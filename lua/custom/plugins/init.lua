@@ -69,6 +69,10 @@ return {
         harpoon:list():select(4)
       end)
 
+      vim.keymap.set('n', '<leader>fh', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end, { desc = 'Harpoon (Default)' })
+
       -- Toggle previous & next buffers stored within Harpoon list
       vim.keymap.set('n', '<leader>p', function()
         harpoon:list():prev()
