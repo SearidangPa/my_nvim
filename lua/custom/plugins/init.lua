@@ -2,6 +2,9 @@
 --  I promise not to create any merge conflicts in this directory :)
 --
 -- See the kickstart.nvim README for more information
+vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-q>', '<Esc>la', { noremap = true, silent = true })
+
 return {
   {
     {
@@ -54,7 +57,7 @@ return {
 
       vim.keymap.set('n', '<leader>1', function()
         harpoon:list():select(1)
-      end)
+      end, { desc = 'harpoon 1' })
       vim.keymap.set('n', '<leader>2', function()
         harpoon:list():select(2)
       end)
@@ -82,4 +85,18 @@ return {
       end, { desc = 'Open harpoon window' })
     end,
   },
+
+  {
+    "zbirenbaum/copilot.lua",
+  cmd = "Copilot",
+  build = ":Copilot auth",
+  opts = {
+    suggestion = { enabled = false },
+    panel = { enabled = false },
+    filetypes = {
+      markdown = true,
+      help = true,
+    },
+  },
+  }
 }
