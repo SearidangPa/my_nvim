@@ -55,18 +55,29 @@ return {
         harpoon:list():add()
       end, { desc = 'add to harpoon' })
 
+      vim.keymap.set('n', '<leader>fr', function()
+        harpoon:list():remove()
+      end, { desc = 'remove from harpoon' })
+
+      vim.keymap.set('n', '<leader>fc', function()
+        harpoon:list():clear()
+      end, { desc = 'clear harpoon' })
+
       vim.keymap.set('n', '<leader>1', function()
         harpoon:list():select(1)
       end, { desc = 'harpoon 1' })
+
       vim.keymap.set('n', '<leader>2', function()
         harpoon:list():select(2)
-      end)
+      end, { desc = 'harpoon 2' })
+
       vim.keymap.set('n', '<leader>3', function()
         harpoon:list():select(3)
-      end)
+      end, { desc = 'harpoon 3' })
+
       vim.keymap.set('n', '<leader>4', function()
         harpoon:list():select(4)
-      end)
+      end, { desc = 'harpoon 4' })
 
       vim.keymap.set('n', '<leader>fh', function()
         harpoon.ui:toggle_quick_menu(harpoon:list())
