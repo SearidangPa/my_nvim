@@ -256,6 +256,23 @@ require('lazy').setup({
     },
   },
 
+  {
+    'L3MON4D3/LuaSnip',
+    config = function()
+      require('luasnip.loaders.from_lua').load { paths = { '~/.config/nvim/snippets/' } }
+      local ls = require 'luasnip'
+
+      vim.keymap.set({ 'i' }, '<C-K>', function()
+        ls.expand()
+      end, { silent = true })
+      vim.keymap.set({ 'i', 's' }, '<C-L>', function()
+        ls.jump(1)
+      end, { silent = true })
+      vim.keymap.set({ 'i', 's' }, '<C-J>', function()
+        ls.jump(-1)
+      end, { silent = true })
+    end,
+  },
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
