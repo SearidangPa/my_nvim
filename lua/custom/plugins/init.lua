@@ -4,6 +4,9 @@
 -- See the kickstart.nvim README for more information
 vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-q>', '<Esc>la', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'p', '"_dp', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'dd', '"_dd', { noremap = true, silent = true })
+
 
 return {
   {
