@@ -13,6 +13,15 @@ ls.add_snippets('go', {
 })
 
 ls.add_snippets('go', {
+  s('iffat', {
+    t 'if err != nil {',
+    t { '', '\t' }, -- Line break with tab indentation
+    t 'log.Fatal(err)', -- Static text for the return statement
+    t { '', '}' }, -- Closing brace on a new line
+  }),
+})
+
+ls.add_snippets('go', {
   s('fn', {
     t 'func ',
     i(1, 'name'),
