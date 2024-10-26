@@ -7,7 +7,7 @@ vim.api.nvim_set_keymap('i', '<C-q>', '<Esc>la', { noremap = true, silent = true
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
 
-vim.cmd [[imap <silent><script> <expr> <C-a> copilot#Accept((("\<CR>")))]]
+vim.cmd [[imap <silent><script> <expr> <C-y> copilot#Accept((("\<CR>")))]]
 
 local function SuggestOneWord()
   vim.fn['copilot#Accept'] ''
