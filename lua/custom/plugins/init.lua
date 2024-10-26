@@ -7,6 +7,17 @@ vim.api.nvim_set_keymap('i', '<C-q>', '<Esc>la', { noremap = true, silent = true
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
 
+vim.cmd [[imap <silent><script> <expr> <C-a> copilot#Accept((("\<CR>")))]]
+
+local function SuggestOneWord()
+  vim.fn['copilot#Accept'] ''
+  local bar = vim.fn['copilot#TextQueuedForInsertion']()
+  return vim.split(bar, '[ .]\zs')[0]
+end
+
+local map = vim.keymap.set
+map('i', '<alt-right>', SuggestOneWord, { expr = true, remap = false })
+
 return {
   {
     {
