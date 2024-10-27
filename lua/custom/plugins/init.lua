@@ -19,9 +19,8 @@ local map = vim.keymap.set
 map('i', '<alt-right>', SuggestOneWord, { expr = true, remap = false })
 
 -- diagnostic
-local opts = { noremap = true, silent = true }
-vim.keymap.set('n', ']g', vim.diagnostic.goto_next)
-vim.keymap.set('n', '[g', vim.diagnostic.goto_prev)
+vim.keymap.set('n', ']g', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
 
 local function toggle_quickfix()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
@@ -35,15 +34,15 @@ end
 vim.keymap.set('n', '<leader>qd', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
-end, opts)
+end, { desc = 'diagnostic to quickfix' })
 
-vim.keymap.set('n', '<leader>ct', toggle_quickfix, opts) -- Toggle Quickfix window
-vim.keymap.set('n', '<leader>cn', ':cnext<CR>', opts) -- Next Quickfix item
-vim.keymap.set('n', '<leader>cp', ':cprevious<CR>', opts) -- Previous Quickfix item
-vim.keymap.set('n', '<leader>co', ':copen<CR>', opts) -- Open Quickfix window
-vim.keymap.set('n', '<leader>cc', ':cclose<CR>', opts) -- Close Quickfix window
-vim.keymap.set('n', '<leader>cl', ':clast<CR>', opts)
-vim.keymap.set('n', '<leader>cf', ':cfirst<CR>', opts)
+vim.keymap.set('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
+vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
+vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
+vim.keymap.set('n', '<leader>cl', ':clast<CR>', { desc = 'Last Quickfix item' })
+vim.keymap.set('n', '<leader>cf', ':cfirst<CR>', { desc = 'First Quickfix item' })
+
 
 return {
   {
