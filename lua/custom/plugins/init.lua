@@ -1,13 +1,11 @@
 -- You can add your own plugins here or in other files in this directory!
 --  I promise not to create any merge conflicts in this directory :)
 --
--- See the kickstart.nvim README for more information
-vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-q>', '<Esc>la', { noremap = true, silent = true })
+-- edit: insert mode keymaps
+vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
+
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
-
-vim.cmd [[imap <silent><script> <expr> <C-y> copilot#Accept((("\<CR>")))]]
 
 local function SuggestOneWord()
   vim.fn['copilot#Accept'] ''
@@ -38,10 +36,12 @@ end, { desc = 'diagnostic to quickfix' })
 
 vim.keymap.set('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+vim.keymap.set('n', '<leader>ql', ':clast<CR>', { desc = 'Last Quickfix item' })
+vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' })
+
 vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
-vim.keymap.set('n', '<leader>cl', ':clast<CR>', { desc = 'Last Quickfix item' })
-vim.keymap.set('n', '<leader>cf', ':cfirst<CR>', { desc = 'First Quickfix item' })
 
 return {
   {
