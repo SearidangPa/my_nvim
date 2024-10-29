@@ -4,6 +4,15 @@ local t = ls.text_node
 local i = ls.insert_node
 
 ls.add_snippets('go', {
+  s('ifnil', {
+    t 'if err != nil {',
+    t { '', '\t' }, -- Line break with tab indentation
+    t 'return nil, err', -- Static text for the return statement
+    t { '', '}' }, -- Closing brace on a new line
+  }),
+})
+
+ls.add_snippets('go', {
   s('iferr', {
     t 'if err != nil {',
     t { '', '\t' }, -- Line break with tab indentation

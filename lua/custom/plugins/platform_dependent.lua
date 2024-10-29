@@ -1,3 +1,5 @@
+vim.api.nvim_set_keymap('n', '<A-d>', 'vb"_da', { noremap = true, silent = true })
+
 return {
   {
     {
