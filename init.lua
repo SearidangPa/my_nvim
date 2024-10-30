@@ -224,9 +224,7 @@ require('lazy').setup({
   },
 
   {
-    'zbirenbaum/copilot.lua',
-    cmd = 'Copilot',
-    event = 'InsertEnter',
+    'github/copilot.vim',
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
