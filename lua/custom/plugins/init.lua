@@ -28,11 +28,10 @@ local function toggle_quickfix()
   end
 end
 
--- Populate the Quickfix list with diagnostics
 vim.keymap.set('n', '<leader>qd', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
-end, { desc = 'diagnostic to quickfix' })
+end, { desc = 'Populate the Quickfix list with diagnostics' })
 
 vim.keymap.set('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
@@ -42,6 +41,11 @@ vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' 
 
 vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
+
+vim.api.nvim_create_user_command('Make', function()
+  vim.cmd [[!wsl --exec /bin/bash -c "export PATH=\$PATH:/usr/local/go/bin:/usr/bin && make -j all"]]
+end, {})
+vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make' })
 
 return {
   {
