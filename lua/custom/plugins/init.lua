@@ -7,6 +7,11 @@ vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = tru
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
 
+-- lua
+vim.api.nvim_create_user_command('Source', 'source %', {})
+vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silent = true, desc = 'source %' })
+
+-- Copilot
 local function SuggestOneWord()
   vim.fn['copilot#Accept'] ''
   local bar = vim.fn['copilot#TextQueuedForInsertion']()
