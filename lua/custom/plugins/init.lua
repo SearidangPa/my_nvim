@@ -38,7 +38,7 @@ vim.keymap.set('n', '<leader>qd', function()
   vim.cmd 'copen'
 end, { desc = 'Populate the Quickfix list with diagnostics' })
 
-vim.keymap.set('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
+vim.keymap.set('n', '<m-t>', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 vim.keymap.set('n', '<leader>ql', ':clast<CR>', { desc = 'Last Quickfix item' })
