@@ -195,6 +195,20 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  {
+    'zbirenbaum/copilot.lua',
+    cmd = 'Copilot',
+    build = ':Copilot auth',
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        help = true,
+      },
+    },
+  },
+
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -222,9 +236,22 @@ require('lazy').setup({
       },
     },
   },
-
   {
-    'github/copilot.vim',
+    'zbirenbaum/copilot-cmp',
+    event = 'InsertEnter',
+    config = function()
+      require('copilot_cmp').setup()
+    end,
+    dependencies = {
+      'zbirenbaum/copilot.lua',
+      cmd = 'Copilot',
+      config = function()
+        require('copilot').setup {
+          suggestion = { enabled = false },
+          panel = { enabled = false },
+        }
+      end,
+    },
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -815,6 +842,7 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
+          { name = 'copilot' },
           {
             name = 'lazydev',
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
