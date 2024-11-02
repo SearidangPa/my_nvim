@@ -4,6 +4,15 @@ local t = ls.text_node
 local i = ls.insert_node
 
 ls.add_snippets('go', {
+  s('winb', {
+    t '//go:build windows',
+    t { '', '// +build windows', '' }, -- Line break with tab indentation
+    t { '', 'package ' }, -- Static text for the return statement
+    i(0),
+  }),
+})
+
+ls.add_snippets('go', {
   s('ifnil', {
     t 'if err != nil {',
     t { '', '\t' }, -- Line break with tab indentation
