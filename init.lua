@@ -183,11 +183,6 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
--- if vim.fn.has 'macunix' == 1 then
---   require 'custom.plugins.platform_dependent_mac'
--- elseif vim.fn.has 'win32' == 1 or vim.fn.has 'win64' == 1 then
---   require 'custom.plugins.platform_dependent_win'
--- end
 --
 -- [[ Configure and install plugins ]]
 --
