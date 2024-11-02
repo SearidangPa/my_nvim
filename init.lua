@@ -183,6 +183,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- if vim.fn.has 'macunix' == 1 then
+--   require 'custom.plugins.platform_dependent_mac'
+-- elseif vim.fn.has 'win32' == 1 or vim.fn.has 'win64' == 1 then
+--   require 'custom.plugins.platform_dependent_win'
+-- end
+--
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -383,6 +389,7 @@ require('lazy').setup({
         defaults = {
           file_ignore_patterns = {
             '.git\\',
+            'git/',
           },
           --   mappings = {
           --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -757,6 +764,23 @@ require('lazy').setup({
           end
           return 'make install_jsregexp'
         end)(),
+        config = function()
+          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+            require('luasnip.loaders.from_lua').load { paths = { 'C:\\Users\\dangs\\AppData\\Local\\nvim\\snippets\\' } }
+          else
+            require('luasnip.loaders.from_lua').load { paths = { '/Users/searidangpa/.config/nvim/snippets' } }
+          end
+
+          vim.keymap.set({ 'i' }, '<C-K>', function()
+            ls.expand()
+          end, { silent = true })
+          vim.keymap.set({ 'i', 's' }, '<C-L>', function()
+            ls.jump(1)
+          end, { silent = true })
+          vim.keymap.set({ 'i', 's' }, '<C-J>', function()
+            ls.jump(-1)
+          end, { silent = true })
+        end,
         dependencies = {
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
@@ -958,7 +982,7 @@ require('lazy').setup({
   require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
   require 'custom.plugins.init',
-  require 'custom.plugins.platform_dependent',
+  require 'custom.plugins.platform_dependent_mac',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.

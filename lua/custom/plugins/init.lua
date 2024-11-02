@@ -1,11 +1,13 @@
 -- You can add your own plugins here or in other files in this directory!
 --  I promise not to create any merge conflicts in this directory :)
 --
+
 -- edit: insert mode keymaps
 vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
 
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<m-d>', 'vb"_da', { noremap = true, silent = true })
 
 -- lua
 vim.api.nvim_create_user_command('Source', 'source %', {})
