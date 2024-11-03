@@ -50,7 +50,11 @@ vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
 
 vim.api.nvim_create_user_command('Make', function()
-  vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "make -j all"]]
+  if vim.fn.has 'win32' == 1 then
+    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "make -j all"]]
+  else
+    vim.cmd [[!"make -j all"]]
+  end
 end, {})
 
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make' })

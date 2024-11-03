@@ -760,7 +760,7 @@ require('lazy').setup({
           return 'make install_jsregexp'
         end)(),
         config = function()
-          if vim.fn.has 'win32' == 1 or vim.fn.executable 'make' == 0 then
+          if vim.fn.has 'win32' == 1 then
             require('luasnip.loaders.from_lua').load { paths = { 'C:\\Users\\dangs\\AppData\\Local\\nvim\\snippets\\' } }
           else
             require('luasnip.loaders.from_lua').load { paths = { '/Users/searidangpa/.config/nvim/snippets' } }
