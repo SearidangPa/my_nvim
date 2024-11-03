@@ -3,7 +3,6 @@
 --
 
 -- edit: insert mode keymaps
-vim.api.nvim_set_keymap('i', '<C-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
 
 vim.api.nvim_set_keymap('v', 'p', '"_dP', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'dD', '"_dd', { noremap = true, silent = true })
