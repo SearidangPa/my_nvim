@@ -13,6 +13,8 @@ vim.api.nvim_set_keymap('n', '<m-d>', 'vb"_da', { noremap = true, silent = true 
 vim.api.nvim_create_user_command('Source', 'source %', {})
 vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silent = true, desc = 'source %' })
 
+vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })
+
 -- Copilot
 local function SuggestOneWord()
   vim.fn['copilot#Accept'] ''

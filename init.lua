@@ -765,6 +765,7 @@ require('lazy').setup({
           else
             require('luasnip.loaders.from_lua').load { paths = { '/Users/searidangpa/.config/nvim/snippets' } }
           end
+          local ls = require 'luasnip'
 
           vim.keymap.set({ 'i' }, '<C-K>', function()
             ls.expand()
