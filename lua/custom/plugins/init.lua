@@ -52,13 +52,19 @@ vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix i
 
 vim.api.nvim_create_user_command('Make', function()
   if vim.fn.has 'win32' == 1 then
-    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "make -j all"]]
+    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
   else
     vim.cmd [[!"make -j all"]]
   end
 end, {})
 
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make' })
+
+vim.api.nvim_create_user_command('GoModTidy', function()
+  vim.cmd [[!go mod tidy]]
+end, { desc = 'Run go mod tidy' })
+
+vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = 'Run go mod tidy' })
 
 return {
   {
