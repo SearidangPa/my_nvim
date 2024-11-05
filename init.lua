@@ -172,6 +172,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   'tpope/vim-fugitive', -- Git commands in Neovim
+  'copilot.vim',
   {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
@@ -179,9 +180,6 @@ require('lazy').setup({
     opts = {
       suggestion = {
         enabled = false,
-        keymap = {
-          accept = '<m-1>',
-        },
       },
       panel = {
         enabled = false,
@@ -847,7 +845,6 @@ require('lazy').setup({
           --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
         },
         sources = {
-          { name = 'copilot' },
           {
             name = 'lazydev',
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
