@@ -21,8 +21,14 @@ local function SuggestOneWord()
   return vim.split(bar, '[ .]\zs')[0]
 end
 
+local function SuggestLine()
+  vim.fn['copilot#Accept'] ''
+  return vim.fn['copilot#TextQueuedForInsertion']()
+end
+
 local map = vim.keymap.set
 map('i', '<alt-right>', SuggestOneWord, { expr = true, remap = false })
+map('i', '<m-l>', SuggestLine, { expr = true, remap = false })
 
 -- diagnostic
 vim.keymap.set('n', ']g', vim.diagnostic.goto_next, { desc = 'Next diagnostic' })
