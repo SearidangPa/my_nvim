@@ -52,9 +52,9 @@ vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix i
 
 vim.api.nvim_create_user_command('Make', function()
   if vim.fn.has 'win32' == 1 then
-    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
+    vim.cmd [[silent !"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
   else
-    vim.cmd [[!make -j all]]
+    vim.cmd [[silent !make -j all]]
   end
 end, {})
 

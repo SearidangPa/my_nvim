@@ -171,13 +171,21 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  'tpope/vim-fugitive', -- Git commands in Neovim
   {
     'zbirenbaum/copilot.lua',
     cmd = 'Copilot',
     build = ':Copilot auth',
     opts = {
-      suggestion = { enabled = false },
-      panel = { enabled = false },
+      suggestion = {
+        enabled = false,
+        keymap = {
+          accept = '<m-1>',
+        },
+      },
+      panel = {
+        enabled = false,
+      },
       filetypes = {
         markdown = true,
         help = true,
