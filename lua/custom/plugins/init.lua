@@ -47,7 +47,7 @@ vim.keymap.set('n', '<leader>qd', function()
   vim.cmd 'copen'
 end, { desc = 'Populate the Quickfix list with diagnostics' })
 
-vim.keymap.set('n', '<m-t>', toggle_quickfix, { desc = 'toggle diagnostic windows' })
+vim.keymap.set('n', ',,', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 vim.keymap.set('n', '<leader>ql', ':clast<CR>', { desc = 'Last Quickfix item' })
@@ -55,12 +55,13 @@ vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' 
 
 vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
+vim.keymap.set('n', '<leader>qcl', ':call setqflist([])<CR>', { desc = 'Previous Quickfix item' })
 
 vim.api.nvim_create_user_command('Make', function()
   if vim.fn.has 'win32' == 1 then
-    vim.cmd [[silent !"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
+    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
   else
-    vim.cmd [[silent !make -j all]]
+    vim.cmd [[!make -j all]]
   end
 end, {})
 
