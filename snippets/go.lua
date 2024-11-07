@@ -6,7 +6,7 @@ local i = ls.insert_node
 ls.add_snippets('go', {
   s('winb', {
     t '//go:build windows',
-    t { '', '// +build windows', '' }, -- Line break with tab indentation
+    t { '', '' }, -- Line break with tab indentation
     t { '', 'package ' }, -- Static text for the return statement
     i(0),
   }),
