@@ -13,6 +13,7 @@ vim.api.nvim_create_user_command('Source', 'source %', {})
 vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silent = true, desc = 'source %' })
 
 vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })
+vim.api.nvim_set_keymap('n', '<m-q>', ':LspStop', { desc = 'Stop LSP' })
 
 -- Copilot
 local function SuggestOneWord()
@@ -55,7 +56,6 @@ vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' 
 
 vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
-vim.keymap.set('n', '<leader>qcl', ':call setqflist([])<CR>', { desc = 'Previous Quickfix item' })
 
 vim.api.nvim_create_user_command('Make', function()
   if vim.fn.has 'win32' == 1 then
