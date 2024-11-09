@@ -43,16 +43,16 @@ local function toggle_quickfix()
   end
 end
 
-vim.keymap.set('n', '<leader>qd', function()
+vim.keymap.set('n', ',q', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
 end, { desc = 'Populate the Quickfix list with diagnostics' })
 
 vim.keymap.set('n', ',,', toggle_quickfix, { desc = 'toggle diagnostic windows' })
-vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-vim.keymap.set('n', '<leader>ql', ':clast<CR>', { desc = 'Last Quickfix item' })
-vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' })
+-- vim.keymap.set('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+-- vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+-- vim.keymap.set('n', '<leader>ql', ':clast<CR>', { desc = 'Last Quickfix item' })
+-- vim.keymap.set('n', '<leader>qf', ':cfirst<CR>', { desc = 'First Quickfix item' })
 
 vim.keymap.set('n', '<leader>n', ':cnext<CR>', { desc = 'Next Quickfix item' })
 vim.keymap.set('n', '<leader>p', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
