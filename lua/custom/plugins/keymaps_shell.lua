@@ -5,7 +5,6 @@ vim.api.nvim_create_user_command('Make', function()
     vim.cmd [[!make -j all]]
   end
 end, {})
-
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make' })
 
 vim.api.nvim_create_user_command('Tidy', function()
@@ -22,6 +21,8 @@ vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silen
 vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })
 vim.api.nvim_set_keymap('n', '<m-q>', ':LspStop', { desc = 'Stop LSP' })
 
+-- terminal
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('n', '<leader>tt', '<cmd>vsp<CR><cmd>term powershell.exe<CR>a', { desc = 'Open terminal' })
 
 return {}

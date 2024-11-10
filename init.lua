@@ -20,7 +20,6 @@ vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
-vim.opt.shell = 'powershell.exe'
 
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
