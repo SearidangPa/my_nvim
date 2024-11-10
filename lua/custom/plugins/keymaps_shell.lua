@@ -1,6 +1,6 @@
 vim.api.nvim_create_user_command('Make', function()
   if vim.fn.has 'win32' == 1 then
-    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "rm bin/cloud-drive.exe && make -j all"]]
+    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "make -j all"]]
   else
     vim.cmd [[!make -j all]]
   end
