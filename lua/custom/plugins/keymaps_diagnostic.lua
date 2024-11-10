@@ -19,7 +19,6 @@ vim.keymap.set('n', ']g', vim.diagnostic.goto_next, { desc = 'Next diagnostic' }
 vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, { desc = 'Previous diagnostic' })
 
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
-vim.keymap.set('n', '<m-o>', ':copen<CR>', { desc = 'Open Quickfix window' })
 vim.keymap.set('n', '<m-c>', ':cclose<CR>', { desc = 'Close Quickfix window' })
 
 return {}
