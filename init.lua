@@ -17,7 +17,6 @@ require('lazy').setup({
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   { import = 'custom.plugins' },
-  { import = 'kickstart.plugins' },
 }, {
   ui = {
     icons = vim.g.have_nerd_font,
