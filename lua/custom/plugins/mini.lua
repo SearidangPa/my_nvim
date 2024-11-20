@@ -15,7 +15,6 @@ return { -- Collection of various small independent plugins/modules
     -- - sd'   - [S]urround [D]elete [']quotes
     -- - sr)'  - [S]urround [R]eplace [)] [']
 
-    -- need to remove keybinds for s to work
     require('mini.surround').setup()
 
     -- Simple and easy statusline.
