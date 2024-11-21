@@ -15,7 +15,7 @@ end
 
 local map = vim.keymap.set
 
-map('i', '<M-k>', SuggestOneWord, { expr = true, remap = false })
-map('i', '<M-l>', SuggestLine, { expr = true, remap = false })
+map('i', '<C-k>', SuggestOneWord, { expr = true, remap = false })
+map('i', '<C-l>', SuggestLine, { expr = true, remap = false })
 
 return {}
