@@ -1,12 +1,10 @@
-local function trim(s)
-  return s:match '^%s*(.-)%s*$'
-end
-
 local function SuggestOneWord()
   vim.fn['copilot#Accept'] ''
-  local bar = vim.fn['copilot#TextQueuedForInsertion']()
-  bar = trim(bar)
-  local result = vim.split(bar, '[ .]')[1]
+  local bar = vim.fn['copilot#TextQueuedForInsertion']() or ''
+  -- Trim leading/trailing spaces
+  bar = bar:match '^%s*(.-)%s*$' or ''
+  -- Match the first word, or use the entire `bar` if no space/dot is found
+  local result = bar:match '^[^ .]+' or bar
   return result
 end
 
