@@ -24,7 +24,7 @@ vim.api.nvim_set_keymap('n', '<m-j>', 'o<Esc>k', { noremap = true, silent = true
 -- empty parentheses
 vim.api.nvim_set_keymap('i', '<m-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
 
-convert-- press jj in insert mode to escaped to normal mode
+-- press jj in insert mode to escaped to normal mode
 vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true, silent = true })
 
 -- delete forward
