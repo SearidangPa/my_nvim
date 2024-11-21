@@ -11,7 +11,7 @@ end
 
 local map = vim.keymap.set
 
-map('i', '<m-<Right>>', SuggestOneWord, { expr = true, remap = false })
+map('i', '<M-f>', SuggestOneWord, { expr = true, remap = false })
 map('i', '<m-l>', SuggestLine, { expr = true, remap = false })
 
 return {}
