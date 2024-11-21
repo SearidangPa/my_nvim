@@ -11,7 +11,7 @@ end
 
 local map = vim.keymap.set
 
-map('i', '<alt-right>', SuggestOneWord, { expr = true, remap = false })
+map('i', '<m-right>', SuggestOneWord, { expr = true, remap = false })
 map('i', '<m-l>', SuggestLine, { expr = true, remap = false })
 
 return {}
