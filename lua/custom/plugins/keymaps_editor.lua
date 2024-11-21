@@ -18,7 +18,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlights' })
 
 -- add empty line
-vim.api.nvim_set_keymap('n', '<M-k>', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
+vim.api.nvim_set_keymap('n', '<M-h>', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
 vim.api.nvim_set_keymap('n', '<M-j>', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
 
 -- empty parentheses
