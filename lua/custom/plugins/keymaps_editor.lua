@@ -28,6 +28,6 @@ vim.api.nvim_set_keymap('i', '<M-p>', '()<Esc>a', { noremap = true, silent = tru
 vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true, silent = true })
 
 -- delete forward
-vim.keymap.set('i', '<C-<Del>>', '<Del>')
+vim.keymap.set('i', '<C-D>', '<Del>')
 
 return {}
