@@ -18,14 +18,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlights' })
 
 -- add empty line
-vim.api.nvim_set_keymap('n', '<M-h>', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
-vim.api.nvim_set_keymap('n', '<M-j>', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
+vim.api.nvim_set_keymap('n', '<M-S-CR>', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
+vim.api.nvim_set_keymap('n', '<M-CR>', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
 
 -- empty parentheses
 vim.api.nvim_set_keymap('i', '<M-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
 
 -- press jj in insert mode to escaped to normal mode
-vim.api.nvim_set_keymap('i', 'jj', '<Esc>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', 'jj', '<Esc>l', { noremap = true, silent = true })
 
 -- delete forward
 vim.keymap.set('i', '<C-D>', '<Del>')
