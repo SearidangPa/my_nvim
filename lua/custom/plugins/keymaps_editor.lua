@@ -15,8 +15,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
--- vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlights' })
-
 -- add empty line
 vim.api.nvim_set_keymap('n', '<M-S-CR>', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
 vim.api.nvim_set_keymap('n', '<M-CR>', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
