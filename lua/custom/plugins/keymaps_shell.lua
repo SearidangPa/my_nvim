@@ -11,7 +11,7 @@ vim.api.nvim_create_user_command('Tidy', function()
   vim.cmd [[!go mod tidy]]
 end, { desc = 'Run go mod tidy' })
 
-vim.keymap.set('n', '<m-t>', ':Tidy<CR>', { desc = 'Run go mod tidy' })
+vim.keymap.set('n', '<leader>gt', ':Tidy<CR>', { desc = 'Run go mod tidy' })
 
 -- lua
 vim.api.nvim_create_user_command('Source', 'source %', {})

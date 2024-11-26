@@ -39,6 +39,7 @@ require('lazy').setup({
   'tpope/vim-fugitive', -- Git commands in Neovim
   'copilot.vim',
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  require 'custom.plugins.lsp',
   { import = 'custom.plugins' },
 }, {
   ui = {
