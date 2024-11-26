@@ -13,6 +13,9 @@ end, { desc = 'Run go mod tidy' })
 
 vim.keymap.set('n', '<leader>gt', ':Tidy<CR>', { desc = 'Run go mod tidy' })
 
+-- LspStop
+vim.keymap.set('n', '<leader>gs', ':LspStop', { desc = 'Stop LSP' })
+
 -- lua
 vim.api.nvim_create_user_command('Source', 'source %', {})
 vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silent = true, desc = 'source %' })
