@@ -13,7 +13,7 @@ end
 if vim.fn.has 'win32' == 1 then
   map('i', '<M-Right>', SuggestOneWord, { expr = true, remap = false })
 else
-  map('i', '<C-S-Right>', SuggestOneWord, { expr = true, remap = false })
+  map('i', '<M-C-Right>', SuggestOneWord, { expr = true, remap = false })
 end
 
 local function SuggestLine()
@@ -23,7 +23,7 @@ end
 if vim.fn.has 'win32' == 1 then
   map('i', '<M-l>', SuggestLine, { expr = true, remap = false })
 else
-  map('i', '<C-S-l>', SuggestLine, { expr = true, remap = false })
+  map('i', '<M-C-l>', SuggestLine, { expr = true, remap = false })
 end
 
 -- Function to accept a specified number of words
@@ -49,7 +49,7 @@ for i = 1, 9 do
   if vim.fn.has 'win32' == 1 then
     key = string.format('<M-%d>', i)
   else
-    key = string.format('<C-S-%d>', i)
+    key = string.format('<M-C-%d>', i)
   end
   map('i', key, function()
     return AcceptWords(i)

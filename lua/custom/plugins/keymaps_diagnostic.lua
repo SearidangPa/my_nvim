@@ -20,4 +20,8 @@ vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, { desc = 'Previous diagnosti
 vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 vim.keymap.set('n', '<leader>tq', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 
+vim.keymap.set('n', '<leader>qf', function()
+  vim.diagnostic.open_float()
+end, { desc = 'Open diagnostic float' })
+
 return {}
