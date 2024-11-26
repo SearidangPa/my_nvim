@@ -9,13 +9,22 @@ local function SuggestOneWord()
   local result = bar:match '^[^ .]+' or bar
   return result
 end
-map('i', '<C-S-Right>', SuggestOneWord, { expr = true, remap = false })
+
+if vim.fn.has 'win32' == 1 then
+  map('i', '<M-Right>', SuggestOneWord, { expr = true, remap = false })
+else
+  map('i', '<C-S-Right>', SuggestOneWord, { expr = true, remap = false })
+end
 
 local function SuggestLine()
   vim.fn['copilot#Accept'] ''
   return vim.fn['copilot#TextQueuedForInsertion']()
 end
-map('i', '<C-S-CR>', SuggestLine, { expr = true, remap = false })
+if vim.fn.has 'win32' == 1 then
+  map('i', '<M-l>', SuggestLine, { expr = true, remap = false })
+else
+  map('i', '<C-S-l>', SuggestLine, { expr = true, remap = false })
+end
 
 -- Function to accept a specified number of words
 local function AcceptWords(num_words)
@@ -36,7 +45,12 @@ end
 
 -- Map keys dynamically for <C-S-%d>
 for i = 1, 9 do
-  local key = string.format('<C-S-%d>', i)
+  local key
+  if vim.fn.has 'win32' == 1 then
+    key = string.format('<M-%d>', i)
+  else
+    key = string.format('<C-S-%d>', i)
+  end
   map('i', key, function()
     return AcceptWords(i)
   end, { expr = true, remap = false })
