@@ -1,34 +1,48 @@
 vim.api.nvim_create_user_command('Make', function()
   local cmd
-  if vim.fn.has 'win32' == 1 then
+  if vim.fn.has('win32') == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
   else
     cmd = { 'make', '-j', 'all' }
   end
 
+  local output = {}
+  local errors = {}
   local job_id = vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    stderr_buffered = true,
     on_stdout = function(_, data)
-      if data then
-        vim.api.nvim_out_write(table.concat(data, '\n') .. '\n')
+      if data and #data > 0 then
+        vim.list_extend(output, data)
       end
     end,
     on_stderr = function(_, data)
-      if data then
-        vim.api.nvim_err_write(table.concat(data, '\n') .. '\n')
+      if data and #data > 0 then
+        vim.list_extend(errors, data)
       end
     end,
     on_exit = function(_, code)
       if code == 0 then
-        print 'make successfully'
+        vim.notify('Make completed successfully!', vim.log.levels.INFO)
+      else
+        vim.notify('Make failed with exit code ' .. code, vim.log.levels.ERROR)
+        -- Populate the quickfix list with errors
+        vim.fn.setqflist({}, ' ', {
+          title = 'Make Errors',
+          lines = errors,
+        })
+        -- Open the quickfix window and jump to the first error
+        vim.cmd('copen')
+        vim.cmd('cc')
       end
-      vim.api.nvim_out_write('Make command exited with code: ' .. code .. '\n')
     end,
   })
 
   if job_id <= 0 then
-    vim.api.nvim_err_write 'Failed to start the Make command\n'
+    vim.notify('Failed to start the Make command', vim.log.levels.ERROR)
   end
 end, {})
+
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
 
 vim.api.nvim_create_user_command('Tidy', function()
