@@ -1,11 +1,34 @@
 vim.api.nvim_create_user_command('Make', function()
+  local cmd
   if vim.fn.has 'win32' == 1 then
-    vim.cmd [[!"C:\Program Files\Git\bin\bash.exe" -c "make -j all"]]
+    cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
   else
-    vim.cmd [[!make -j all]]
+    cmd = { 'make', '-j', 'all' }
+  end
+
+  local job_id = vim.fn.jobstart(cmd, {
+    on_stdout = function(_, data)
+      if data then
+        vim.api.nvim_out_write(table.concat(data, '\n') .. '\n')
+      end
+    end,
+    on_stderr = function(_, data)
+      if data then
+        vim.api.nvim_err_write(table.concat(data, '\n') .. '\n')
+      end
+    end,
+    on_exit = function(_, code)
+      vim.api.nvim_out_write('Make command exited with code: ' .. code .. '\n')
+    end,
+  })
+
+  if job_id <= 0 then
+    vim.api.nvim_err_write 'Failed to start the Make command\n'
+  else
+    vim.api.nvim_out_write('Make job started with ID: ' .. job_id .. '\n')
   end
 end, {})
-vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make' })
+vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
 
 vim.api.nvim_create_user_command('Tidy', function()
   vim.cmd [[!go mod tidy]]
@@ -14,7 +37,7 @@ end, { desc = 'Run go mod tidy' })
 vim.keymap.set('n', '<leader>gt', ':Tidy<CR>', { desc = 'Run go mod tidy' })
 
 -- LspStop
-vim.keymap.set('n', '<leader>gs', ':LspStop', { desc = 'Stop LSP' })
+vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })
 
 -- lua
 vim.api.nvim_create_user_command('Source', 'source %', {})
