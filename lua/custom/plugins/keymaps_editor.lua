@@ -16,8 +16,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 -- add empty line
-vim.api.nvim_set_keymap('n', '<leader>j', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
-vim.api.nvim_set_keymap('n', '<leader>k', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
+vim.api.nvim_set_keymap('n', '<leader>k', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
+vim.api.nvim_set_keymap('n', '<leader>j', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
 
 -- empty parentheses
 vim.api.nvim_set_keymap('i', '<M-p>', '()<Esc>a', { noremap = true, silent = true, desc = 'Insert parentheses' })
