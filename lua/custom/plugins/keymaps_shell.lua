@@ -18,14 +18,15 @@ vim.api.nvim_create_user_command('Make', function()
       end
     end,
     on_exit = function(_, code)
+      if code == 0 then
+        print 'make successfully'
+      end
       vim.api.nvim_out_write('Make command exited with code: ' .. code .. '\n')
     end,
   })
 
   if job_id <= 0 then
     vim.api.nvim_err_write 'Failed to start the Make command\n'
-  else
-    vim.api.nvim_out_write('Make job started with ID: ' .. job_id .. '\n')
   end
 end, {})
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
