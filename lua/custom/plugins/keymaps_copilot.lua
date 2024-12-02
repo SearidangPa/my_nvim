@@ -11,9 +11,9 @@ local function SuggestOneWord()
 end
 
 if vim.fn.has 'win32' == 1 then
-  map('i', '<M-Right>', SuggestOneWord, { expr = true, remap = false })
+  map('i', '<M-k>', SuggestOneWord, { expr = true, remap = false })
 else
-  map('i', '<M-C-Right>', SuggestOneWord, { expr = true, remap = false })
+  map('i', '<C-M-k>', SuggestOneWord, { expr = true, remap = false })
 end
 
 local function SuggestLine()
@@ -70,12 +70,7 @@ end
 
 -- Dynamically map keys for <C-S-%d>
 for i = 1, 9 do
-  local key
-  if vim.fn.has 'win32' == 1 then
-    key = string.format('<M-%d>', i)
-  else
-    key = string.format('<M-S-%d>', i)
-  end
+  local key = string.format('<C-S-%d>', i)
   map('i', key, function()
     return SuggestFirstLine() -- Use the function to accept only the first line
   end, { expr = true, remap = false })
