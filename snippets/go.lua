@@ -54,7 +54,7 @@ ls.add_snippets('go', {
 })
 
 ls.add_snippets('go', {
-  s('strmethod', {
+  s('strf', {
     t 'func (',
     i(1, 'receiver'),
     t ' ',

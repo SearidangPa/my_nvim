@@ -21,6 +21,21 @@ return { -- Autocompletion
           require('luasnip.loaders.from_lua').load { paths = { '/Users/searidangpa/.config/nvim/snippets' } }
         end
         local ls = require 'luasnip'
+        local types = require 'luasnip.util.types'
+
+        ls.config.set_config {
+          history = true,
+          updateevents = 'TextChanged,TextChangedI',
+          enable_autosnippets = true,
+
+          ext_opts = {
+            [types.choiceNode] = {
+              active = {
+                virt_text = { { '<-', 'Error' } },
+              },
+            },
+          },
+        }
 
         vim.keymap.set({ 'i' }, '<C-K>', function()
           ls.expand()

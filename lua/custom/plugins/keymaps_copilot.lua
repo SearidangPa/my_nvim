@@ -56,24 +56,38 @@ for i = 1, 9 do
   end, { expr = true, remap = false })
 end
 
-local function SuggestFirstLine()
+local function SuggestLines(n)
   -- Accept the suggestion
   vim.fn['copilot#Accept'] ''
   -- Get the queued text for insertion
   local queuedText = vim.fn['copilot#TextQueuedForInsertion']() or ''
   -- Trim leading and trailing spaces
   queuedText = queuedText:match '^%s*(.-)%s*$' or ''
-  -- Extract the first line of the suggestion
-  local firstLine = queuedText:match '^[^\n]*' or ''
-  return string.format('%s\n\t', firstLine)
+  -- Split the text into lines
+  local lines = {}
+  for line in queuedText:gmatch '[^\n]+' do
+    table.insert(lines, line)
+  end
+  -- Extract the first `n` lines or all lines if `n` is greater than available
+  local selectedLines = vim.list_slice(lines, 1, n or #lines)
+  -- Remove leading spaces or tabs from all lines
+  for i, line in ipairs(selectedLines) do
+    selectedLines[i] = line:match '^%s*(.-)$' -- Trim leading spaces/tabs
+  end
+  -- Concatenate lines with `\n`
+  return table.concat(selectedLines, '\n') .. '\n'
 end
 
 -- Dynamically map keys for <C-S-%d>
 for i = 1, 9 do
-  local key = string.format('<C-S-%d>', i)
+  local key
+  if vim.fn.has 'win32' == 1 then
+    key = string.format('<M-S-%d>', i)
+  else
+    key = string.format('<C-S-%d>', i)
+  end
   map('i', key, function()
-    return SuggestFirstLine() -- Use the function to accept only the first line
+    return SuggestLines(i) -- Accept `i` lines dynamically based on the key
   end, { expr = true, remap = false })
 end
-
 return {}
