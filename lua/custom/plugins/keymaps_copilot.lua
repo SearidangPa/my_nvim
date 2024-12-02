@@ -74,7 +74,7 @@ for i = 1, 9 do
   if vim.fn.has 'win32' == 1 then
     key = string.format('<M-%d>', i)
   else
-    key = string.format('<M-C-%d>', i)
+    key = string.format('<M-S-%d>', i)
   end
   map('i', key, function()
     return SuggestFirstLine() -- Use the function to accept only the first line
