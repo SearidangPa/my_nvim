@@ -56,4 +56,29 @@ for i = 1, 9 do
   end, { expr = true, remap = false })
 end
 
+local function SuggestFirstLine()
+  -- Accept the suggestion
+  vim.fn['copilot#Accept'] ''
+  -- Get the queued text for insertion
+  local queuedText = vim.fn['copilot#TextQueuedForInsertion']() or ''
+  -- Trim leading and trailing spaces
+  queuedText = queuedText:match '^%s*(.-)%s*$' or ''
+  -- Extract the first line of the suggestion
+  local firstLine = queuedText:match '^[^\n]*' or ''
+  return firstLine
+end
+
+-- Dynamically map keys for <C-S-%d>
+for i = 1, 9 do
+  local key
+  if vim.fn.has 'win32' == 1 then
+    key = string.format('<M-%d>', i)
+  else
+    key = string.format('<M-C-%d>', i)
+  end
+  map('i', key, function()
+    return SuggestFirstLine() -- Use the function to accept only the first line
+  end, { expr = true, remap = false })
+end
+
 return {}
