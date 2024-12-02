@@ -65,7 +65,7 @@ local function SuggestFirstLine()
   queuedText = queuedText:match '^%s*(.-)%s*$' or ''
   -- Extract the first line of the suggestion
   local firstLine = queuedText:match '^[^\n]*' or ''
-  return firstLine
+  return string.format('%s\n\t', firstLine)
 end
 
 -- Dynamically map keys for <C-S-%d>

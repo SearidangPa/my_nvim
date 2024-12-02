@@ -54,7 +54,7 @@ local function fugitive_git_workflow()
 end
 
 -- Create a keymap to trigger the function
-vim.keymap.set('n', '<leader>gc', fugitive_git_workflow, {
+vim.keymap.set('n', '<leader>gcp', fugitive_git_workflow, {
   noremap = true,
   silent = true,
   desc = 'Git workflow: add, commit, push',
