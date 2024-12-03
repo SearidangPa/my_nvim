@@ -5,11 +5,11 @@ return {
   end)(),
 
   config = function()
+    local ls = require 'luasnip'
     local path_sep = package.config:sub(1, 1) -- Detects the path separator (e.g., '\' on Windows, '/' on Unix)
     local snippet_path = vim.fn.stdpath 'config' .. path_sep .. 'snippets'
     require('luasnip.loaders.from_lua').load { paths = { snippet_path } }
 
-    local ls = require 'luasnip'
     vim.snippet.expand = ls.lsp_expand
 
     ---@diagnostic disable-next-line: duplicate-set-field
@@ -62,9 +62,9 @@ return {
       return vim.snippet.active { direction = -1 } and vim.snippet.jump(-1)
     end, { silent = true })
 
-    vim.keymap.set('i', '<C-l>', function()
+    vim.keymap.set({ 'i', 's' }, '<C-]>', function()
       if ls.choice_active() then
-        return ls.change_choice(1)
+        ls.change_choice(1)
       end
     end, { silent = true })
   end,

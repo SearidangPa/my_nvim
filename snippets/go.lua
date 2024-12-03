@@ -1,6 +1,7 @@
 local ls = require 'luasnip'
 local s = ls.snippet
 local t = ls.text_node
+local c = ls.choice_node
 local i = ls.insert_node
 local f = ls.function_node
 
@@ -59,11 +60,33 @@ local fmt = require('luasnip.extras.fmt').fmt
 ls.add_snippets('go', {
   s(
     'efi',
-    fmt('{}, err := {}()\nif err != nil {{\n\treturn nil, fmt.Errorf(failed to {}, err: %v, err)\n}}\n{}', {
-      i(2, 'varName'),
-      i(1, 'funcName'),
-      rep(1),
-      i(0),
+    fmt(
+      [[
+    {}, err := {}()
+    if err != nil {{
+      return nil, fmt.Errorf("failed to {}, err: %v", err)
+    }}
+    {}
+    ]],
+      {
+        i(2, ''),
+        i(1, 'funcName'),
+        rep(1),
+        i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'trig',
+    c(1, {
+      t 'Ugh boring, a text node',
+      i(nil, 'At least I can edit something now...'),
+      f(function()
+        return 'Still only counts as text!!'
+      end, {}),
     })
   ),
 })
