@@ -4,6 +4,9 @@ local t = ls.text_node
 local c = ls.choice_node
 local i = ls.insert_node
 local f = ls.function_node
+local extras = require 'luasnip.extras'
+local rep = extras.rep
+local fmt = require('luasnip.extras.fmt').fmt
 
 ls.add_snippets('go', {
   s('winb', {
@@ -40,38 +43,57 @@ ls.add_snippets('go', {
 })
 
 ls.add_snippets('go', {
-  s('fn', {
-    t 'func ',
-    i(1, 'name'),
-    t '(',
-    i(2),
-    t ') ',
-    i(3, 'returnType'),
-    t { ' {', '\t' },
-    i(0),
-    t { '', '}' },
-  }),
+  s(
+    'fn',
+    fmt(
+      [[
+         func {}({}) {} {{
+             {}
+         }}
+      ]],
+      {
+        i(1, 'funcName'),
+        i(2, ''),
+        i(3, 'returnType'),
+        i(0),
+      }
+    )
+  ),
 })
-
-local extras = require 'luasnip.extras'
-local rep = extras.rep
-local fmt = require('luasnip.extras.fmt').fmt
 
 ls.add_snippets('go', {
   s(
     'efi',
     fmt(
       [[
-    {}, err := {}()
+    {}, err := {}({})
     if err != nil {{
       return nil, fmt.Errorf("failed to {}, err: %v", err)
     }}
     {}
     ]],
       {
-        i(2, ''),
-        i(1, 'funcName'),
-        rep(1),
+        i(1, ''),
+        i(2, 'funcName'),
+        i(3, 'args'),
+        rep(2),
+        i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'gt',
+    fmt(
+      [[
+    func Test_{}(t *testing.T) {{
+        {}
+    }}
+    ]],
+      {
+        i(1, 'name'),
         i(0),
       }
     )
