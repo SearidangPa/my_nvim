@@ -61,22 +61,44 @@ ls.add_snippets('go', {
   ),
 })
 
+local function strip_parentheses_and_content(args)
+  local func_name = args[1][1] -- Get the text from the first input node
+  return func_name:gsub("%b()", "") -- Remove everything inside balanced parentheses and the parentheses themselves
+end
+
 ls.add_snippets('go', {
   s(
     'efi',
     fmt(
       [[
-    {}, err := {}({})
-    if err != nil {{
-      return nil, fmt.Errorf("failed to {}, err: %v", err)
-    }}
-    {}
-    ]],
+        {}, err := {}
+        if err != nil {{
+          return nil, fmt.Errorf("failed to {}, err: %v", err)
+        }}
+        {}
+      ]],
       {
-        i(1, ''),
+        i(1, 'resultName'),
         i(2, 'funcName'),
-        i(3, 'args'),
-        rep(2),
+        f(strip_parentheses_and_content, { 2}),
+        i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'tne', -- test no error
+    fmt(
+      [[
+        {}, err := {}
+        require.NoError(t, err)
+        {}
+      ]],
+      {
+        i(1, 'resultName'),
+        i(2, 'funcName'),
         i(0),
       }
     )
@@ -120,7 +142,6 @@ ls.add_snippets('go', {
       -- Get the input and lowercase the first character
       local input = args[1][1] or ''
       local lower = input:sub(1, 1):lower() .. input:sub(2)
-      print(lower)
       return lower
     end, { 1 }),
     t ' ',
