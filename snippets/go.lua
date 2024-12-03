@@ -2,12 +2,11 @@ local ls = require 'luasnip'
 local s = ls.snippet
 local t = ls.text_node
 local i = ls.insert_node
+local f = ls.function_node
 
 ls.add_snippets('go', {
   s('winb', {
-    t '//go:build windows',
-    t { '', '' }, -- Line break with tab indentation
-    t { '', 'package ' }, -- Static text for the return statement
+    t { '//go:build windows', '', 'package ' },
     i(0),
   }),
 })
@@ -53,12 +52,34 @@ ls.add_snippets('go', {
   }),
 })
 
+local extras = require 'luasnip.extras'
+local rep = extras.rep
+local fmt = require('luasnip.extras.fmt').fmt
+
+ls.add_snippets('go', {
+  s(
+    'efi',
+    fmt('{}, err := {}()\nif err != nil {{\n\treturn nil, fmt.Errorf(failed to {}, err: %v, err)\n}}\n{}', {
+      i(2, 'varName'),
+      i(1, 'funcName'),
+      rep(1),
+      i(0),
+    })
+  ),
+})
+
 ls.add_snippets('go', {
   s('strf', {
     t 'func (',
-    i(1, 'receiver'),
+    f(function(args)
+      -- Get the input and lowercase the first character
+      local input = args[1][1] or ''
+      local lower = input:sub(1, 1):lower() .. input:sub(2)
+      print(lower)
+      return lower
+    end, { 1 }),
     t ' ',
-    i(2, 'Type'),
+    i(1, 'Type'), -- Input node for the type
     t ') String() string {',
     t { '', '\t' }, -- Indentation for the method body
     i(0), -- Placeholder to start writing the method body

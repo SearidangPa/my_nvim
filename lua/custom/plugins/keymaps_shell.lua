@@ -56,12 +56,6 @@ vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })
 
 -- lua
 vim.api.nvim_set_keymap('n', '<leader>x', '<cmd>source % <CR>', { noremap = true, silent = true, desc = 'source %' })
-vim.api.nvim_set_keymap(
-  'n',
-  '<leader><leader>s',
-  '<cmd> source ~/.config/nvim/snippets/go.lua<CR>',
-  { noremap = true, silent = true, desc = 'source go snippets' }
-)
 
 -- lsp
 vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })
