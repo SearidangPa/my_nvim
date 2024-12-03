@@ -1,6 +1,6 @@
 vim.api.nvim_create_user_command('Make', function()
   local cmd
-  if vim.fn.has('win32') == 1 then
+  if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
   else
     cmd = { 'make', '-j', 'all' }
@@ -32,8 +32,8 @@ vim.api.nvim_create_user_command('Make', function()
           lines = errors,
         })
         -- Open the quickfix window and jump to the first error
-        vim.cmd('copen')
-        vim.cmd('cc')
+        vim.cmd 'copen'
+        vim.cmd 'cc'
       end
     end,
   })
@@ -55,8 +55,13 @@ vim.keymap.set('n', '<leader>gt', ':Tidy<CR>', { desc = 'Run go mod tidy' })
 vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })
 
 -- lua
-vim.api.nvim_create_user_command('Source', 'source %', {})
-vim.api.nvim_set_keymap('n', '<leader>x', ':Source<CR>', { noremap = true, silent = true, desc = 'source %' })
+vim.api.nvim_set_keymap('n', '<leader>x', '<cmd>source % <CR>', { noremap = true, silent = true, desc = 'source %' })
+vim.api.nvim_set_keymap(
+  'n',
+  '<leader><leader>s',
+  '<cmd> source ~/.config/nvim/snippets/go.lua<CR>',
+  { noremap = true, silent = true, desc = 'source go snippets' }
+)
 
 -- lsp
 vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })

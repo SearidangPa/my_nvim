@@ -7,14 +7,10 @@ local function SuggestOneWord()
   bar = bar:match '^%s*(.-)%s*$' or ''
   -- Match the first word, or use the entire `bar` if no space/dot is found
   local result = bar:match '^[^ .]+' or bar
-  return result
+  return string.format('%s ', result)
 end
 
-if vim.fn.has 'win32' == 1 then
-  map('i', '<M-k>', SuggestOneWord, { expr = true, remap = false })
-else
-  map('i', '<C-M-k>', SuggestOneWord, { expr = true, remap = false })
-end
+map('i', '<M-f>', SuggestOneWord, { expr = true, remap = false })
 
 local function SuggestLine()
   vim.fn['copilot#Accept'] ''
