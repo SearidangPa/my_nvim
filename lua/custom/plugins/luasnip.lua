@@ -38,9 +38,11 @@ return {
 
     local types = require 'luasnip.util.types'
 
+    vim.snippet.stop = ls.unlink_current
     ls.config.set_config {
       history = true,
       updateevents = 'TextChanged,TextChangedI',
+      override_builtin = true,
       enable_autosnippets = true,
 
       ext_opts = {
