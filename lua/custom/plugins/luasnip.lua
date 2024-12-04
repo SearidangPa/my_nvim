@@ -8,7 +8,7 @@ return {
     local ls = require 'luasnip'
     local types = require 'luasnip.util.types'
 
-    ls.setup {
+    ls.config.setup {
       history = true,
       updateevents = 'TextChanged,TextChangedI',
       enable_autosnippets = true,
@@ -29,7 +29,6 @@ return {
 
     local path_sep = package.config:sub(1, 1) -- Detects the path separator (e.g., '\' on Windows, '/' on Unix)
     local snippet_path = vim.fn.stdpath 'config' .. path_sep .. 'lua' .. path_sep .. 'custom' .. path_sep .. 'snippets'
-    print('Loading snippets from ' .. snippet_path)
     require('luasnip.loaders.from_lua').load { paths = { snippet_path } }
 
     vim.snippet.expand = ls.lsp_expand
