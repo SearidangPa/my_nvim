@@ -3,7 +3,6 @@ return {
   dependencies = {
     'nvim-tree/nvim-web-devicons',
     require 'custom.plugins.harpoon',
-    'nvim-lua/lsp-status.nvim',
   },
   options = {
     theme = 'gruvbox',
@@ -22,7 +21,7 @@ return {
         },
         lualine_x = {},
         lualine_y = {},
-        lualine_z = { "require'lsp-status'.status()" },
+        lualine_z = {},
       },
     }
   end,
