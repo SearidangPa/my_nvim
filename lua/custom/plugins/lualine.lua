@@ -3,6 +3,7 @@ return {
   dependencies = {
     'nvim-tree/nvim-web-devicons',
     require 'custom.plugins.harpoon',
+    'nvim-lua/lsp-status.nvim',
   },
   options = {
     theme = 'gruvbox',
@@ -12,14 +13,16 @@ return {
   config = function()
     local ll = require 'lualine'
     ll.setup {
-      lualine_c = {
-        'harpoon2',
-        icon = '♥',
-        indicators = { 'a', 's', 'q', 'w' },
-        active_indicators = { 'A', 'S', 'Q', 'W' },
-        color_active = { fg = '#00ff00' },
-        _separator = ' ',
-        no_harpoon = 'Harpoon not loaded',
+      sections = {
+        lualine_a = { 'mode' },
+        lualine_b = { 'branch', 'diagnostics' },
+        lualine_c = {
+          'filename',
+          'harpoon2',
+        },
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = { "require'lsp-status'.status()" },
       },
     }
   end,
