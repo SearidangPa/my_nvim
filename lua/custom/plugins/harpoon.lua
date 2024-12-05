@@ -16,7 +16,7 @@ return {
     end, { desc = 'Harpoon (Default)' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6, 7 } do
-      vim.keymap.set('n', string.format('<leader>%d', idx), function()
+      vim.keymap.set('n', string.format('<C-%d>', idx), function()
         harpoon:list():select(idx)
       end, { desc = string.format('harpoon %d', idx) })
     end

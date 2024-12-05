@@ -33,7 +33,6 @@ vim.api.nvim_create_user_command('Make', function()
         })
         -- Open the quickfix window and jump to the first error
         vim.cmd 'copen'
-        vim.cmd 'cc'
       end
     end,
   })
