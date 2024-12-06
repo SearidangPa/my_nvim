@@ -30,19 +30,24 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
   local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
   if vim.v.shell_error ~= 0 then
-    error('Error cloning lazy.nvim:\n' .. out)
+    vim.api.nvim_echo({
+      { 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
+      { out, 'WarningMsg' },
+      { '\nPress any key to exit...' },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
   end
-end ---@diagnostic disable-next-line: undefined-field
+end
 vim.opt.rtp:prepend(lazypath)
 
-require('lazy').setup({
-  'tpope/vim-fugitive', -- Git commands in Neovim
-  'copilot.vim',
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  require 'custom.plugins.lsp',
-  { import = 'custom.plugins' },
-}, {
-  ui = {
-    icons = vim.g.have_nerd_font,
+require('lazy').setup {
+  spec = {
+    {
+      import = 'custom.plugins',
+    },
+    'tpope/vim-fugitive', -- Git commands in Neovim
+    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    'copilot.vim',
   },
-})
+}
