@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   dependencies = {
     'nvim-tree/nvim-web-devicons',
-    require 'custom.plugins.harpoon',
+    require 'plugins.harpoon',
   },
   options = {
     theme = 'gruvbox',

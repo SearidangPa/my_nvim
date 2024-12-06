@@ -44,7 +44,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup {
   spec = {
     {
-      import = 'custom.plugins',
+      import = 'plugins',
     },
     'tpope/vim-fugitive', -- Git commands in Neovim
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
