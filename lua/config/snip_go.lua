@@ -35,15 +35,6 @@ ls.add_snippets('go', {
 })
 
 ls.add_snippets('go', {
-  s('iffat', {
-    t 'if err != nil {',
-    t { '', '\t' }, -- Line break with tab indentation
-    t 'log.Fatal(err)', -- Static text for the return statement
-    t { '', '}' }, -- Closing brace on a new line
-  }),
-})
-
-ls.add_snippets('go', {
   s(
     'fn',
     fmt(
@@ -90,20 +81,24 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'efat',
-    fmt(
+    'efa',
+    fmta(
       [[
-        {}, err := <>
+        <resultName>, err := <funcName>
         if err != nil {{
-          log.Fatal("failed to {}, err: %v", err)
+          log.Fatal("failed to <processedFuncName>, err: %v", err)
         }}
-        {}
+        <finish>
       ]],
       {
-        i(1, 'resultName'),
-        i(2, 'funcName'),
-        f(strip_parentheses_and_content, { 2 }),
-        i(0),
+        resultName = i(1, 'resultName'),
+        funcName = i(2, 'funcName'),
+        processedFuncName = f(strip_parentheses_and_content, { 2 }),
+        finish = i(0),
+        -- i(1, 'resultName'),
+        -- i(2, 'funcName'),
+        -- f(strip_parentheses_and_content, { 2 }),
+        -- i(0),
       }
     )
   ),
