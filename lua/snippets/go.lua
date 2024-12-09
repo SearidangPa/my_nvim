@@ -90,6 +90,27 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
+    'efat',
+    fmt(
+      [[
+        {}, err := <>
+        if err != nil {{
+          log.Fatal("failed to {}, err: %v", err)
+        }}
+        {}
+      ]],
+      {
+        i(1, 'resultName'),
+        i(2, 'funcName'),
+        f(strip_parentheses_and_content, { 2 }),
+        i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
     'tne', -- test no error
     fmt(
       [[
