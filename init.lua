@@ -52,5 +52,3 @@ require('lazy').setup {
     'rcarriga/nvim-notify',
   },
 }
-
-return M
