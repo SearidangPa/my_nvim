@@ -9,29 +9,46 @@ local rep = extras.rep
 local fmt = require('luasnip.extras.fmt').fmt
 local fmta = require('luasnip.extras.fmt').fmta
 
+local function strip_parentheses_and_content(args)
+  local func_name = args[1][1] -- Get the text from the first input node
+  return func_name:gsub('%b()', '') -- Remove everything inside balanced parentheses and the parentheses themselves
+end
+
 ls.add_snippets('go', {
-  s('winb', {
-    t { '//go:build windows', '', 'package ' },
-    i(0),
-  }),
+  s(
+    'efa',
+    fmta(
+      [[
+        <resultName>, err := <funcName>
+        if err != nil {{
+          log.Fatal("failed to <processedFuncName>, err: %v", err)
+        }}
+        <finish>
+      ]],
+      {
+        resultName = i(1, 'resultName'),
+        funcName = i(2, 'funcName'),
+        processedFuncName = f(strip_parentheses_and_content, { 2 }),
+        finish = i(0),
+      }
+    )
+  ),
 })
 
 ls.add_snippets('go', {
-  s('ifnil', {
-    t 'if err != nil {',
-    t { '', '\t' }, -- Line break with tab indentation
-    t 'return nil, err', -- Static text for the return statement
-    t { '', '}' }, -- Closing brace on a new line
-  }),
-})
+  s(
+    'winb',
+    fmta(
+      [[
+            //go:build windows
 
-ls.add_snippets('go', {
-  s('iferr', {
-    t 'if err != nil {',
-    t { '', '\t' }, -- Line break with tab indentation
-    t 'return err', -- Static text for the return statement
-    t { '', '}' }, -- Closing brace on a new line
-  }),
+            package <finish>
+        ]],
+      {
+        finish = i(0),
+      }
+    )
+  ),
 })
 
 ls.add_snippets('go', {
@@ -53,11 +70,6 @@ ls.add_snippets('go', {
   ),
 })
 
-local function strip_parentheses_and_content(args)
-  local func_name = args[1][1] -- Get the text from the first input node
-  return func_name:gsub('%b()', '') -- Remove everything inside balanced parentheses and the parentheses themselves
-end
-
 ls.add_snippets('go', {
   s(
     'efi',
@@ -74,31 +86,6 @@ ls.add_snippets('go', {
         i(2, 'funcName'),
         f(strip_parentheses_and_content, { 2 }),
         i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'efa',
-    fmta(
-      [[
-        <resultName>, err := <funcName>
-        if err != nil {{
-          log.Fatal("failed to <processedFuncName>, err: %v", err)
-        }}
-        <finish>
-      ]],
-      {
-        resultName = i(1, 'resultName'),
-        funcName = i(2, 'funcName'),
-        processedFuncName = f(strip_parentheses_and_content, { 2 }),
-        finish = i(0),
-        -- i(1, 'resultName'),
-        -- i(2, 'funcName'),
-        -- f(strip_parentheses_and_content, { 2 }),
-        -- i(0),
       }
     )
   ),
