@@ -54,17 +54,17 @@ ls.add_snippets('go', {
 ls.add_snippets('go', {
   s(
     'fn',
-    fmt(
+    fmta(
       [[
-         func {}({}) {} {{
-             {}
-         }}
+        func <funcName>(<args>) <returnType> {
+            <body>
+        }
       ]],
       {
-        i(1, 'funcName'),
-        i(2, ''),
-        i(3, 'returnType'),
-        i(0),
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
+        returnType = i(3, 'returnType'),
+        body = i(0),
       }
     )
   ),
