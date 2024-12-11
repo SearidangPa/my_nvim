@@ -21,6 +21,13 @@ return { -- Autocompletion
       completion = { completeopt = 'menu,menuone,noinsert' },
 
       mapping = cmp.mapping.preset.insert {
+        ['<M-l>'] = cmp.mapping(function()
+          local accept = vim.fn['copilot#Accept']
+          local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+          res = res .. '\n'
+          vim.api.nvim_feedkeys(res, 'n', false)
+        end),
+
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
 

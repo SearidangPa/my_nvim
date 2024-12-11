@@ -7,11 +7,12 @@ map('i', '<M-f>', function()
   return vim.fn['copilot#AcceptWord'] ''
 end, { expr = true, remap = false })
 
-local function acceptSuggestion()
-  vim.fn['copilot#Accept'] ''
-  return vim.fn['copilot#TextQueuedForInsertion']()
-end
-map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false, desc = 'Accept suggestion' })
+-- local function acceptSuggestion()
+--   vim.fn['copilot#Accept'] ''
+--   return vim.fn['copilot#TextQueuedForInsertion']()
+-- end
+
+-- map('i', '<Plug>(vimrc:copilot-dummy-map)', 'copilot#Accept("")', { expr = true, remap = false, desc = 'Accept suggestion' })
 
 local function SuggestLines(n)
   vim.fn['copilot#Accept'] ''

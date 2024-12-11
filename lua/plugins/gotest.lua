@@ -26,10 +26,6 @@ local attach_to_buffer = function(bufnr, command)
               print(string.format('Running %s', decoded.Action))
             end
 
-            --   if decoded.Action == 'run' then
-            --     print(string.format('Running %s', decoded.Action))
-            --   end
-
             ::continue::
           end
         end,
