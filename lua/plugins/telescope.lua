@@ -34,10 +34,9 @@ return {
           theme = 'ivy',
           hidden = true,
         },
-        live_grep = {
-          theme = 'ivy',
-          hidden = true,
-        },
+        live_grep = { theme = 'ivy' },
+        help_tags = { theme = 'ivy' },
+        diagnostics = { theme = 'ivy' },
       },
     }
     require('telescope').setup(opts)

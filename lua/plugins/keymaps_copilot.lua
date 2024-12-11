@@ -1,13 +1,13 @@
 local map = vim.keymap.set
 
-local function SuggestLine()
+local function acceptSuggestion()
   vim.fn['copilot#Accept'] ''
   return vim.fn['copilot#TextQueuedForInsertion']()
 end
 if vim.fn.has 'win32' == 1 then
-  map('i', '<M-l>', SuggestLine, { expr = true, remap = false })
+  map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false })
 else
-  map('i', '<M-C-l>', SuggestLine, { expr = true, remap = false })
+  map('i', '<M-C-l>', acceptSuggestion, { expr = true, remap = false })
 end
 
 local function AcceptWords(num_words)
@@ -22,18 +22,6 @@ local function AcceptWords(num_words)
     end
   end
   return table.concat(words, ' ')
-end
-
-for i = 1, 9 do
-  local key
-  if vim.fn.has 'win32' == 1 then
-    key = string.format('<M-%d>', i)
-  else
-    key = string.format('<M-C-%d>', i)
-  end
-  map('i', key, function()
-    return AcceptWords(i)
-  end, { expr = true, remap = false })
 end
 
 local function SuggestLines(n)
@@ -52,12 +40,14 @@ local function SuggestLines(n)
 end
 
 for i = 1, 9 do
-  local key
-  if vim.fn.has 'win32' == 1 then
-    key = string.format('<M-S-%d>', i)
-  else
-    key = string.format('<C-S-%d>', i)
-  end
+  local key = string.format('<M-C-%d>', i)
+  map('i', key, function()
+    return AcceptWords(i)
+  end, { expr = true, remap = false })
+end
+
+for i = 1, 9 do
+  local key = string.format('<M-%d>', i)
   map('i', key, function()
     return SuggestLines(i)
   end, { expr = true, remap = false })
