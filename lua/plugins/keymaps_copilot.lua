@@ -1,5 +1,13 @@
 local map = vim.keymap.set
+map('i', '<M-y>', function()
+  return vim.fn['copilot#AcceptLine'] ''
+end, { expr = true, remap = false })
 
+map('i', '<M-f>', function()
+  return vim.fn['copilot#AcceptWord'] ''
+end, { expr = true, remap = false })
+
+-- enable accept suggestion even when lsp menu is open
 local function acceptSuggestion()
   vim.fn['copilot#Accept'] ''
   return vim.fn['copilot#TextQueuedForInsertion']()
@@ -8,20 +16,6 @@ if vim.fn.has 'win32' == 1 then
   map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false })
 else
   map('i', '<M-C-l>', acceptSuggestion, { expr = true, remap = false })
-end
-
-local function AcceptWords(num_words)
-  vim.fn['copilot#Accept'] ''
-  local bar = vim.fn['copilot#TextQueuedForInsertion']() or ''
-  bar = bar:match '^%s*(.-)%s*$' or ''
-  local words = {}
-  for word in bar:gmatch '%S+' do
-    table.insert(words, string.format('%s ', word))
-    if #words == num_words then
-      break
-    end
-  end
-  return table.concat(words, ' ')
 end
 
 local function SuggestLines(n)
@@ -40,20 +34,10 @@ local function SuggestLines(n)
 end
 
 for i = 1, 9 do
-  local key = string.format('<M-C-%d>', i)
+  local key = string.format('<M-%d>', i)
   map('i', key, function()
-    return AcceptWords(i)
+    return SuggestLines(i)
   end, { expr = true, remap = false })
 end
-
-local key = string.format('<M-f>', 1)
-map('i', key, function()
-  return SuggestLines(1)
-end, { expr = true, remap = false })
-
-key = string.format('<M-s>', 2)
-map('i', key, function()
-  return SuggestLines(2)
-end, { expr = true, remap = false })
 
 return {}
