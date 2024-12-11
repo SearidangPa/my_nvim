@@ -12,11 +12,7 @@ local function acceptSuggestion()
   vim.fn['copilot#Accept'] ''
   return vim.fn['copilot#TextQueuedForInsertion']()
 end
-if vim.fn.has 'win32' == 1 then
-  map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false })
-else
-  map('i', '<M-C-l>', acceptSuggestion, { expr = true, remap = false })
-end
+map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false })
 
 local function SuggestLines(n)
   vim.fn['copilot#Accept'] ''

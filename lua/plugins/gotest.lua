@@ -9,13 +9,22 @@ local attach_to_buffer = function(bufnr, command)
         end
       end
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { 'output of main.go' })
+
       vim.fn.jobstart(command, {
         stdout_buffered = true,
         on_stdout = function(_, data)
           if not data then
             return
           end
+          for _, line in ipairs(data) do
+            local decoded = vim.json.decode(line)
+            if decoded.Action == 'run' then
+              print(string.format('Running %s', decoded.Action))
+            end
+          end
+          append_data(_, data)
         end,
+
         on_stderr = append_data,
       })
     end,

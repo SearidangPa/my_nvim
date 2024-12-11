@@ -23,6 +23,6 @@ vim.api.nvim_set_keymap('n', '<leader>j', 'o<Esc>k', { noremap = true, silent = 
 
 -- exit mode
 vim.keymap.set('n', '``', 'i', { noremap = true, silent = true, desc = 'Enter insert mode' })
-vim.keymap.set('i', '``', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode' })
+vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode' })
 
 return {}
