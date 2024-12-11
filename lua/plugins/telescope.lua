@@ -27,6 +27,7 @@ return {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
+        fzf = {},
       },
       pickers = {
         find_files = {
@@ -39,9 +40,8 @@ return {
         },
       },
     }
-
-    pcall(require('telescope').load_extension, 'fzf')
-    pcall(require('telescope').load_extension, 'ui-select')
+    require('telescope').load_extension 'fzf'
+    require('telescope').load_extension 'ui-select'
 
     local builtin = require 'telescope.builtin'
     vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
