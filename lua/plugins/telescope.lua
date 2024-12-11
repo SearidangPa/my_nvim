@@ -22,9 +22,6 @@ return {
           '.git\\',
           'git/',
         },
-        layout_config = {
-          vertical = { width = 0.9 },
-        },
       },
       extensions = {
         ['ui-select'] = {
