@@ -7,12 +7,11 @@ map('i', '<M-f>', function()
   return vim.fn['copilot#AcceptWord'] ''
 end, { expr = true, remap = false })
 
--- enable accept suggestion even when lsp menu is open
 local function acceptSuggestion()
   vim.fn['copilot#Accept'] ''
   return vim.fn['copilot#TextQueuedForInsertion']()
 end
-map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false })
+map('i', '<M-l>', acceptSuggestion, { expr = true, remap = false, desc = 'Accept suggestion' })
 
 local function SuggestLines(n)
   vim.fn['copilot#Accept'] ''

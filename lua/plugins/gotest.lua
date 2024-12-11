@@ -16,13 +16,22 @@ local attach_to_buffer = function(bufnr, command)
           if not data then
             return
           end
+
           for _, line in ipairs(data) do
+            if line == '' then
+              goto continue
+            end
             local decoded = vim.json.decode(line)
             if decoded.Action == 'run' then
               print(string.format('Running %s', decoded.Action))
             end
+
+            --   if decoded.Action == 'run' then
+            --     print(string.format('Running %s', decoded.Action))
+            --   end
+
+            ::continue::
           end
-          append_data(_, data)
         end,
 
         on_stderr = append_data,
