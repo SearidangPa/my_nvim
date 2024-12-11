@@ -106,10 +106,15 @@ local function go_result_type(info)
   end
 
   for _, node in query:iter_captures(function_node, 0) do
+    if not node then
+      return { t 'nil' }
+    end
     if handlers[node:type()] then
       return handlers[node:type()](node, info)
     end
   end
+
+  return { t '' }
 end
 
 local go_ret_vals = function(args)
