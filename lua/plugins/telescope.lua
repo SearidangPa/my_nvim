@@ -14,12 +14,16 @@ return {
     { 'nvim-telescope/telescope-ui-select.nvim' },
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
   },
+
   config = function()
     require('telescope').setup {
       defaults = {
         file_ignore_patterns = {
           '.git\\',
           'git/',
+        },
+        layout_config = {
+          vertical = { width = 0.9 },
         },
       },
       extensions = {
@@ -29,6 +33,11 @@ return {
       },
       pickers = {
         find_files = {
+          theme = 'ivy',
+          hidden = true,
+        },
+        live_grep = {
+          theme = 'ivy',
           hidden = true,
         },
       },
@@ -48,6 +57,12 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
     vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+
+    vim.keymap.set('n', '<leader>en', function()
+      builtin.find_files {
+        cwd = vim.fn.stdpath 'config',
+      }
+    end, { desc = '[E]dit [N]vim config' })
 
     vim.keymap.set('n', '<leader>/', function()
       builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
