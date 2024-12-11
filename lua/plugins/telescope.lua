@@ -61,6 +61,12 @@ return {
       }
     end, { desc = '[E]dit [N]vim config' })
 
+    vim.keymap.set('n', '<leader>ep', function()
+      builtin.find_files {
+        cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
+      }
+    end, { desc = '[E]dit [P]lugins' })
+
     vim.keymap.set('n', '<leader>/', function()
       builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
         winblend = 10,
