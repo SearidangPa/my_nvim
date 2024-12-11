@@ -15,8 +15,6 @@ local attach_to_buffer = function(bufnr, command)
           if not data then
             return
           end
-
-          for 
         end,
         on_stderr = append_data,
       })

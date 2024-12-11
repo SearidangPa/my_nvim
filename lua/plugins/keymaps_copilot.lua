@@ -46,10 +46,14 @@ for i = 1, 9 do
   end, { expr = true, remap = false })
 end
 
-for i = 1, 9 do
-  local key = string.format('<M-%d>', i)
-  map('i', key, function()
-    return SuggestLines(i)
-  end, { expr = true, remap = false })
-end
+local key = string.format('<M-f>', 1)
+map('i', key, function()
+  return SuggestLines(1)
+end, { expr = true, remap = false })
+
+key = string.format('<M-s>', 2)
+map('i', key, function()
+  return SuggestLines(2)
+end, { expr = true, remap = false })
+
 return {}
