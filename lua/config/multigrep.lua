@@ -2,13 +2,14 @@ local pickers = require 'telescope.pickers'
 local finders = require 'telescope.finders'
 local make_entry = require 'telescope.make_entry'
 local conf = require('telescope.config').values
+local themes = require 'telescope.themes'
 
 local M = {}
 
 local live_multigrep = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
-  --
+  opts = vim.tbl_deep_extend('force', themes.get_ivy(), opts)
   local finder = finders.new_async_job {
     command_generator = function(prompt)
       if not prompt or prompt == '' then
@@ -43,6 +44,7 @@ local live_multigrep = function(opts)
     entry_maker = make_entry.gen_from_vimgrep(opts),
     cwd = opts.cwd,
   }
+
   pickers
     .new(opts, {
       debounce = 100,
@@ -55,7 +57,7 @@ local live_multigrep = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set('n', '<leader>fg', live_multigrep)
+  vim.keymap.set('n', '<leader>sm', live_multigrep, { desc = 'Multi grep' })
 end
 
 return M

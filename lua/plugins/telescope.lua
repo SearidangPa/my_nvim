@@ -16,7 +16,7 @@ return {
   },
 
   config = function()
-    require('telescope').setup {
+    local opts = {
       defaults = {
         file_ignore_patterns = {
           '.git\\',
@@ -40,6 +40,7 @@ return {
         },
       },
     }
+    require('telescope').setup(opts)
     require('telescope').load_extension 'fzf'
     require('telescope').load_extension 'ui-select'
 
@@ -85,6 +86,6 @@ return {
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
 
-    require 'config.multigrep'
+    require('config.multigrep').setup(opts)
   end,
 }
