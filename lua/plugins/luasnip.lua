@@ -67,7 +67,7 @@ M = {
       end
     end, { silent = true })
 
-    require 'config.snip_go'
+    require 'config.go_snip'
   end,
 }
 

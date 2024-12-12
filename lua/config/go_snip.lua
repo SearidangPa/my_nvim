@@ -230,20 +230,26 @@ ls.add_snippets('go', {
   ),
 })
 
+local lowerFirst = function(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower() .. input:sub(2)
+  return lower
+end
+
 ls.add_snippets('go', {
-  s('strf', {
-    t 'func (',
-    f(function(args)
-      -- Get the input and lowercase the first character
-      local input = args[1][1] or ''
-      local lower = input:sub(1, 1):lower() .. input:sub(2)
-      return lower
-    end, { 1 }),
-    t ' ',
-    i(1, 'Type'), -- Input node for the type
-    t ') String() string {',
-    t { '', '\t' }, -- Indentation for the method body
-    i(0), -- Placeholder to start writing the method body
-    t { '', '}' },
-  }),
+  s(
+    'strf',
+    fmta(
+      [[
+          func (<inst> *<Type>) String() string {
+                  <body>
+          }
+      ]],
+      {
+        Type = i(1, 'Type'),
+        inst = f(lowerFirst, { 1 }),
+        body = i(0),
+      }
+    )
+  ),
 })
