@@ -2,7 +2,6 @@ local map = vim.keymap.set
 map('i', '<M-y>', function()
   local accept = vim.fn['copilot#AcceptLine']
   local res = accept(vim.api.nvim_replace_termcodes('<M-C-Right>', true, true, false))
-  res = res .. '\n'
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, silent = true })
 

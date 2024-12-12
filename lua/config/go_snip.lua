@@ -12,6 +12,20 @@ local get_node_text = vim.treesitter.get_node_text
 local rep = require('luasnip.extras').rep
 local fmta = require('luasnip.extras.fmt').fmta
 
+local lowerFirst = function(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower() .. input:sub(2)
+  return lower
+end
+
+local getLastFuncName = function(args)
+  print('args', args)
+  ---@diagnostic disable-next-line: param-type-mismatch
+  local parts = vim.split(args, '.', true)
+  print('num parts', #parts)
+  return parts[#parts] or ''
+end
+
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
 vim.treesitter.query.set(
   'go',
@@ -29,7 +43,7 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', info.func_name))
+      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', getLastFuncName(info.func_name)))
     end
   elseif text == 'bool' then
     return t 'false'
@@ -105,25 +119,6 @@ local go_ret_vals = function(args)
     }
   )
 end
-
-ls.add_snippets('go', {
-  s('er', { -- error return
-    i(1, { 'val' }),
-    t ', ',
-    i(2, { 'err' }),
-    t ' := ',
-    i(3, { 'f' }),
-    t '(',
-    i(4),
-    t ')',
-    t { '', 'if ' },
-    rep(2),
-    t { ' != nil {', '\treturn ' },
-    d(5, go_ret_vals, { 2, 3 }),
-    t { '', '}' },
-    i(0),
-  }),
-})
 
 ls.add_snippets('go', {
   s(
@@ -249,12 +244,6 @@ ls.add_snippets('go', {
     )
   ),
 })
-
-local lowerFirst = function(args)
-  local input = args[1][1] or ''
-  local lower = input:sub(1, 1):lower() .. input:sub(2)
-  return lower
-end
 
 ls.add_snippets('go', {
   s(
