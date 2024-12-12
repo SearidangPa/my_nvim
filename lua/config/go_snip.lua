@@ -113,7 +113,7 @@ local go_ret_vals = function(args)
 end
 
 ls.add_snippets('go', {
-  s('er', {
+  s('er', { -- error return
     i(1, { 'val' }),
     t ', ',
     i(2, { 'err' }),
@@ -189,7 +189,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ef',
+    'ef', -- error fatal
     fmta(
       [[
         <choiceNode> <funcName>(<args>)

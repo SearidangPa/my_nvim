@@ -1,18 +1,14 @@
 local map = vim.keymap.set
 map('i', '<M-y>', function()
-  return vim.fn['copilot#AcceptLine'] ''
-end, { expr = true, remap = false })
+  local accept = vim.fn['copilot#AcceptLine']
+  local res = accept(vim.api.nvim_replace_termcodes('<M-C-Right>', true, true, false))
+  res = res .. '\n'
+  vim.api.nvim_feedkeys(res, 'n', false)
+end, { expr = true, remap = false, silent = true })
 
 map('i', '<M-f>', function()
   return vim.fn['copilot#AcceptWord'] ''
 end, { expr = true, remap = false })
-
--- local function acceptSuggestion()
---   vim.fn['copilot#Accept'] ''
---   return vim.fn['copilot#TextQueuedForInsertion']()
--- end
-
--- map('i', '<Plug>(vimrc:copilot-dummy-map)', 'copilot#Accept("")', { expr = true, remap = false, desc = 'Accept suggestion' })
 
 local function SuggestLines(n)
   vim.fn['copilot#Accept'] ''
