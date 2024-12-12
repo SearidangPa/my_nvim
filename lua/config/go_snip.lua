@@ -19,10 +19,8 @@ local lowerFirst = function(args)
 end
 
 local getLastFuncName = function(args)
-  print('args', args)
   ---@diagnostic disable-next-line: param-type-mismatch
   local parts = vim.split(args, '.', true)
-  print('num parts', #parts)
   return parts[#parts] or ''
 end
 
