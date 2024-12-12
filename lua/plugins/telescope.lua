@@ -22,6 +22,7 @@ return {
           '.git\\',
           'git/',
         },
+        layout_strategy = 'vertical',
       },
       extensions = {
         ['ui-select'] = {

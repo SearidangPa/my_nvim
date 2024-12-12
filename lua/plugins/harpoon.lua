@@ -15,11 +15,11 @@ return {
       harpoon.ui:toggle_quick_menu(harpoon:list())
     end, { desc = 'Harpoon (Default)' })
 
-    vim.keymap.set('n', '<C-]>', function()
+    vim.keymap.set('n', '<M-n>', function()
       harpoon:list():next()
     end, { desc = 'Harpoon next' })
 
-    vim.keymap.set('n', '<C-[>', function()
+    vim.keymap.set('n', '<M-p>', function()
       harpoon:list():prev()
     end, { desc = 'Harpoon prev' })
 
