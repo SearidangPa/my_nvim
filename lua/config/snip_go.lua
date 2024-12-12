@@ -276,3 +276,13 @@ ls.add_snippets('go', {
     t { '', '}' },
   }),
 })
+
+ls.add_snippets('go', {
+  s(
+    'trig',
+    c(1, {
+      t 'err := ',
+      fmta([[<val>, err := <func>]], { val = i(1, 'val'), func = i(2, 'func') }),
+    })
+  ),
+})
