@@ -148,27 +148,6 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ef',
-    fmta(
-      [[
-        <resultName>, err := <funcName>
-        if err != nil {
-            log.Fatal("failed to <processedFuncName>, err: %v", err)
-        }
-        <finish>
-      ]],
-      {
-        resultName = i(1, 'resultName'),
-        funcName = i(2, 'funcName'),
-        processedFuncName = f(strip_parentheses_and_content, { 2 }),
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
     'winb',
     fmta(
       [[
@@ -217,6 +196,31 @@ ls.add_snippets('go', {
           fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
           fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
         }),
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ef',
+    fmta(
+      [[
+        <choiceNode> <funcName>(<args>)
+        if err != nil {
+            log.Fatal("failed to <processedFuncName>, err: %v", err)
+        }
+        <finish>
+      ]],
+      {
+        choiceNode = c(1, {
+          fmta([[<resultName>, err := ]], { resultName = i(1, 'resultName') }),
+          fmta([[err := ]], {}),
+          fmta([[err = ]], {}),
+        }),
+        funcName = i(2, 'funcName'),
+        args = i(3, 'args'),
         finish = i(0),
       }
     )
