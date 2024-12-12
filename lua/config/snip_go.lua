@@ -6,25 +6,11 @@ local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
 local snippet_from_nodes = ls.sn
-
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
-
-local extras = require 'luasnip.extras'
-local rep = extras.rep
+local rep = require('luasnip.extras').rep
 local fmta = require('luasnip.extras.fmt').fmta
-
-local function strip_parentheses_and_content(args)
-  local func_name = args[1][1] -- Get the text from the first input node
-  return func_name:gsub('%b()', '') -- Remove everything inside balanced parentheses and the parentheses themselves
-end
-
--- local function same(index)
---   return f(function(args)
---     return args[1]
---   end, { index })
--- end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
 vim.treesitter.query.set(
