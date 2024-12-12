@@ -131,7 +131,7 @@ ls.add_snippets('go', {
       ]],
       {
         choiceNode = c(1, {
-          fmta([[<resultName>, err := ]], { resultName = i(1, 'resultName') }),
+          fmta([[<res>, err := ]], { res = i(1, 'res') }),
           fmta([[err := ]], {}),
           fmta([[err = ]], {}),
         }),
@@ -213,7 +213,7 @@ ls.add_snippets('go', {
       ]],
       {
         choiceNode = c(1, {
-          fmta([[<resultName>, err := ]], { resultName = i(1, 'resultName') }),
+          fmta([[<res>, err := ]], { res = i(1, 'res') }),
           fmta([[err := ]], {}),
           fmta([[err = ]], {}),
         }),
