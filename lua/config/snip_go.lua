@@ -13,7 +13,6 @@ local get_node_text = vim.treesitter.get_node_text
 
 local extras = require 'luasnip.extras'
 local rep = extras.rep
-local fmt = require('luasnip.extras.fmt').fmt
 local fmta = require('luasnip.extras.fmt').fmta
 
 local function strip_parentheses_and_content(args)
@@ -21,11 +20,11 @@ local function strip_parentheses_and_content(args)
   return func_name:gsub('%b()', '') -- Remove everything inside balanced parentheses and the parentheses themselves
 end
 
-local function same(index)
-  return f(function(args)
-    return args[1]
-  end, { index })
-end
+-- local function same(index)
+--   return f(function(args)
+--     return args[1]
+--   end, { index })
+-- end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
 vim.treesitter.query.set(
@@ -138,7 +137,7 @@ ls.add_snippets('go', {
     i(4),
     t ')',
     t { '', 'if ' },
-    same(2),
+    rep(2),
     t { ' != nil {', '\treturn ' },
     d(5, go_ret_vals, { 2, 3 }),
     t { '', '}' },
@@ -221,7 +220,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(2, 'funcName'),
         args = i(3, 'args'),
-        processedFuncName = same(2),
+        processedFuncName = rep(2),
         finish = i(0),
       }
     )
