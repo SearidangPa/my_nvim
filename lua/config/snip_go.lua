@@ -28,7 +28,6 @@ local function same(index)
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
-
 vim.treesitter.query.set(
   'go',
   'LuaSnip_Result',
@@ -129,7 +128,7 @@ local go_ret_vals = function(args)
 end
 
 ls.add_snippets('go', {
-  s('smart_err', {
+  s('er', {
     i(1, { 'val' }),
     t ', ',
     i(2, { 'err' }),
@@ -205,38 +204,20 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'efi',
-    fmt(
+    'ne', -- no error
+    fmta(
       [[
-        {}, err := {}
-        if err != nil {{
-          return nil, fmt.Errorf("failed to {}, err: %v", err)
-        }}
-        {}
+          <choiceNode>
+          require.NoError(t, err)
+          <finish>
       ]],
       {
-        i(1, 'resultName'),
-        i(2, 'funcName'),
-        f(strip_parentheses_and_content, { 2 }),
-        i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'tne', -- test no error
-    fmt(
-      [[
-        {}, err := {}
-        require.NoError(t, err)
-        {}
-      ]],
-      {
-        i(1, 'resultName'),
-        i(2, 'funcName'),
-        i(0),
+        choiceNode = c(1, {
+          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
+          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+        }),
+        finish = i(0),
       }
     )
   ),
@@ -245,15 +226,15 @@ ls.add_snippets('go', {
 ls.add_snippets('go', {
   s(
     'test',
-    fmt(
+    fmta(
       [[
-    func Test_{}(t *testing.T) {{
-        {}
-    }}
+          func Test_<Name>(t *testing.T) {
+                  <body>
+          }
     ]],
       {
-        i(1, 'name'),
-        i(0),
+        Name = i(1, 'Name'),
+        body = i(0),
       }
     )
   ),
