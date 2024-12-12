@@ -221,6 +221,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(2, 'funcName'),
         args = i(3, 'args'),
+        processedFuncName = same(2),
         finish = i(0),
       }
     )
