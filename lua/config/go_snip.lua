@@ -29,14 +29,7 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      return c(info.index, {
-        t(string.format('fmt.Errorf("%s: %%v", %s)', info.func_name, info.err_name)),
-        t(info.err_name),
-        t(string.format('fmt.Errorf("%s: %%w", %s)', info.func_name, info.err_name)),
-        t(string.format('errors.Wrap(%s, "%s")', info.err_name, info.func_name)),
-      })
-    else
-      return t 'err'
+      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', info.func_name))
     end
   elseif text == 'bool' then
     return t 'false'
@@ -44,6 +37,8 @@ local transform = function(text, info)
     return t '""'
   elseif string.find(text, '*', 1, true) then
     return t 'nil'
+  else
+    return t(string.format('%s{}', text))
   end
 
   return t(text)
@@ -106,8 +101,7 @@ local go_ret_vals = function(args)
     nil,
     go_result_type {
       index = 0,
-      err_name = args[1][1],
-      func_name = args[2][1],
+      func_name = args[1][1],
     }
   )
 end
@@ -129,6 +123,32 @@ ls.add_snippets('go', {
     t { '', '}' },
     i(0),
   }),
+})
+
+ls.add_snippets('go', {
+  s(
+    'erp', -- error return
+    fmta(
+      [[
+        <choiceNode> <funcName>(<args>)
+        if err != nil {
+            return <dynamicRet>
+        }
+        <finish>
+      ]],
+      {
+        choiceNode = c(1, {
+          fmta([[<resultName>, err := ]], { resultName = i(1, 'resultName') }),
+          fmta([[err := ]], {}),
+          fmta([[err = ]], {}),
+        }),
+        funcName = i(2, 'funcName'),
+        args = i(3, ''),
+        dynamicRet = d(4, go_ret_vals, { 2, 3 }),
+        finish = i(0),
+      }
+    )
+  ),
 })
 
 ls.add_snippets('go', {
