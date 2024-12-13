@@ -107,8 +107,10 @@ local function go_result_type(info)
     if not node then
       return { t 'nil' }
     end
-    if handlers[node:type()] then
-      return handlers[node:type()](node, info)
+
+    local handlerFunc = handlers[node:type()]
+    if handlerFunc then
+      return handlerFunc(node, info)
     end
   end
 
