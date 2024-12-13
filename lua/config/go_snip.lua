@@ -120,7 +120,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'erp', -- error return
+    'er', -- error return
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
@@ -146,7 +146,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'winb',
+    'wb',
     fmta(
       [[
             //go:build windows
@@ -228,7 +228,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test',
+    'tes',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -245,7 +245,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'strf',
+    'str',
     fmta(
       [[
           func (<inst> *<Type>) String() string {
