@@ -130,13 +130,13 @@ ls.add_snippets('go', {
         <finish>
       ]],
       {
-        choiceNode = c(1, {
+        choiceNode = c(3, {
           fmta([[<res>, err := ]], { res = i(1, 'res') }),
           t 'err = ',
           t 'err := ',
         }),
-        funcName = i(2, 'funcName'),
-        args = i(3, ''),
+        funcName = i(1, 'funcName'),
+        args = i(2, ''),
         dynamicRet = d(4, go_ret_vals, { 2, 3 }),
         finish = i(0),
       }
@@ -146,14 +146,24 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'wb',
+    'ef', -- error fatal
     fmta(
       [[
-            //go:build windows
-
-            package <finish>
-        ]],
+        <choiceNode> <funcName>(<args>)
+        if err != nil {
+            log.Fatal("failed to <processedFuncName>, err: %v", err)
+        }
+        <finish>
+      ]],
       {
+        choiceNode = c(3, {
+          fmta([[<res>, err := ]], { res = i(1, 'res') }),
+          t 'err = ',
+          t 'err := ',
+        }),
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
+        processedFuncName = rep(1),
         finish = i(0),
       }
     )
@@ -178,53 +188,6 @@ ls.add_snippets('go', {
           i(nil, 'returnType'),
         }),
         body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'ne', -- no error
-    fmta(
-      [[
-          <choiceNode>
-          require.NoError(t, err)
-          <finish>
-      ]],
-      {
-        choiceNode = c(1, {
-          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
-          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-        }),
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'ef', -- error fatal
-    fmta(
-      [[
-        <choiceNode> <funcName>(<args>)
-        if err != nil {
-            log.Fatal("failed to <processedFuncName>, err: %v", err)
-        }
-        <finish>
-      ]],
-      {
-        choiceNode = c(1, {
-          fmta([[<res>, err := ]], { res = i(1, 'res') }),
-          t 'err = ',
-          t 'err := ',
-        }),
-        funcName = i(2, 'funcName'),
-        args = i(3, 'args'),
-        processedFuncName = rep(2),
-        finish = i(0),
       }
     )
   ),
@@ -282,6 +245,43 @@ ls.add_snippets('go', {
       {
         Name = i(1, 'Name'),
         body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ne', -- no error
+    fmta(
+      [[
+          <choiceNode>
+          require.NoError(t, err)
+          <finish>
+      ]],
+      {
+        choiceNode = c(1, {
+          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
+          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+        }),
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'wb',
+    fmta(
+      [[
+            //go:build windows
+
+            package <finish>
+        ]],
+      {
+        finish = i(0),
       }
     )
   ),
