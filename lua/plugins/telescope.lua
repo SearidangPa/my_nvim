@@ -23,6 +23,9 @@ return {
           'git/',
         },
         layout_strategy = 'vertical',
+        layout_config = {
+          width = 0.9,
+        },
       },
       extensions = {
         ['ui-select'] = {
