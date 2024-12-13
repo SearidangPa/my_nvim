@@ -41,7 +41,6 @@ vim.api.nvim_create_user_command('Make', function()
     vim.notify('Failed to start the Make command', vim.log.levels.ERROR)
   end
 end, {})
-
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
 
 vim.api.nvim_create_user_command('GoModTidy', function()
