@@ -42,4 +42,6 @@ vim.api.nvim_create_user_command('AutoRun', function()
   attach_to_buffer(tonumber(bufnr), command)
 end, {})
 
+-- create a user command that print out the closest test name using treesitter
+
 return {}
