@@ -165,14 +165,18 @@ ls.add_snippets('go', {
     'fn',
     fmta(
       [[
-        func <funcName>(<args>) <returnType> {
+        func <funcName>(<args>) <choiceNode> {
             <body>
         }
       ]],
       {
         funcName = i(1, 'funcName'),
         args = i(2, 'args'),
-        returnType = i(3, 'returnType'),
+        choiceNode = c(3, {
+          t 'error',
+          t ' ',
+          i(nil, 'returnType'),
+        }),
         body = i(0),
       }
     )
