@@ -29,11 +29,11 @@ function _G.TabLine()
     local winnr = vim.fn.tabpagewinnr(i)
     local bufnr = vim.fn.tabpagebuflist(i)[winnr]
     local bufname = vim.fn.bufname(bufnr)
-    local relpath = vim.fn.fnamemodify(bufname, ':~:.') -- Relative path
+    local filename = vim.fn.fnamemodify(bufname, ':t') -- Extract only the filename
     if i == vim.fn.tabpagenr() then
-      s = s .. '%#TabLineSel#' .. ' ' .. i .. ': ' .. relpath .. ' '
+      s = s .. '%#TabLineSel#' .. ' ' .. filename .. ' '
     else
-      s = s .. '%#TabLine#' .. ' ' .. i .. ': ' .. relpath .. ' '
+      s = s .. '%#TabLine#' .. ' ' .. filename .. ' '
     end
   end
   s = s .. '%#TabLineFill#'
