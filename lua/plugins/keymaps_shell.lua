@@ -47,8 +47,7 @@ vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the backgrou
 vim.api.nvim_create_user_command('Tidy', function()
   vim.cmd [[!go mod tidy]]
 end, { desc = 'Run go mod tidy' })
-
-vim.keymap.set('n', '<leader>gt', ':Tidy<CR>', { desc = 'Run go mod tidy' })
+vim.keymap.set('n', '<leader>gmt', ':Tidy<CR>', { desc = '[G]o [M]od [T]idy' })
 
 -- LspStop
 vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })
