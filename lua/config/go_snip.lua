@@ -228,7 +228,25 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'tes',
+    'str',
+    fmta(
+      [[
+          func (<inst> *<Type>) String() string {
+                  <body>
+          }
+      ]],
+      {
+        Type = i(1, 'Type'),
+        inst = f(lowerFirst, { 1 }),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ts',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -245,16 +263,20 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'str',
+    'tf',
     fmta(
       [[
-          func (<inst> *<Type>) String() string {
+          func Test_<Name>(t *testing.T) {
+                  tr := initTestResource(t, withConnectSyncRoot())
+                  defer tr.cleanUp()
+                  f1 := "file1.txt"
+                  fp := filepath.Join(tr.syncRootPath, f1)
+                  entryUUID := createAFilePlaceholderUnderRoot(tr, t, f1)
                   <body>
           }
-      ]],
+    ]],
       {
-        Type = i(1, 'Type'),
-        inst = f(lowerFirst, { 1 }),
+        Name = i(1, 'Name'),
         body = i(0),
       }
     )
