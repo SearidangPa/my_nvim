@@ -12,7 +12,9 @@ return {
   config = function()
     local ll = require 'lualine'
     ll.setup {
-      options = { fmt = string.lower },
+      options = {
+        globalstatus = true,
+      },
       sections = {
         lualine_a = {
           {
