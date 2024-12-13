@@ -202,7 +202,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'str',
+    'strf',
     fmta(
       [[
           func (<inst> *<Type>) String() string {
@@ -220,7 +220,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ts',
+    'test_blank',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -237,7 +237,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'tf',
+    'test_init',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -259,7 +259,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'fnt',
+    'fn_in_test',
     fmta(
       [[
         func <funcName>(t *testing.T, <args>) {
