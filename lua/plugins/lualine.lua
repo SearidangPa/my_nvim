@@ -12,18 +12,27 @@ return {
   config = function()
     local ll = require 'lualine'
     ll.setup {
+      options = { fmt = string.lower },
       sections = {
-        lualine_a = { 'mode' },
+        lualine_a = {
+          {
+            'mode',
+            fmt = function(str)
+              return str:sub(1, 1)
+            end,
+          },
+        },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = {
           'filename',
+        },
+        lualine_x = {},
+        lualine_y = {
           {
             'harpoon2',
             indicators = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' },
           },
         },
-        lualine_x = {},
-        lualine_y = {},
         lualine_z = {},
       },
     }
