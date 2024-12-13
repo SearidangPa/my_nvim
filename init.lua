@@ -22,7 +22,6 @@ vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
 vim.o.tabline = '%!v:lua.TabLine()'
-
 function _G.TabLine()
   local s = ''
   for i = 1, vim.fn.tabpagenr '$' do
@@ -68,6 +67,5 @@ require('lazy').setup {
     'tpope/vim-fugitive', -- Git commands in Neovim
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'copilot.vim',
-    'rcarriga/nvim-notify',
   },
 }
