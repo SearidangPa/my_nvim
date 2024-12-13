@@ -83,15 +83,8 @@ vim.api.nvim_create_user_command('GoModTidy', function()
 end, {})
 vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy' })
 
--- LspStop
-vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })
-
 -- lua
 vim.api.nvim_set_keymap('n', '<leader>x', '<cmd>source % <CR>', { noremap = true, silent = true, desc = 'source %' })
-
--- lsp
-vim.api.nvim_set_keymap('n', '<m-r>', ':LspRestart<CR>', { desc = 'Restart LSP' })
-vim.api.nvim_set_keymap('n', '<m-q>', ':LspStop', { desc = 'Stop LSP' })
 
 -- terminal
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
