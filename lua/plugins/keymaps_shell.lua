@@ -45,8 +45,43 @@ end, {})
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
 
 vim.api.nvim_create_user_command('GoModTidy', function()
-  vim.cmd [[!go mod tidy]]
-end, { desc = 'Run go mod tidy' })
+  local cmd = { 'go', 'mod', 'tidy' }
+
+  local output = {}
+  local errors = {}
+  local job_id = vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    stderr_buffered = true,
+    on_stdout = function(_, data)
+      if data and #data > 0 then
+        vim.list_extend(output, data)
+      end
+    end,
+    on_stderr = function(_, data)
+      if data and #data > 0 then
+        vim.list_extend(errors, data)
+      end
+    end,
+    on_exit = function(_, code)
+      if code == 0 then
+        vim.notify('GoModTidy completed successfully!', vim.log.levels.INFO)
+      else
+        vim.notify('GoModTidy failed with exit code ' .. code, vim.log.levels.ERROR)
+        -- Populate the quickfix list with errors
+        vim.fn.setqflist({}, ' ', {
+          title = 'GoModTidy Errors',
+          lines = errors,
+        })
+        -- Open the quickfix window and jump to the first error
+        vim.cmd 'copen'
+      end
+    end,
+  })
+
+  if job_id <= 0 then
+    vim.notify('Failed to start the GoModTidy command', vim.log.levels.ERROR)
+  end
+end, {})
 vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy' })
 
 -- LspStop
