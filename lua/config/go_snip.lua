@@ -21,7 +21,11 @@ end
 local getLastFuncName = function(args)
   ---@diagnostic disable-next-line: param-type-mismatch
   local parts = vim.split(args, '.', true)
-  return parts[#parts] or ''
+  local res = parts[#parts] or ''
+  if res == '' then
+    return ''
+  end
+  return lowerFirst { { res } }
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
@@ -137,7 +141,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, ''),
-        dynamicRet = d(4, go_ret_vals, { 2, 3 }),
+        dynamicRet = d(4, go_ret_vals, { 1 }),
         finish = i(0),
       }
     )
