@@ -9,7 +9,6 @@ local snippet_from_nodes = ls.sn
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
-local rep = require('luasnip.extras').rep
 local fmta = require('luasnip.extras.fmt').fmta
 
 local lowerFirst = function(args)
