@@ -19,12 +19,14 @@ local lowerFirst = function(args)
 end
 
 local getLastFuncName = function(args)
+  local input = args[1][1] or ''
   ---@diagnostic disable-next-line: param-type-mismatch
-  local parts = vim.split(args, '.', true)
+  local parts = vim.split(input, '.', true)
   local res = parts[#parts] or ''
   if res == '' then
     return ''
   end
+
   return lowerFirst { { res } }
 end
 
@@ -45,12 +47,14 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', getLastFuncName(info.func_name)))
+      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', getLastFuncName { { info.func_name } }))
     end
   elseif text == 'bool' then
     return t 'false'
   elseif text == 'string' then
     return t '""'
+  elseif text == 'uintptr' then
+    return t 'cldapi.Failed'
   elseif string.find(text, '*', 1, true) then
     return t 'nil'
   else
@@ -155,7 +159,7 @@ ls.add_snippets('go', {
       [[
         <choiceNode> <funcName>(<args>)
         if err != nil {
-            log.Fatal("failed to <processedFuncName>, err: %v", err)
+            log.Fatalf("failed to <processedFuncName>, err: %v", err)
         }
         <finish>
       ]],
@@ -167,7 +171,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, 'args'),
-        processedFuncName = rep(1),
+        processedFuncName = getLastFuncName { i(1, 'funcName') },
         finish = i(0),
       }
     )
@@ -180,7 +184,7 @@ ls.add_snippets('go', {
     fmta(
       [[
         func <funcName>(<args>) <choiceNode> {
-            <body>
+              <body>
         }
       ]],
       {
@@ -248,6 +252,24 @@ ls.add_snippets('go', {
     ]],
       {
         Name = i(1, 'Name'),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'fnt',
+    fmta(
+      [[
+        func <funcName>(t *testing.T, <args>) {
+              <body>
+        }
+      ]],
+      {
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
         body = i(0),
       }
     )

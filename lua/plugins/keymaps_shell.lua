@@ -42,7 +42,7 @@ vim.api.nvim_create_user_command('Make', function()
   end
 end, {})
 
-vim.keymap.set('n', '<leader>ma', ':Make<CR>', { desc = 'Run make in the background' })
+vim.keymap.set('n', ',m', ':Make<CR>', { desc = 'Run make in the background' })
 
 vim.api.nvim_create_user_command('Tidy', function()
   vim.cmd [[!go mod tidy]]
