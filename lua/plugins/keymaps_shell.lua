@@ -44,10 +44,10 @@ end, {})
 
 vim.keymap.set('n', '<leader>m', ':Make<CR>', { desc = 'Run make in the background' })
 
-vim.api.nvim_create_user_command('Tidy', function()
+vim.api.nvim_create_user_command('GoModTidy', function()
   vim.cmd [[!go mod tidy]]
 end, { desc = 'Run go mod tidy' })
-vim.keymap.set('n', '<leader>gmt', ':Tidy<CR>', { desc = '[G]o [M]od [T]idy' })
+vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy' })
 
 -- LspStop
 vim.keymap.set('n', '<leader>gs', ':LspStop<CR>', { desc = 'Stop LSP' })

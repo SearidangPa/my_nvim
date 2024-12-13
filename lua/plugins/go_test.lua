@@ -43,5 +43,6 @@ vim.api.nvim_create_user_command('AutoRun', function()
 end, {})
 
 -- create a user command that print out the closest test name using treesitter
+-- should use the keymap <leader>gt
 
 return {}
