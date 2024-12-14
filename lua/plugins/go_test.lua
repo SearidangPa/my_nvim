@@ -41,7 +41,7 @@ local attach_to_buffer = function(bufnr, command)
   local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
 
   vim.api.nvim_create_autocmd('BufWritePost', {
-    group = vim.api.nvim_create_augroup('reallyCool', { clear = true }),
+    group = group,
     pattern = '*.go',
     callback = function()
       local append_data = function(_, data)
@@ -123,10 +123,6 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   local command = { 'go', 'test', '-json', '-v', '-run', GetEnclosingFunctionName() }
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
-
-vim.keymap.set('n', '<leader>xr', function()
-  vim.cmd 'AutoRun'
-end, { desc = 'Auto run' })
 
 vim.keymap.set('n', '<leader>cm', ':clear messages<CR>', { desc = '[C]lear [m]essages' })
 
