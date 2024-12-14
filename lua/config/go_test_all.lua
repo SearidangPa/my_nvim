@@ -130,10 +130,13 @@ vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test out
 
 vim.keymap.set('n', '<leader>cn', function()
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
-end, { desc = '[C]lear [N]amespace' })
+  vim.diagnostic.reset()
+end, { desc = '[C]lear [N]amespace and reset diagnostic' })
 
 vim.keymap.set('n', '<leader>cg', function()
   vim.api.nvim_del_augroup_by_name 'teej-automagic'
-end, { desc = '[C]lear [G]roup Teej-automagic' })
+  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
+  vim.diagnostic.reset()
+end, { desc = '[C]lear [G]roup, clear ext_mark and reset diagnostic' })
 
 return {}
