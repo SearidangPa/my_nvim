@@ -1,6 +1,10 @@
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 
+local function starts_with(str, prefix)
+  return string.sub(str, 1, #prefix) == prefix
+end
+
 function GetEnclosingFunctionName()
   local node = ts_utils.get_node_at_cursor()
 
@@ -9,8 +13,12 @@ function GetEnclosingFunctionName()
       local func_name_node = node:child(1)
       if func_name_node then
         local func_name = get_node_text(func_name_node, 0)
-        print('Enclosing function name: ' .. func_name)
-        return func_name
+        if starts_with(func_name, 'Test_') then
+          print('Enclosing function name: ' .. func_name)
+          return func_name
+        else
+          print 'Not a test function'
+        end
       end
     end
     node = node:parent() -- Traverse up the node tree to find a function node
