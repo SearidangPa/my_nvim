@@ -1,3 +1,6 @@
+require 'config.find_test_line'
+local ns = vim.api.nvim_create_namespace 'live_tests'
+
 local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
@@ -38,7 +41,6 @@ local attach_to_buffer = function(bufnr, command)
     state.tests[make_key(entry)].success = entry.Action == 'pass'
   end
 
-  local ns = vim.api.nvim_create_namespace 'live_tests'
   local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
 
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -73,8 +75,14 @@ local attach_to_buffer = function(bufnr, command)
               local test = state.tests[make_key(decoded)]
 
               if test.success then
-                local text = { '✅' }
-                vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, { virt_text = { text } })
+                local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
+
+                if #existing_extmarks < 1 then
+                  local text = { '✅' }
+                  vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
+                    virt_text = { text },
+                  })
+                end
               end
             elseif decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' then
               -- Do nothing
@@ -123,5 +131,9 @@ end, {})
 
 vim.keymap.set('n', '<leader>xa', ':GoTestAllOnSave<CR>', { desc = 'Auto-run tests on save' })
 vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
+
+vim.keymap.set('n', '<leader>cn', function()
+  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
+end, { desc = '[C]lear [N]amespace' })
 
 return {}
