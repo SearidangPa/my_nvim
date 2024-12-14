@@ -120,11 +120,6 @@ local attach_to_buffer = function(bufnr, command)
   })
 end
 
--- vim.api.nvim_create_user_command('GoTestFuncOnSave', function()
---   local command = { 'go', 'test', '-json', '-v', '-run', GetEnclosingFunctionName() }
---   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
--- end, {})
-
 vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   local command = { 'go', 'test', '-json', '-v' }
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
@@ -139,6 +134,6 @@ end, { desc = '[C]lear [N]amespace' })
 
 vim.keymap.set('n', '<leader>cg', function()
   vim.api.nvim_del_augroup_by_name 'teej-automagic'
-end, { desc = '[C]lear [N]amespace' })
+end, { desc = '[C]lear [G]roup Teej-automagic' })
 
 return {}
