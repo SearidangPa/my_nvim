@@ -18,8 +18,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 -- add empty line
-vim.api.nvim_set_keymap('n', 'kj', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
-vim.api.nvim_set_keymap('n', 'jk', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
+vim.api.nvim_set_keymap('n', 'gj', 'O<Esc>j', { noremap = true, silent = true, desc = 'Insert empty line above' })
+vim.api.nvim_set_keymap('n', 'gk', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
 
 -- exit mode
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode' })
