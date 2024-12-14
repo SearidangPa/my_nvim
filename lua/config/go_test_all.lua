@@ -121,6 +121,7 @@ local attach_to_buffer = function(bufnr, command)
 end
 
 vim.api.nvim_create_user_command('GoTestAllOnSave', function()
+  -- need to pass in 'Test1|Test2|Test3'. Otherwise, this will run every tests in the code base
   local command = { 'go', 'test', '-json', '-v' }
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
