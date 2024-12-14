@@ -12,7 +12,7 @@ local attach_to_buffer = function(bufnr, command)
       print('TestLine: ' .. testLine)
       if test.line == testLine then
         vim.cmd.new()
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, { 'what' })
+        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
       end
     end
   end, {})
@@ -23,7 +23,7 @@ local attach_to_buffer = function(bufnr, command)
     return string.format('%s/%s', entry.Package, entry.Test)
   end
 
-  local find_test_line = function(bufnr, test_name)
+  local find_test_line = function(test_name)
     local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) -- Get all lines from the buffer
     for i, line in ipairs(lines) do
       -- Match test functions, such as `func TestSomething(t *testing.T)`
@@ -34,21 +34,20 @@ local attach_to_buffer = function(bufnr, command)
     return nil
   end
 
-  local add_golang_test = function(state, entry)
+  local add_golang_test = function(entry)
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = find_test_line(state.bufnr, entry.Test),
+      line = find_test_line(entry.Test),
       output = {},
     }
   end
 
-  local add_golang_output = function(state, entry)
+  local add_golang_output = function(entry)
     assert(state.tests, vim.inspect(state))
-    print('Adding output: ' .. vim.trim(entry.Output))
     table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
   end
 
-  local mark_success = function(state, entry)
+  local mark_success = function(entry)
     state.tests[make_key(entry)].success = entry.Action == 'pass'
   end
 
@@ -75,15 +74,15 @@ local attach_to_buffer = function(bufnr, command)
             assert(decoded, 'Failed to decode: ' .. line)
 
             if decoded.Action == 'run' then
-              add_golang_test(state, decoded)
+              add_golang_test(decoded)
             elseif decoded.Action == 'output' then
               if not decoded.Test then
                 return
               end
 
-              add_golang_output(state, decoded)
+              add_golang_output(decoded)
             elseif decoded.Action == 'pass' or decoded.Action == 'fail' then
-              mark_success(state, decoded)
+              mark_success(decoded)
               local test = state.tests[make_key(decoded)]
 
               if test.success then

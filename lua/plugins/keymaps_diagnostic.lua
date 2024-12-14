@@ -21,9 +21,9 @@ vim.keymap.set('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window
 vim.keymap.set('n', '<leader>tq', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 
 -- clear all diagnostics
-vim.keymap.set('n', '<leader>qd', function()
-  vim.diagnostic.clear(0)
-end, { desc = 'Clear all diagnostics' })
+vim.keymap.set('n', '<leader>qr', function()
+  vim.diagnostic.reset()
+end, { desc = 'Reset diagnostics' })
 
 vim.keymap.set('n', '<leader>qo', function()
   vim.diagnostic.open_float()
