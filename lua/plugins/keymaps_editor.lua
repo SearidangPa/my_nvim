@@ -22,7 +22,6 @@ vim.api.nvim_set_keymap('n', 'kj', 'O<Esc>j', { noremap = true, silent = true, d
 vim.api.nvim_set_keymap('n', 'jk', 'o<Esc>k', { noremap = true, silent = true, desc = 'Insert empty line below' })
 
 -- exit mode
-vim.keymap.set('n', '``', 'i', { noremap = true, silent = true, desc = 'Enter insert mode' })
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode' })
 
 return {}
