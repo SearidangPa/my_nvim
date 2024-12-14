@@ -45,3 +45,5 @@ end, {})
 vim.keymap.set('n', '<leader>xr', function()
   vim.cmd 'AutoRun'
 end, { desc = 'Auto run' })
+
+return {}
