@@ -82,12 +82,11 @@ local handlers = {
   end,
 }
 
-function Go_result_type(info)
+local function go_result_type(info)
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
     return { t 'nil' }
   end
-  print(string.format('cursor_node: %s', cursor_node))
 
   local scope = ts_locals.get_scope_tree(cursor_node, 0)
   local function_node
@@ -104,18 +103,11 @@ function Go_result_type(info)
     return { t 'nil' }
   end
 
-  print 'function_node'
-  print(function_node)
-  print 'query:iter_captures'
-  print(query:iter_captures(function_node, 0))
-
   for _, node in query:iter_captures(function_node, 0) do
     if not node then
       return { t 'nil' }
     end
 
-    print 'node:type()'
-    print(node:type())
     local handlerFunc = handlers[node:type()]
     if handlerFunc then
       return handlerFunc(node, info)
@@ -128,7 +120,7 @@ end
 local go_ret_vals = function(args)
   return snippet_from_nodes(
     nil,
-    Go_result_type {
+    go_result_type {
       index = 0,
       func_name = args[1][1],
     }
