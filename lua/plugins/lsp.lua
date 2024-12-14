@@ -130,6 +130,6 @@ return {
       },
     }
 
-    require 'config.go_test'
+    require 'config.go_test_all'
   end,
 }
