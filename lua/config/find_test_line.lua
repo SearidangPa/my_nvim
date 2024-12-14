@@ -25,7 +25,6 @@ Find_test_line = function(go_bufnr, name)
 
   for _, node in query:iter_captures(root, go_bufnr, 0, -1) do
     local nodeContent = get_node_text(node, go_bufnr)
-    print(string.format('nodeContent: %s', nodeContent))
     if nodeContent == name then
       local start_line, _, _, _ = node:range()
       return start_line + 1
