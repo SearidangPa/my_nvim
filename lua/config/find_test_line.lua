@@ -1,3 +1,5 @@
+local get_node_text = vim.treesitter.get_node_text
+
 Find_test_line_brute = function(bufnr, test_name)
   local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) -- Get all lines from the buffer
   for i, line in ipairs(lines) do
@@ -33,7 +35,9 @@ Find_test_line = function(go_bufnr, name)
   local root = tree:root()
 
   for id, node in query:iter_captures(root, go_bufnr, 0, -1) do
-    if id == 1 then
+    local nodeContent = get_node_text(node, go_bufnr)
+    print(string.format('nodeContent: %s', nodeContent))
+    if nodeContent == name then
       local start_line, _, _, _ = node:range()
       return start_line + 1
     end
@@ -41,7 +45,7 @@ Find_test_line = function(go_bufnr, name)
 end
 
 vim.keymap.set('n', '<leader>ftl', function()
-  local name = vim.fn.input 'Test name: '
-  local line = Find_test_line(vim.api.nvim_get_current_buf(), name)
-  print('Test line:', line)
+  local _, testName = GetEnclosingFunctionName()
+  local line = Find_test_line(vim.api.nvim_get_current_buf(), testName)
+  print(string.format('test name: %s, line: %d', testName, line))
 end, { desc = '[F]ind [T]est [L]ine' })
