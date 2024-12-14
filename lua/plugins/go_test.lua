@@ -53,6 +53,6 @@ vim.keymap.set('n', '<leader>xr', function()
   vim.cmd 'AutoRun'
 end, { desc = 'Auto run' })
 
-vim.keymap.set('n', '<leader>mc', ':messages clear<CR>', { desc = 'Clear messages' })
+vim.keymap.set('n', '<leader>cm', ':clear messages<CR>', { desc = '[C]lear [m]essages' })
 
 return {}
