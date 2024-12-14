@@ -46,7 +46,6 @@ vim.api.nvim_create_user_command('AutoRun', function()
   local bufnr = vim.fn.input 'Bufnr: '
   local command = { 'go', 'test', '-json', '-v', '-run', GetEnclosingFunctionName() }
   print('Running command: ' .. table.concat(command, ' '))
-  -- local command = vim.split(vim.fn.input 'Command: ', ' ')
   attach_to_buffer(tonumber(bufnr), command)
 end, {})
 
