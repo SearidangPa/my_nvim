@@ -8,8 +8,6 @@ local attach_to_buffer = function(bufnr, command)
     local testLine, _ = GetEnclosingFunctionName()
     testLine = testLine - 1
     for _, test in pairs(state.tests) do
-      print(string.format('Test: %s, Line: %s', test.name, test.line))
-      print('TestLine: ' .. testLine)
       if test.line == testLine then
         vim.cmd.new()
         vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
@@ -23,21 +21,10 @@ local attach_to_buffer = function(bufnr, command)
     return string.format('%s/%s', entry.Package, entry.Test)
   end
 
-  local find_test_line = function(test_name)
-    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) -- Get all lines from the buffer
-    for i, line in ipairs(lines) do
-      -- Match test functions, such as `func TestSomething(t *testing.T)`
-      if line:match('^%s*func%s+' .. test_name .. '%s*%(') then
-        return i - 1 -- Return 0-indexed line
-      end
-    end
-    return nil
-  end
-
   local add_golang_test = function(entry)
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = find_test_line(entry.Test),
+      line = Find_test_line(bufnr, entry.Test),
       output = {},
     }
   end
