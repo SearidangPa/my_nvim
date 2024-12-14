@@ -27,7 +27,7 @@ local attach_to_buffer = function(bufnr, command)
   local add_golang_test = function(entry)
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = Find_test_line(bufnr, entry.Test),
+      line = Find_test_line_brute(bufnr, entry.Test),
       output = {},
     }
   end
@@ -75,6 +75,7 @@ local attach_to_buffer = function(bufnr, command)
               local test = state.tests[make_key(decoded)]
 
               if test.success then
+                -- from start to end of the test line
                 local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
 
                 if #existing_extmarks < 1 then
