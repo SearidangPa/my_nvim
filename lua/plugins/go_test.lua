@@ -14,6 +14,32 @@ local attach_to_buffer = function(bufnr, command)
     end
   end, {})
 
+  local make_key = function(entry)
+    assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
+    assert(entry.Test, 'Must have test name' .. vim.inspect(entry))
+    return string.format('%s/%s', entry.Package, entry.Test)
+  end
+
+  local add_golang_test = function(state, entry)
+    state.tests[make_key(entry)] = {
+      name = entry.Test,
+      line = find_test_line(state.bufnr, entry.Test),
+      output = {},
+    }
+  end
+
+  local add_golang_output = function(state, entry)
+    assert(state.tests, vim.inspect(state))
+    table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
+  end
+
+  local mark_success = function(state, entry)
+    state.tests[make_key(entry)].success = entry.Action == 'pass'
+  end
+
+  local ns = vim.api.nvim_create_namespace 'live_tests'
+  local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
+
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = vim.api.nvim_create_augroup('reallyCool', { clear = true }),
     pattern = '*.go',
@@ -39,12 +65,28 @@ local attach_to_buffer = function(bufnr, command)
             end
 
             local decoded = vim.json.decode(line)
-            if not decoded then
-              goto continue
-            end
+            assert(decoded, 'Failed to decode: ' .. line)
 
             if decoded.Action == 'run' then
-              print(string.format('Running %s', decoded.Action))
+              add_golang_test(state, decoded)
+            elseif decoded.Action == 'output' then
+              if not decoded.Test then
+                return
+              end
+
+              add_golang_output(state, decoded)
+            elseif decoded.Action == 'pass' or decoded.Action == 'fail' then
+              mark_success(state, decoded)
+              local test = state.tests[make_key(decoded)]
+
+              if test.success then
+                local text = { '✅' }
+                vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, { virt_text = { text } })
+              end
+            elseif decoded.Action == 'pause' or decoded.Action == 'cont' then
+              -- Do nothing
+            else
+              print('Failed to handle: ' .. vim.inspect(data))
             end
 
             ::continue::
@@ -52,16 +94,34 @@ local attach_to_buffer = function(bufnr, command)
         end,
 
         on_stderr = append_data,
+        on_exit = function()
+          local failed = {}
+          for _, test in pairs(state.tests) do
+            if test.line then
+              if not test.success then
+                table.insert(failed, {
+                  bufnr = bufnr,
+                  lnum = test.line,
+                  col = 0,
+                  severity = vim.diagnostic.severity.ERROR,
+                  source = 'go-test',
+                  message = 'Test Failed',
+                  user_data = {},
+                })
+              end
+            end
+          end
+
+          vim.diagnostic.set(ns, bufnr, failed, {})
+        end,
       })
     end,
   })
 end
 
-vim.api.nvim_create_user_command('AutoRun', function()
-  local bufnr = vim.fn.input 'Bufnr: '
+vim.api.nvim_create_user_command('GoTestOnSave', function()
   local command = { 'go', 'test', '-json', '-v', '-run', GetEnclosingFunctionName() }
-  print('Running command: ' .. table.concat(command, ' '))
-  attach_to_buffer(tonumber(bufnr), command)
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
 
 vim.keymap.set('n', '<leader>xr', function()
