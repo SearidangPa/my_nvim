@@ -90,7 +90,5 @@ return {
     end, { desc = '[S]earch [N]eovim files' })
 
     require('config.multigrep').setup()
-    require('config.nearest_func').setup()
-    require('config.go_test').setup()
   end,
 }

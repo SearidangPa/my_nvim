@@ -21,7 +21,12 @@ local attach_to_buffer = function(bufnr, command)
             if line == '' then
               goto continue
             end
+
             local decoded = vim.json.decode(line)
+            if not decoded then
+              goto continue
+            end
+
             if decoded.Action == 'run' then
               print(string.format('Running %s', decoded.Action))
             end

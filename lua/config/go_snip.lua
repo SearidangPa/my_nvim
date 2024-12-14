@@ -1,15 +1,15 @@
 local ls = require 'luasnip'
-local s = ls.snippet
-local t = ls.text_node
+local snippet_from_nodes = ls.sn
 local c = ls.choice_node
+local s = ls.snippet
 local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
-local snippet_from_nodes = ls.sn
+local t = ls.text_node
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
-local get_node_text = vim.treesitter.get_node_text
 local fmta = require('luasnip.extras.fmt').fmta
+local get_node_text = vim.treesitter.get_node_text
 
 local lowerFirst = function(args)
   local input = args[1][1] or ''
@@ -28,17 +28,6 @@ local getLastFuncName = function(args)
 
   return lowerFirst { { res } }
 end
-
--- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
-vim.treesitter.query.set(
-  'go',
-  'LuaSnip_Result',
-  [[ [
-    (method_declaration result: (_) @id)
-    (function_declaration result: (_) @id)
-    (func_literal result: (_) @id)
-  ] ]]
-)
 
 local transform = function(text, info)
   if text == 'int' then
