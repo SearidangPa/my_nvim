@@ -129,5 +129,7 @@ return {
         end,
       },
     }
+
+    require 'config.go_test'
   end,
 }

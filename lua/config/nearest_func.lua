@@ -13,7 +13,8 @@ function GetEnclosingFunctionName()
     local func_name_node = node:child(1)
     if func_name_node then
       local func_name = get_node_text(func_name_node, 0)
-      return func_name
+      local startLine, _, _ = node:start()
+      return startLine + 1, func_name -- +1 to convert 0-based to 1-based lua indexing system
     end
 
     ::continue::
@@ -23,5 +24,6 @@ function GetEnclosingFunctionName()
 end
 
 vim.keymap.set('n', '<leader>fn', function()
-  print(string.format('Enclosing function name: %s', GetEnclosingFunctionName()))
+  local startLine, func_name = GetEnclosingFunctionName()
+  print(string.format('Enclosing function name: %s at line %d', func_name, startLine))
 end, { desc = 'Print the enclosing function name' })
