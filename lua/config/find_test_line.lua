@@ -18,7 +18,8 @@ local test_function_query_string = [[
       type: (pointer_type
         (qualified_type
           package: (package_identifier) @package_name
-          name: (type_identifier) @type_name)))))  
+          name: (type_identifier) @type_name))))
+)  
 (#eq? @package_name "testing")
 (#eq? @type_name "T")
 (#eq? @name "%s")
