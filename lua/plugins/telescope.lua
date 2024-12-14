@@ -89,6 +89,8 @@ return {
       builtin.find_files { cwd = vim.fn.stdpath 'config' }
     end, { desc = '[S]earch [N]eovim files' })
 
-    require('config.multigrep').setup(opts)
+    require('config.multigrep').setup()
+    require('config.nearest_func').setup()
+    require('config.go_test').setup()
   end,
 }
