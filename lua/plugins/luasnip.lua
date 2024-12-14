@@ -67,7 +67,7 @@ M = {
       end
     end, { silent = true })
 
-    require 'config.nearest_func_from_treesitter'
+    require 'config.go_snip'
     require 'config.nearest_func_from_treesitter'
   end,
 }
