@@ -27,7 +27,7 @@ local attach_to_buffer = function(bufnr, command)
   local add_golang_test = function(entry)
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = Find_test_line_brute(bufnr, entry.Test),
+      line = Find_test_line(bufnr, entry.Test),
       output = {},
     }
   end

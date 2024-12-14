@@ -1,16 +1,5 @@
 local get_node_text = vim.treesitter.get_node_text
 
-Find_test_line_brute = function(bufnr, test_name)
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false) -- Get all lines from the buffer
-  for i, line in ipairs(lines) do
-    -- Match test functions, such as `func TestSomething(t *testing.T)`
-    if line:match('^%s*func%s+' .. test_name .. '%s*%(') then
-      return i - 1 -- Return 0-indexed line
-    end
-  end
-  return nil
-end
-
 local test_function_query_string = [[
 (function_declaration
   name: (identifier) @name
@@ -34,7 +23,7 @@ Find_test_line = function(go_bufnr, name)
   local tree = parser:parse()[1]
   local root = tree:root()
 
-  for id, node in query:iter_captures(root, go_bufnr, 0, -1) do
+  for _, node in query:iter_captures(root, go_bufnr, 0, -1) do
     local nodeContent = get_node_text(node, go_bufnr)
     print(string.format('nodeContent: %s', nodeContent))
     if nodeContent == name then
