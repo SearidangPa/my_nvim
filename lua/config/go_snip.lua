@@ -11,6 +11,17 @@ local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
 
+-- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
+vim.treesitter.query.set(
+  'go',
+  'LuaSnip_Result',
+  [[ [
+    (method_declaration result: (_) @id)
+    (function_declaration result: (_) @id)
+    (func_literal result: (_) @id)
+  ] ]]
+)
+
 local lowerFirst = function(args)
   local input = args[1][1] or ''
   local lower = input:sub(1, 1):lower() .. input:sub(2)
@@ -71,11 +82,12 @@ local handlers = {
   end,
 }
 
-local function go_result_type(info)
+function Go_result_type(info)
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
     return { t 'nil' }
   end
+  print(string.format('cursor_node: %s', cursor_node))
 
   local scope = ts_locals.get_scope_tree(cursor_node, 0)
   local function_node
@@ -92,11 +104,18 @@ local function go_result_type(info)
     return { t 'nil' }
   end
 
+  print 'function_node'
+  print(function_node)
+  print 'query:iter_captures'
+  print(query:iter_captures(function_node, 0))
+
   for _, node in query:iter_captures(function_node, 0) do
     if not node then
       return { t 'nil' }
     end
 
+    print 'node:type()'
+    print(node:type())
     local handlerFunc = handlers[node:type()]
     if handlerFunc then
       return handlerFunc(node, info)
@@ -109,7 +128,7 @@ end
 local go_ret_vals = function(args)
   return snippet_from_nodes(
     nil,
-    go_result_type {
+    Go_result_type {
       index = 0,
       func_name = args[1][1],
     }

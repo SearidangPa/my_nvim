@@ -86,6 +86,9 @@ vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy
 -- lua
 vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>source % <CR>', { noremap = true, silent = true, desc = 'source %' })
 
+-- view messages
+vim.keymap.set('n', '<leader>rm', '<cmd>messages<CR>', { desc = 'read messages' })
+
 -- terminal
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 

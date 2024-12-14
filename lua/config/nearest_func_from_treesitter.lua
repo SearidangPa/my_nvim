@@ -1,55 +1,32 @@
-local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
+local get_node_text = vim.treesitter.get_node_text
 
--- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
-vim.treesitter.query.set(
-  'go',
-  'LuaSnip_Result',
-  [[ [
-    (method_declaration result: (_) @id)
-    (function_declaration result: (_) @id)
-    (func_literal result: (_) @id)
-  ] ]]
-)
+function GetEnclosingFunctionName()
+  local node = ts_utils.get_node_at_cursor()
 
-local function print_nearest_func()
-  local cursor_node = ts_utils.get_node_at_cursor()
-  if not cursor_node then
-    return {}
-  end
-
-  local scope = ts_locals.get_scope_tree(cursor_node, 0)
-
-  local function_node
-  for _, v in ipairs(scope) do
-    print(string.format('v: %s', v))
-    if v:type() == 'function_declaration' or v:type() == 'method_declaration' or v:type() == 'func_literal' then
-      function_node = v
-      break
+  while node do
+    if node:type() == 'function_declaration' then
+      local func_name_node = node:child(1)
+      if func_name_node then
+        local func_name = get_node_text(func_name_node, 0)
+        print('Enclosing function name: ' .. func_name)
+        return func_name
+      end
     end
-  end
-  print(string.format('function_node: %s', function_node))
-
-  local query = vim.treesitter.query.get('go', 'LuaSnip_Result')
-
-  if not query then
-    print 'query is nil'
-    return {}
+    node = node:parent() -- Traverse up the node tree to find a function node
   end
 
-  print 'enter nearest_func'
-  for _, node in query:iter_captures(function_node, 0) do
-    print('node: ', node)
-    print(node)
-
-    -- local handlerFunc = handler[node:type()]
-    -- if handlerFunc then
-    --   return handlerFunc(node)
-    -- end
-  end
-
-  print 'exit nearest_func'
-  return {}
+  print 'No enclosing function found.'
+  return nil
 end
 
-vim.keymap.set('n', '<leader>f', print_nearest_func, { desc = 'Print the nearest function' })
+vim.keymap.set('n', '<leader>nf', function()
+  Go_result_type {
+    index = 0,
+    func_name = 'nothing',
+  }
+end, { desc = 'Trying to print the nearest function' })
+
+vim.keymap.set('n', '<leader>fn', function()
+  GetEnclosingFunctionName()
+end, { desc = 'Print the enclosing function name' })

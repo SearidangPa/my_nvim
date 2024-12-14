@@ -16,6 +16,7 @@ local attach_to_buffer = function(bufnr, command)
           if not data then
             return
           end
+          append_data(_, data)
 
           for _, line in ipairs(data) do
             if line == '' then
