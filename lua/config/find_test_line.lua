@@ -14,7 +14,7 @@ local test_function_query_string = [[
 )  
 ]]
 
-Find_test_line_by_name = function(go_bufnr, testName)
+local find_test_line_by_name = function(go_bufnr, testName)
   local formatted = string.format(test_function_query_string, testName)
   local query = vim.treesitter.query.parse('go', formatted)
   local parser = vim.treesitter.get_parser(go_bufnr, 'go', {})
@@ -33,7 +33,7 @@ end
 
 vim.keymap.set('n', '<leader>ft', function()
   local _, testName = GetEnclosingFunctionName()
-  local line = Find_test_line_by_name(vim.api.nvim_get_current_buf(), testName)
+  local line = find_test_line_by_name(vim.api.nvim_get_current_buf(), testName)
   print(string.format('test name: %s, line: %d', testName, line))
 end, { desc = '[F]ind [T]est' })
 
@@ -49,7 +49,7 @@ local function_query = [[
       name: (identifier)
       type: (pointer_type
         (qualified_type
-          package: (package_identifier) 
+          package: (package_identifier) @_package_name
           name: (type_identifier) ))))
 )  
 ]]
@@ -67,7 +67,14 @@ Find_all_tests = function(go_bufnr)
       return res
     end
     local nodeContent = get_node_text(node, go_bufnr)
+
+    -- all tests start with Test_
+    if not string.match(nodeContent, 'Test_') then
+      goto continue
+    end
+
     res[nodeContent] = node:start() + 1
+    ::continue::
   end
   return res
 end

@@ -98,5 +98,5 @@ else
   vim.keymap.set('n', '<leader>tt', '<cmd>term<CR>a', { desc = 'Open terminal' })
 end
 
-vim.keymap.set('n', '<leader>cm', ':messages clear<CR>', { desc = '[C]lear [m]essages' })
+vim.keymap.set('n', '<leader>mc', ':messages clear<CR>', { desc = '[C]lear [m]essages' })
 return {}
