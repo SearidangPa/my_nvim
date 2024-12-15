@@ -169,7 +169,6 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
     command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   end
 
-  print('Command: ' .. vim.inspect(command))
   attach_to_buffer(bufnr, command)
 end, {})
 
