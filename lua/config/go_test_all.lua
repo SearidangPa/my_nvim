@@ -7,6 +7,8 @@ local attach_to_buffer = function(bufnr, command)
     tests = {},
   }
 
+  local testsCurrBuf = Find_all_tests(bufnr)
+
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestLineDiag', function()
     local testLine, _ = GetEnclosingFunctionName()
     testLine = testLine - 1
@@ -27,7 +29,7 @@ local attach_to_buffer = function(bufnr, command)
   local add_golang_test = function(entry)
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = Find_test_line(bufnr, entry.Test) - 1,
+      line = testsCurrBuf[entry.Test] - 1,
       output = {},
     }
   end
@@ -41,6 +43,7 @@ local attach_to_buffer = function(bufnr, command)
     state.tests[make_key(entry)].success = entry.Action == 'pass'
   end
 
+  local virtualText = { '✅' }
   local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
 
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -77,11 +80,9 @@ local attach_to_buffer = function(bufnr, command)
               if test.success then
                 -- from start to end of the test line
                 local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
-
                 if #existing_extmarks < 1 then
-                  local text = { '✅' }
                   vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
-                    virt_text = { text },
+                    virt_text = { virtualText },
                   })
                 end
               end
@@ -121,19 +122,30 @@ local attach_to_buffer = function(bufnr, command)
 end
 
 vim.api.nvim_create_user_command('GoTestAllOnSave', function()
-  -- need to pass in 'Test1|Test2|Test3'. Otherwise, this will run every tests in the code base
-  local command = { 'go', 'test', '-json', '-v' }
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  local concatTestName = ''
+  for testName, _ in pairs(testsInCurrBuf) do
+    concatTestName = concatTestName .. testName .. '|'
+  end
+  -- remove the last |
+  concatTestName = concatTestName:sub(1, -2)
+
+  local command = { 'go', 'test', '-json', '-v', '-run', string.format('%s', concatTestName) }
+  print(string.format('Running: %s', table.concat(command, ' ')))
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
 
 vim.keymap.set('n', '<leader>xa', ':GoTestAllOnSave<CR>', { desc = 'Auto-run tests on save' })
 vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
 
+-- Clear namespace and reset diagnostic
 vim.keymap.set('n', '<leader>cn', function()
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
   vim.diagnostic.reset()
 end, { desc = '[C]lear [N]amespace and reset diagnostic' })
 
+-- unattach the autocommand
 vim.keymap.set('n', '<leader>cg', function()
   vim.api.nvim_del_augroup_by_name 'teej-automagic'
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
