@@ -165,7 +165,6 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   local command
   if vim.fn.has 'win32' == 1 then
     command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-    -- command = { 'go', 'test', './...', '-json', '-v' }
   else
     command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   end
