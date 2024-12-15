@@ -83,6 +83,7 @@ local attach_to_buffer = function(bufnr, command)
                 return
               end
 
+              print(decoded.Output)
               add_golang_output(decoded)
             elseif decoded.Action == 'pass' or decoded.Action == 'fail' then
               mark_success(decoded)
@@ -141,10 +142,11 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
 
-  local command = { 'go', 'test', '-json', '-v', '-run', string.format('%s', concatTestName) }
+  local command
   if vim.fn.has 'win32' == 1 then
-    table.insert(command, 1, 'C:\\Program Files\\Git\\bin\\bash.exe')
-    table.insert(command, 2, '-c')
+    command = { 'go', 'test', '.\\...', '-json', '-v', '-run', string.format('"%s"', concatTestName) }
+  else
+    command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   end
 
   print(string.format('Running: %s', table.concat(command, ' ')))
