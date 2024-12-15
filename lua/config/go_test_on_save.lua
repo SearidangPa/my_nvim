@@ -104,8 +104,6 @@ local attach_to_buffer = function(bufnr, command)
             if decoded.Action == 'output' then
               if decoded.Test then
                 add_golang_output(decoded)
-                -- else
-                --   print('output without test: ' .. line)
               end
               goto continue
             end
