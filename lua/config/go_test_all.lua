@@ -121,7 +121,7 @@ local attach_to_buffer = function(bufnr, command)
   })
 end
 
-vim.api.nvim_create_user_command('GoTestAllOnSave', function()
+vim.api.nvim_create_user_command('GoTestOnSave', function()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   local concatTestName = ''
@@ -136,7 +136,7 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
 
-vim.keymap.set('n', '<leader>xa', ':GoTestAllOnSave<CR>', { desc = 'Auto-run tests on save' })
+vim.keymap.set('n', '<leader>xa', ':GoTestOnSave<CR>', { desc = 'Auto-run tests on save' })
 vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
 
 -- Clear namespace and reset diagnostic
