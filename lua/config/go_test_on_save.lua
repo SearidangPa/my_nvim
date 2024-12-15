@@ -173,14 +173,7 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
     concatTestName = concatTestName .. testName .. '|'
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
-
-  local command
-  if vim.fn.has 'win32' == 1 then
-    command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  else
-    command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  end
-
+  local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   attach_to_buffer(bufnr, command)
 end, {})
 
