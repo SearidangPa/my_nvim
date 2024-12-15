@@ -1,4 +1,5 @@
 require 'config.find_test_line'
+require 'config.floating_window'
 local ns = vim.api.nvim_create_namespace 'live_tests'
 
 local attach_to_buffer = function(bufnr, command)
