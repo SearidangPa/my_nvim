@@ -139,10 +139,14 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   for testName, _ in pairs(testsInCurrBuf) do
     concatTestName = concatTestName .. testName .. '|'
   end
-  -- remove the last |
-  concatTestName = concatTestName:sub(1, -2)
+  concatTestName = concatTestName:sub(1, -2) -- remove the last |
 
   local command = { 'go', 'test', '-json', '-v', '-run', string.format('%s', concatTestName) }
+  if vim.fn.has 'win32' == 1 then
+    table.insert(command, 1, 'C:\\Program Files\\Git\\bin\\bash.exe')
+    table.insert(command, 2, '-c')
+  end
+
   print(string.format('Running: %s', table.concat(command, ' ')))
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end, {})
