@@ -43,7 +43,6 @@ local attach_to_buffer = function(bufnr, command)
   local add_golang_test = function(entry)
     local testLine = testsCurrBuf[entry.Test]
     if not testLine then
-      print('Test not found: ' .. entry.Test)
       testLine = 0
     end
 
@@ -62,7 +61,6 @@ local attach_to_buffer = function(bufnr, command)
   local mark_success = function(entry)
     local test = state.tests[make_key(entry)]
     if not test then
-      print('Test not found for entry: ' .. vim.inspect(entry))
       return
     end
     test.success = entry.Action == 'pass'
@@ -70,7 +68,12 @@ local attach_to_buffer = function(bufnr, command)
 
   local virtualText = { '✅' }
   local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
-
+  local ignored_actions = {
+    pause = true,
+    cont = true,
+    start = true,
+    skip = true,
+  }
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
@@ -86,43 +89,50 @@ local attach_to_buffer = function(bufnr, command)
             if line == '' then
               goto continue
             end
-            print('line: ' .. line)
-
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
 
+            if ignored_actions[decoded.Action] then
+              goto continue
+            end
+
             if decoded.Action == 'run' then
               add_golang_test(decoded)
-            elseif decoded.Action == 'output' then
-              if not decoded.Test then
-                goto continue
-              end
+              goto continue
+            end
 
-              print(decoded.Output)
-              add_golang_output(decoded)
-            elseif decoded.Action == 'pass' or decoded.Action == 'fail' then
+            if decoded.Action == 'output' then
+              if decoded.Test then
+                add_golang_output(decoded)
+              else
+                print('output without test: ' .. line)
+              end
+              goto continue
+            end
+
+            if decoded.Action == 'pass' or decoded.Action == 'fail' then
               mark_success(decoded)
               local test = state.tests[make_key(decoded)]
               if not test then
-                print('Test not found for entry: ' .. vim.inspect(decoded))
+                print('Failed to find test: ' .. line)
                 goto continue
               end
 
-              if test.success then
-                -- from start to end of the test line
-                local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
-                if #existing_extmarks < 1 then
-                  vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
-                    virt_text = { virtualText },
-                  })
-                end
+              if not test.success then
+                goto continue
               end
-            elseif decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' or decoded.Action == 'skip' then
-              -- Do nothing
-            else
-              print('Failed to handle: ' .. line)
+
+              local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
+              if #existing_extmarks < 1 then
+                vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
+                  virt_text = { virtualText },
+                })
+              end
+
+              goto continue
             end
 
+            print('Failed to handle: ' .. line)
             ::continue::
           end
         end,
