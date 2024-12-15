@@ -9,6 +9,17 @@ local attach_to_buffer = function(bufnr, command)
 
   local testsCurrBuf = Find_all_tests(bufnr)
 
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestDiag', function()
+    vim.cmd.new()
+    for _, test in pairs(state.tests) do
+      if test.success == false then
+        local currentBuf = vim.api.nvim_get_current_buf()
+        local num_lines = vim.api.nvim_buf_line_count(currentBuf)
+        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
+      end
+    end
+  end, {})
+
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestLineDiag', function()
     local testLine, _ = GetEnclosingFunctionName()
     testLine = testLine - 1
