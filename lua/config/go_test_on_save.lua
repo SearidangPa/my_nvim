@@ -33,14 +33,23 @@ local attach_to_buffer = function(bufnr, command)
 
   local make_key = function(entry)
     assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
+    if not entry.Test then
+      return entry.Package
+    end
     assert(entry.Test, 'Must have test name' .. vim.inspect(entry))
     return string.format('%s/%s', entry.Package, entry.Test)
   end
 
   local add_golang_test = function(entry)
+    local testLine = testsCurrBuf[entry.Test]
+    if not testLine then
+      print('Test not found: ' .. entry.Test)
+      testLine = 0
+    end
+
     state.tests[make_key(entry)] = {
       name = entry.Test,
-      line = testsCurrBuf[entry.Test] - 1,
+      line = testLine - 1,
       output = {},
     }
   end
@@ -51,7 +60,12 @@ local attach_to_buffer = function(bufnr, command)
   end
 
   local mark_success = function(entry)
-    state.tests[make_key(entry)].success = entry.Action == 'pass'
+    local test = state.tests[make_key(entry)]
+    if not test then
+      print('Test not found for entry: ' .. vim.inspect(entry))
+      return
+    end
+    test.success = entry.Action == 'pass'
   end
 
   local virtualText = { '✅' }
@@ -72,6 +86,7 @@ local attach_to_buffer = function(bufnr, command)
             if line == '' then
               goto continue
             end
+            print('line: ' .. line)
 
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
@@ -80,7 +95,7 @@ local attach_to_buffer = function(bufnr, command)
               add_golang_test(decoded)
             elseif decoded.Action == 'output' then
               if not decoded.Test then
-                return
+                goto continue
               end
 
               print(decoded.Output)
@@ -88,6 +103,10 @@ local attach_to_buffer = function(bufnr, command)
             elseif decoded.Action == 'pass' or decoded.Action == 'fail' then
               mark_success(decoded)
               local test = state.tests[make_key(decoded)]
+              if not test then
+                print('Test not found for entry: ' .. vim.inspect(decoded))
+                goto continue
+              end
 
               if test.success then
                 -- from start to end of the test line
@@ -98,7 +117,7 @@ local attach_to_buffer = function(bufnr, command)
                   })
                 end
               end
-            elseif decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' then
+            elseif decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' or decoded.Action == 'skip' then
               -- Do nothing
             else
               print('Failed to handle: ' .. line)
@@ -109,6 +128,7 @@ local attach_to_buffer = function(bufnr, command)
         end,
 
         on_exit = function()
+          print 'Tests finished'
           local failed = {}
           for _, test in pairs(state.tests) do
             if test.line then
@@ -144,13 +164,13 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
 
   local command
   if vim.fn.has 'win32' == 1 then
-    command = { 'go', 'test', '.\\...', '-json', '-v', '-run', string.format('"%s"', concatTestName) }
+    -- command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('"%s"', concatTestName) }
+    command = { 'go', 'test', './...', '-json', '-v' }
   else
     command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   end
 
-  print(string.format('Command: %s', table.concat(command, ' ')))
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
+  attach_to_buffer(bufnr, command)
 end, {})
 
 vim.keymap.set('n', '<leader>xa', ':GoTestOnSave<CR>', { desc = 'Auto-run tests on save' })
