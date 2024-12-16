@@ -32,19 +32,13 @@ return {
           },
         },
         lualine_x = {},
-        lualine_y = {
-          -- {
-          --   'harpoon2',
-          --   indicators = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' },
-          -- },
-        },
+        lualine_y = {},
         lualine_z = {
           {
             'harpoon2',
             indicators = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' },
           },
         },
-        -- lualine_z = { { 'tabs' } },
       },
     }
   end,
