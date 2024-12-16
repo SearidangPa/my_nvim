@@ -1,6 +1,6 @@
-function Create_floating_window(content)
+function Create_floating_window(content, start_line, end_line)
   local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
+  vim.api.nvim_buf_set_lines(buf, start_line, end_line, false, content)
 
   local width = vim.opt.columns:get()
   local height = vim.opt.lines:get()

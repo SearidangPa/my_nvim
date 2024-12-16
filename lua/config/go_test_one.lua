@@ -1,9 +1,19 @@
 require 'config.find_test_line'
 require 'config.floating_window'
 local ns = vim.api.nvim_create_namespace 'live_test'
-
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
+
+function Go_test_Output(state)
+  assert(state.tests, vim.inspect(state))
+  ---@diagnostic disable-next-line: redefined-local
+  local testLine, _ = GetEnclosingFunctionName()
+  for _, test in pairs(state.tests) do
+    if test.line == testLine - 1 then
+      Create_floating_window(test.output, 0, -1)
+    end
+  end
+end
 
 function GetEnclosingFunctionName()
   local node = ts_utils.get_node_at_cursor()
@@ -34,14 +44,7 @@ local attach_to_buffer = function(bufnr, command, testLine)
   }
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestOutput', function()
-    assert(state.tests, vim.inspect(state))
-    ---@diagnostic disable-next-line: redefined-local
-    local testLine, _ = GetEnclosingFunctionName()
-    for _, test in pairs(state.tests) do
-      if test.line == testLine - 1 then
-        Create_floating_window(test.output)
-      end
-    end
+    Go_test_Output(state)
   end, {})
 
   local make_key = function(entry)
