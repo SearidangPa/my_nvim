@@ -123,13 +123,15 @@ local attach_to_buffer = function(bufnr, command)
               end
               local current_time = os.date '%H:%M:%S'
               local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
-              if #existing_extmarks < 1 then
-                vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
-                  virt_text = {
-                    { string.format('%s %s', '✅', current_time) },
-                  },
-                })
+              for _, extmark in ipairs(existing_extmarks) do
+                vim.api.nvim_buf_del_extmark(state.bufnr, ns, extmark[1][1])
               end
+
+              vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
+                virt_text = {
+                  { string.format('%s %s', '✅', current_time) },
+                },
+              })
 
               goto continue
             end
