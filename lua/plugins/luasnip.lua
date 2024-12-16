@@ -68,7 +68,6 @@ M = {
     end, { silent = true })
 
     require 'config.go_snip'
-    require 'config.nearest_func'
   end,
 }
 

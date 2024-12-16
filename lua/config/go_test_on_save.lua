@@ -1,6 +1,7 @@
 require 'config.find_test_line'
 require 'config.floating_window'
-local ns = vim.api.nvim_create_namespace 'live_tests'
+require 'config.go_test_one'
+local ns = vim.api.nvim_create_namespace 'live_tests_all'
 
 local attach_to_buffer = function(bufnr, command)
   local state = {
@@ -67,7 +68,7 @@ local attach_to_buffer = function(bufnr, command)
     test.success = entry.Action == 'pass'
   end
 
-  local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
+  local group = vim.api.nvim_create_augroup('all_tests_automagic', { clear = true })
   local ignored_actions = {
     pause = true,
     cont = true,
@@ -182,10 +183,10 @@ vim.keymap.set('n', '<leader>xa', ':GoTestAllOnSave<CR>', { desc = 'Auto-run tes
 vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
 
 -- unattach the autocommand
-vim.keymap.set('n', '<leader>cg', function()
-  vim.api.nvim_del_augroup_by_name 'teej-automagic'
+vim.api.nvim_create_user_command('StopGoTestAllOnSave', function()
+  vim.api.nvim_del_augroup_by_name 'all_tests_automagic'
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
   vim.diagnostic.reset()
-end, { desc = '[C]lear [G]roup, clear ext_mark and reset diagnostic' })
+end, {})
 
 return {}
