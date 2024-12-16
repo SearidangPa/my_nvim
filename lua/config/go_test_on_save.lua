@@ -8,8 +8,6 @@ local function Go_tests_Output(state, filter_for_sucess)
     if test.success == filter_for_sucess then
       local num_lines = vim.api.nvim_buf_line_count(buf)
       vim.api.nvim_buf_set_lines(buf, num_lines, -1, false, test.output)
-      num_lines = vim.api.nvim_buf_line_count(buf)
-      vim.api.nvim_buf_set_lines(buf, num_lines, num_lines, false, { '' })
     end
   end
 end
