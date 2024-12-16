@@ -27,17 +27,16 @@ function GetEnclosingFunctionName()
   return nil
 end
 
-vim.keymap.set('n', '<leader>fn', function()
+vim.api.nvim_create_user_command('PrintEnclosingFunctionName', function()
   local startLine, func_name = GetEnclosingFunctionName()
   print(string.format('Enclosing function name: %s at line %d', func_name, startLine))
-end, { desc = 'Print the enclosing function name' })
-local attach_to_buffer = function(bufnr, command)
+end, {})
+
+local attach_to_buffer = function(bufnr, command, testLine)
   local state = {
     bufnr = bufnr,
     tests = {},
   }
-
-  local testsCurrBuf = Find_all_tests(bufnr)
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestDiag', function()
     vim.cmd.new()
@@ -51,7 +50,6 @@ local attach_to_buffer = function(bufnr, command)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestLineDiag', function()
-    local testLine, _ = GetEnclosingFunctionName()
     testLine = testLine - 1
     for _, test in pairs(state.tests) do
       if test.line == testLine then
@@ -71,11 +69,6 @@ local attach_to_buffer = function(bufnr, command)
   end
 
   local add_golang_test = function(entry)
-    local testLine = testsCurrBuf[entry.Test]
-    if not testLine then
-      testLine = 0
-    end
-
     state.tests[make_key(entry)] = {
       name = entry.Test,
       line = testLine - 1,
@@ -103,6 +96,7 @@ local attach_to_buffer = function(bufnr, command)
     start = true,
     skip = true,
   }
+
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
@@ -197,14 +191,19 @@ end
 
 vim.api.nvim_create_user_command('GoTestOnSave', function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  local concatTestName = ''
-  for testName, _ in pairs(testsInCurrBuf) do
-    concatTestName = concatTestName .. testName .. '|'
+  local line, testName = GetEnclosingFunctionName()
+  if not testName then
+    print 'Not in a function'
+    return
   end
-  concatTestName = concatTestName:sub(1, -2) -- remove the last |
-  local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  attach_to_buffer(bufnr, command)
+
+  if not string.match(testName, 'Test_') then
+    print 'Not a test function'
+    return
+  end
+
+  local command = { 'go', 'test', './...', '-json', '-v', '-run', testName }
+  attach_to_buffer(bufnr, command, line)
 end, {})
 
 -- unattach the autocommand
