@@ -99,6 +99,7 @@ local attach_to_buffer = function(bufnr, command)
             end
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
+            print(vim.inspect(decoded))
 
             if ignored_actions[decoded.Action] then
               goto continue

@@ -133,6 +133,6 @@ return {
       },
     }
 
-    require 'config.go_test_on_save'
+    require 'config.go_test_all_on_save'
   end,
 }
