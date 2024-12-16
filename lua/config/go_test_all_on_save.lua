@@ -130,7 +130,6 @@ local attach_to_buffer = function(bufnr, command)
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
-                print('Deleting extmark: ' .. test_extmark_id)
                 vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
               end
 
