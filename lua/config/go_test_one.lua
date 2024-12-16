@@ -5,11 +5,9 @@ local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 
 function Go_test_Output(state)
-  assert(state.tests, vim.inspect(state))
-  ---@diagnostic disable-next-line: redefined-local
-  local testLine, _ = GetEnclosingFunctionName()
+  local _, testName = GetEnclosingFunctionName()
   for _, test in pairs(state.tests) do
-    if test.line == testLine - 1 then
+    if test.name == testName then
       Create_floating_window(test.output, 0, -1)
     end
   end
