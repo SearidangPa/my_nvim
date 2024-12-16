@@ -111,15 +111,13 @@ local attach_to_buffer = function(bufnr, command)
               goto continue
             end
 
-            if decoded.Action == 'pass' or decoded.Action == 'fail' then
+            local test = state.tests[make_key(decoded)]
+            if not test then
+              goto continue
+            end
+
+            if decoded.Action == 'pass' then
               mark_success(decoded)
-              local test = state.tests[make_key(decoded)]
-              if not test then
-                goto continue
-              end
-              if not test.success then
-                goto continue
-              end
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
@@ -132,6 +130,13 @@ local attach_to_buffer = function(bufnr, command)
                   { string.format('%s %s', '✅', current_time) },
                 },
               })
+            end
+
+            if decoded.Action == 'fail' then
+              local test_extmark_id = extmark_ids[test.name]
+              if test_extmark_id then
+                vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
+              end
             end
 
             print('Failed to handle: ' .. line)
@@ -176,18 +181,6 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
   local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  attach_to_buffer(bufnr, command)
-end, {})
-
-vim.api.nvim_create_user_command('GoTestAllOnSaveNotParallel', function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  local concatTestName = ''
-  for testName, _ in pairs(testsInCurrBuf) do
-    concatTestName = concatTestName .. testName .. '|'
-  end
-  concatTestName = concatTestName:sub(1, -2) -- remove the last |
-  local command = { 'go', 'test', './...', '-json', '-parallel=1', '-v', '-run', string.format('%s', concatTestName) }
   attach_to_buffer(bufnr, command)
 end, {})
 
