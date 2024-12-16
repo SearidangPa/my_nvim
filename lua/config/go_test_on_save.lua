@@ -121,7 +121,6 @@ local attach_to_buffer = function(bufnr, command)
               end
 
               local current_time = os.date '%H:%M:%S'
-              ns = vim.api.nvim_create_namespace 'live_tests_all'
               vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
