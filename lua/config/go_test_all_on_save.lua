@@ -61,14 +61,7 @@ local attach_to_buffer = function(bufnr, command)
   local add_golang_output = function(entry)
     assert(state.tests, vim.inspect(state))
     local state_entry = state.tests[make_key(entry)]
-    if not state_entry then
-      for k, v in pairs(state.tests) do
-        table.insert(v.output, vim.trim(entry.Output))
-        print(k, v)
-      end
-      return
-    end
-    table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
+    table.insert(state_entry.output, vim.trim(entry.Output))
   end
 
   local mark_success = function(entry)
@@ -104,8 +97,8 @@ local attach_to_buffer = function(bufnr, command)
             end
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
-            local lines = vim.split(vim.trim(vim.inspect(decoded)), '\n', {})
-            vim.list_extend(state.debug_output, lines)
+            -- local lines = vim.split(vim.trim(vim.inspect(decoded)), '\n', {})
+            -- vim.list_extend(state.debug_output, lines)
 
             if ignored_actions[decoded.Action] then
               goto continue
