@@ -43,9 +43,7 @@ local attach_to_buffer = function(bufnr, command)
   end
 
   local add_golang_test = function(entry)
-    local testsCurrBuf = Find_test_line_by_name(bufnr, entry.Test)
-    assert(testsCurrBuf, 'Failed to find test: ' .. entry.Test)
-    local testLine = testsCurrBuf[entry.Test]
+    local testLine = Find_test_line_by_name(bufnr, entry.Test)
     if not testLine then
       testLine = 0
     end
@@ -122,7 +120,7 @@ local attach_to_buffer = function(bufnr, command)
               end
 
               local current_time = os.date '%H:%M:%S'
-              vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
+              vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, -1, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
                 },
