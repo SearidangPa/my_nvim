@@ -1,6 +1,6 @@
 require 'config.find_test_line'
 require 'config.floating_window'
-local ns = vim.api.nvim_create_namespace 'live_tests'
+local ns = vim.api.nvim_create_namespace 'live_test'
 
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
@@ -27,34 +27,19 @@ function GetEnclosingFunctionName()
   return nil
 end
 
-vim.api.nvim_create_user_command('PrintEnclosingFunctionName', function()
-  local startLine, func_name = GetEnclosingFunctionName()
-  print(string.format('Enclosing function name: %s at line %d', func_name, startLine))
-end, {})
-
 local attach_to_buffer = function(bufnr, command, testLine)
   local state = {
     bufnr = bufnr,
     tests = {},
   }
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestDiag', function()
-    vim.cmd.new()
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestOutput', function()
+    assert(state.tests, vim.inspect(state))
+    ---@diagnostic disable-next-line: redefined-local
+    local testLine, _ = GetEnclosingFunctionName()
     for _, test in pairs(state.tests) do
-      if test.success == false then
-        local currentBuf = vim.api.nvim_get_current_buf()
-        local num_lines = vim.api.nvim_buf_line_count(currentBuf)
-        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
-      end
-    end
-  end, {})
-
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestLineDiag', function()
-    testLine = testLine - 1
-    for _, test in pairs(state.tests) do
-      if test.line == testLine then
-        vim.cmd.new()
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
+      if test.line == testLine - 1 then
+        Create_floating_window(test.output)
       end
     end
   end, {})

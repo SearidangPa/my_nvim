@@ -25,13 +25,13 @@ local attach_to_buffer = function(bufnr, command)
     end
   end, {})
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestFailedOutput', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestOutput', function()
+    assert(state.tests, vim.inspect(state))
+    ---@diagnostic disable-next-line: redefined-local
     local testLine, _ = GetEnclosingFunctionName()
-    testLine = testLine - 1
     for _, test in pairs(state.tests) do
-      if test.line == testLine then
-        vim.cmd.new()
-        vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
+      if test.line == testLine - 1 then
+        Create_floating_window(test.output)
       end
     end
   end, {})

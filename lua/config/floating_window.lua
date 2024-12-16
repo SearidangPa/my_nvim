@@ -1,13 +1,5 @@
-local function create_floating_window(content)
+function Create_floating_window(content)
   local buf = vim.api.nvim_create_buf(false, true)
-  local testsCurrBuf = Find_all_tests(vim.api.nvim_get_current_buf())
-  local testNames = ''
-  for testName, line in pairs(testsCurrBuf) do
-    testNames = testNames .. string.format('test name: %s, line: %d', testName, line)
-  end
-
-  table.insert(content, testNames)
-
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
 
   local width = vim.opt.columns:get()
@@ -31,7 +23,3 @@ local function create_floating_window(content)
 
   return win, buf
 end
-
-vim.api.nvim_create_user_command('CreateFloatingWindow', function()
-  create_floating_window { 'Custom Floating Window', 'More Text Here', 'It works!' }
-end, {})
