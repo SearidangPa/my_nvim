@@ -1,7 +1,6 @@
 require 'config.find_test_line'
 require 'config.floating_window'
 require 'config.go_test_one'
-local ns = vim.api.nvim_create_namespace 'live_tests_all'
 
 local function Go_tests_Output(state, filter_for_sucess)
   local buf = Create_floating_window({}, 0, -1)
@@ -117,16 +116,12 @@ local attach_to_buffer = function(bufnr, command)
               if not test then
                 goto continue
               end
-
               if not test.success then
                 goto continue
               end
-              local current_time = os.date '%H:%M:%S'
-              local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
-              for _, extmark in ipairs(existing_extmarks) do
-                vim.api.nvim_buf_del_extmark(state.bufnr, ns, extmark[1][1])
-              end
 
+              local current_time = os.date '%H:%M:%S'
+              local ns = vim.api.nvim_create_namespace 'live_tests_all'
               vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
