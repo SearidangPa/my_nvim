@@ -26,12 +26,13 @@ local attach_to_buffer = function(bufnr, command)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsSuccessOutput', function()
-    vim.cmd.new()
+    local buf = Create_floating_window({}, 0, -1)
     for _, test in pairs(state.tests) do
       if test.success == true then
-        local currentBuf = vim.api.nvim_get_current_buf()
-        local num_lines = vim.api.nvim_buf_line_count(currentBuf)
-        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
+        local num_lines = vim.api.nvim_buf_line_count(buf)
+        vim.api.nvim_buf_set_lines(buf, num_lines, -1, false, test.output)
+        num_lines = vim.api.nvim_buf_line_count(buf)
+        vim.api.nvim_buf_set_lines(buf, num_lines, num_lines, false, { '' })
       end
     end
   end, {})

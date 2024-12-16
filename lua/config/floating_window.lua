@@ -4,14 +4,13 @@ function Create_floating_window(content, start_line, end_line)
 
   local width = vim.opt.columns:get()
   local height = vim.opt.lines:get()
-  print(width, height)
 
   local win_height = 60
   local win_width = 130
   local row = math.floor((height - win_height) / 2)
   local col = math.floor((width - win_width) / 2)
 
-  local win = vim.api.nvim_open_win(buf, true, {
+  local _ = vim.api.nvim_open_win(buf, true, {
     relative = 'editor',
     width = win_width,
     height = win_height,
@@ -21,5 +20,5 @@ function Create_floating_window(content, start_line, end_line)
     border = 'rounded',
   })
 
-  return win, buf
+  return buf
 end
