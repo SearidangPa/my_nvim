@@ -20,8 +20,6 @@ local attach_to_buffer = function(bufnr, command)
     tests = {},
   }
 
-  local testsCurrBuf = Find_all_tests(bufnr)
-
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllFailedOutput', function()
     Go_tests_Output(state, false)
   end, {})
@@ -44,6 +42,7 @@ local attach_to_buffer = function(bufnr, command)
   end
 
   local add_golang_test = function(entry)
+    local testsCurrBuf = Find_all_tests(bufnr)
     local testLine = testsCurrBuf[entry.Test]
     if not testLine then
       testLine = 0
