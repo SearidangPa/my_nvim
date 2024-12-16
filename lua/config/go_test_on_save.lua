@@ -115,7 +115,6 @@ local attach_to_buffer = function(bufnr, command)
               mark_success(decoded)
               local test = state.tests[make_key(decoded)]
               if not test then
-                print('Failed to find test: ' .. line)
                 goto continue
               end
 
@@ -123,7 +122,6 @@ local attach_to_buffer = function(bufnr, command)
                 goto continue
               end
               local current_time = os.date '%H:%M:%S'
-              print('Current time:', current_time)
               local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
               if #existing_extmarks < 1 then
                 vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
