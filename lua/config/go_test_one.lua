@@ -202,6 +202,8 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
     return
   end
 
+  print('Attaching test: ' .. testName)
+
   local command = { 'go', 'test', './...', '-json', '-v', '-run', testName }
   attach_to_buffer(bufnr, command, line)
 end, {})
