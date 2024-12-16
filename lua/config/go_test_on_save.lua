@@ -126,7 +126,7 @@ local attach_to_buffer = function(bufnr, command)
               if #existing_extmarks < 1 then
                 vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
                   virt_text = {
-                    { string.format('%s %s', '✔', current_time) },
+                    { string.format('%s %s', '✅', current_time) },
                   },
                 })
               end
