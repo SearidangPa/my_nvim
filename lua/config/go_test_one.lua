@@ -85,7 +85,7 @@ local attach_to_buffer = function(bufnr, command, testLine)
     skip = true,
   }
 
-  local extmark_id, extmark_line, extmark_col = -1, -1, -1
+  local extmark_id = -1
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
@@ -131,15 +131,11 @@ local attach_to_buffer = function(bufnr, command, testLine)
               end
 
               if extmark_id ~= -1 then
-                local extmark_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, extmark_id, {})
-                print(vim.inspect(extmark_pos))
-                extmark_line, extmark_col = extmark_pos[1], extmark_pos[2]
-              else
-                extmark_line, extmark_col = test.line, -1
+                vim.api.nvim_buf_del_extmark(bufnr, ns, extmark_id)
               end
 
               local current_time = os.date '%H:%M:%S'
-              extmark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, extmark_line, extmark_col, {
+              extmark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, -1, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
                 },

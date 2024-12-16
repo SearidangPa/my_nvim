@@ -13,6 +13,8 @@ local function Go_tests_Output(state, filter_for_sucess)
 end
 
 local ns = vim.api.nvim_create_namespace 'live_tests_all'
+local extmark_ids = {}
+
 local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
@@ -126,13 +128,18 @@ local attach_to_buffer = function(bufnr, command)
                 goto continue
               end
 
+              local test_extmark_id = extmark_ids[test.name]
+              if test_extmark_id then
+                print('Deleting extmark: ' .. test_extmark_id)
+                vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
+              end
+
               local current_time = os.date '%H:%M:%S'
-              vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, -1, {
+              extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, -1, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
                 },
               })
-              goto continue
             end
 
             print('Failed to handle: ' .. line)
