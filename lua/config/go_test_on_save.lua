@@ -11,24 +11,38 @@ local attach_to_buffer = function(bufnr, command)
 
   local testsCurrBuf = Find_all_tests(bufnr)
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestDiag', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllFailedOutput', function()
     vim.cmd.new()
     for _, test in pairs(state.tests) do
       if test.success == false then
         local currentBuf = vim.api.nvim_get_current_buf()
         local num_lines = vim.api.nvim_buf_line_count(currentBuf)
         vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
+
+        num_lines = vim.api.nvim_buf_line_count(currentBuf)
+        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, { '' })
       end
     end
   end, {})
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestLineDiag', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestFailedOutput', function()
     local testLine, _ = GetEnclosingFunctionName()
     testLine = testLine - 1
     for _, test in pairs(state.tests) do
       if test.line == testLine then
         vim.cmd.new()
         vim.api.nvim_buf_set_lines(vim.api.nvim_get_current_buf(), 0, -1, false, test.output)
+      end
+    end
+  end, {})
+
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsSuccessOutput', function()
+    vim.cmd.new()
+    for _, test in pairs(state.tests) do
+      if test.success == true then
+        local currentBuf = vim.api.nvim_get_current_buf()
+        local num_lines = vim.api.nvim_buf_line_count(currentBuf)
+        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
       end
     end
   end, {})
@@ -178,9 +192,6 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
   attach_to_buffer(bufnr, command)
 end, {})
-
-vim.keymap.set('n', '<leader>xa', ':GoTestAllOnSave<CR>', { desc = 'Auto-run tests on save' })
-vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
 
 -- unattach the autocommand
 vim.api.nvim_create_user_command('StopGoTestAllOnSave', function()

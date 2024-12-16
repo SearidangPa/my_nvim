@@ -207,20 +207,11 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_to_buffer(bufnr, command)
 end, {})
 
-vim.keymap.set('n', '<leader>xa', ':GoTestOnSave<CR>', { desc = 'Auto-run tests on save' })
-vim.keymap.set('n', '<leader>xd', ':GoTestLineDiag<CR>', { desc = 'Show test output for failed test' })
-
--- Clear namespace and reset diagnostic
-vim.keymap.set('n', '<leader>cn', function()
-  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
-  vim.diagnostic.reset()
-end, { desc = '[C]lear [N]amespace and reset diagnostic' })
-
 -- unattach the autocommand
-vim.keymap.set('n', '<leader>cg', function()
+vim.api.nvim_create_user_command('StopGoTestOnSave', function()
   vim.api.nvim_del_augroup_by_name 'teej-automagic'
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
   vim.diagnostic.reset()
-end, { desc = '[C]lear [G]roup, clear ext_mark and reset diagnostic' })
+end, {})
 
 return {}
