@@ -3,6 +3,18 @@ require 'config.floating_window'
 require 'config.go_test_one'
 local ns = vim.api.nvim_create_namespace 'live_tests_all'
 
+local function Go_tests_Output(state, filter_for_sucess)
+  local buf = Create_floating_window({}, 0, -1)
+  for _, test in pairs(state.tests) do
+    if test.success == filter_for_sucess then
+      local num_lines = vim.api.nvim_buf_line_count(buf)
+      vim.api.nvim_buf_set_lines(buf, num_lines, -1, false, test.output)
+      num_lines = vim.api.nvim_buf_line_count(buf)
+      vim.api.nvim_buf_set_lines(buf, num_lines, num_lines, false, { '' })
+    end
+  end
+end
+
 local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
@@ -12,17 +24,7 @@ local attach_to_buffer = function(bufnr, command)
   local testsCurrBuf = Find_all_tests(bufnr)
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllFailedOutput', function()
-    vim.cmd.new()
-    for _, test in pairs(state.tests) do
-      if test.success == false then
-        local currentBuf = vim.api.nvim_get_current_buf()
-        local num_lines = vim.api.nvim_buf_line_count(currentBuf)
-        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, test.output)
-
-        num_lines = vim.api.nvim_buf_line_count(currentBuf)
-        vim.api.nvim_buf_set_lines(currentBuf, num_lines, num_lines, false, { '' })
-      end
-    end
+    Go_tests_Output(state, false)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsSuccessOutput', function()
