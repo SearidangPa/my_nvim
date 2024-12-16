@@ -67,7 +67,6 @@ local attach_to_buffer = function(bufnr, command)
     test.success = entry.Action == 'pass'
   end
 
-  local virtualText = { '✅' }
   local group = vim.api.nvim_create_augroup('teej-automagic', { clear = true })
   local ignored_actions = {
     pause = true,
@@ -120,11 +119,14 @@ local attach_to_buffer = function(bufnr, command)
               if not test.success then
                 goto continue
               end
-
+              local current_time = os.date '%H:%M:%S'
+              print('Current time:', current_time)
               local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
               if #existing_extmarks < 1 then
                 vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
-                  virt_text = { virtualText },
+                  virt_text = {
+                    { string.format('%s %s', '✅', current_time) },
+                  },
                 })
               end
 
