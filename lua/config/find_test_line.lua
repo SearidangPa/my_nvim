@@ -8,13 +8,14 @@ local test_function_query_string = [[
       name: (identifier)
       type: (pointer_type
         (qualified_type
-          package: (package_identifier) 
+          package: (package_identifier) @_package_name
           name: (type_identifier) ))))
+  (#eq? @_package_name "testing")
   (#eq? @name "%s")
 )  
 ]]
 
-local find_test_line_by_name = function(go_bufnr, testName)
+Find_test_line_by_name = function(go_bufnr, testName)
   local formatted = string.format(test_function_query_string, testName)
   local query = vim.treesitter.query.parse('go', formatted)
   local parser = vim.treesitter.get_parser(go_bufnr, 'go', {})
@@ -30,23 +31,6 @@ local find_test_line_by_name = function(go_bufnr, testName)
     end
   end
 end
-
-vim.api.nvim_create_user_command('FindTestLine', function ()
-  local testName = vim.fn.input('Enter test name: ')
-  local go_bufnr = vim.api.nvim_get_current_buf()
-  local line = find_test_line_by_name(go_bufnr, testName)
-  if line then
-    vim.api.nvim_win_set_cursor(0, { line, 0 })
-  else
-    vim.notify('Test not found', vim.log.levels.ERROR)
-  end
-end, {})
-
-
-
---[[
- === All tests in the current buffer 
---]]
 
 local function_query = [[
 (function_declaration

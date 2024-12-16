@@ -14,6 +14,7 @@ local function Go_tests_Output(state, filter_for_sucess)
   end
 end
 
+local ns = vim.api.nvim_create_namespace 'live_tests_all'
 local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
@@ -42,7 +43,8 @@ local attach_to_buffer = function(bufnr, command)
   end
 
   local add_golang_test = function(entry)
-    local testsCurrBuf = Find_all_tests(bufnr)
+    local testsCurrBuf = Find_test_line_by_name(bufnr, entry.Test)
+    assert(testsCurrBuf, 'Failed to find test: ' .. entry.Test)
     local testLine = testsCurrBuf[entry.Test]
     if not testLine then
       testLine = 0
@@ -68,7 +70,6 @@ local attach_to_buffer = function(bufnr, command)
     test.success = entry.Action == 'pass'
   end
 
-  local ns = vim.api.nvim_create_namespace 'live_tests_all'
   local group = vim.api.nvim_create_augroup('all_tests_automagic', { clear = true })
   local ignored_actions = {
     pause = true,
