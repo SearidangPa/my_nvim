@@ -85,6 +85,7 @@ local attach_to_buffer = function(bufnr, command, testLine)
     skip = true,
   }
 
+  local extmark_id, extmark_line, extmark_col = -1, -1, -1
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
@@ -123,24 +124,27 @@ local attach_to_buffer = function(bufnr, command, testLine)
               mark_success(decoded)
               local test = state.tests[make_key(decoded)]
               if not test then
-                print('Failed to find test: ' .. line)
                 goto continue
               end
-
               if not test.success then
                 goto continue
               end
-              local current_time = os.date '%H:%M:%S'
-              print('Current time:', current_time)
-              local existing_extmarks = vim.api.nvim_buf_get_extmarks(state.bufnr, ns, { test.line, 0 }, { test.line, -1 }, {})
-              if #existing_extmarks < 1 then
-                vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
-                  virt_text = {
-                    { string.format('%s %s', '✔', current_time) },
-                  },
-                })
+
+              if extmark_id ~= -1 then
+                local extmark_pos = vim.api.nvim_buf_get_extmark_by_id(bufnr, ns, extmark_id, {})
+                print(vim.inspect(extmark_pos))
+                extmark_line, extmark_col = extmark_pos[1], extmark_pos[2]
+              else
+                extmark_line, extmark_col = test.line, -1
               end
 
+              local current_time = os.date '%H:%M:%S'
+              extmark_id = vim.api.nvim_buf_set_extmark(bufnr, ns, extmark_line, extmark_col, {
+                virt_text = {
+                  { string.format('%s %s', '✅', current_time) },
+                },
+                virt_lines_leftcol = true,
+              })
               goto continue
             end
 

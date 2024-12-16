@@ -55,6 +55,14 @@ local attach_to_buffer = function(bufnr, command)
 
   local add_golang_output = function(entry)
     assert(state.tests, vim.inspect(state))
+    local state_entry = state.tests[make_key(entry)]
+    if not state_entry then
+      for k, v in pairs(state.tests) do
+        table.insert(v.output, vim.trim(entry.Output))
+        print(k, v)
+      end
+      return
+    end
     table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
   end
 
@@ -73,6 +81,7 @@ local attach_to_buffer = function(bufnr, command)
     start = true,
     skip = true,
   }
+
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
@@ -123,7 +132,6 @@ local attach_to_buffer = function(bufnr, command)
                   { string.format('%s %s', '✅', current_time) },
                 },
               })
-
               goto continue
             end
 
