@@ -69,6 +69,7 @@ local attach_to_buffer = function(bufnr, command)
     test.success = entry.Action == 'pass'
   end
 
+  local ns = vim.api.nvim_create_namespace 'live_tests_all'
   local group = vim.api.nvim_create_augroup('all_tests_automagic', { clear = true })
   local ignored_actions = {
     pause = true,
@@ -121,7 +122,7 @@ local attach_to_buffer = function(bufnr, command)
               end
 
               local current_time = os.date '%H:%M:%S'
-              local ns = vim.api.nvim_create_namespace 'live_tests_all'
+              ns = vim.api.nvim_create_namespace 'live_tests_all'
               vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
