@@ -69,3 +69,5 @@ require('lazy').setup {
     'copilot.vim',
   },
 }
+
+require 'config.keymaps_shell'
