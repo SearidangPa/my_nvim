@@ -29,7 +29,6 @@ local attach_to_buffer = function(bufnr, command)
       if output then
         local trimmed_str = string.gsub(output, '\n', '')
         table.insert(content, trimmed_str)
-        -- content = vim.list_extend(content, trimmed_str)
       end
     end
     Create_floating_window(content, 0, -1)
