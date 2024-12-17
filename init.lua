@@ -73,5 +73,5 @@ require('lazy').setup {
 vim.schedule(function()
   require 'config.go_test_on_save'
   require 'config.nvim_term'
-  require 'config.hand_made_command'
+  require 'config.user_command'
 end)
