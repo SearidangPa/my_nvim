@@ -16,7 +16,12 @@ vim.api.nvim_create_autocmd('TermOpen', {
 local job_id = 0
 vim.keymap.set('n', '<leader>bt', function()
   vim.cmd.vnew()
-  vim.cmd.term()
+  if vim.fn.has 'win32' == 1 then
+    vim.cmd.term 'powershell.exe'
+  else
+    vim.cmd.term()
+  end
+
   vim.cmd.wincmd 'J'
   vim.api.nvim_win_set_height(0, 15)
   vim.api.nvim_feedkeys('i', 'n', true)
