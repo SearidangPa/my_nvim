@@ -67,7 +67,7 @@ local function get_enclosing_fn()
   return nil
 end
 
-local go_test_output = function(state)
+local go_test_one_output = function(state)
   local _, testName = get_enclosing_fn()
   for _, test in pairs(state.tests) do
     if test.name == testName then
@@ -76,7 +76,7 @@ local go_test_output = function(state)
   end
 end
 
-local function Go_tests_Output(state, filter_for_sucess)
+local function go_test_all_output(state, filter_for_sucess)
   local buf = Create_floating_window({}, 0, -1)
   for _, test in pairs(state.tests) do
     if test.success == filter_for_sucess then
@@ -106,18 +106,17 @@ local attach_to_buffer = function(bufnr, command, group, ns)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsFailedOutput', function()
-    Go_tests_Output(state, false)
+    go_test_all_output(state, false)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsSuccessOutput', function()
-    Go_tests_Output(state, true)
+    go_test_all_output(state, true)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestOutput', function()
-    go_test_output(state)
+    go_test_one_output(state)
   end, {})
 
-  -- unattach the autocommand
   vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
     vim.api.nvim_del_augroup_by_id(group)
     vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
