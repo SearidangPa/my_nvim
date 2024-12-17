@@ -1,6 +1,5 @@
 require 'config.find_test_line'
 require 'config.floating_window'
-require 'config.go_test_one'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 
