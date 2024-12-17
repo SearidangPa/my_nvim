@@ -252,4 +252,5 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
   attach_to_buffer(vim.api.nvim_get_current_buf(), command, ns_one, group_one)
 end, {})
+
 return {}
