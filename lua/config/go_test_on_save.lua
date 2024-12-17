@@ -181,6 +181,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
             end
 
             if decoded.Action == 'fail' then
+              mark_success(state, decoded)
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
                 vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
@@ -245,7 +246,6 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
     return
   end
   print('Attaching test: ' .. testName)
-
   local command = { 'go', 'test', './...', '-json', '-v', '-run', testName }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
