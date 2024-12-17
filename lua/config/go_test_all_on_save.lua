@@ -19,9 +19,23 @@ local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
     tests = {},
+    all_output = {},
   }
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllFailedOutput', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllOutput', function()
+    local content = {}
+    for _, decodedLine in ipairs(state.all_output) do
+      local output = decodedLine.Output
+      if output then
+        local trimmed_str = string.gsub(output, '\n', '')
+        table.insert(content, trimmed_str)
+        -- content = vim.list_extend(content, trimmed_str)
+      end
+    end
+    Create_floating_window(content, 0, -1)
+  end, {})
+
+  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsFailedOutput', function()
     Go_tests_Output(state, false)
   end, {})
 
@@ -94,6 +108,7 @@ local attach_to_buffer = function(bufnr, command)
             end
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
+            table.insert(state.all_output, decoded)
 
             if ignored_actions[decoded.Action] then
               goto continue
