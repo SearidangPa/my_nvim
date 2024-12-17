@@ -71,6 +71,7 @@ require('lazy').setup {
 }
 
 vim.schedule(function()
-  require 'config.go_test_all_on_save'
-  require 'config.keymaps_shell'
+  require 'lua.config.go_test_on_save'
+  require 'config.nvim_term'
+  require 'config.hand_made_command'
 end)
