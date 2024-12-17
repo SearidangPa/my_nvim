@@ -118,7 +118,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
   end, {})
 
   -- unattach the autocommand
-  vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestAllOnSave', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
     vim.api.nvim_del_augroup_by_id(group)
     vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
     vim.diagnostic.reset()
@@ -149,13 +149,13 @@ local attach_to_buffer = function(bufnr, command, group, ns)
             end
 
             if decoded.Action == 'run' then
-              add_golang_test(decoded)
+              add_golang_test(bufnr, state, decoded)
               goto continue
             end
 
             if decoded.Action == 'output' then
               if decoded.Test then
-                add_golang_output(decoded)
+                add_golang_output(state, decoded)
               end
               goto continue
             end
@@ -166,7 +166,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
             end
 
             if decoded.Action == 'pass' then
-              mark_success(decoded)
+              mark_success(state, decoded)
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
@@ -250,7 +250,7 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   local command = { 'go', 'test', './...', '-json', '-v', '-run', testName }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command, ns_one, group_one)
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)
 end, {})
 
 return {}
