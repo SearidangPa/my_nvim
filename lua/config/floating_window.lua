@@ -5,8 +5,8 @@ function Create_floating_window(content, start_line, end_line)
   local width = vim.opt.columns:get()
   local height = vim.opt.lines:get()
 
-  local win_height = 45
-  local win_width = 100
+  local win_height = 50
+  local win_width = 110
   local row = math.floor((height - win_height) / 2)
   local col = math.floor((width - win_width) / 2)
 

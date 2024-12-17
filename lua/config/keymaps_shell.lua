@@ -10,6 +10,8 @@ vim.api.nvim_create_user_command('ViewErrors', function()
 end, {})
 
 vim.api.nvim_create_user_command('Make', function()
+  output = {}
+  errors = {}
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
@@ -23,16 +25,15 @@ vim.api.nvim_create_user_command('Make', function()
 
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
+        print('stdout', line)
         table.insert(output, line)
       end
     end,
 
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
+        print('stderr', line)
         table.insert(errors, line)
-      end
-      if data and #data > 0 then
-        vim.list_extend(errors, data)
       end
     end,
 
