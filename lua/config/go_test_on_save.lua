@@ -30,7 +30,7 @@ local add_golang_output = function(state, entry)
   table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
 end
 
-local mark_success = function(state, entry)
+local mark_outcome = function(state, entry)
   local test = state.tests[make_key(entry)]
   if not test then
     return
@@ -165,7 +165,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
             end
 
             if decoded.Action == 'pass' then
-              mark_success(state, decoded)
+              mark_outcome(state, decoded)
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
@@ -181,7 +181,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
             end
 
             if decoded.Action == 'fail' then
-              mark_success(state, decoded)
+              mark_outcome(state, decoded)
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
                 vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
