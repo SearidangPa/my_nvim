@@ -132,7 +132,5 @@ return {
         end,
       },
     }
-
-    require 'config.go_test_all_on_save'
   end,
 }

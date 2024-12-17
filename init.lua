@@ -70,4 +70,7 @@ require('lazy').setup {
   },
 }
 
-require 'config.keymaps_shell'
+vim.schedule(function()
+  require 'config.go_test_all_on_save'
+  require 'config.keymaps_shell'
+end)

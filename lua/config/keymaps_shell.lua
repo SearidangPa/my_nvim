@@ -76,4 +76,5 @@ vim.keymap.set('n', '<leader>mc', ':messages clear<CR>', { desc = '[C]lear [m]es
 vim.keymap.set('n', '<leader>rl', function()
   vim.cmd 'LspRestart'
 end, { noremap = true, desc = '[R]estart [L]SP' })
+
 return {}
