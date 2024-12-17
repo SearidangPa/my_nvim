@@ -1,3 +1,4 @@
+local nore_and_silent = { noremap = true, silent = true }
 -- window navigation
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
@@ -24,4 +25,7 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', { noremap = true, silent = true, d
 -- exit mode
 vim.keymap.set('i', 'jj', '<Esc>', { noremap = true, silent = true, desc = 'Exit insert mode' })
 
+-- =================== Tabs ===================
+vim.keymap.set('n', '[t', ':tabprev<CR>', nore_and_silent)
+vim.keymap.set('n', ']t', ':tabnext<CR>', nore_and_silent)
 return {}
