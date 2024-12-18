@@ -79,6 +79,7 @@ return {
   'neovim/nvim-lspconfig',
   dependencies = {
     'folke/lazydev.nvim',
+    ft = "lua", -- only load for lua files
     opts = {
       library = {
         { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
@@ -89,7 +90,9 @@ return {
   config = function()
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
-    require('lspconfig').lua_ls.setup { capabilities = capabilities }
+    require('lspconfig').lua_ls.setup {
+      capabilities = capabilities
+    }
 
     attach_auto_import()
     lsp_attach_keybind()
