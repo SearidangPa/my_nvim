@@ -75,4 +75,5 @@ vim.schedule(function()
   require 'config.auto_command'
   require 'config.user_command'
   require 'config.keymaps'
+  require 'config.git_flow'
 end)
