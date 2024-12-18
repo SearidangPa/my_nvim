@@ -1,6 +1,3 @@
-vim.keymap.set('n', '<leader>th1', ':colorscheme kanagawa-wave<CR>', { noremap = true, silent = true, desc = 'change to kanagawa-wave' })
-vim.keymap.set('n', '<leader>th2', ':colorscheme github_light_default<CR>', { noremap = true, silent = true, desc = 'change to github_light_default' })
-
 return {
   {
     'rebelot/kanagawa.nvim',
