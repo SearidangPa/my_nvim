@@ -71,19 +71,21 @@ local function handle_choice(choice, on_success_cb)
 end
 
 local function git_commit_with_message_prompt(on_success_cb)
-  local options = {
+  local item_options = {
     'Save progress',
     'Done',
     'Custom input',
   }
 
-  vim.ui.select(options, {
+  local opts = {
     prompt = 'Select Commit Message:',
     format_item = function(item)
       commit_msg = item
       return item
     end,
-  }, function(choice)
+  }
+
+  vim.ui.select(item_options, opts, function(choice)
     handle_choice(choice, on_success_cb)
   end)
 end
