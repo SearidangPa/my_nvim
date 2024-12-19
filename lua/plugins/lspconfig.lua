@@ -30,7 +30,7 @@ local function lsp_attach_keybind()
         mode = mode or 'n'
         vim.keymap.set(mode, keys, func, {
           buffer = event.buf,
-          desc = 'LSP: ' .. desc
+          desc = 'LSP: ' .. desc,
         })
       end
 
@@ -81,11 +81,16 @@ end
 return {
   'neovim/nvim-lspconfig',
   dependencies = {
-    'folke/lazydev.nvim',
-    ft = "lua", -- only load for lua files
-    opts = {
-      library = {
-        { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+    { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
+    'williamboman/mason-lspconfig.nvim',
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    {
+      'folke/lazydev.nvim',
+      ft = 'lua', -- only load for lua files
+      opts = {
+        library = {
+          { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+        },
       },
     },
   },
@@ -93,11 +98,39 @@ return {
   config = function()
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
-    require('lspconfig').lua_ls.setup {
-      capabilities = capabilities
-    }
 
     attach_auto_import()
     lsp_attach_keybind()
+
+    local servers = {
+
+      lua_ls = {
+        settings = {
+          Lua = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+          },
+        },
+      },
+    }
+
+    require('mason').setup()
+
+    local ensure_installed = vim.tbl_keys(servers or {})
+    vim.list_extend(ensure_installed, {
+      'stylua', -- Used to format Lua code
+    })
+    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+    require('mason-lspconfig').setup {
+      handlers = {
+        function(server_name)
+          local server = servers[server_name] or {}
+          server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+          require('lspconfig')[server_name].setup(server)
+        end,
+      },
+    }
   end,
 }
