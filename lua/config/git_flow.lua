@@ -40,7 +40,7 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
-local some_nice_quote = {
+local some_nice_quotes = {
   '“What is hell? I maintain that it is the suffering of being unable to love.”',
   '“Beauty will save the world”',
   '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.” ',
@@ -57,8 +57,8 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
-  local random_index = math.random(1, #some_nice_quote)
-  local selected_quote = some_nice_quote[random_index]
+  local random_index = math.random(1, #some_nice_quotes)
+  local selected_quote = some_nice_quotes[random_index]
 
   local nui_input_options = {
     prompt = '> ',
