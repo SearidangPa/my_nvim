@@ -132,7 +132,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
     pattern = '*.go',
     callback = function()
       if job_id ~= -1 then
-        print(string.format('Stopping job: %d', job_id))
+        print('Stopping job: ' .. job_id)
         vim.fn.jobstop(job_id)
       end
 
@@ -202,7 +202,8 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          print(string.format('Test finished: %d', job_id))
+          print 'Test finished'
+          job_id = -1
           local failed = {}
           for _, test in pairs(state.tests) do
             if not test.line or test.success then
