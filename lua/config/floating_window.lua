@@ -1,24 +1,19 @@
-function Create_floating_window(content, start_line, end_line)
+function Create_floating_window()
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.9)
+  local row = math.floor((vim.o.columns - width) / 2)
+  local col = math.floor((vim.o.lines - height) / 2)
+
   local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, start_line, end_line, false, content)
-
-  local width = vim.opt.columns:get()
-  local height = vim.opt.lines:get()
-
-  local win_height = 50
-  local win_width = 110
-  local row = math.floor((height - win_height) / 2)
-  local col = math.floor((width - win_width) / 2)
-
-  local _ = vim.api.nvim_open_win(buf, true, {
+  local win = vim.api.nvim_open_win(buf, true, {
     relative = 'editor',
-    width = win_width,
-    height = win_height,
+    width = width,
+    height = height,
     row = row,
     col = col,
     style = 'minimal',
     border = 'rounded',
   })
 
-  return buf
+  return { buf = buf, win = win }
 end
