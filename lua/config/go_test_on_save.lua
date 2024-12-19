@@ -129,18 +129,20 @@ local attach_to_buffer = function(bufnr, command, group, ns)
 
   local extmark_ids = {}
   local job_id = -1
+  local make_notify = mini_notify.make_notify()
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
     callback = function()
       if job_id ~= -1 then
-        print('Stopping job: ' .. job_id)
+        make_notify(string.format('Stopping job: %d', job_id))
         vim.fn.jobstop(job_id)
         state = {
           bufnr = bufnr,
           tests = {},
           all_output = {},
         }
+        vim.diagnostic.reset()
       end
 
       job_id = vim.fn.jobstart(command, {
@@ -209,8 +211,8 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          vim.notify 'Test finished'
           job_id = -1
+          make_notify 'Test finished'
           local failed = {}
           for _, test in pairs(state.tests) do
             if not test.line or test.success then
