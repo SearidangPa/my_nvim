@@ -54,6 +54,8 @@ local toggle_floating_terminal = function()
     else
       vim.cmd.term()
     end
+
+    vim.api.nvim_feedkeys('i', 'n', true)
   end
 end
 
