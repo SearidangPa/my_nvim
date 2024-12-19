@@ -12,7 +12,7 @@ local test_function_query_string = [[
           name: (type_identifier) ))))
   (#eq? @_package_name "testing")
   (#eq? @name "%s")
-)  
+)
 ]]
 
 Find_test_line_by_name = function(go_bufnr, testName)
@@ -42,7 +42,7 @@ local function_query = [[
         (qualified_type
           package: (package_identifier) @_package_name
           name: (type_identifier) ))))
-)  
+)
 ]]
 
 Find_all_tests = function(go_bufnr)
@@ -69,12 +69,3 @@ Find_all_tests = function(go_bufnr)
   end
   return res
 end
-
-vim.keymap.set('n', '<leader>fat', function()
-  local testsCurrBuf = Find_all_tests(vim.api.nvim_get_current_buf())
-  for testName, line in pairs(testsCurrBuf) do
-    print(string.format('test name: %s, line: %d', testName, line))
-  end
-  vim.notify(vim.fn.execute 'messages')
-end, { desc = '[F]ind [A]ll [T]ests' })
-
