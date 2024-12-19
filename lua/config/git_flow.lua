@@ -29,9 +29,7 @@ end
 
 local popup_option = {
   position = { row = row, col = col },
-  size = {
-    width = 120,
-  },
+  size = { width = 120 },
   border = {
     style = 'rounded',
     text = {
@@ -39,9 +37,7 @@ local popup_option = {
       top_align = 'center',
     },
   },
-  win_options = {
-    winhighlight = 'Normal:Normal,FloatBorder:Normal',
-  },
+  win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
 local nui_input_options = {
