@@ -56,10 +56,6 @@ local input = nui_input({
   end,
 })
 
-input:on(event.BufLeave, function()
-  input:unmount() -- unmount component when cursor leaves buffer
-end)
-
 local function handle_choice(choice, on_success_cb)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
@@ -73,7 +69,15 @@ local function handle_choice(choice, on_success_cb)
 
   input:mount() -- mount/open the component
 
-  perform_commit(on_success_cb)
+  input:on(event.BufLeave, function()
+    input:unmount() -- unmount component when cursor leaves buffer
+    if commit_msg == '' then
+      make_notify 'Commit aborted: no message provided.'
+      return
+    end
+
+    perform_commit(on_success_cb)
+  end)
 
   -- vim.ui.input({ prompt = 'Enter Commit Message: ' }, function(input_msg)
   --   if not input_msg or vim.trim(input_msg) == '' then
