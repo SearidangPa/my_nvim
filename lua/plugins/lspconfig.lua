@@ -28,7 +28,10 @@ local function lsp_attach_keybind()
     callback = function(event)
       local map = function(keys, func, desc, mode)
         mode = mode or 'n'
-        vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+        vim.keymap.set(mode, keys, func, {
+          buffer = event.buf,
+          desc = 'LSP: ' .. desc
+        })
       end
 
       map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
