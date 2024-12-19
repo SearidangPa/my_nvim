@@ -1,3 +1,5 @@
+local mini_notify = require 'mini.notify'
+
 -- Function to handle 'git add .'
 local function git_add(on_success)
   vim.fn.jobstart('git add .', {
@@ -5,7 +7,7 @@ local function git_add(on_success)
       if exit_code == 0 then
         on_success()
       else
-        print 'Git add failed.'
+        mini_notify.add 'Git add all failed.'
       end
     end,
   })
@@ -16,7 +18,7 @@ local function git_commit(on_success)
   -- Prompt user for commit message
   local commit_msg = vim.fn.input 'Commit message: '
   if commit_msg == '' then
-    print 'Commit aborted: no message provided.'
+    mini_notify.add 'Commit aborted: no message provided.'
     return
   end
 
@@ -25,7 +27,7 @@ local function git_commit(on_success)
       if exit_code == 0 then
         on_success()
       else
-        print 'Git commit failed.'
+        mini_notify.add 'Git commit failed.'
       end
     end,
   })
@@ -36,9 +38,9 @@ local function git_push()
   vim.fn.jobstart('git push', {
     on_exit = function(_, exit_code)
       if exit_code == 0 then
-        print 'Git push successful!'
+        mini_notify.add 'Git push successful!'
       else
-        print 'Git push failed.'
+        mini_notify.add 'Git push failed.'
       end
     end,
   })
