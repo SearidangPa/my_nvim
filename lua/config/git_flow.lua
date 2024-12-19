@@ -27,16 +27,15 @@ local function perform_commit(on_success_cb)
   })
 end
 
-local popup_options = {
-  position = 'center',
+local popup_option = {
+  position = { row = row, col = col },
   size = {
-    width = width,
-    height = height,
+    width = 120,
   },
   border = {
     style = 'rounded',
     text = {
-      top = 'Git Flow',
+      top = '[My Lovely Commit Message]',
       top_align = 'center',
     },
   },
@@ -45,15 +44,13 @@ local popup_options = {
   },
 }
 
-local nui_input_options = {
+local input = nui_input(popup_option, {
   prompt = '> ',
   default_value = ' “What is hell? I maintain that it is the suffering of being unable to love.” - Fyodor Dostoevsky',
   on_submit = function(value)
     commit_msg = value
   end,
-}
-
-local input = nui_input(popup_options, nui_input_options)
+})
 
 local function handle_choice(choice, on_success_cb)
   if not choice then
