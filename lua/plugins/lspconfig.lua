@@ -103,6 +103,7 @@ return {
     lsp_attach_keybind()
 
     local servers = {
+      gopls = {},
       lua_ls = {
         settings = {
           Lua = {
