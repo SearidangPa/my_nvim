@@ -63,4 +63,46 @@ vim.keymap.set('n', '<leader>gcp', fugitive_git_workflow, {
   desc = 'Git workflow: add, commit, push',
 })
 
+-- [[
+-- Playing with the ui module
+-- ]]
+
+local function handle_custom_input(input_msg)
+  if not input_msg or vim.trim(input_msg) == '' then
+    make_notify 'Commit aborted: no message provided.'
+    return
+  end
+  make_notify('Custom input: ' .. input_msg)
+end
+
+local function play_prompt_input()
+  local options = {
+    'Improve log',
+    'Save progress',
+    'Done',
+    'Custom input',
+  }
+
+  vim.ui.select(options, {
+    prompt = 'Select Commit Message:',
+    format_item = function(item)
+      return item
+    end,
+  }, function(choice)
+    if not choice then
+      make_notify 'Commit aborted: no message selected.'
+      return
+    end
+
+    if choice == 'Custom input' then
+      vim.ui.input({
+        prompt = 'Enter Commit Message: ',
+      }, handle_custom_input)
+    else
+    end
+  end)
+end
+
+play_prompt_input()
+
 return {}
