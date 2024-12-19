@@ -126,11 +126,17 @@ local attach_to_buffer = function(bufnr, command, group, ns)
   end, {})
 
   local extmark_ids = {}
+  local job_id = -1
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
     callback = function()
-      vim.fn.jobstart(command, {
+      if job_id ~= -1 then
+        print(string.format('Stopping job: %d', job_id))
+        vim.fn.jobstop(job_id)
+      end
+
+      job_id = vim.fn.jobstart(command, {
         stdout_buffered = true,
         on_stdout = function(_, data)
           if not data then
@@ -196,7 +202,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          print 'Tests finished'
+          print(string.format('Test finished: %d', job_id))
           local failed = {}
           for _, test in pairs(state.tests) do
             if not test.line or test.success then
