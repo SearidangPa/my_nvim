@@ -48,7 +48,7 @@ local function perform_commit(on_success_cb)
   })
 end
 
-local function handle_choice(choice, on_success)
+local function handle_choice(choice, on_success_cb)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
     return
@@ -61,10 +61,10 @@ local function handle_choice(choice, on_success)
         return
       end
       commit_msg = input_msg
-      perform_commit(on_success)
+      perform_commit(on_success_cb)
     end)
   else
-    perform_commit(on_success)
+    perform_commit(on_success_cb)
   end
 end
 
