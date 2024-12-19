@@ -72,7 +72,6 @@ end
 
 local function git_commit_with_message_prompt(on_success_cb)
   local options = {
-    'Improve log',
     'Save progress',
     'Done',
     'Custom input',
