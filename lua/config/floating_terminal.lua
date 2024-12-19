@@ -9,6 +9,9 @@ local state = {
 local toggle_floating_terminal = function()
   if not vim.api.nvim_win_is_valid(state.floating.win) then
     state.floating.buf, state.floating.win = Create_floating_window { buf = state.floating.buf }
+    -- if vim.bo[state.floating.buf].buftype ~= "terminal" then
+    --   vim.cmd.term()
+    -- end
   else
     vim.api.nvim_win_hide(state.floating.win)
   end

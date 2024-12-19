@@ -1,10 +1,5 @@
-local default_opts = {
-  buf = -1,
-}
-
-
 function Create_floating_window(opts)
-  opts = opts or default_opts
+  opts = opts or {}
 
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
@@ -12,10 +7,10 @@ function Create_floating_window(opts)
   local col = math.floor((vim.o.lines - height))
 
   local buf = nil
-  if vim.api.nvim_buf_is_valid(opts.buf) then
-    buf = opts.buf
-  else
+  if not opts.floating then
     buf = vim.api.nvim_create_buf(false, true)
+  else
+    buf = opts.floating.buf
   end
 
 
