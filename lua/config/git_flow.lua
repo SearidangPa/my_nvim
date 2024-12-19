@@ -26,7 +26,7 @@ local function git_commit(on_success)
       if exit_code == 0 then
         on_success()
       else
-        make_notify 'Git commit failed.'
+        make_notify 'Git commit failed'
       end
     end,
   })
@@ -38,7 +38,7 @@ local function git_push()
       if exit_code == 0 then
         make_notify(string.format('Git push successful\n%s', commit_msg))
       else
-        make_notify 'Git push failed.'
+        make_notify 'Git push failed'
       end
     end,
   })
