@@ -134,6 +134,11 @@ local attach_to_buffer = function(bufnr, command, group, ns)
       if job_id ~= -1 then
         print('Stopping job: ' .. job_id)
         vim.fn.jobstop(job_id)
+        state = {
+          bufnr = bufnr,
+          tests = {},
+          all_output = {},
+        }
       end
 
       job_id = vim.fn.jobstart(command, {
@@ -202,7 +207,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          print 'Test finished'
+          vim.notify 'Test finished'
           job_id = -1
           local failed = {}
           for _, test in pairs(state.tests) do
