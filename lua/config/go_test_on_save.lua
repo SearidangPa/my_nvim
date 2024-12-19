@@ -71,18 +71,18 @@ local go_test_one_output = function(state)
   local _, testName = get_enclosing_fn()
   for _, test in pairs(state.tests) do
     if test.name == testName then
-      local res = Create_floating_window()
-      vim.api.nvim_buf_set_lines(res.buf, 0, 1, false, test.output)
+      local buf, _ = Create_floating_window()
+      vim.api.nvim_buf_set_lines(buf, 0, 1, false, test.output)
     end
   end
 end
 
 local function go_test_all_output(state, filter_for_sucess)
-  local res = Create_floating_window()
+  local buf, _ = Create_floating_window()
   for _, test in pairs(state.tests) do
     if test.success == filter_for_sucess then
-      local num_lines = vim.api.nvim_buf_line_count(res.buf)
-      vim.api.nvim_buf_set_lines(res.buf, num_lines, -1, false, test.output)
+      local num_lines = vim.api.nvim_buf_line_count(buf)
+      vim.api.nvim_buf_set_lines(buf, num_lines, -1, false, test.output)
     end
   end
 end
@@ -103,8 +103,8 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         table.insert(content, trimmed_str)
       end
     end
-    local res = Create_floating_window()
-    vim.api.nvim_buf_set_lines(res.buf, 0, -1, false, content)
+    local buf, _ = Create_floating_window()
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
   end, {})
 
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsFailedOutput', function()

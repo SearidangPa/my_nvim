@@ -52,13 +52,13 @@ vim.api.nvim_create_user_command('GoModTidy', function()
 end, {})
 
 vim.api.nvim_create_user_command('ViewOutput', function()
-  local res = Create_floating_window()
-  vim.api.nvim_buf_set_lines(res.buf, 0, -1, false, output)
+  local buf, _ = Create_floating_window()
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
 end, {})
 
 vim.api.nvim_create_user_command('ViewErrors', function()
-  local res = Create_floating_window()
-  vim.api.nvim_buf_set_lines(res.buf, 0, -1, false, errors)
+  local buf = Create_floating_window()
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, errors)
 end, {})
 
 vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>source % <CR>', { noremap = true, silent = true, desc = 'source %' })
