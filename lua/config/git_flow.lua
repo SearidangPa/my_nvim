@@ -37,7 +37,8 @@ local function git_push()
     on_exit = function(_, exit_code)
       if exit_code == 0 then
         make_notify(string.format(
-          [[Git push successful!\\nCommit: %s
+          [[Git push successful!
+          Commit: %s
           ]],
           commit_msg
         ))
