@@ -1,5 +1,14 @@
 local mini_notify = require 'mini.notify'
 
+local make_notify = mini_notify.make_notify {
+  ERROR = { duration = 5000, hl_group = 'DiagnosticError' },
+  WARN = { duration = 5000, hl_group = 'DiagnosticWarn' },
+  INFO = { duration = 100, hl_group = 'DiagnosticInfo' },
+  DEBUG = { duration = 0, hl_group = 'DiagnosticHint' },
+  TRACE = { duration = 0, hl_group = 'DiagnosticOk' },
+  OFF = { duration = 0, hl_group = 'MiniNotifyNormal' },
+}
+
 -- Function to handle 'git add .'
 local function git_add(on_success)
   vim.fn.jobstart('git add .', {
