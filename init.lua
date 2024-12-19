@@ -73,7 +73,7 @@ require('lazy').setup {
 vim.schedule(function()
   require 'config.go_test_on_save'
   require 'config.auto_command'
-  require 'config.user_command'
+  require 'config.auto_make'
   require 'config.keymaps'
   require 'config.git_flow'
   require 'config.term'
