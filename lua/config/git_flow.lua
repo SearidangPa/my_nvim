@@ -40,11 +40,10 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
-local Fyodor_Dostoevsky_quotes = {
+local some_nice_quote = {
   '“What is hell? I maintain that it is the suffering of being unable to love.”',
-  '“The soul is healed by being with children.”',
-  '“The mystery of human existence lies not in just staying alive, but in finding something to live for.”',
-  "“Above all, don't lie to yourself. The man who lies to himself and listens to his own lie comes to a point that he cannot distinguish the truth within him, or around him, and so loses all respect for himself and for others.”",
+  '“Beauty will save the world”',
+  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.” ',
 }
 
 local function handle_choice(choice, on_success_cb)
@@ -58,8 +57,8 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
-  local random_index = math.random(1, #Fyodor_Dostoevsky_quotes)
-  local selected_quote = Fyodor_Dostoevsky_quotes[random_index]
+  local random_index = math.random(1, #some_nice_quote)
+  local selected_quote = some_nice_quote[random_index]
 
   local nui_input_options = {
     prompt = '> ',
