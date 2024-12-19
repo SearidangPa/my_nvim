@@ -40,12 +40,11 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
-local nui_input_options = {
-  prompt = '> ',
-  default_value = ' “What is hell? I maintain that it is the suffering of being unable to love.” - Fyodor Dostoevsky',
-  on_submit = function(value)
-    commit_msg = value
-  end,
+local Fyodor_Dostoevsky_quotes = {
+  '“What is hell? I maintain that it is the suffering of being unable to love.”',
+  '“The soul is healed by being with children.”',
+  '“The mystery of human existence lies not in just staying alive, but in finding something to live for.”',
+  "“Above all, don't lie to yourself. The man who lies to himself and listens to his own lie comes to a point that he cannot distinguish the truth within him, or around him, and so loses all respect for himself and for others.”",
 }
 
 local function handle_choice(choice, on_success_cb)
@@ -58,6 +57,17 @@ local function handle_choice(choice, on_success_cb)
     perform_commit(on_success_cb)
     return
   end
+
+  local random_index = math.random(1, #Fyodor_Dostoevsky_quotes)
+  local selected_quote = Fyodor_Dostoevsky_quotes[random_index]
+
+  local nui_input_options = {
+    prompt = '> ',
+    default_value = selected_quote,
+    on_submit = function(value)
+      commit_msg = value
+    end,
+  }
 
   local input = nui_input(popup_option, nui_input_options)
   input:mount()
