@@ -76,5 +76,5 @@ vim.schedule(function()
   require 'config.user_command'
   require 'config.keymaps'
   require 'config.git_flow'
-  require 'config.floating_terminal'
+  require 'config.floating'
 end)
