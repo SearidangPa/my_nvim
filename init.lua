@@ -71,10 +71,18 @@ require('lazy').setup {
 }
 
 vim.schedule(function()
-  require 'config.go_test_on_save'
-  require 'config.highlight_yank'
-  require 'config.auto_make'
-  require 'config.keymaps'
-  require 'config.git_flow'
-  require 'config.term'
+  local stdpath = vim.fn.stdpath 'config'
+  local config_path
+  if vim.fn.has 'win32' == 1 then
+    config_path = stdpath .. '\\lua\\config'
+  else
+    config_path = stdpath .. '/lua/config'
+  end
+
+  --@diagnostic disable-next-line: param-type-mismatch
+  local files = vim.fn.globpath(config_path, '*.lua', true, true)
+  for _, file in ipairs(files) do
+    local filename = file:match("^.*/([^/\\]+)$")
+    require('config.' .. filename:match '(.+).lua')
+  end
 end)
