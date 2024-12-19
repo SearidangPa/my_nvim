@@ -2,9 +2,25 @@ require 'config.find_test_line'
 require 'config.term'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
-local mini_notify = require 'mini.notify'
 
-require('mini.notify').setup {}
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {
+  ERROR = { duration = 5000, hl_group = 'DiagnosticError' },
+  WARN = { duration = 5000, hl_group = 'DiagnosticWarn' },
+  INFO = { duration = 100, hl_group = 'DiagnosticInfo' },
+  DEBUG = { duration = 0, hl_group = 'DiagnosticHint' },
+  TRACE = { duration = 0, hl_group = 'DiagnosticOk' },
+  OFF = { duration = 0, hl_group = 'MiniNotifyNormal' },
+}
+
+local job_id = -1
+local ignored_actions = {
+  pause = true,
+  cont = true,
+  start = true,
+  skip = true,
+}
+
 local make_key = function(entry)
   assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
   if not entry.Test then
@@ -40,13 +56,6 @@ local mark_outcome = function(state, entry)
   test.success = entry.Action == 'pass'
 end
 
-local ignored_actions = {
-  pause = true,
-  cont = true,
-  start = true,
-  skip = true,
-}
-
 local function get_enclosing_fn()
   local node = ts_utils.get_node_at_cursor()
 
@@ -79,7 +88,7 @@ local go_test_one_output = function(state)
   end
 end
 
-local function go_test_all_output(state, filter_for_sucess)
+local go_test_all_output = function(state, filter_for_sucess)
   local buf, _ = Create_floating_window()
   for _, test in pairs(state.tests) do
     if test.success == filter_for_sucess then
@@ -89,13 +98,7 @@ local function go_test_all_output(state, filter_for_sucess)
   end
 end
 
-local attach_to_buffer = function(bufnr, command, group, ns)
-  local state = {
-    bufnr = bufnr,
-    tests = {},
-    all_output = {},
-  }
-
+local create_tests_user_command = function(bufnr, group, ns, state)
   vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllOutput', function()
     local content = {}
     for _, decodedLine in ipairs(state.all_output) do
@@ -126,24 +129,55 @@ local attach_to_buffer = function(bufnr, command, group, ns)
     vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
     vim.diagnostic.reset()
   end, {})
+end
+
+local on_exit_fn = function(state, bufnr, ns)
+  job_id = -1
+  make_notify 'Test finished'
+  local failed = {}
+  for _, test in pairs(state.tests) do
+    if not test.line or test.success then
+      goto continue
+    end
+
+    table.insert(failed, {
+      bufnr = bufnr,
+      lnum = test.line,
+      col = 0,
+      severity = vim.diagnostic.severity.ERROR,
+      source = 'go-test',
+      message = 'Test Failed',
+      user_data = {},
+    })
+
+    ::continue::
+  end
+
+  vim.diagnostic.set(ns, bufnr, failed, {})
+end
+
+local function clean_up_prev_job()
+  if job_id ~= -1 then
+    make_notify(string.format('Stopping job: %d', job_id))
+    vim.fn.jobstop(job_id)
+    vim.diagnostic.reset()
+  end
+end
+
+local attach_to_buffer = function(bufnr, command, group, ns)
+  local state = {
+    bufnr = bufnr,
+    tests = {},
+    all_output = {},
+  }
+  create_tests_user_command(bufnr, group, ns, state)
 
   local extmark_ids = {}
-  local job_id = -1
-  local make_notify = mini_notify.make_notify()
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = group,
     pattern = '*.go',
     callback = function()
-      if job_id ~= -1 then
-        make_notify(string.format('Stopping job: %d', job_id))
-        vim.fn.jobstop(job_id)
-        state = {
-          bufnr = bufnr,
-          tests = {},
-          all_output = {},
-        }
-        vim.diagnostic.reset()
-      end
+      clean_up_prev_job()
 
       job_id = vim.fn.jobstart(command, {
         stdout_buffered = true,
@@ -213,28 +247,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          job_id = -1
-          make_notify 'Test finished'
-          local failed = {}
-          for _, test in pairs(state.tests) do
-            if not test.line or test.success then
-              goto continue
-            end
-
-            table.insert(failed, {
-              bufnr = bufnr,
-              lnum = test.line,
-              col = 0,
-              severity = vim.diagnostic.severity.ERROR,
-              source = 'go-test',
-              message = 'Test Failed',
-              user_data = {},
-            })
-
-            ::continue::
-          end
-
-          vim.diagnostic.set(ns, bufnr, failed, {})
+          on_exit_fn(state, bufnr, ns)
         end,
       })
     end,

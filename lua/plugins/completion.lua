@@ -39,18 +39,6 @@ return { -- Autocompletion
           local res = accept(vim.api.nvim_replace_termcodes('<M-C-Right>', true, true, false))
           vim.api.nvim_feedkeys(res, 'n', false)
         end),
-
-        ['<C-n>'] = cmp.mapping.select_next_item(),
-        ['<C-p>'] = cmp.mapping.select_prev_item(),
-        ['<C-y>'] = cmp.mapping.confirm { select = true },
-
-        ['<CR>'] = cmp.mapping.confirm { select = false, behavior = cmp.ConfirmBehavior.Replace },
-        ['<Tab>'] = cmp.mapping.select_next_item(),
-        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete {},
       },
       sources = {
         {
