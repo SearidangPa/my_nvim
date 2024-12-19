@@ -34,6 +34,12 @@ return { -- Autocompletion
           vim.api.nvim_feedkeys(res, 'n', false)
         end),
 
+        ['Tab'] = cmp.mapping(function()
+          local accept = vim.fn['copilot#AcceptLine']
+          local res = accept(vim.api.nvim_replace_termcodes('<M-C-Right>', true, true, false))
+          vim.api.nvim_feedkeys(res, 'n', false)
+        end),
+
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
         ['<C-y>'] = cmp.mapping.confirm { select = true },
