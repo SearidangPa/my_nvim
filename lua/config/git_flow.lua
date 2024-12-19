@@ -5,11 +5,12 @@ local commit_msg = ''
 local function git_add(on_success_cb)
   vim.fn.jobstart('git add .', {
     on_exit = function(_, exit_code)
-      if exit_code == 0 then
-        on_success_cb()
-      else
+      if exit_code ~= 0 then
         make_notify 'Git add all failed.'
+        return
       end
+
+      on_success_cb()
     end,
   })
 end
@@ -26,6 +27,7 @@ local function git_push()
         make_notify 'Git push failed'
         return
       end
+
       make_notify(string.format(git_push_format_notification, commit_msg))
     end,
   })
@@ -37,13 +39,12 @@ local function perform_commit(on_success_cb)
 
   vim.fn.jobstart(cmd, {
     on_exit = function(_, exit_code)
-      if exit_code == 0 then
-        if on_success_cb then
-          on_success_cb()
-        end
-      else
+      if exit_code ~= 0 then
         make_notify 'Git commit failed.'
+        return
       end
+
+      on_success_cb()
     end,
   })
 end
@@ -54,18 +55,19 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
-  if choice == 'Custom input' then
-    vim.ui.input({ prompt = 'Enter Commit Message: ' }, function(input_msg)
-      if not input_msg or vim.trim(input_msg) == '' then
-        make_notify 'Commit aborted: no message provided.'
-        return
-      end
-      commit_msg = input_msg
-      perform_commit(on_success_cb)
-    end)
-  else
+  if choice ~= 'Custom input' then
     perform_commit(on_success_cb)
+    return
   end
+
+  vim.ui.input({ prompt = 'Enter Commit Message: ' }, function(input_msg)
+    if not input_msg or vim.trim(input_msg) == '' then
+      make_notify 'Commit aborted: no message provided.'
+      return
+    end
+    commit_msg = input_msg
+    perform_commit(on_success_cb)
+  end)
 end
 
 local function git_commit_with_message_prompt(on_success_cb)
