@@ -44,13 +44,13 @@ local popup_option = {
   },
 }
 
-local input = nui_input(popup_option, {
+local nui_input_options = {
   prompt = '> ',
   default_value = ' “What is hell? I maintain that it is the suffering of being unable to love.” - Fyodor Dostoevsky',
   on_submit = function(value)
     commit_msg = value
   end,
-})
+}
 
 local function handle_choice(choice, on_success_cb)
   if not choice then
@@ -63,6 +63,7 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
+  local input = nui_input(popup_option, nui_input_options)
   input:mount()
 
   input:on(event.BufLeave, function()
