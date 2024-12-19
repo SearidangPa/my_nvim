@@ -1,4 +1,4 @@
-require 'treesitter.find_test_line'
+require 'my_treesitter.find_test_line'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 
