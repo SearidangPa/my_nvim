@@ -39,7 +39,7 @@ local create_user_command = function(cmd, invokeStr)
   end
 end
 
-vim.api.nvim_create_user_command('Make', function()
+vim.api.nvim_create_user_command('MakeAll', function()
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
