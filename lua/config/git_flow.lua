@@ -91,7 +91,7 @@ end
 local function push_all()
   git_add(function()
     git_commit_with_message_prompt(function()
-      git_push(commit_msg)
+      git_push()
     end)
   end)
 end
