@@ -38,7 +38,6 @@ local function perform_commit(on_success_cb)
   vim.fn.jobstart(cmd, {
     on_exit = function(_, exit_code)
       if exit_code == 0 then
-        make_notify 'Git commit successful.'
         if on_success_cb then
           on_success_cb()
         end
