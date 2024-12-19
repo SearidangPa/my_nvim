@@ -26,11 +26,22 @@ local function map_opt(desc)
   return { noremap = true, silent = true, desc = desc }
 end
 
--- window navigation
+-- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
 map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the lower window')
 map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the upper window')
+
+-- =================== Terminal ===================
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+-- =================== Tabs ===================
+map('n', '[t', ':tabprev<CR>', map_opt 'Previous tab')
+map('n', ']t', ':tabnext<CR>', map_opt 'Next tab')
+
+-- =================== diagnostics ===================
+map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
+map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 -- =================== delete ===================
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
@@ -41,14 +52,6 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
-
--- =================== Tabs ===================
-map('n', '[t', ':tabprev<CR>', map_opt 'Previous tab')
-map('n', ']t', ':tabnext<CR>', map_opt 'Next tab')
-
--- =================== diagnostics ===================
-map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
-map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 map('n', '<leader>qf', function()
   vim.diagnostic.setqflist()
