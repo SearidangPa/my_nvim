@@ -103,6 +103,10 @@ local function play_prompt_input()
   end)
 end
 
-play_prompt_input()
+vim.keymap.set('n', '<leader>p', play_prompt_input, {
+  noremap = true,
+  silent = true,
+  desc = 'play prompt input',
+})
 
 return {}

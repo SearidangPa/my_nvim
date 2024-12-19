@@ -1,7 +1,6 @@
-local map = vim.keymap.map
-
 local bind_keymap_builtin = function()
   local builtin = require 'telescope.builtin'
+  local map = vim.keymap.set
   map('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
   map('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
   map('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
