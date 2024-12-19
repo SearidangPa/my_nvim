@@ -36,7 +36,7 @@ local function git_push()
   vim.fn.jobstart('git push', {
     on_exit = function(_, exit_code)
       if exit_code == 0 then
-        make_notify(string.format('Git push successful! "%s"', commit_msg))
+        make_notify(string.format('Git push successful!: %s', commit_msg))
       else
         make_notify 'Git push failed.'
       end
