@@ -1,3 +1,11 @@
+vim.api.nvim_create_autocmd('TermOpen', {
+  group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
+  callback = function()
+    vim.opt.number = false
+    vim.opt.relativenumber = false
+  end,
+})
+
 function Create_floating_window(buf_intput)
   buf_intput = buf_intput or -1
   local width = math.floor(vim.o.columns * 0.9)
@@ -52,3 +60,25 @@ end
 vim.api.nvim_create_user_command("Floaterminal", toggle_floating_terminal, {})
 vim.keymap.set({ 't', 'n' }, '<leader>tt', toggle_floating_terminal,
   { noremap = true, silent = true, desc = 'Toggle floating terminal' })
+
+
+local job_id = 0
+vim.keymap.set('n', '<leader>bt', function()
+  vim.cmd.vnew()
+  if vim.fn.has 'win32' == 1 then
+    vim.cmd.term 'powershell.exe'
+  else
+    vim.cmd.term()
+  end
+
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 15)
+  vim.api.nvim_feedkeys('i', 'n', true)
+  job_id = vim.bo.channel
+end)
+
+vim.keymap.set('n', '<leader>xst', function()
+  vim.fn.chansend(job_id, 're;st\n')
+end, { desc = 'Send re;st to terminal' })
+
+return {}
