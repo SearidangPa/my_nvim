@@ -41,9 +41,9 @@ local popup_option = {
 }
 
 local some_nice_quotes = {
-  '“What is hell? I maintain that it is the suffering of being unable to love.”',
-  '“Beauty will save the world”',
-  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.” ',
+  '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
+  '“Beauty will save the world”-- Fyodor Dostoevsky',
+  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
 }
 
 local function handle_choice(choice, on_success_cb)
