@@ -1,6 +1,9 @@
 local output = {}
 local errors = {}
 
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
+
 local create_user_command = function(cmd, invokeStr)
   output = {}
   errors = {}
@@ -23,16 +26,16 @@ local create_user_command = function(cmd, invokeStr)
     on_exit = function(_, code)
       if code ~= 0 then
         local notif = string.format('%s failed with exit code %d', invokeStr, code)
-        vim.notify(notif, vim.log.levels.ERROR)
+        make_notify(notif, vim.log.levels.ERROR)
         return
       end
       local notif = string.format('%s completed successfully', invokeStr)
-      vim.notify(notif, vim.log.levels.INFO)
+      make_notify(notif, vim.log.levels.INFO)
     end,
   })
 
   if job_id <= 0 then
-    vim.notify('Failed to start the Make command', vim.log.levels.ERROR)
+    make_notify('Failed to start the Make command', vim.log.levels.ERROR)
   end
 end
 
