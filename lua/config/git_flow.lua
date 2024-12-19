@@ -27,34 +27,33 @@ local function perform_commit(on_success_cb)
   })
 end
 
-local input = nui_input({
-  position = { row = row, col = col },
+local popup_options = {
+  position = 'center',
   size = {
-    width = 120,
+    width = width,
+    height = height,
   },
   border = {
     style = 'rounded',
     text = {
-      top = '[My Lovely Commit Message]',
+      top = 'Git Flow',
       top_align = 'center',
     },
   },
   win_options = {
     winhighlight = 'Normal:Normal,FloatBorder:Normal',
   },
-}, {
+}
+
+local nui_input_options = {
   prompt = '> ',
   default_value = ' “What is hell? I maintain that it is the suffering of being unable to love.” - Fyodor Dostoevsky',
-
-  on_close = function()
-    print 'Input Closed!'
-  end,
-
   on_submit = function(value)
-    print('Input Submitted: ' .. value)
     commit_msg = value
   end,
-})
+}
+
+local input = nui_input(popup_options, nui_input_options)
 
 local function handle_choice(choice, on_success_cb)
   if not choice then
@@ -67,26 +66,16 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
-  input:mount() -- mount/open the component
+  input:mount()
 
   input:on(event.BufLeave, function()
-    input:unmount() -- unmount component when cursor leaves buffer
+    input:unmount()
     if commit_msg == '' then
       make_notify 'Commit aborted: no message provided.'
       return
     end
-
     perform_commit(on_success_cb)
   end)
-
-  -- vim.ui.input({ prompt = 'Enter Commit Message: ' }, function(input_msg)
-  --   if not input_msg or vim.trim(input_msg) == '' then
-  --     make_notify 'Commit aborted: no message provided.'
-  --     return
-  --   end
-  --   commit_msg = input_msg
-  --   perform_commit(on_success_cb)
-  -- end)
 end
 
 local function git_add(on_success_cb)
