@@ -103,7 +103,6 @@ return {
     lsp_attach_keybind()
 
     local servers = {
-
       lua_ls = {
         settings = {
           Lua = {
@@ -111,6 +110,7 @@ return {
               callSnippet = 'Replace',
             },
           },
+          diagnostics = { disable = { 'missing-fields' } },
         },
       },
     }
