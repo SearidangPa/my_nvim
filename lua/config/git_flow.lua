@@ -15,6 +15,12 @@ local item_options = {
   'Custom input',
 }
 
+local some_nice_quotes = {
+  '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
+  '“Beauty will save the world”-- Fyodor Dostoevsky',
+  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
+}
+
 local popup_option = {
   position = { row = row, col = col },
   size = { width = 120 },
@@ -27,17 +33,6 @@ local popup_option = {
   },
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
-
-local some_nice_quotes = {
-  '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
-  '“Beauty will save the world”-- Fyodor Dostoevsky',
-  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
-}
-
-local git_push_format_notification = [[
-Git push successful!
-commit: %s
-]]
 
 local function perform_commit(on_success_cb, commit_msg)
   ---@diagnostic disable-next-line: undefined-field
@@ -60,11 +55,11 @@ end
 
 local commit_msg = ''
 local function git_push()
+  local commit_format_notification = [[commit: %s]]
   Start_job {
     cmd = 'git push',
     on_success_cb = function()
-      print(commit_msg)
-      make_notify(string.format(git_push_format_notification, commit_msg))
+      make_notify(string.format(commit_format_notification, commit_msg))
     end,
     silent = false,
   }
