@@ -14,7 +14,7 @@ local function perform_commit(on_success_cb)
   ---@diagnostic disable-next-line: undefined-field
   local escaped_msg = commit_msg:gsub('"', '\\"') -- Escape double quotes in commit_msg to prevent shell issues
   local cmd = 'git commit -m "' .. escaped_msg .. '"'
-  Create_user_command {
+  Start_job {
     cmd = cmd,
     on_success_cb = on_success_cb,
   }
