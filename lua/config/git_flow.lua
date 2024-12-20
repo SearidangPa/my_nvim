@@ -15,7 +15,17 @@ local function perform_commit(on_success_cb)
   local escaped_msg = commit_msg:gsub('"', '\\"') -- Escape double quotes in commit_msg to prevent shell issues
   local cmd = 'git commit -m "' .. escaped_msg .. '"'
 
+  local errors = {}
   vim.fn.jobstart(cmd, {
+    stderr_buffered = true,
+
+    on_stderr = function(_, data)
+      for _, line in ipairs(data) do
+        table.insert(errors, line)
+      end
+      make_notify('Git commit failed: ' .. table.concat(errors, '\n'))
+    end,
+
     on_exit = function(_, exit_code)
       if exit_code ~= 0 then
         make_notify 'Git commit failed.'
