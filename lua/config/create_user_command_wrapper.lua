@@ -3,7 +3,6 @@ local make_notify = mini_notify.make_notify {}
 
 Create_user_command = function(opts)
   local cmd = opts.cmd
-  local on_success_cb = opts.on_success_cb
   local invokeStr = table.concat(cmd, ' ')
   local output = {}
   local errors = {}
@@ -32,8 +31,8 @@ Create_user_command = function(opts)
       local notif = string.format('%s completed successfully', invokeStr)
       make_notify(notif, vim.log.levels.INFO)
 
-      if on_success_cb then
-        on_success_cb()
+      if opts.on_success_cb then
+        opts.on_success_cb()
       end
     end,
   })
