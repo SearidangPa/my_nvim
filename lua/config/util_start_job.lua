@@ -4,6 +4,9 @@ local make_notify = mini_notify.make_notify {}
 Start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
+  local output = {}
+  local errors = {}
+
   local invokeStr
   if type(cmd) == 'table' then
     invokeStr = table.concat(cmd, ' ')
@@ -11,8 +14,6 @@ Start_job = function(opts)
     invokeStr = cmd
   end
 
-  local output = {}
-  local errors = {}
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = true,
     stderr_buffered = true,
@@ -31,8 +32,7 @@ Start_job = function(opts)
 
     on_exit = function(_, code)
       if code ~= 0 then
-        local notif = string.format('%s failed with exit code %d', invokeStr, code)
-        make_notify(notif, vim.log.levels.ERROR)
+        make_notify(string.format('%s failed.\nOutput: %s\nError:%s', invokeStr, table.concat(output), table.concat(errors, '\n')), vim.log.levels.ERROR)
         return
       end
 
@@ -50,4 +50,6 @@ Start_job = function(opts)
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
   end
+
+  return job_id, output, errors
 end

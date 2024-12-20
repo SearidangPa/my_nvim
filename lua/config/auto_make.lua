@@ -1,3 +1,6 @@
+local output = {}
+local errors = {}
+
 vim.api.nvim_create_user_command('MakeAll', function()
   local cmd
   if vim.fn.has 'win32' == 1 then
@@ -5,12 +8,12 @@ vim.api.nvim_create_user_command('MakeAll', function()
   else
     cmd = { 'make', '-j', 'all' }
   end
-  Start_job { cmd = cmd }
+  _, output, errors = Start_job { cmd = cmd }
 end, {})
 
 vim.api.nvim_create_user_command('GoModTidy', function()
   local cmd = { 'go', 'mod', 'tidy' }
-  Start_job { cmd = cmd }
+  _, output, errors = Start_job { cmd = cmd }
 end, {})
 
 vim.api.nvim_create_user_command('ViewOutput', function()

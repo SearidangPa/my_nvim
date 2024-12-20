@@ -50,7 +50,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
-      { out,                            'WarningMsg' },
+      { out, 'WarningMsg' },
       { '\nPress any key to exit...' },
     }, true, {})
     vim.fn.getchar()
@@ -65,13 +65,13 @@ require('lazy').setup {
       import = 'plugins',
     },
     'tpope/vim-fugitive', -- Git commands in Neovim
-    'tpope/vim-sleuth',   -- Detect tabstop and shiftwidth automatically
+    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'copilot.vim',
   },
 }
 
 vim.schedule(function()
-local stdpath = vim.fn.stdpath 'config'
+  local stdpath = vim.fn.stdpath 'config'
   local config_path
   if vim.fn.has 'win32' == 1 then
     config_path = stdpath .. '\\lua\\config'
@@ -83,6 +83,8 @@ local stdpath = vim.fn.stdpath 'config'
   local files = vim.fn.globpath(config_path, '*.lua', true, true)
   for _, file in ipairs(files) do
     local module = vim.fn.fnamemodify(file, ':t:r')
-    require('config.' .. module)
+    if not string.match(module, 'util_') then
+      require('config.' .. module)
+    end
   end
 end)
