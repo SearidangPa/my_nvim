@@ -35,7 +35,7 @@ local function perform_commit(on_success_cb)
 
     on_exit = function(_, exit_code)
       if exit_code ~= 0 then
-        make_notify 'Git commit failed.'
+        make_notify('Git commit failed.' .. table.concat(output, '\n'))
         return
       end
 
