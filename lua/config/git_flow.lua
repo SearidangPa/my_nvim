@@ -21,6 +21,8 @@ local some_nice_quotes = {
   '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
 }
 
+local commit_msg = ''
+
 local popup_option = {
   position = { row = row, col = col },
   size = { width = 120 },
@@ -34,7 +36,7 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
-local function perform_commit(on_success_cb, commit_msg)
+local function perform_commit(on_success_cb)
   ---@diagnostic disable-next-line: undefined-field
   local escaped_msg = commit_msg:gsub('"', '\\"') -- Escape double quotes in commit_msg to prevent shell issues
   local cmd = 'git commit -m "' .. escaped_msg .. '"'
@@ -53,9 +55,8 @@ local function git_add_all(on_success_cb)
   }
 end
 
-local commit_msg = ''
 local function git_push()
-  local commit_format_notification = [[push successfully
+  local commit_format_notification = [[Push successfully
   Commit: %s]]
 
   Start_job {
@@ -75,7 +76,7 @@ local function handle_choice(choice, on_success_cb)
 
   if choice ~= 'Custom input' then
     commit_msg = choice
-    perform_commit(on_success_cb, choice)
+    perform_commit(on_success_cb)
     return
   end
 
@@ -87,23 +88,22 @@ local function handle_choice(choice, on_success_cb)
     default_value = selected_quote,
     on_submit = function(value)
       commit_msg = value
+      print('Commit message:', commit_msg)
     end,
   }
 
   local input = nui_input(popup_option, nui_input_options)
   input:mount()
 
-  local on_leave = function()
+  input:on(event.BufLeave, function()
     input:unmount()
     if commit_msg == '' then
       make_notify 'Commit aborted: no message provided.'
       return
     end
 
-    perform_commit(on_success_cb, commit_msg)
-  end
-
-  input:on(event.BufLeave, on_leave)
+    perform_commit(on_success_cb)
+  end)
 end
 
 local function git_commit_with_message_prompt(on_success_cb)
