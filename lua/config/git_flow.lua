@@ -61,7 +61,7 @@ local function git_push()
     on_success_cb = function()
       make_notify(string.format(commit_format_notification, commit_msg))
     end,
-    silent = false,
+    silent = true,
   }
 end
 
