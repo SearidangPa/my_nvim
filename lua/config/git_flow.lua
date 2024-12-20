@@ -14,34 +14,10 @@ local function perform_commit(on_success_cb)
   ---@diagnostic disable-next-line: undefined-field
   local escaped_msg = commit_msg:gsub('"', '\\"') -- Escape double quotes in commit_msg to prevent shell issues
   local cmd = 'git commit -m "' .. escaped_msg .. '"'
-
-  local errors = {}
-  local output = {}
-  vim.fn.jobstart(cmd, {
-    stderr_buffered = true,
-
-    on_stdout = function(_, data)
-      for _, line in ipairs(data) do
-        table.insert(output, line)
-      end
-    end,
-
-    on_stderr = function(_, data)
-      for _, line in ipairs(data) do
-        table.insert(errors, line)
-      end
-      make_notify('Git commit failed: ' .. table.concat(errors, '\n'))
-    end,
-
-    on_exit = function(_, exit_code)
-      if exit_code ~= 0 then
-        make_notify('Git commit failed.' .. table.concat(output, '\n'))
-        return
-      end
-
-      on_success_cb()
-    end,
-  })
+  Create_user_command {
+    cmd = cmd,
+    on_success_cb = on_success_cb,
+  }
 end
 
 local popup_option = {
