@@ -58,11 +58,12 @@ local function git_add_all(on_success_cb)
   }
 end
 
+local commit_msg = ''
 local function git_push()
   Start_job {
     cmd = 'git push',
     on_success_cb = function()
-      make_notify(string.format(git_push_format_notification))
+      make_notify(string.format(git_push_format_notification, commit_msg))
     end,
     silent = false,
   }
@@ -75,6 +76,7 @@ local function handle_choice(choice, on_success_cb)
   end
 
   if choice ~= 'Custom input' then
+    commit_msg = choice
     perform_commit(on_success_cb, choice)
     return
   end
@@ -82,7 +84,6 @@ local function handle_choice(choice, on_success_cb)
   local random_index = math.random(1, #some_nice_quotes)
   local selected_quote = some_nice_quotes[random_index]
 
-  local commit_msg = ''
   local nui_input_options = {
     prompt = '> ',
     default_value = selected_quote,
