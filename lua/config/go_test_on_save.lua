@@ -270,28 +270,23 @@ local function get_enclosing_test()
   return testName
 end
 
-vim.api.nvim_create_user_command('GoTestOnSave', function()
+local attach_single_test = function()
   local test_name = get_enclosing_test()
-  if not test_name then
-    return
-  end
-
   print('Attaching test: ' .. test_name)
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
   attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)
+end
+
+vim.api.nvim_create_user_command('GoTestOnSave', function()
+  attach_single_test()
 end, {})
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
-  local test_name = get_enclosing_test()
-  print('Attaching test: ' .. test_name)
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
-  local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
-  local ns_one = vim.api.nvim_create_namespace 'live_one_test'
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)
+  attach_single_test()
 end, {})
 
 return {}
