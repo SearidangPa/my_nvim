@@ -6,7 +6,10 @@ Start_job = function(opts)
   local invokeStr
   if type(cmd) == 'table' then
     invokeStr = table.concat(cmd, ' ')
+  else
+    invokeStr = cmd
   end
+
   local output = {}
   local errors = {}
   local job_id = vim.fn.jobstart(cmd, {
