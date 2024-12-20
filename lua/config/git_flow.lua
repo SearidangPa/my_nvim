@@ -55,7 +55,9 @@ end
 
 local commit_msg = ''
 local function git_push()
-  local commit_format_notification = [[push successfully, commit: %s]]
+  local commit_format_notification = [[push successfully
+  Commit: %s]]
+
   Start_job {
     cmd = 'git push',
     on_success_cb = function()
