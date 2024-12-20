@@ -98,12 +98,6 @@ local function handle_choice(choice, on_success_cb)
 
   input:on(event.BufLeave, function()
     input:unmount()
-    if commit_msg == '' then
-      make_notify 'Commit aborted: no message provided.'
-      return
-    end
-
-    perform_commit(on_success_cb)
   end)
 end
 
