@@ -231,9 +231,6 @@ local attach_to_buffer = function(bufnr, command, group, ns)
               end
             end
 
-            if not decoded.Action '' then
-              print('Failed to handle: ' .. line)
-            end
             ::continue::
           end
         end,
