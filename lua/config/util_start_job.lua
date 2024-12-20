@@ -3,6 +3,7 @@ local make_notify = mini_notify.make_notify {}
 
 Start_job = function(opts)
   local cmd = opts.cmd
+  local silent = opts.silent
   local invokeStr
   if type(cmd) == 'table' then
     invokeStr = table.concat(cmd, ' ')
@@ -35,8 +36,10 @@ Start_job = function(opts)
         return
       end
 
-      local notif = string.format('%s completed successfully', invokeStr)
-      make_notify(notif, vim.log.levels.INFO)
+      if not silent then
+        local notif = string.format('%s completed successfully', invokeStr)
+        make_notify(notif, vim.log.levels.INFO)
+      end
 
       if opts.on_success_cb then
         opts.on_success_cb()

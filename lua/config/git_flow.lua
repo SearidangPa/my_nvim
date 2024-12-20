@@ -17,6 +17,7 @@ local function perform_commit(on_success_cb)
   Start_job {
     cmd = cmd,
     on_success_cb = on_success_cb,
+    silent = true,
   }
 end
 
