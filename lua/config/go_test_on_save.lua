@@ -286,6 +286,8 @@ end, {})
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   local test_name = get_enclosing_test()
   print('Attaching test: ' .. test_name)
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'dev'
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
