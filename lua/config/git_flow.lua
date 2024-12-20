@@ -16,8 +16,15 @@ local function perform_commit(on_success_cb)
   local cmd = 'git commit -m "' .. escaped_msg .. '"'
 
   local errors = {}
+  local output = {}
   vim.fn.jobstart(cmd, {
     stderr_buffered = true,
+
+    on_stdout = function(_, data)
+      for _, line in ipairs(data) do
+        table.insert(output, line)
+      end
+    end,
 
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
