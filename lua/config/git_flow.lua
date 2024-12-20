@@ -50,7 +50,7 @@ local function perform_commit(on_success_cb, commit_msg)
   }
 end
 
-local function git_add(on_success_cb)
+local function git_add_all(on_success_cb)
   Start_job {
     cmd = 'git add .',
     on_success_cb = on_success_cb,
@@ -121,7 +121,7 @@ local function git_commit_with_message_prompt(on_success_cb)
 end
 
 local function push_all()
-  git_add(function()
+  git_add_all(function()
     git_commit_with_message_prompt(function()
       git_push()
     end)
