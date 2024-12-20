@@ -48,7 +48,7 @@ local mark_outcome = function(state, entry)
   test.success = entry.Action == 'pass'
 end
 
-local function get_enclosing_fn()
+local function get_enclosing_fn_info()
   local node = ts_utils.get_node_at_cursor()
 
   while node do
@@ -71,7 +71,7 @@ local function get_enclosing_fn()
 end
 
 local go_test_one_output = function(state)
-  local _, testName = get_enclosing_fn()
+  local _, testName = get_enclosing_fn_info()
   for _, test in pairs(state.tests) do
     if test.name == testName then
       local buf, _ = Create_floating_window()
@@ -257,18 +257,36 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   attach_to_buffer(bufnr, command, group_all_tests, ns_all_tests)
 end, {})
 
-vim.api.nvim_create_user_command('GoTestOnSave', function()
-  local _, testName = get_enclosing_fn()
+local function get_enclosing_test()
+  local _, testName = get_enclosing_fn_info()
   if not testName then
     print 'Not in a function'
-    return
+    return nil
   end
   if not string.match(testName, 'Test_') then
-    print 'Not a test function'
+    print(string.format('Not in a test function: %s', testName))
+    return nil
+  end
+  return testName
+end
+
+vim.api.nvim_create_user_command('GoTestOnSave', function()
+  local test_name = get_enclosing_test()
+  if not test_name then
     return
   end
-  print('Attaching test: ' .. testName)
-  local command = { 'go', 'test', './...', '-json', '-v', '-run', testName }
+
+  print('Attaching test: ' .. test_name)
+  local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
+  local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
+  local ns_one = vim.api.nvim_create_namespace 'live_one_test'
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)
+end, {})
+
+vim.api.nvim_create_user_command('DriveTestOnSave', function()
+  local test_name = get_enclosing_test()
+  print('Attaching test: ' .. test_name)
+  local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
   attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)

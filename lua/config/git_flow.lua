@@ -140,10 +140,10 @@ local function push_all()
   end)
 end
 
-vim.keymap.set('n', '<leader>gpa', push_all, {
+vim.keymap.set('n', '<leader>pa', push_all, {
   noremap = true,
   silent = true,
-  desc = '[G]it [P]ush [A]ll',
+  desc = '[P]ush [A]ll',
 })
 
 return {}
