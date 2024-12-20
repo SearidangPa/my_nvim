@@ -89,6 +89,7 @@ local function handle_choice(choice, on_success_cb)
     on_submit = function(value)
       commit_msg = value
       print('Commit message:', commit_msg)
+      perform_commit(on_success_cb)
     end,
   }
 
