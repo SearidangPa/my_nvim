@@ -59,7 +59,7 @@ end
 
 local function git_push()
   local commit_format_notification = [[Push successfully
-  Commit: %s]]
+Commit: %s]]
 
   Start_job {
     cmd = 'git push',
