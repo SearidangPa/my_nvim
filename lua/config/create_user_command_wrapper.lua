@@ -1,12 +1,9 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-Start_job = function(opts)
+start_job = function(opts)
   local cmd = opts.cmd
-  local invokeStr
-  if type(cmd) == 'table' then
-    invokeStr = table.concat(cmd, ' ')
-  end
+  local invokeStr = table.concat(cmd, ' ')
   local output = {}
   local errors = {}
   local job_id = vim.fn.jobstart(cmd, {
@@ -31,7 +28,6 @@ Start_job = function(opts)
         make_notify(notif, vim.log.levels.ERROR)
         return
       end
-
       local notif = string.format('%s completed successfully', invokeStr)
       make_notify(notif, vim.log.levels.INFO)
 

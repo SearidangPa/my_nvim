@@ -5,12 +5,12 @@ vim.api.nvim_create_user_command('MakeAll', function()
   else
     cmd = { 'make', '-j', 'all' }
   end
-  Create_user_command { cmd = cmd }
+  Start_job { cmd = cmd }
 end, {})
 
 vim.api.nvim_create_user_command('GoModTidy', function()
   local cmd = { 'go', 'mod', 'tidy' }
-  Create_user_command { cmd = cmd }
+  Start_job { cmd = cmd }
 end, {})
 
 vim.api.nvim_create_user_command('ViewOutput', function()
