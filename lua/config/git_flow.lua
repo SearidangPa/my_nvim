@@ -19,6 +19,7 @@ local some_nice_quotes = {
   '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
   '“Beauty will save the world”-- Fyodor Dostoevsky',
   '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
+  '“Taking a new step, uttering a new word, is what people fear most.”-- Fyodor Dostoevsky',
 }
 
 local commit_msg = ''
