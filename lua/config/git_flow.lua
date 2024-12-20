@@ -12,6 +12,7 @@ local col = math.floor((vim.o.lines - height))
 local item_options = {
   'Save progress',
   'Done with what I set out to do',
+  'Refinement',
   'Custom input',
 }
 
