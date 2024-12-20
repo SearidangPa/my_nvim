@@ -63,6 +63,7 @@ local function git_push()
   Start_job {
     cmd = 'git push',
     on_success_cb = function()
+      print(commit_msg)
       make_notify(string.format(git_push_format_notification, commit_msg))
     end,
     silent = false,
