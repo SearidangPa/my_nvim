@@ -1,6 +1,8 @@
 local ls = require 'luasnip'
 local s = ls.snippet
 local i = ls.insert_node
+local extras = require 'luasnip.extras'
+local rep = extras.rep
 local fmta = require('luasnip.extras.fmt').fmta
 
 ls.add_snippets('go', {
@@ -14,30 +16,43 @@ package cli
 
 func init() {
 	var <flag_var>
-	updatePlaceholderInvokeStr := "update-placeholder-info"
-	updatePlaceholderCmd := &cobra.Command{
-		Use:   updatePlaceholderInvokeStr,
-		Short: "Update placeholder info",
+	<api1>InvokeStr := "<cmd_invoke_str>"
+	<api2>Cmd := &cobra.Command{
+		Use:   <apiInvokeStr>InvokeStr,
+		Short: "<short_desc>",
 	}
-	rootCmd.AddCommand(updatePlaceholderCmd)
+	rootCmd.AddCommand(<apiAddCmd>Cmd)
 	logging.IniLog()
 
-	updatePlaceholderCmd.Flags().StringVarP(&fp, "path", "p", "", "path of the placeholder to query info")
-	updatePlaceholderCmd.Flags().StringVarP(&newParentUUIDstr, "new-parent-uuid", "d", "", "new parent uuid")
+	<api3>Cmd.Flags().StringVarP(&fp, "path", "p", "", "path of the placeholder to query info")
+	<api4>Cmd.Flags().StringVarP(&newParentUUIDstr, "new-parent-uuid", "d", "", "new parent uuid")
 
-	markFlagsRequired(updatePlaceholderCmd, "path")
-	updatePlaceholderCmd.Run = func(cmd *cobra.Command, args []string) {
-		err := updatePlaceholderCLI(fp, newParentUUIDstr)
+	markFlagsRequired(<api5>Cmd, "path")
+	<api6>Cmd.Run = func(cmd *cobra.Command, args []string) {
+		err := <api7>CLI(fp, newParentUUIDstr)
 		logRes(fp, err)
 	}
 }
 
-func updatePlaceholderCLI(fp, newParentUUIDstr string) error {
+func <api7>CLI(<fn_args>) error {
       <finish>
 }
       ]],
       {
-        flag_var = i(1),
+        api1 = i(1),
+        api2 = rep(i(1)),
+        api3 = rep(i(1)),
+        api4 = rep(i(1)),
+        api5 = rep(i(1)),
+        api6 = rep(i(1)),
+        api7 = rep(i(1)),
+        apiAddCmd = rep(i(1)),
+        apiInvokeStr = rep(i(1)),
+
+        cmd_invoke_str = i(2, 'cmd_invoke_str'),
+        short_desc = i(3, 'short_desc'),
+        flag_var = i(4),
+        fn_args = i(5),
         finish = i(0),
       }
     )
