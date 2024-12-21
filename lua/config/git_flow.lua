@@ -10,11 +10,15 @@ local row = math.floor((vim.o.columns - width))
 local col = math.floor((vim.o.lines - height))
 
 local default_no_more_input = {
+  '',
+  '====================',
   'Done with what I set out to do',
-  'Save progress',
+  'Does not even compile',
+  'To manual testing',
 }
 
 local item_options = {
+  'Save progress',
   'Checkpoint',
   'Refinement',
   'To do next',
