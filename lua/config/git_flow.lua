@@ -13,8 +13,8 @@ local default_no_more_input = {
   '',
   '====================',
   'Done with what I set out to do',
-  'Does not even compile',
   'To manual testing',
+  'Does not even compile',
 }
 
 local item_options = {
