@@ -20,7 +20,6 @@ local some_nice_quotes = {
   '“Beauty will save the world”-- Fyodor Dostoevsky',
   '“Taking a new step, uttering a new word, is what people fear most.”-- Fyodor Dostoevsky',
   '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
-  '“I can see the sun, but even if I cannot see the sun, I know that it exists. And to know that the sun is there - that is living.”-- Fyodor Dostoevsky',
 }
 
 local commit_msg = ''
@@ -40,8 +39,7 @@ local popup_option = {
 
 local function perform_commit(on_success_cb)
   ---@diagnostic disable-next-line: undefined-field
-  local escaped_msg = commit_msg:gsub('"', '\\"') -- Escape double quotes in commit_msg to prevent shell issues
-  local cmd = 'git commit -m "' .. escaped_msg .. '"'
+  local cmd = 'git commit -m "' .. commit_msg .. '"'
   Start_job {
     cmd = cmd,
     on_success_cb = on_success_cb,
