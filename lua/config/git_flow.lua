@@ -12,16 +12,16 @@ local col = math.floor((vim.o.lines - height))
 local default_no_more_input = {
   '',
   '====================',
+  'Does not even compile',
+  'Merged',
   'Done with what I set out to do',
   'To manual testing',
-  'Does not even compile',
 }
 
 local item_options = {
   'Save progress',
   'Checkpoint',
   'Refinement',
-  'Merged',
 }
 
 local choice_options = vim.list_extend(item_options, default_no_more_input)
