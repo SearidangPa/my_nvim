@@ -10,7 +10,7 @@ local row = math.floor((vim.o.columns - width))
 local col = math.floor((vim.o.lines - height))
 
 local default_no_more_input = {
-  '',
+  'a',
   'Done with what I set out to do',
   'Save progress',
 }
@@ -18,6 +18,7 @@ local default_no_more_input = {
 local item_options = {
   'Checkpoint',
   'Refinement',
+  'To do next',
 }
 
 local choice_options = vim.list_extend(item_options, default_no_more_input)
