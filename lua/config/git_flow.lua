@@ -16,12 +16,6 @@ local item_options = {
   'Custom input',
 }
 
-local some_nice_quotes = {
-  '“Beauty will save the world”-- Fyodor Dostoevsky',
-  '“Taking a new step, uttering a new word, is what people fear most.”-- Fyodor Dostoevsky',
-  '“What is hell? I maintain that it is the suffering of being unable to love.”-- Fyodor Dostoevsky',
-}
-
 local commit_msg = ''
 
 local popup_option = {
@@ -80,12 +74,8 @@ local function handle_choice(choice, on_success_cb)
     return
   end
 
-  local random_index = math.random(1, #some_nice_quotes)
-  local selected_quote = some_nice_quotes[random_index]
-
   local nui_input_options = {
     prompt = '> ',
-    default_value = selected_quote,
     on_submit = function(value)
       commit_msg = value
       perform_commit(on_success_cb)
