@@ -102,7 +102,7 @@ end
 
 local function git_commit_with_message_prompt(on_success_cb)
   local opts = {
-    prompt = 'Select Commit Message:',
+    prompt = 'Select Suggested Commit Message:',
     format_item = function(item)
       return item
     end,
