@@ -21,7 +21,7 @@ local item_options = {
   'Save progress',
   'Checkpoint',
   'Refinement',
-  'To do next',
+  'Merged',
 }
 
 local choice_options = vim.list_extend(item_options, default_no_more_input)
