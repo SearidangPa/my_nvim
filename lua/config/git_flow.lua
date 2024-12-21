@@ -9,11 +9,14 @@ local height = math.floor(vim.o.lines * 0.25)
 local row = math.floor((vim.o.columns - width))
 local col = math.floor((vim.o.lines - height))
 
-local item_options = {
-  'Save progress',
+local default_no_more_input = {
   'Done with what I set out to do',
+  'Save progress',
+}
+
+local item_options = {
+  'Checkpoint',
   'Refinement',
-  'Custom input',
 }
 
 local commit_msg = ''
@@ -62,20 +65,31 @@ Commit: %s]]
   }
 end
 
+local function contains(tbl, value)
+  for _, v in ipairs(tbl) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
+
 local function handle_choice(choice, on_success_cb)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
     return
   end
 
-  if choice ~= 'Custom input' then
-    commit_msg = choice
+  commit_msg = choice
+
+  if contains(default_no_more_input, choice) then
     perform_commit(on_success_cb)
     return
   end
 
   local nui_input_options = {
     prompt = '> ',
+    default_value = string.format('%s: ', commit_msg),
     on_submit = function(value)
       commit_msg = value
       perform_commit(on_success_cb)
@@ -98,7 +112,8 @@ local function git_commit_with_message_prompt(on_success_cb)
     end,
   }
 
-  vim.ui.select(item_options, opts, function(choice)
+  local choice_options = vim.list_extend(item_options, default_no_more_input)
+  vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, on_success_cb)
   end)
 end
