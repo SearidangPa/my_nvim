@@ -13,13 +13,13 @@ local default_no_more_input = {
   '',
   '====================',
   'Does not even compile',
+  'Save progress',
   'Merged',
   'Done with what I set out to do',
   'To manual testing',
 }
 
 local item_options = {
-  'Save progress',
   'Checkpoint',
   'Refinement',
 }
