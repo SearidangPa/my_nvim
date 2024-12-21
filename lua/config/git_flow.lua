@@ -10,6 +10,7 @@ local row = math.floor((vim.o.columns - width))
 local col = math.floor((vim.o.lines - height))
 
 local default_no_more_input = {
+  '',
   'Done with what I set out to do',
   'Save progress',
 }
@@ -19,6 +20,7 @@ local item_options = {
   'Refinement',
 }
 
+local choice_options = vim.list_extend(item_options, default_no_more_input)
 local commit_msg = ''
 
 local popup_option = {
@@ -112,7 +114,6 @@ local function git_commit_with_message_prompt(on_success_cb)
     end,
   }
 
-  local choice_options = vim.list_extend(item_options, default_no_more_input)
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, on_success_cb)
   end)
