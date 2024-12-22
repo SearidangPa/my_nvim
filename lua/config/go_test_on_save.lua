@@ -116,6 +116,8 @@ local create_tests_user_command = function(bufnr, group, ns, state)
     go_test_one_output(state)
   end, {})
 
+  vim.keymap.set('n', '<leader>gto', ':GoTestOutput<CR>', { desc = '[G]o [T]est [O]utput' })
+
   vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
     vim.api.nvim_del_augroup_by_id(group)
     vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
@@ -282,6 +284,8 @@ end
 vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
+
+vim.keymap.set('n', '<leader>gts', ':GoTestOnSave<CR>', { desc = '[G]o [T]est on [S]ave' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
