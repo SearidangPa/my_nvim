@@ -20,12 +20,14 @@ Start_job = function(opts)
 
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
+        print('stdout' .. line)
         table.insert(output, line)
       end
     end,
 
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
+        print('stderr' .. line)
         table.insert(errors, line)
       end
     end,

@@ -46,4 +46,6 @@ vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the 
 vim.keymap.set('n', '<leader>mt', ':GoModTidy<CR>', { desc = '[M]ake [T]idy' })
 vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
+vim.keymap.set('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
+
 return {}
