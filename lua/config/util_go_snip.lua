@@ -52,7 +52,7 @@ func init() {
 
 	<apiFlag>Cmd.Flags().StringVarP(&userID, "user", "u", "", "user id")
 
-	markFlagsRequired(<apiMarkFlag>Cmd, "path")
+	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
 	<apiRun>Cmd.Run = func(cmd *cobra.Command, args []string) {
 		<apiCall>CLI(<fn_args_call>)
 	}
@@ -86,13 +86,14 @@ func <apiImplement>CLI(<fn_args>) {
           i(1, 'short_desc'),
         }),
         flag_var = i(4),
+        requiredFlag = i(5),
 
-        choiceNode = c(5, {
+        choiceNode = c(6, {
           fmta([[<val>, err := <funcName>]], { val = i(1, 'val'), funcName = i(2, 'funcName') }),
           fmta([[err := <funcName>]], { funcName = i(1, 'funcName') }),
         }),
-        fn_args = i(6),
-        fn_args_call = i(7),
+        fn_args = i(7),
+        fn_args_call = i(8),
         finish = i(0),
       }
     )
