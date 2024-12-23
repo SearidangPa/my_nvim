@@ -42,7 +42,7 @@ vim.keymap.set('n', '<leader>xx', '<cmd>source % <CR>', {
   desc = 'source this lua file',
 })
 
-vim.keymap.set('n', '<leader>ma', ':Make<CR>', { desc = '[M}ake [A]ll in the background' })
+vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 vim.keymap.set('n', '<leader>mt', ':GoModTidy<CR>', { desc = '[M]ake [T]idy' })
 vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
