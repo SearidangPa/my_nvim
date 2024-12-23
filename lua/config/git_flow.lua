@@ -12,10 +12,7 @@ local col = math.floor((vim.o.lines - height))
 local default_no_more_input = {
   '',
   '====================',
-  'Does not even compile',
-  'Merged',
   'Done with what I set out to do',
-  'To manual testing',
   'Save progress',
 }
 
