@@ -61,7 +61,7 @@ func init() {
 func <apiImplement>CLI(<fn_args>) {
       <choiceNode>
       if err != nil {
-          log.Fatal(err)
+          log.Fatalf(<errFmt>)
       }
       <finish>
 }
@@ -94,6 +94,7 @@ func <apiImplement>CLI(<fn_args>) {
         }),
         fn_args = i(7),
         fn_args_call = i(8),
+        errFmt = i(9),
         finish = i(0),
       }
     )
