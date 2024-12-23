@@ -1,9 +1,31 @@
 local ls = require 'luasnip'
+local c = ls.choice_node
+local f = ls.function_node
 local s = ls.snippet
 local i = ls.insert_node
 local extras = require 'luasnip.extras'
 local rep = extras.rep
 local fmta = require('luasnip.extras.fmt').fmta
+
+local function kebabToCamelCase(args)
+  local input = args[1][1]
+  print('input' .. input)
+  local parts = vim.split(input, '-', { plain = true })
+  for index = 2, #parts do
+    parts[index] = parts[index]:sub(1, 1):upper() .. parts[index]:sub(2)
+  end
+  return table.concat(parts, '')
+end
+
+local function reverseAndJoin(args)
+  local input = args[1][1]
+  local parts = vim.split(input, '-', { plain = true })
+  local reversedParts = {}
+  for i = #parts, 1, -1 do
+    table.insert(reversedParts, parts[i])
+  end
+  return table.concat(reversedParts, ' ')
+end
 
 ls.add_snippets('go', {
   s(
@@ -14,45 +36,63 @@ ls.add_snippets('go', {
 
 package cli
 
+import (
+    log "github.com/sirupsen/logrus"
+)
+
 func init() {
-	var <flag_var>
-	<api1>InvokeStr := "<cmd_invoke_str>"
-	<api2>Cmd := &cobra.Command{
-		Use:   <apiInvokeStr>InvokeStr,
+	var <flag_var>, userID string
+	<apiInvoke>InvokeStr := "<cmd_invoke_str>"
+	<apiInit>Cmd := &cobra.Command{
+		Use:   <apiUse>InvokeStr,
 		Short: "<short_desc>",
 	}
 	rootCmd.AddCommand(<apiAddCmd>Cmd)
 	logging.IniLog()
 
-	<api3>Cmd.Flags().StringVarP(&fp, "path", "p", "", "path of the placeholder to query info")
-	<api4>Cmd.Flags().StringVarP(&newParentUUIDstr, "new-parent-uuid", "d", "", "new parent uuid")
+	<apiFlag>Cmd.Flags().StringVarP(&userID, "user", "u", "", "user id")
 
-	markFlagsRequired(<api5>Cmd, "path")
-	<api6>Cmd.Run = func(cmd *cobra.Command, args []string) {
-		err := <api7>CLI(fp, newParentUUIDstr)
-		logRes(fp, err)
+	markFlagsRequired(<apiMarkFlag>Cmd, "path")
+	<apiRun>Cmd.Run = func(cmd *cobra.Command, args []string) {
+		<apiCall>CLI(<fn_args_call>)
 	}
 }
 
-func <api7>CLI(<fn_args>) error {
+func <apiImplement>CLI(<fn_args>) {
+      <choiceNode>
+      if err != nil {
+          log.Fatal(err)
+      }
       <finish>
 }
       ]],
       {
-        api1 = i(1),
-        api2 = rep(1),
-        api3 = rep(1),
-        api4 = rep(1),
-        api5 = rep(1),
-        api6 = rep(1),
-        api7 = rep(1),
-        apiAddCmd = rep(1),
-        apiInvokeStr = rep(1),
+        apiInvoke = c(2, {
+          f(kebabToCamelCase, { 1 }),
+          i(2, ''),
+        }),
+        apiInit = rep(2),
+        apiUse = rep(2),
+        apiAddCmd = rep(2),
+        apiFlag = rep(2),
+        apiMarkFlag = rep(2),
+        apiRun = rep(2),
+        apiCall = rep(2),
+        apiImplement = rep(2),
 
-        cmd_invoke_str = i(2, 'cmd_invoke_str'),
-        short_desc = i(3, 'short_desc'),
+        cmd_invoke_str = i(1, 'cmd_invoke_str'),
+        short_desc = c(3, {
+          f(reverseAndJoin, { 1 }),
+          i(1, 'short_desc'),
+        }),
         flag_var = i(4),
-        fn_args = i(5),
+
+        choiceNode = c(5, {
+          fmta([[<val>, err := <funcName>]], { val = i(1, 'val'), funcName = i(2, 'funcName') }),
+          fmta([[err := <funcName>]], { funcName = i(1, 'funcName') }),
+        }),
+        fn_args = i(6),
+        fn_args_call = i(7),
         finish = i(0),
       }
     )
