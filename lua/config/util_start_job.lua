@@ -2,29 +2,47 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
 local function set_diagnostics_and_quickfix(output)
-  local diagnostics = {}
+  local diagnostics_list = {}
+  local diagnostic = {
+    bufnr = 0,
+  }
 
   for _, line in ipairs(output) do
+    print(string.format('line: %s', line))
     local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
+    local file_bufnr = -1
+
     if file and row and col and message then
-      local bufnr = vim.fn.bufnr(file, false)
-      table.insert(diagnostics, {
-        bufnr = bufnr,
+      file_bufnr = vim.fn.bufnr(file)
+      print(string.format('bufnr: %s, file: %s', file_bufnr, file))
+
+      if not vim.api.nvim_buf_is_valid(file_bufnr) then
+        print(string.format('bufnr: %s is not valid', file_bufnr))
+        file_bufnr = vim.fn.bufadd(file)
+        vim.fn.bufload(file_bufnr)
+      end
+
+      diagnostic = {
+        bufnr = file_bufnr,
         lnum = tonumber(row) - 1, -- Line number (0-indexed)
         col = tonumber(col) - 1, -- Column number (0-indexed)
         message = message, -- The diagnostic message
         severity = vim.diagnostic.severity.ERROR, -- Set severity to ERROR
         source = 'golangci-lint',
         user_data = {},
-      })
+      }
+
+      print(string.format('diagnostic being inserted: %s', vim.inspect(diagnostic)))
+      table.insert(diagnostics_list, diagnostic)
     end
   end
 
-  for _, diagnostic in ipairs(diagnostics) do
-    vim.diagnostic.set(vim.api.nvim_create_namespace 'golangci-lint', diagnostic.bufnr, diagnostics, {})
+  for _, diag in ipairs(diagnostics_list) do
+    print(string.format('diagnostic in loop: %s', vim.inspect(diag)))
+    vim.diagnostic.set(vim.api.nvim_create_namespace 'golangci-lint', diag.bufnr, { diag }, {})
   end
 
-  if #diagnostics > 0 then
+  if #diagnostics_list > 0 then
     vim.diagnostic.setqflist {}
   end
 end
