@@ -28,7 +28,6 @@ end
 Start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
-  local ns = opts.ns or vim.api.nvim_create_namespace 'golangci-lint'
   local output = {}
   local errors = {}
 
