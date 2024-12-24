@@ -37,11 +37,12 @@ local function get_diagnostic_map(output)
   return diagnostics_map
 end
 
-local function set_diagnostics_and_quickfix(output)
+local function set_diagnostics_and_quickfix(output, ns)
+  vim.diagnostic.reset(ns)
+
   local diagnostics_map = get_diagnostic_map(output)
-  local namespace = vim.api.nvim_create_namespace 'golangci-lint'
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
-    vim.diagnostic.set(namespace, bufnr, diagnostics, {})
+    vim.diagnostic.set(ns, bufnr, diagnostics, {})
   end
 
   local quickfix_list = {}
@@ -66,6 +67,7 @@ end
 Start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
+  local ns = vim.api.nvim_create_namespace 'start-job'
   local output = {}
   local errors = {}
 
@@ -95,7 +97,7 @@ Start_job = function(opts)
     on_exit = function(_, code)
       if code ~= 0 then
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
-        set_diagnostics_and_quickfix(output)
+        set_diagnostics_and_quickfix(output, ns)
 
         if #errors > 0 then
           print('Error:' .. table.concat(errors, '\n'))
