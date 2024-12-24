@@ -1,7 +1,7 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local function set_diagnostics_and_quickfix(output)
+local function get_diagnostic_map(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
@@ -34,14 +34,16 @@ local function set_diagnostics_and_quickfix(output)
       table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
     end
   end
+  return diagnostics_map
+end
 
-  -- Apply diagnostics to buffers
+local function set_diagnostics_and_quickfix(output)
+  local diagnostics_map = get_diagnostic_map(output)
   local namespace = vim.api.nvim_create_namespace 'golangci-lint'
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     vim.diagnostic.set(namespace, bufnr, diagnostics, {})
   end
 
-  -- Populate the quickfix list
   local quickfix_list = {}
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     for _, diag in ipairs(diagnostics) do
