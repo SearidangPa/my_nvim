@@ -1,28 +1,32 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local function set_linter_quickfix(output)
+local function set_diagnostics_and_quickfix(output)
   local diagnostics = {}
+
   for _, line in ipairs(output) do
     local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
     if file and row and col and message then
+      local bufnr = vim.fn.bufnr(file, false)
       table.insert(diagnostics, {
-        filename = file,
-        lnum = tonumber(row),
-        col = tonumber(col),
-        text = message,
-        type = 'E',
+        bufnr = bufnr,
+        lnum = tonumber(row) - 1, -- Line number (0-indexed)
+        col = tonumber(col) - 1, -- Column number (0-indexed)
+        message = message, -- The diagnostic message
+        severity = vim.diagnostic.severity.ERROR, -- Set severity to ERROR
+        source = 'golangci-lint',
+        user_data = {},
       })
     end
   end
 
-  if #diagnostics > 0 then
-    vim.fn.setqflist({}, 'r', { title = 'Linter Diagnostics', items = diagnostics })
-    vim.cmd 'copen' -- Open the quickfix window
-    return
+  for _, diagnostic in ipairs(diagnostics) do
+    vim.diagnostic.set(vim.api.nvim_create_namespace 'golangci-lint', diagnostic.bufnr, diagnostics, {})
   end
 
-  print 'No diagnostics found'
+  if #diagnostics > 0 then
+    vim.diagnostic.setqflist {}
+  end
 end
 
 Start_job = function(opts)
@@ -57,7 +61,7 @@ Start_job = function(opts)
     on_exit = function(_, code)
       if code ~= 0 then
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
-        set_linter_quickfix(output)
+        set_diagnostics_and_quickfix(output)
 
         if #errors > 0 then
           print('Error:' .. table.concat(errors, '\n'))
