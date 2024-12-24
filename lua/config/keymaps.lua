@@ -53,7 +53,7 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
-map('n', '<leader>qf', function()
+map('n', '<leader>qs', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
 end, { desc = 'Fill the Quickfix list with diagnostics' })
@@ -62,13 +62,14 @@ map('n', '<leader>ql', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]u
 map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 map('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 
 map('n', '<leader>qr', function()
   vim.diagnostic.reset()
 end, { desc = 'diagnostics reset' })
 
-map('n', '<leader>qo', function()
+map('n', '<leader>qf', function()
   vim.diagnostic.open_float()
 end, { desc = 'Open diagnostic float' })
 
