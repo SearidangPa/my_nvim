@@ -2,27 +2,23 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
 local function set_diagnostics_and_quickfix(output)
-  local diagnostics_list = {}
-  local diagnostic = {
-    bufnr = 0,
+  local diagnostics_map = {
+    diagnostics_list_per_bufnr = {},
   }
 
   for _, line in ipairs(output) do
-    print(string.format('line: %s', line))
     local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
     local file_bufnr = -1
 
     if file and row and col and message then
       file_bufnr = vim.fn.bufnr(file)
-      print(string.format('bufnr: %s, file: %s', file_bufnr, file))
 
       if not vim.api.nvim_buf_is_valid(file_bufnr) then
-        print(string.format('bufnr: %s is not valid', file_bufnr))
         file_bufnr = vim.fn.bufadd(file)
         vim.fn.bufload(file_bufnr)
       end
 
-      diagnostic = {
+      local diagnostic = {
         bufnr = file_bufnr,
         lnum = tonumber(row) - 1, -- Line number (0-indexed)
         col = tonumber(col) - 1, -- Column number (0-indexed)
@@ -32,18 +28,36 @@ local function set_diagnostics_and_quickfix(output)
         user_data = {},
       }
 
-      print(string.format('diagnostic being inserted: %s', vim.inspect(diagnostic)))
-      table.insert(diagnostics_list, diagnostic)
+      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+      end
+      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
     end
   end
 
-  for _, diag in ipairs(diagnostics_list) do
-    print(string.format('diagnostic in loop: %s', vim.inspect(diag)))
-    vim.diagnostic.set(vim.api.nvim_create_namespace 'golangci-lint', diag.bufnr, { diag }, {})
+  -- Apply diagnostics to buffers
+  local namespace = vim.api.nvim_create_namespace 'golangci-lint'
+  for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
+    vim.diagnostic.set(namespace, bufnr, diagnostics, {})
   end
 
-  if #diagnostics_list > 0 then
-    vim.diagnostic.setqflist {}
+  -- Populate the quickfix list
+  local quickfix_list = {}
+  for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
+    for _, diag in ipairs(diagnostics) do
+      table.insert(quickfix_list, {
+        bufnr = bufnr,
+        lnum = diag.lnum + 1, -- Convert back to 1-indexed for quickfix
+        col = diag.col + 1,
+        text = diag.message,
+        type = 'E', -- Error type for quickfix
+      })
+    end
+  end
+
+  if #quickfix_list > 0 then
+    vim.fn.setqflist(quickfix_list, 'r')
+    vim.cmd 'copen'
   end
 end
 
