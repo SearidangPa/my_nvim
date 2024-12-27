@@ -74,7 +74,7 @@ return {
       },
       tabline = {
         lualine_a = {},
-        lualine_b = {},
+        lualine_b = { { 'filename', path = 4 } },
         lualine_c = {},
         lualine_x = {},
         lualine_y = { get_harpoon_filenames },
