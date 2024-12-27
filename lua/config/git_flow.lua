@@ -17,6 +17,7 @@ local default_no_more_input = {
 }
 
 local item_options = {
+  'Half-progress',
   'Checkpoint',
   'Refinement',
 }
