@@ -16,6 +16,7 @@ vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = Start_job { cmd = cmd }
 end, {})
 
+local linter_ns = vim.api.nvim_create_namespace 'cloud_drive_linter'
 vim.api.nvim_create_user_command('MakeLint', function()
   local cmd
   if vim.fn.has 'win32' == 1 then
@@ -23,7 +24,12 @@ vim.api.nvim_create_user_command('MakeLint', function()
   else
     cmd = { 'make', '-j', 'lint-unix' }
   end
-  _, output, errors = Start_job { cmd = cmd }
+  _, output, errors = Start_job { cmd = cmd, ns = linter_ns }
+end, {})
+
+vim.api.nvim_create_user_command('ClearQuickFix', function()
+  vim.fn.setqflist({}, 'r')
+  vim.diagnostic.reset(linter_ns)
 end, {})
 
 vim.api.nvim_create_user_command('ViewOutput', function()

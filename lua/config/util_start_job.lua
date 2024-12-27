@@ -67,7 +67,7 @@ end
 Start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
-  local ns = vim.api.nvim_create_namespace 'start-job'
+  local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
   local output = {}
   local errors = {}
 
