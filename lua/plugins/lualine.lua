@@ -56,12 +56,7 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = {
-          {
-            'filename',
-            path = 4,
-          },
-        },
+        lualine_c = {},
         lualine_x = {},
         lualine_y = {},
         lualine_z = {

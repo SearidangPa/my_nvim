@@ -88,4 +88,12 @@ for i = 1, 9 do
   end, { expr = true, remap = false })
 end
 
+function RenameAndCapitalize()
+  local current_word = vim.fn.expand '<cword>'
+  local capitalized_word = current_word:sub(1, 1):upper() .. current_word:sub(2)
+  vim.lsp.buf.rename(capitalized_word)
+end
+
+vim.keymap.set('n', '<leader>rc', ':lua RenameAndCapitalize()<CR>', map_opt 'Rename and capitalize first character')
+
 return {}
