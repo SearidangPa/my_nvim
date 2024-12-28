@@ -3,5 +3,6 @@ return { -- Collection of various small independent plugins/modules
   config = function()
     require('mini.ai').setup { n_lines = 500 }
     require('mini.notify').setup {}
+    require('mini.icons').setup {}
   end,
 }

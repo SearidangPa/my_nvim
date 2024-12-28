@@ -68,6 +68,11 @@ require('lazy').setup {
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     'copilot.vim',
   },
+  {
+    rocks = {
+      hererocks = true,
+    },
+  },
 }
 
 vim.schedule(function()
