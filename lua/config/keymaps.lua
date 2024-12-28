@@ -94,6 +94,10 @@ function RenameAndCapitalize()
   vim.lsp.buf.rename(capitalized_word)
 end
 
-vim.keymap.set('n', '<leader>rc', ':lua RenameAndCapitalize()<CR>', map_opt 'Rename and capitalize first character')
+vim.api.nvim_create_user_command('RenameCapitalize', function()
+  RenameAndCapitalize()
+end, {})
+
+vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
 
 return {}
