@@ -15,8 +15,6 @@ local function getAllTabFilenames()
   return s
 end
 
-print(vim.inspect(getAllTabFilenames()))
-
 local function get_harpoon_filenames()
   local harpoon = require 'harpoon'
   local root_dir = harpoon:list().config:get_root_dir()
@@ -44,6 +42,9 @@ local function get_harpoon_filenames()
       list_names = list_names .. display_sep .. tokens[#tokens]
     end
   end
+
+  -- remove the first separator
+  list_names = list_names:sub(4)
 
   return list_names
 end
