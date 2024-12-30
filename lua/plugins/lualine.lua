@@ -1,3 +1,22 @@
+local function getAllTabFilenames()
+  local s = ''
+  for i = 1, vim.fn.tabpagenr '$' do
+    local winnr = vim.fn.tabpagewinnr(i)
+    local bufnr = vim.fn.tabpagebuflist(i)[winnr]
+    local bufname = vim.fn.bufname(bufnr)
+    local filename = vim.fn.fnamemodify(bufname, ':t') -- Extract only the filename
+    if i == vim.fn.tabpagenr() then
+      s = s .. '%#TabLineSel#' .. ' ' .. filename .. ' '
+    else
+      s = s .. '%#TabLine#' .. ' ' .. filename .. ' '
+    end
+  end
+  s = s .. '%#TabLineFill#'
+  return s
+end
+
+print(vim.inspect(getAllTabFilenames()))
+
 local function get_harpoon_filenames()
   local harpoon = require 'harpoon'
   local root_dir = harpoon:list().config:get_root_dir()
@@ -20,10 +39,10 @@ local function get_harpoon_filenames()
     local fullpath = root_dir .. os_sep .. path
 
     if fullpath == current_file_path then
-      display_sep = ' |* '
+      list_names = list_names .. display_sep .. '%#TabLineSel#' .. tokens[#tokens] .. '%#TabLine#'
+    else
+      list_names = list_names .. display_sep .. tokens[#tokens]
     end
-
-    list_names = list_names .. display_sep .. tokens[#tokens]
   end
 
   return list_names
@@ -56,7 +75,7 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = {},
+        lualine_c = { { 'filename', path = 4 } },
         lualine_x = {},
         lualine_y = {},
         lualine_z = {
@@ -68,8 +87,8 @@ return {
         },
       },
       tabline = {
-        lualine_a = {},
-        lualine_b = { { 'filename', path = 4 } },
+        lualine_a = { getAllTabFilenames },
+        lualine_b = {},
         lualine_c = {},
         lualine_x = {},
         lualine_y = { get_harpoon_filenames },

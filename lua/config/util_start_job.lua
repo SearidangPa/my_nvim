@@ -97,6 +97,8 @@ Start_job = function(opts)
     on_exit = function(_, code)
       if code ~= 0 then
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
+        vim.list_extend(output, errors)
+
         set_diagnostics_and_quickfix(output, ns)
 
         if #errors > 0 then
@@ -107,6 +109,8 @@ Start_job = function(opts)
       end
 
       if not silent then
+        vim.diagnostic.reset(ns)
+        vim.fn.setqflist({}, 'r')
         local notif = string.format('%s completed successfully', invokeStr)
         make_notify(notif, vim.log.levels.INFO)
       end

@@ -21,24 +21,6 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
-vim.o.tabline = '%!v:lua.TabLine()'
-function _G.TabLine()
-  local s = ''
-  for i = 1, vim.fn.tabpagenr '$' do
-    local winnr = vim.fn.tabpagewinnr(i)
-    local bufnr = vim.fn.tabpagebuflist(i)[winnr]
-    local bufname = vim.fn.bufname(bufnr)
-    local filename = vim.fn.fnamemodify(bufname, ':t') -- Extract only the filename
-    if i == vim.fn.tabpagenr() then
-      s = s .. '%#TabLineSel#' .. ' ' .. filename .. ' '
-    else
-      s = s .. '%#TabLine#' .. ' ' .. filename .. ' '
-    end
-  end
-  s = s .. '%#TabLineFill#'
-  return s
-end
-
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)

@@ -38,10 +38,7 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- =================== Tabs ===================
 map('n', '[t', ':tabprev<CR>', map_opt 'Previous tab')
 map('n', ']t', ':tabnext<CR>', map_opt 'Next tab')
-
--- =================== diagnostics ===================
-map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
-map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
+vim.keymap.set('n', '<leader>tn', ':tabnew<CR>', map_opt 'New tab')
 
 -- =================== delete ===================
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
@@ -94,10 +91,21 @@ function RenameAndCapitalize()
   vim.lsp.buf.rename(capitalized_word)
 end
 
+function RenameAndLowercase()
+  local current_word = vim.fn.expand '<cword>'
+  local lowercase_word = current_word:sub(1, 1):lower() .. current_word:sub(2)
+  vim.lsp.buf.rename(lowercase_word)
+end
+
 vim.api.nvim_create_user_command('RenameCapitalize', function()
   RenameAndCapitalize()
 end, {})
 
+vim.api.nvim_create_user_command('RenameLowercase', function()
+  RenameAndLowercase()
+end, {})
+
 vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
+vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lowercase first character')
 
 return {}
