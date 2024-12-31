@@ -50,12 +50,11 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
-map('n', '<leader>qs', function()
+map('n', '<leader>ql', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
-end, { desc = 'Fill the Quickfix list with diagnostics' })
+end, { desc = '[Q]uickfix [L]ist' })
 
-map('n', '<leader>ql', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
@@ -85,6 +84,10 @@ for i = 1, 9 do
   end, { expr = true, remap = false })
 end
 
+-- [[
+-- ================== Rename the first letter
+-- ]]
+
 function RenameAndCapitalize()
   local current_word = vim.fn.expand '<cword>'
   local capitalized_word = current_word:sub(1, 1):upper() .. current_word:sub(2)
@@ -107,5 +110,7 @@ end, {})
 
 vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lowercase first character')
+
+vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite [A]ll')
 
 return {}
