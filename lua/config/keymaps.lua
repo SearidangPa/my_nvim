@@ -50,16 +50,20 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
+-- =================== Quickfix ===================
 map('n', '<leader>ql', function()
   vim.diagnostic.setqflist()
   vim.cmd 'copen'
 end, { desc = '[Q]uickfix [L]ist' })
-
 map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 map('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
+
+-- =================== LSP diagnostic ===================
+map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
+map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 map('n', '<leader>qr', function()
   vim.diagnostic.reset()
@@ -111,7 +115,8 @@ end, {})
 vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lowercase first character')
 
--- ================== Write all ===================
+-- ================== local leader===================
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = 'Write all' })
+vim.keymap.set('n', '<localleader><localleader>', '<cmd>source % <CR>', map_opt 'Source the current file')
 
 return {}

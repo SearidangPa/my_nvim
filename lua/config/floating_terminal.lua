@@ -15,6 +15,7 @@ function Create_floating_window(buf_intput)
 
   local buf = nil
   if buf_intput == -1 then
+    print 'Creating new buffer'
     buf = vim.api.nvim_create_buf(false, true)
   else
     buf = buf_intput
@@ -74,6 +75,7 @@ local function small_terminal()
   vim.api.nvim_win_set_height(0, 15)
   vim.api.nvim_feedkeys('i', 'n', true)
   job_id = vim.bo.channel
+  return job_id
 end
 
 vim.keymap.set('n', '<leader>st', small_terminal, { desc = '[S]mall [T]erminal' })

@@ -32,6 +32,34 @@ vim.api.nvim_create_user_command('ClearQuickFix', function()
   vim.diagnostic.reset(linter_ns)
 end, {})
 
+local state = {
+  floating = {
+    buf = -1,
+    win = -1,
+  },
+}
+
+local toggle_output = function(content)
+  if vim.api.nvim_win_is_valid(state.floating.win) then
+    vim.api.nvim_win_hide(state.floating.win)
+    return
+  end
+
+  state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
+  vim.api.nvim_buf_set_lines(state.floating.buf, 0, -1, false, content)
+end
+
+vim.api.nvim_create_user_command('ToggleOutput', function()
+  toggle_output(output)
+end, {})
+
+vim.api.nvim_create_user_command('ToggleErrors', function()
+  toggle_output(errors)
+end, {})
+
+vim.keymap.set('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput' })
+vim.keymap.set('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors' })
+
 vim.api.nvim_create_user_command('ViewOutput', function()
   local buf, _ = Create_floating_window()
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, output)
@@ -41,12 +69,6 @@ vim.api.nvim_create_user_command('ViewErrors', function()
   local buf = Create_floating_window()
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, errors)
 end, {})
-
-vim.keymap.set('n', '<localleader><localleader>', '<cmd>source % <CR>', {
-  noremap = true,
-  silent = false,
-  desc = 'Source this lua file',
-})
 
 vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 vim.keymap.set('n', '<leader>mt', ':GoModTidy<CR>', { desc = '[M]ake [T]idy' })
