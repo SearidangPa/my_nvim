@@ -76,9 +76,6 @@ return {
     -- bring back cursors if you accidentally clear them
     set('n', '<leader>gv', mc.restoreCursors)
 
-    -- Align cursor columns.
-    set('n', '<leader>a', mc.alignCursors)
-
     -- Split visual selections by regex.
     set('v', 'S', mc.splitCursors)
 

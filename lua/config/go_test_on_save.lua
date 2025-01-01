@@ -70,52 +70,63 @@ local function get_enclosing_fn_info()
   return nil
 end
 
+local win_state = {
+  floating = {
+    buf = -1,
+    win = -1,
+  },
+}
+
+local toggle_float = function(content)
+  if vim.api.nvim_win_is_valid(win_state.floating.win) then
+    vim.api.nvim_win_hide(win_state.floating.win)
+    return
+  end
+
+  win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+  vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
+end
+
 local go_test_one_output = function(state)
+  if vim.api.nvim_win_is_valid(win_state.floating.win) then
+    vim.api.nvim_win_hide(win_state.floating.win)
+    return
+  end
+
   local _, testName = get_enclosing_fn_info()
   for _, test in pairs(state.tests) do
     if test.name == testName then
-      local buf, _ = Create_floating_window()
-      vim.api.nvim_buf_set_lines(buf, 0, 1, false, test.output)
+      toggle_float(test.output)
     end
   end
 end
 
-local go_test_all_output = function(state, filter_for_sucess)
-  local buf, _ = Create_floating_window()
-  for _, test in pairs(state.tests) do
-    if test.success == filter_for_sucess then
-      local num_lines = vim.api.nvim_buf_line_count(buf)
-      vim.api.nvim_buf_set_lines(buf, num_lines, -1, false, test.output)
+local go_test_all_output = function(state)
+  if vim.api.nvim_win_is_valid(win_state.floating.win) then
+    vim.api.nvim_win_hide(win_state.floating.win)
+    return
+  end
+
+  local content = {}
+  for _, decodedLine in ipairs(state.all_output) do
+    local output = decodedLine.Output
+    if output then
+      local trimmed_str = string.gsub(output, '\n', '')
+      table.insert(content, trimmed_str)
     end
   end
+  toggle_float(content)
 end
 
 local create_tests_user_command = function(bufnr, group, ns, state)
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsAllOutput', function()
-    local content = {}
-    for _, decodedLine in ipairs(state.all_output) do
-      local output = decodedLine.Output
-      if output then
-        local trimmed_str = string.gsub(output, '\n', '')
-        table.insert(content, trimmed_str)
-      end
-    end
-    local buf, _ = Create_floating_window()
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, content)
+  vim.api.nvim_create_user_command('GoTestAllOutput', function()
+    go_test_all_output(state)
   end, {})
-
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsFailedOutput', function()
-    go_test_all_output(state, false)
-  end, {})
-
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestsSuccessOutput', function()
-    go_test_all_output(state, true)
-  end, {})
-
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoTestOutput', function()
+  vim.api.nvim_create_user_command('GoTestOutput', function()
     go_test_one_output(state)
   end, {})
 
+  vim.keymap.set('n', '<leader>gta', ':GoTestAllOutput<CR>', { desc = '[G]o [T]est [A]ll [O]utput' })
   vim.keymap.set('n', '<leader>gto', ':GoTestOutput<CR>', { desc = '[G]o [T]est [O]utput' })
 
   vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
@@ -284,8 +295,6 @@ end
 vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
-
-vim.keymap.set('n', '<leader>gts', ':GoTestOnSave<CR>', { desc = '[G]o [T]est on [S]ave' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'

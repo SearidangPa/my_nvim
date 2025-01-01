@@ -39,7 +39,7 @@ local state = {
   },
 }
 
-local toggle_output = function(content)
+local toggle_float = function(content)
   if vim.api.nvim_win_is_valid(state.floating.win) then
     vim.api.nvim_win_hide(state.floating.win)
     return
@@ -50,11 +50,11 @@ local toggle_output = function(content)
 end
 
 vim.api.nvim_create_user_command('ToggleOutput', function()
-  toggle_output(output)
+  toggle_float(output)
 end, {})
 
 vim.api.nvim_create_user_command('ToggleErrors', function()
-  toggle_output(errors)
+  toggle_float(errors)
 end, {})
 
 vim.keymap.set('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput' })
