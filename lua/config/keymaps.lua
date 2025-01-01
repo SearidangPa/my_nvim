@@ -111,6 +111,7 @@ end, {})
 vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lowercase first character')
 
-vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite [A]ll')
+-- ================== Write all ===================
+vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = 'Write all' })
 
 return {}

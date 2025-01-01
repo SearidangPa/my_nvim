@@ -42,10 +42,10 @@ vim.api.nvim_create_user_command('ViewErrors', function()
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, errors)
 end, {})
 
-vim.keymap.set('n', '<leader>xx', '<cmd>source % <CR>', {
+vim.keymap.set('n', '<localleader>z', '<cmd>source % <CR>', {
   noremap = true,
-  silent = true,
-  desc = 'source this lua file',
+  silent = false,
+  desc = '[Z]ource this lua file',
 })
 
 vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
