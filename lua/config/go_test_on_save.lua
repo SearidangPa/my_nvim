@@ -1,7 +1,6 @@
 require 'config.util_find_test'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
-
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
@@ -11,6 +10,12 @@ local ignored_actions = {
   cont = true,
   start = true,
   skip = true,
+}
+local win_state = {
+  floating = {
+    buf = -1,
+    win = -1,
+  },
 }
 
 local make_key = function(entry)
@@ -27,7 +32,6 @@ local add_golang_test = function(bufnr, state, entry)
   if not testLine then
     testLine = 0
   end
-
   state.tests[make_key(entry)] = {
     name = entry.Test,
     line = testLine - 1,
@@ -50,7 +54,6 @@ end
 
 local function get_enclosing_fn_info()
   local node = ts_utils.get_node_at_cursor()
-
   while node do
     if node:type() ~= 'function_declaration' then
       node = node:parent() -- Traverse up the node tree to find a function node
@@ -63,19 +66,11 @@ local function get_enclosing_fn_info()
       local startLine, _, _ = node:start()
       return startLine + 1, func_name -- +1 to convert 0-based to 1-based lua indexing system
     end
-
     ::continue::
   end
 
   return nil
 end
-
-local win_state = {
-  floating = {
-    buf = -1,
-    win = -1,
-  },
-}
 
 local go_test_one_output = function(state)
   if vim.api.nvim_win_is_valid(win_state.floating.win) then
@@ -277,7 +272,7 @@ end
 
 local attach_single_test = function()
   local test_name = get_enclosing_test()
-  print('Attaching test: ' .. test_name)
+  make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
   local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
   local ns_one = vim.api.nvim_create_namespace 'live_one_test'
