@@ -77,16 +77,6 @@ local win_state = {
   },
 }
 
-local toggle_float = function(content)
-  if vim.api.nvim_win_is_valid(win_state.floating.win) then
-    vim.api.nvim_win_hide(win_state.floating.win)
-    return
-  end
-
-  win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
-  vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
-end
-
 local go_test_one_output = function(state)
   if vim.api.nvim_win_is_valid(win_state.floating.win) then
     vim.api.nvim_win_hide(win_state.floating.win)
@@ -96,7 +86,8 @@ local go_test_one_output = function(state)
   local _, testName = get_enclosing_fn_info()
   for _, test in pairs(state.tests) do
     if test.name == testName then
-      toggle_float(test.output)
+      win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+      vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, test.output)
     end
   end
 end
@@ -115,7 +106,8 @@ local go_test_all_output = function(state)
       table.insert(content, trimmed_str)
     end
   end
-  toggle_float(content)
+  win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+  vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
 end
 
 local create_tests_user_command = function(bufnr, group, ns, state)
@@ -126,8 +118,8 @@ local create_tests_user_command = function(bufnr, group, ns, state)
     go_test_one_output(state)
   end, {})
 
-  vim.keymap.set('n', '<leader>gta', ':GoTestAllOutput<CR>', { desc = '[G]o [T]est [A]ll [O]utput' })
-  vim.keymap.set('n', '<leader>gto', ':GoTestOutput<CR>', { desc = '[G]o [T]est [O]utput' })
+  vim.keymap.set('n', '<localleader>ta', ':GoTestAllOutput<CR>', { desc = 'Go [T]est [A]ll Output' })
+  vim.keymap.set('n', '<localleader>to', ':GoTestOutput<CR>', { desc = 'Go [T]est [O]utput' })
 
   vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
     vim.api.nvim_del_augroup_by_id(group)
