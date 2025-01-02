@@ -64,7 +64,7 @@ func init() {
 	<apiFlag>Cmd.Flags().StringVarP(&userID, "user", "u", "", "user id")
 
 	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
-	<apiRun>Cmd.Run = func(cmd *cobra.Command, args []string) {
+	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
 		<apiCall>CLI(<fn_args_call>)
 	}
 }
