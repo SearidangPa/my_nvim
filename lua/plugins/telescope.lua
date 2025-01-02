@@ -18,10 +18,6 @@ local bind_keymap_builtin = function()
     }
   end, { desc = '[E]dit [N]vim config' })
 
-  map('n', '<leader>sn', function()
-    builtin.find_files { cwd = vim.fn.stdpath 'config' }
-  end, { desc = '[S]earch [N]eovim files' })
-
   map('n', '<leader>ep', function()
     builtin.find_files {
       cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),

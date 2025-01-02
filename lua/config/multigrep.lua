@@ -6,28 +6,52 @@ local themes = require 'telescope.themes'
 
 local M = {}
 
-local live_multigrep = function(opts)
+local construct_args_multigrep = function(prompt)
+  if not prompt or prompt == '' then
+    return nil
+  end
+  local pieces = vim.split(prompt, '  ')
+  local args = { 'rg' }
+
+  if pieces[1] then
+    table.insert(args, '-e')
+    table.insert(args, pieces[1])
+  end
+
+  if pieces[2] then
+    table.insert(args, '-g')
+    table.insert(args, pieces[2])
+  end
+  return args
+end
+
+local construct_args_no_regex = function(prompt)
+  if not prompt or prompt == '' then
+    return nil
+  end
+  local pieces = vim.split(prompt, '  ')
+  local args = { 'rg' }
+
+  if pieces[1] then
+    table.insert(args, '-F')
+    table.insert(args, pieces[1])
+  end
+  return args
+end
+
+local live_search = function(opts)
   opts = opts or {}
   opts.cwd = opts.cwd or vim.uv.cwd()
   opts = vim.tbl_deep_extend('force', themes.get_ivy(), opts)
+  assert(opts.args_constructor, 'You need to pass an args_constructor')
+  assert(opts.prompt_title, 'You need to pass a prompt_title')
+
   local finder = finders.new_async_job {
     command_generator = function(prompt)
-      if not prompt or prompt == '' then
+      local args = opts.args_constructor(prompt)
+      if not args then
         return nil
       end
-      local pieces = vim.split(prompt, '  ')
-      local args = { 'rg' }
-
-      if pieces[1] then
-        table.insert(args, '-e')
-        table.insert(args, pieces[1])
-      end
-
-      if pieces[2] then
-        table.insert(args, '-g')
-        table.insert(args, pieces[2])
-      end
-
       ---@diagnostic disable-next-line: deprecated
       return vim.tbl_flatten {
         args,
@@ -48,7 +72,7 @@ local live_multigrep = function(opts)
   pickers
     .new(opts, {
       debounce = 100,
-      prompt_title = 'Multi grep',
+      prompt_title = opts.prompt_title,
       finder = finder,
       previewer = conf.grep_previewer(opts),
       sorter = require('telescope.sorters').empty(),
@@ -57,7 +81,19 @@ local live_multigrep = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set('n', '<leader>sm', live_multigrep, { desc = '[S]earch [M]ulti grep' })
+  vim.keymap.set('n', '<leader>sm', function()
+    live_search {
+      args_constructor = construct_args_multigrep,
+      prompt_title = 'multi grep',
+    }
+  end, { desc = '[S]earch [M]ulti grep' })
+
+  vim.keymap.set('n', '<leader>sn', function()
+    live_search {
+      args_constructor = construct_args_no_regex,
+      prompt_title = 'no regex',
+    }
+  end, { desc = '[S]earch [N]o regex' })
 end
 
 return M
