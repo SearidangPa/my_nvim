@@ -17,15 +17,26 @@ local function kebabToCamelCase(args)
   return table.concat(parts, '')
 end
 
-local function reverseAndJoin(args)
+local function parseJoin(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
-  local reversedParts = {}
-  for i = #parts, 1, -1 do
-    table.insert(reversedParts, parts[i])
-  end
-  return table.concat(reversedParts, ' ')
+  return table.concat(parts, ' ')
 end
+
+ls.add_snippets('go', {
+  s(
+    'iffat',
+    fmta(
+      [[
+      if err != nil{
+        log.Fatalf("failed to <finish>
+      }
+      ]],{
+        finish = i(0),
+      }
+    )
+  ),
+})
 
 ls.add_snippets('go', {
   s(
@@ -82,7 +93,7 @@ func <apiImplement>CLI(<fn_args>) {
 
         cmd_invoke_str = i(1, 'cmd_invoke_str'),
         short_desc = c(3, {
-          f(reverseAndJoin, { 1 }),
+          f(parseJoin, { 1 }),
           i(1, 'short_desc'),
         }),
         flag_var = i(4),
