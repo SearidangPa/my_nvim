@@ -37,9 +37,9 @@ local linter_ns = vim.api.nvim_create_namespace 'cloud_drive_linter'
 vim.api.nvim_create_user_command('MakeLint', function()
   local cmd
   if vim.fn.has 'win32' == 1 then
-    cmd = { 'C:\\ProgramData\\chocolatey\\bin\\make.exe', '-j', 'lint-windows' }
+    cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j lint' }
   else
-    cmd = { 'make', '-j', 'lint-unix' }
+    cmd = { 'make', '-j', 'lint' }
   end
   _, output, errors = Start_job { cmd = cmd, ns = linter_ns }
 end, {})
