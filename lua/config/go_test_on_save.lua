@@ -283,6 +283,9 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
 
+vim.keymap.set('n', '<localleader>gt', ':GoTestOnSave<CR>', { desc = '[G]o [T]est On [S]ave' })
+vim.keymap.set('n', '<localleader>sgt', ':StopGoTestOnSave<CR>', { desc = '[S]top [G]o [T]est On Save' })
+
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'

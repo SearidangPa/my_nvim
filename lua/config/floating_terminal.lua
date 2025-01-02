@@ -15,7 +15,6 @@ function Create_floating_window(buf_intput)
 
   local buf = nil
   if buf_intput == -1 then
-    print 'Creating new buffer'
     buf = vim.api.nvim_create_buf(false, true)
   else
     buf = buf_intput
