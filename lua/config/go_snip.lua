@@ -10,7 +10,6 @@ local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
-require 'config.util_go_snip'
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
 vim.treesitter.query.set(
@@ -23,13 +22,13 @@ vim.treesitter.query.set(
   ] ]]
 )
 
-local lowerFirst = function(args)
+LowerFirst = function(args)
   local input = args[1][1] or ''
   local lower = input:sub(1, 1):lower() .. input:sub(2)
   return lower
 end
 
-local getLastFuncName = function(args)
+GetLastFuncName = function(args)
   local input = args[1][1] or ''
   ---@diagnostic disable-next-line: param-type-mismatch
   local parts = vim.split(input, '.', true)
@@ -38,7 +37,7 @@ local getLastFuncName = function(args)
     return ''
   end
 
-  return lowerFirst { { res } }
+  return LowerFirst { { res } }
 end
 
 local transform = function(text, info)
@@ -50,10 +49,10 @@ local transform = function(text, info)
       print(string.format('info.index: %d, text: %s', info.index, text))
       return c(info.index, {
         fmta([[eris.Wrap(err, "failed to <funcName>")]], {
-          funcName = getLastFuncName { { info.func_name } },
+          funcName = GetLastFuncName { { info.func_name } },
         }),
         fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], {
-          funcName = getLastFuncName { { info.func_name } },
+          funcName = GetLastFuncName { { info.func_name } },
           moreInfo = i(1, 'moreInfo'),
         }),
       })
@@ -160,163 +159,4 @@ ls.add_snippets('go', {
   ),
 })
 
-ls.add_snippets('go', {
-  s(
-    'ef', -- error fatal
-    fmta(
-      [[
-        <choiceNode> <funcName>(<args>)
-        if err != nil {
-            log.Fatalf("failed to <processedFuncName>, err: %v", err)
-        }
-        <finish>
-      ]],
-      {
-        choiceNode = c(3, {
-          fmta([[<res>, err := ]], { res = i(1, 'res') }),
-          t 'err = ',
-          t 'err := ',
-        }),
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        processedFuncName = getLastFuncName { i(1, 'funcName') },
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'fn',
-    fmta(
-      [[
-        func <funcName>(<args>) <choiceNode> {
-              <body>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        choiceNode = c(3, {
-          t 'error',
-          t ' ',
-          i(nil, 'returnType'),
-        }),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'strf',
-    fmta(
-      [[
-          func (<inst> *<Type>) String() string {
-                  <body>
-          }
-      ]],
-      {
-        Type = i(1, 'Type'),
-        inst = f(lowerFirst, { 1 }),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'test',
-    fmta(
-      [[
-          func Test_<Name>(t *testing.T) {
-                  <body>
-          }
-    ]],
-      {
-        Name = i(1, 'Name'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'test_init_file',
-    fmta(
-      [[
-          func Test_<Name>(t *testing.T) {
-                  tr := initTestResource(t, withConnectSyncRoot())
-                  defer tr.cleanUp()
-                  f1 := "file1.txt"
-                  fp := filepath.Join(tr.syncRootPath, f1)
-                  entryUUID := createAFilePlaceholderUnderRoot(tr, t, f1)
-                  <body>
-          }
-    ]],
-      {
-        Name = i(1, 'Name'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'test_fn',
-    fmta(
-      [[
-        func <funcName>(t *testing.T, <args>) {
-              <body>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'ne', -- no error
-    fmta(
-      [[
-          <choiceNode>
-          require.NoError(t, err)
-          <finish>
-      ]],
-      {
-        choiceNode = c(1, {
-          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
-          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-        }),
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'wb',
-    fmta(
-      [[
-            //go:build windows
-
-            package <finish>
-        ]],
-      {
-        finish = i(0),
-      }
-    )
-  ),
-})
+require 'config.util_go_snip'

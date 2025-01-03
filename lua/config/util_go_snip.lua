@@ -3,6 +3,7 @@ local c = ls.choice_node
 local f = ls.function_node
 local s = ls.snippet
 local i = ls.insert_node
+local t = ls.text_node
 local extras = require 'luasnip.extras'
 local rep = extras.rep
 local fmta = require('luasnip.extras.fmt').fmta
@@ -31,7 +32,8 @@ ls.add_snippets('go', {
       if err != nil{
         log.Fatalf("failed to <finish>
       }
-      ]],{
+      ]],
+      {
         finish = i(0),
       }
     )
@@ -106,6 +108,167 @@ func <apiImplement>CLI(<fn_args>) {
         fn_args = i(7),
         fn_args_call = i(8),
         errFmt = i(9),
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ef', -- error fatal
+    fmta(
+      [[
+        <choiceNode> <funcName>(<args>)
+        if err != nil {
+            log.Fatalf("failed to <processedFuncName>, err: %v", err)
+        }
+        <finish>
+      ]],
+      {
+        choiceNode = c(3, {
+          fmta([[<res>, err := ]], { res = i(1, 'res') }),
+          t 'err = ',
+          t 'err := ',
+        }),
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
+        processedFuncName = GetLastFuncName { i(1, 'funcName') },
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'fn',
+    fmta(
+      [[
+        func <funcName>(<args>) <choiceNode> {
+              <body>
+        }
+      ]],
+      {
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
+        choiceNode = c(3, {
+          t 'error',
+          t ' ',
+          i(nil, 'returnType'),
+        }),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'strf',
+    fmta(
+      [[
+          func (<inst> *<Type>) String() string {
+                  <body>
+          }
+      ]],
+      {
+        Type = i(1, 'Type'),
+        inst = f(LowerFirst, { 1 }),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'test',
+    fmta(
+      [[
+          func Test_<Name>(t *testing.T) {
+                  <body>
+          }
+    ]],
+      {
+        Name = i(1, 'Name'),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'test_init_file',
+    fmta(
+      [[
+          func Test_<Name>(t *testing.T) {
+                  tr := initTestResource(t, withConnectSyncRoot())
+                  defer tr.cleanUp()
+                  f1 := "file1.txt"
+                  fp := filepath.Join(tr.syncRootPath, f1)
+                  entryUUID := createAFilePlaceholderUnderRoot(tr, t, f1)
+                  <body>
+          }
+    ]],
+      {
+        Name = i(1, 'Name'),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'test_fn',
+    fmta(
+      [[
+        func <funcName>(t *testing.T, <args>) {
+              <body>
+        }
+      ]],
+      {
+        funcName = i(1, 'funcName'),
+        args = i(2, 'args'),
+        body = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ne', -- no error
+    fmta(
+      [[
+          <choiceNode>
+          require.NoError(t, err)
+          <finish>
+      ]],
+      {
+        choiceNode = c(1, {
+          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
+          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+        }),
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'wb',
+    fmta(
+      [[
+            //go:build windows
+
+            package <finish>
+        ]],
+      {
         finish = i(0),
       }
     )
