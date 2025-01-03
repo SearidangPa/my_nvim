@@ -48,6 +48,7 @@ require('lazy').setup {
     },
     'tpope/vim-fugitive', -- Git commands in Neovim
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    { 'github/copilot.vim' },
   },
   {
     rocks = {

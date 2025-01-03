@@ -119,4 +119,8 @@ vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lo
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = 'Write all' })
 vim.keymap.set('n', '<localleader><localleader>', '<cmd>source % <CR>', map_opt 'Source the current file')
 
+-- =================== theme ==================
+vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
+vim.keymap.set('n', '<leader>tcd', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [D]ark')
+
 return {}
