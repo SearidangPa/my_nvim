@@ -46,17 +46,6 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      print(string.format('info.index: %d, text: %s', info.index, text))
-      -- return c(info.index, {
-      --   fmta([[eris.Wrap(err, "failed to <funcName>")]], {
-      --     funcName = GetLastFuncName { { info.func_name } },
-      --   }),
-      --   fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], {
-      --     funcName = GetLastFuncName { { info.func_name } },
-      --     moreInfo = i(1, 'moreInfo'),
-      --   }),
-      -- })
-      --
       return c(info.index, {
         t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
         sn(nil, {
