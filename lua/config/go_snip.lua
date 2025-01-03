@@ -47,9 +47,15 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
+      print(string.format('info.index: %d, text: %s', info.index, text))
       return c(info.index, {
-        fmta([[eris.Wrap(err, "failed to <funcName>")]], { funcName = getLastFuncName { { info.func_name } } }),
-        fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], { funcName = getLastFuncName { { info.func_name } }, moreInfo = i(1, 'moreInfo') }),
+        fmta([[eris.Wrap(err, "failed to <funcName>")]], {
+          funcName = getLastFuncName { { info.func_name } },
+        }),
+        fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], {
+          funcName = getLastFuncName { { info.func_name } },
+          moreInfo = i(1, 'moreInfo'),
+        }),
       })
     end
   elseif text == 'bool' then
@@ -122,13 +128,13 @@ local function go_result_type(info)
 end
 
 local go_ret_vals = function(args)
-  return snippet_from_nodes(
-    nil,
-    go_result_type {
-      index = 0,
-      func_name = args[1][1],
-    }
-  )
+  local info = {
+    index = 0,
+    func_name = args[1][1] or 'unknown',
+  }
+  local result = go_result_type(info)
+  print('Resulting snippet:', vim.inspect(result)) -- Debugging
+  return snippet_from_nodes(nil, result)
 end
 
 ls.add_snippets('go', {
@@ -140,18 +146,16 @@ ls.add_snippets('go', {
         if err != nil {
             return <dynamicRet>
         }
-        <finish>
       ]],
       {
-        choiceNode = c(3, {
+        choiceNode = c(2, {
           fmta([[<res>, err := ]], { res = i(1, 'res') }),
           t 'err = ',
           t 'err := ',
         }),
         funcName = i(1, 'funcName'),
-        args = i(2, ''),
+        args = i(3, ''),
         dynamicRet = d(4, go_ret_vals, { 1 }),
-        finish = i(0),
       }
     )
   ),
