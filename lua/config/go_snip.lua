@@ -133,7 +133,6 @@ local go_ret_vals = function(args)
     func_name = args[1][1] or 'unknown',
   }
   local result = go_result_type(info)
-  print('Resulting snippet:', vim.inspect(result)) -- Debugging
   return snippet_from_nodes(nil, result)
 end
 
