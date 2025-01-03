@@ -183,7 +183,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test',
+    'test_new',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {

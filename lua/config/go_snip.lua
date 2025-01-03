@@ -1,7 +1,7 @@
 local ls = require 'luasnip'
-local snippet_from_nodes = ls.sn
 local c = ls.choice_node
 local s = ls.snippet
+local sn = ls.snippet_node
 local i = ls.insert_node
 local f = ls.function_node
 local d = ls.dynamic_node
@@ -47,13 +47,24 @@ local transform = function(text, info)
     if info then
       info.index = info.index + 1
       print(string.format('info.index: %d, text: %s', info.index, text))
+      -- return c(info.index, {
+      --   fmta([[eris.Wrap(err, "failed to <funcName>")]], {
+      --     funcName = GetLastFuncName { { info.func_name } },
+      --   }),
+      --   fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], {
+      --     funcName = GetLastFuncName { { info.func_name } },
+      --     moreInfo = i(1, 'moreInfo'),
+      --   }),
+      -- })
+      --
       return c(info.index, {
-        fmta([[eris.Wrap(err, "failed to <funcName>")]], {
-          funcName = GetLastFuncName { { info.func_name } },
-        }),
-        fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], {
-          funcName = GetLastFuncName { { info.func_name } },
-          moreInfo = i(1, 'moreInfo'),
+        t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
+        sn(nil, {
+          f(function()
+            return string.format('eris.Wrapf(err, "failed to %s, ', GetLastFuncName { { info.func_name } })
+          end, {}),
+          i(1, 'additional_info'), -- Insert node for user input
+          t '")',
         }),
       })
     end
@@ -126,13 +137,20 @@ local function go_result_type(info)
   return { t '' }
 end
 
+local function debug_node(node, label)
+  print(string.format('%s: Type: %s, Static Text: %s', label or 'Node', node.type, vim.inspect(node.static_text or 'N/A')))
+end
+
 local go_ret_vals = function(args)
   local info = {
     index = 0,
     func_name = args[1][1] or 'unknown',
   }
   local result = go_result_type(info)
-  return snippet_from_nodes(nil, result)
+  for _, node in ipairs(result) do
+    debug_node(node, 'Result Node')
+  end
+  return sn(nil, result)
 end
 
 ls.add_snippets('go', {
