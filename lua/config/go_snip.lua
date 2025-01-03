@@ -47,7 +47,10 @@ local transform = function(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      return t(string.format('fmt.Errorf("failed to %s, err: %%v", err) ', getLastFuncName { { info.func_name } }))
+      return c(info.index, {
+        fmta([[eris.Wrap(err, "failed to <funcName>")]], { funcName = getLastFuncName { { info.func_name } } }),
+        fmta([[eris.Wrapf(err, "failed to <funcName>, <moreInfo>")]], { funcName = getLastFuncName { { info.func_name } }, moreInfo = i(1, 'moreInfo') }),
+      })
     end
   elseif text == 'bool' then
     return t 'false'
@@ -223,7 +226,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_blank',
+    'test',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -240,7 +243,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_init',
+    'test_init_file',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -262,7 +265,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'fn_in_test',
+    'test_fn',
     fmta(
       [[
         func <funcName>(t *testing.T, <args>) {
