@@ -18,8 +18,8 @@ local win_state = {
   },
 }
 
-local group = vim.api.nvim_create_augroup('one_test_group', { clear = true })
-local ns = vim.api.nvim_create_namespace 'live_one_test'
+local group = vim.api.nvim_create_augroup('live_test', { clear = true })
+local ns = vim.api.nvim_create_namespace 'live_go_test'
 
 local make_key = function(entry)
   assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
