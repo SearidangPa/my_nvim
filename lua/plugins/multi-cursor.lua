@@ -3,9 +3,7 @@ return {
   branch = '1.0',
   config = function()
     local mc = require 'multicursor-nvim'
-
     mc.setup()
-
     local set = vim.keymap.set
 
     set({ 'n', 'v' }, '<up>', function()
@@ -14,40 +12,22 @@ return {
 
     set({ 'n', 'v' }, '<down>', function()
       mc.lineAddCursor(1)
-    end)
+    end, { noremap = true, desc = 'Add cursor below' })
+
     set({ 'n', 'v' }, '<leader><up>', function()
       mc.lineSkipCursor(-1)
-    end)
+    end, { noremap = true, desc = 'Skip cursor above' })
+
     set({ 'n', 'v' }, '<leader><down>', function()
       mc.lineSkipCursor(1)
-    end)
+    end, { noremap = true, desc = 'Skip cursor below' })
 
-    -- Add or skip adding a new cursor by matching word/selection
-    set({ 'n', 'v' }, '<leader>n', function()
-      mc.matchAddCursor(1)
-    end)
-    set({ 'n', 'v' }, '<leader>s', function()
-      mc.matchSkipCursor(1)
-    end)
-    set({ 'n', 'v' }, '<leader>N', function()
-      mc.matchAddCursor(-1)
-    end)
-    set({ 'n', 'v' }, '<leader>S', function()
-      mc.matchSkipCursor(-1)
-    end)
-
-    -- Rotate the main cursor.
-    set({ 'n', 'v' }, '<left>', mc.nextCursor, { noremap = true, desc = 'Rotate cursor left' })
-    set({ 'n', 'v' }, '<right>', mc.prevCursor, { noremap = true, desc = 'Rotate cursor right' })
-
-    -- Delete the main cursor.
     set({ 'n', 'v' }, '<leader>x', mc.deleteCursor, { noremap = true, desc = 'Delete cursor' })
-
-    -- Add and remove cursors with control + left click.
     set('n', '<c-leftmouse>', mc.handleMouse, { noremap = true, desc = 'Add cursor with control + left click' })
-
-    -- Easy way to add and remove cursors using the main cursor.
     set({ 'n', 'v' }, '<c-q>', mc.toggleCursor, { noremap = true, desc = 'Toggle cursor' })
+    set('v', 'I', mc.insertVisual, { noremap = true, desc = 'Insert for each line of the visual section' })
+    set('v', 'A', mc.appendVisual, { noremap = true, desc = 'Append for each line of the visual section' })
+    set('v', 'M', mc.matchCursors, { noremap = true, desc = 'Match cursors within visual selection by regex' })
 
     set('n', '<esc>', function()
       if not mc.cursorsEnabled() then
@@ -55,16 +35,8 @@ return {
       elseif mc.hasCursors() then
         mc.clearCursors()
       else
-        -- Default <esc> handler.
       end
     end)
-
-    -- Append/insert for each line of visual selections.
-    set('v', 'I', mc.insertVisual)
-    set('v', 'A', mc.appendVisual)
-
-    -- match new cursors within visual selections by regex.
-    set('v', 'M', mc.matchCursors)
 
     -- Customize how cursors look.
     local hl = vim.api.nvim_set_hl
