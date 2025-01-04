@@ -280,8 +280,7 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
 end, {})
 
 vim.keymap.set('n', '<leader>tg', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
-vim.keymap.set('n', '<localleader>ta', ':GoTestAllOutput<CR>', { desc = 'Go [T]est [A]ll Output' })
-vim.keymap.set('n', '<localleader>to', ':GoTestOutput<CR>', { desc = 'Go [T]est [O]utput' })
+vim.keymap.set('n', '<leader>to', ':GoTestOutput<CR>', { desc = 'Go [T]est [O]utput' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
