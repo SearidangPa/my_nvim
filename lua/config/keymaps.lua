@@ -21,8 +21,8 @@ map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the upper window')
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- =================== Tabs ===================
-map('n', '[t', ':tabprev<CR>', map_opt 'Previous tab')
-map('n', ']t', ':tabnext<CR>', map_opt 'Next tab')
+map('n', '[t', ':tabprev<CR>', map_opt 'Previous [t]ab')
+map('n', ']t', ':tabnext<CR>', map_opt 'Next [t]ab')
 vim.keymap.set('n', '<leader>nt', ':tabnew<CR>', map_opt '[N]ew [T]ab')
 
 -- =================== delete ===================
@@ -52,11 +52,11 @@ map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 map('n', '<leader>qr', function()
   vim.diagnostic.reset()
-end, { desc = 'diagnostics reset' })
+end, { desc = 'diagnostics [r]eset' })
 
 map('n', '<leader>qf', function()
   vim.diagnostic.open_float()
-end, { desc = 'Open diagnostic float' })
+end, { desc = 'Open diagnostic [f]loat' })
 
 --[[
       ================== Copilot ===================
@@ -105,7 +105,7 @@ vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and 
 
 -- ================== local leader===================
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = '[W]rite all' })
-vim.keymap.set('n', '<localleader><localleader>', '<cmd>source % <CR>', map_opt 'Source the current file')
+vim.keymap.set('n', '<leader>z', '<cmd>source % <CR>', map_opt 'Source the current lua file')
 
 -- =================== theme ==================
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
