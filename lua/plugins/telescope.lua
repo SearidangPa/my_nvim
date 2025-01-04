@@ -46,7 +46,7 @@ return {
         builtin.live_grep {
           cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
         }
-      end, { desc = '[B]rowse [P]lugins' })
+      end, { desc = '[S]earch Plugin by [G]rep' })
 
       map('n', '<leader>/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {

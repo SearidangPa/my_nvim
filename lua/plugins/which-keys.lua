@@ -23,6 +23,8 @@ return {
       { '<leader>p', group = 'git [P]ush' },
       { '<leader>g', group = '[G]o' },
       { '<leader>gm', group = '[G]o [M]od' },
+
+      { '<localleader>s', group = '[S]earch plugin' },
     },
   },
 }
