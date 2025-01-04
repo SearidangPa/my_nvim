@@ -11,15 +11,6 @@ local function generate_keymap()
     }
   end
 
-  -- keymap['<C-l>'] = {
-  --   function()
-  --     local accept = vim.fn['copilot#Accept']
-  --     local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-  --     res = res .. '\n'
-  --     vim.api.nvim_feedkeys(res, 'n', false)
-  --   end,
-  -- }
-
   return keymap
 end
 
@@ -58,6 +49,11 @@ return {
       },
 
       completion = {
+        list = {
+          selection = function(ctx)
+            return ctx.mode == 'cmdline' and 'auto_insert' or 'preselect'
+          end,
+        },
         menu = {
           draw = {
             columns = { { 'item_idx' }, { 'kind_icon', 'kind' }, { 'label', 'label_description', gap = 1 } },
