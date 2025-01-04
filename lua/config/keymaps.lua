@@ -62,12 +62,11 @@ end, { desc = 'Open diagnostic float' })
       ================== Copilot ===================
 --]]
 
-map('i', '<M-f>', function()
-  return vim.fn['copilot#AcceptWord'] ''
-end, { expr = true, remap = false, desc = 'Copilot Accept word' })
-
 map('i', '<M-l>', function()
-  return vim.fn['copilot#AcceptLine'] ''
+  local accept = vim.fn['copilot#AcceptLine']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  res = res .. '\n'
+  vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept line' })
 
 map('i', '<M-y>', function()

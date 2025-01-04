@@ -11,14 +11,14 @@ local function generate_keymap()
     }
   end
 
-  keymap['<C-l>'] = {
-    function()
-      local accept = vim.fn['copilot#Accept']
-      local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-      res = res .. '\n'
-      vim.api.nvim_feedkeys(res, 'n', false)
-    end,
-  }
+  -- keymap['<C-l>'] = {
+  --   function()
+  --     local accept = vim.fn['copilot#Accept']
+  --     local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  --     res = res .. '\n'
+  --     vim.api.nvim_feedkeys(res, 'n', false)
+  --   end,
+  -- }
 
   return keymap
 end
