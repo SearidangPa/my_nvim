@@ -22,12 +22,4 @@ return {
       subwordMovement = true,
     },
   },
-  -- highlights unique targets for f/F/t/T
-  {
-    'jinh0/eyeliner.nvim',
-    opts = {
-      highlight_on_key = true,
-      dim = true,
-    },
-  },
 }
