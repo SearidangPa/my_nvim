@@ -30,17 +30,23 @@ return {
       map('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
       map('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
-      map('n', '<leader>en', function()
+      map('n', '<leader>bn', function()
         builtin.find_files {
           cwd = vim.fn.stdpath 'config',
         }
-      end, { desc = '[E]dit [N]vim config' })
+      end, { desc = '[B]rowse [N]vim config' })
 
-      map('n', '<leader>ep', function()
+      map('n', '<leader>bp', function()
         builtin.find_files {
           cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
         }
-      end, { desc = '[E]dit [P]lugins' })
+      end, { desc = '[B]rowse [P]lugins' })
+
+      map('n', '<localleader>sg', function()
+        builtin.live_grep {
+          cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
+        }
+      end, { desc = '[B]rowse [P]lugins' })
 
       map('n', '<leader>/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {

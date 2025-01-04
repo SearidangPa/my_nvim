@@ -18,6 +18,9 @@ local win_state = {
   },
 }
 
+local group = vim.api.nvim_create_augroup('one_test_group', { clear = true })
+local ns = vim.api.nvim_create_namespace 'live_one_test'
+
 local make_key = function(entry)
   assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
   if not entry.Test then
@@ -105,7 +108,7 @@ local go_test_all_output = function(state)
   vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
 end
 
-local create_tests_user_command = function(bufnr, group, ns, state)
+local create_tests_user_command = function(bufnr, state)
   vim.api.nvim_create_user_command('GoTestAllOutput', function()
     go_test_all_output(state)
   end, {})
@@ -123,7 +126,7 @@ local create_tests_user_command = function(bufnr, group, ns, state)
   end, {})
 end
 
-local on_exit_fn = function(state, bufnr, ns)
+local on_exit_fn = function(state, bufnr)
   job_id = -1
   make_notify 'Test finished'
   local failed = {}
@@ -156,13 +159,13 @@ local function clean_up_prev_job()
   end
 end
 
-local attach_to_buffer = function(bufnr, command, group, ns)
+local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
     tests = {},
     all_output = {},
   }
-  create_tests_user_command(bufnr, group, ns, state)
+  create_tests_user_command(bufnr, state)
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -236,7 +239,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          on_exit_fn(state, bufnr, ns)
+          on_exit_fn(state, bufnr)
         end,
       })
     end,
@@ -252,9 +255,7 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
   local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  local group_all_tests = vim.api.nvim_create_augroup('all_tests_group', { clear = true })
-  local ns_all_tests = vim.api.nvim_create_namespace 'live_tests_all'
-  attach_to_buffer(bufnr, command, group_all_tests, ns_all_tests)
+  attach_to_buffer(bufnr, command)
 end, {})
 
 local function get_enclosing_test()
@@ -274,17 +275,14 @@ local attach_single_test = function()
   local test_name = get_enclosing_test()
   make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
-  local group_one = vim.api.nvim_create_augroup('one_test_group', { clear = true })
-  local ns_one = vim.api.nvim_create_namespace 'live_one_test'
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command, group_one, ns_one)
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
 vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
 
-vim.keymap.set('n', '<localleader>gt', ':GoTestOnSave<CR>', { desc = '[G]o [T]est On [S]ave' })
-vim.keymap.set('n', '<localleader>sgt', ':StopGoTestOnSave<CR>', { desc = '[S]top [G]o [T]est On Save' })
+vim.keymap.set('n', '<leader>tg', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
