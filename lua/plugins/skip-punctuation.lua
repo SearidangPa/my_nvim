@@ -1,23 +1,33 @@
 return {
-  'chrisgrieser/nvim-spider',
-  keys = {
-    {
-      'w',
-      "<cmd>lua require('spider').motion('w')<CR>",
-      mode = { 'n', 'o', 'x' },
+  {
+    'chrisgrieser/nvim-spider',
+    keys = {
+      {
+        'w',
+        "<cmd>lua require('spider').motion('w')<CR>",
+        mode = { 'n', 'o', 'x' },
+      },
+      {
+        'e',
+        "<cmd>lua require('spider').motion('e')<CR>",
+        mode = { 'n', 'o', 'x' },
+      },
+      {
+        'b',
+        "<cmd>lua require('spider').motion('b')<CR>",
+        mode = { 'n', 'o', 'x' },
+      },
     },
-    {
-      'e',
-      "<cmd>lua require('spider').motion('e')<CR>",
-      mode = { 'n', 'o', 'x' },
-    },
-    {
-      'b',
-      "<cmd>lua require('spider').motion('b')<CR>",
-      mode = { 'n', 'o', 'x' },
+    opts = {
+      subwordMovement = true,
     },
   },
-  opts = {
-    subwordMovement = true,
+  -- highlights unique targets for f/F/t/T
+  {
+    'jinh0/eyeliner.nvim',
+    opts = {
+      highlight_on_key = true,
+      dim = true,
+    },
   },
 }
