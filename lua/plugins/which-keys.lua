@@ -25,6 +25,7 @@ return {
       { '<leader>gm', group = '[G]o [M]od' },
 
       { '<localleader>s', group = '[S]earch plugin' },
+      { '<localleader>t', group = '[T]oggle make result' },
     },
   },
 }
