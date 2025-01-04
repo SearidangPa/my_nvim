@@ -67,7 +67,7 @@ map('i', '<M-l>', function()
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
   res = res .. '\n'
   vim.api.nvim_feedkeys(res, 'n', false)
-end, { expr = true, remap = false, desc = 'Copilot Accept line' })
+end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 
 map('i', '<M-y>', function()
   local accept = vim.fn['copilot#Accept']
@@ -100,11 +100,11 @@ vim.api.nvim_create_user_command('RenameLowercase', function()
   RenameAndLowercase()
 end, {})
 
-vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt 'Rename and capitalize first character')
-vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt 'Rename and lowercase first character')
+vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt '[R]ename and [c]apitalize first character')
+vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and [l]owercase first character')
 
 -- ================== local leader===================
-vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = 'Write all' })
+vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = '[W]rite all' })
 vim.keymap.set('n', '<localleader><localleader>', '<cmd>source % <CR>', map_opt 'Source the current file')
 
 -- =================== theme ==================
