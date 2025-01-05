@@ -35,10 +35,26 @@ return {
       {
         '<leader>tq',
         '<cmd>Trouble qflist toggle<cr>',
-        desc = '[T]rouble [Q]uickfix',
+        desc = '[T]oggle [Q]uickfix',
       },
     },
     config = function()
+      local tr = require 'trouble'
+
+      vim.keymap.set('n', '<leader>xn', function()
+        ---@diagnostic disable-next-line: missing-fields
+        tr.next {}
+        ---@diagnostic disable-next-line: missing-fields
+        tr.jump {}
+      end, { desc = 'Toggle references' })
+
+      vim.keymap.set('n', '<leader>xp', function()
+        ---@diagnostic disable-next-line: missing-fields
+        tr.prev {}
+        ---@diagnostic disable-next-line: missing-fields
+        tr.jump {}
+      end, { desc = 'Toggle references' })
+
       local open_with_trouble = require('trouble.sources.telescope').open
       local telescope = require 'telescope'
       telescope.setup {
