@@ -35,10 +35,9 @@ vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
--- =================== Quickfix ===================
+-- -- =================== Quickfix ===================
 map('n', '<leader>ql', function()
   vim.diagnostic.setqflist()
-  vim.cmd 'copen'
 end, { desc = '[Q]uickfix [L]ist' })
 map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
