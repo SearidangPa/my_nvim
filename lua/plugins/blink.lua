@@ -51,7 +51,7 @@ return {
       completion = {
         menu = {
           draw = {
-            columns = { { 'item_idx' }, { 'kind_icon', 'kind' }, { 'label', 'label_description', gap = 1 } },
+            columns = { { 'label' }, { 'item_idx' } },
             components = {
               item_idx = {
                 text = function(ctx)
