@@ -1,12 +1,6 @@
 return {
   {
     'rebelot/kanagawa.nvim',
-    priority = 1000,
-    config = function()
-      require('kanagawa').setup {
-        theme = 'wave',
-      }
-    end,
   },
   { 'rose-pine/neovim', name = 'rose-pine' },
   { 'folke/tokyonight.nvim', lazy = false },

@@ -49,11 +49,6 @@ return {
       },
 
       completion = {
-        list = {
-          selection = function(ctx)
-            return ctx.mode == 'cmdline' and 'auto_insert' or 'preselect'
-          end,
-        },
         menu = {
           draw = {
             columns = { { 'item_idx' }, { 'kind_icon', 'kind' }, { 'label', 'label_description', gap = 1 } },
