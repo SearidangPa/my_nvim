@@ -6,6 +6,7 @@ return {
     mc.setup()
     local set = vim.keymap.set
 
+    set('n', '<c-leftmouse>', mc.handleMouse, { noremap = true, desc = 'Add cursor with control + left click' })
     set({ 'n', 'v' }, '<up>', function()
       mc.lineAddCursor(-1)
     end, { noremap = true, desc = 'Add cursor above' })
@@ -22,8 +23,7 @@ return {
       mc.lineSkipCursor(1)
     end, { noremap = true, desc = 'Skip cursor below' })
 
-    set({ 'n', 'v' }, '<leader>x', mc.deleteCursor, { noremap = true, desc = 'Delete cursor' })
-    set('n', '<c-leftmouse>', mc.handleMouse, { noremap = true, desc = 'Add cursor with control + left click' })
+    -- set({ 'n', 'v' }, '<leader>x', mc.deleteCursor, { noremap = true, desc = 'Delete cursor' })
     set({ 'n', 'v' }, '<c-q>', mc.toggleCursor, { noremap = true, desc = 'Toggle cursor' })
     set('v', 'I', mc.insertVisual, { noremap = true, desc = 'Insert for each line of the visual section' })
     set('v', 'A', mc.appendVisual, { noremap = true, desc = 'Append for each line of the visual section' })
