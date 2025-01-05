@@ -27,7 +27,7 @@ return {
       { '<leader>w', group = '[W]orkspace' },
 
       { '<localleader>s', group = '[S]earch plugin' },
-      { '<localleader>t', group = '[T]oggle make result' },
+      { '<localleader>t', group = '[T]oggle' },
     },
   },
 }

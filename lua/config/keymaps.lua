@@ -99,6 +99,10 @@ vim.api.nvim_create_user_command('RenameLowercase', function()
   RenameAndLowercase()
 end, {})
 
+vim.keymap.set('n', '<localleader>ts', function()
+  require('spectre').toggle()
+end, { noremap = true, silent = true, desc = '[T]oggle [S]pectre' })
+
 vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt '[R]ename and [c]apitalize first character')
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and [l]owercase first character')
 
