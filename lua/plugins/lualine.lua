@@ -60,6 +60,7 @@ return {
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' },
   },
+
   config = function()
     local ll = require 'lualine'
     ll.setup {
