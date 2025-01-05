@@ -24,7 +24,8 @@ return {
     end, { noremap = true, desc = 'Skip cursor below' })
 
     -- set({ 'n', 'v' }, '<leader>x', mc.deleteCursor, { noremap = true, desc = 'Delete cursor' })
-    set({ 'n', 'v' }, '<c-q>', mc.toggleCursor, { noremap = true, desc = 'Toggle cursor' })
+    -- set({ 'n', 'v' }, '<c-q>', mc.toggleCursor, { noremap = true, desc = 'Toggle cursor' })
+
     set('v', 'I', mc.insertVisual, { noremap = true, desc = 'Insert for each line of the visual section' })
     set('v', 'A', mc.appendVisual, { noremap = true, desc = 'Append for each line of the visual section' })
     set('v', 'M', mc.matchCursors, { noremap = true, desc = 'Match cursors within visual selection by regex' })
@@ -38,7 +39,6 @@ return {
       end
     end)
 
-    -- Customize how cursors look.
     local hl = vim.api.nvim_set_hl
     hl(0, 'MultiCursorCursor', { link = 'Cursor' })
     hl(0, 'MultiCursorVisual', { link = 'Visual' })
