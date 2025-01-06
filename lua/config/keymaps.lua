@@ -68,6 +68,12 @@ map('i', '<M-l>', function()
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 
+map('i', '<C-l>', function()
+  local accept = vim.fn['copilot#AcceptLine']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  vim.api.nvim_feedkeys(res, 'n', false)
+end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
+
 map('i', '<M-y>', function()
   local accept = vim.fn['copilot#Accept']
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
@@ -108,7 +114,7 @@ vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and 
 
 -- ================== local leader===================
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = '[W]rite all' })
-vim.keymap.set('n', '<leader>z', '<cmd>source % <CR>', map_opt 'Source the current lua file')
+vim.keymap.set('n', '<leader>xx', '<cmd>source % <CR>', map_opt 'Source the current lua file')
 
 -- =================== theme ==================
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
