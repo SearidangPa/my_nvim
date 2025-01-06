@@ -2,7 +2,6 @@ return {
   'nvim-pack/nvim-spectre',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'noib3/nvim-oxi',
   },
   config = function()
     require('spectre').setup {
