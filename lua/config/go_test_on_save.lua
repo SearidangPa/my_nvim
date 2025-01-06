@@ -160,7 +160,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
     tests = {},
     all_output = {},
   }
-  create_tests_user_command(bufnr, state)
+  create_tests_user_command(bufnr, state, group, ns)
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -234,7 +234,7 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          on_exit_fn(state, bufnr)
+          on_exit_fn(state, bufnr,ns)
         end,
       })
     end,
@@ -250,7 +250,9 @@ vim.api.nvim_create_user_command('GoTestAllOnSave', function()
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
   local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  attach_to_buffer(bufnr, command)
+  local group = vim.api.nvim_create_augroup('live_test', { clear = true })
+  local ns = vim.api.nvim_create_namespace 'live_go_test'
+  attach_to_buffer(bufnr, command, group, ns)
 end, {})
 
 local function get_enclosing_test()
