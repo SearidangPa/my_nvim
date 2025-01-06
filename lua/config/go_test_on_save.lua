@@ -18,7 +18,6 @@ local win_state = {
   },
 }
 
-
 local make_key = function(entry)
   assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
   if not entry.Test then
@@ -107,21 +106,21 @@ local go_test_all_output = function(state)
 end
 
 local create_tests_user_command = function(bufnr, state, group, ns)
-  vim.api.nvim_create_user_command('GoTestAllOutput', function()
+  vim.api.nvim_create_user_command('GoTestOutputAll', function()
     go_test_all_output(state)
   end, {})
   vim.api.nvim_create_user_command('ToggleTestOutput', function()
     go_test_one_output(state)
   end, {})
 
-  vim.api.nvim_buf_create_user_command(bufnr, 'StopGoTestOnSave', function()
+  vim.api.nvim_buf_create_user_command(bufnr, 'ClearGoTestOnSave', function()
     vim.api.nvim_del_augroup_by_id(group)
     vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
     vim.diagnostic.reset()
   end, {})
 end
 
-local on_exit_fn = function(state, bufnr,  ns)
+local on_exit_fn = function(state, bufnr, ns)
   job_id = -1
   make_notify 'Test finished'
   local failed = {}
@@ -234,14 +233,14 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          on_exit_fn(state, bufnr,ns)
+          on_exit_fn(state, bufnr, ns)
         end,
       })
     end,
   })
 end
 
-vim.api.nvim_create_user_command('GoTestAllOnSave', function()
+vim.api.nvim_create_user_command('GoTestOnSaveAll', function()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   local concatTestName = ''
@@ -283,6 +282,7 @@ end, {})
 
 vim.keymap.set('n', '<leader>tg', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
 vim.keymap.set('n', '<leader>to', ':ToggleTestOutput<CR>', { desc = '[T]oggle go test [O]utput' })
+vim.keymap.set('n', '<leader>cg', ':ClearGoTestOnSave<CR>', { desc = '[C]lear [G]o Test on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
