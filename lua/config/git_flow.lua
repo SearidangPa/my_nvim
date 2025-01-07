@@ -13,11 +13,10 @@ local default_no_more_input = {
   '',
   '====================',
   'Done with what I set out to do',
-  'Save progress',
 }
 
 local item_options = {
-  'Half-progress',
+  'Save progress',
   'Checkpoint',
   'Refinement',
 }
