@@ -18,6 +18,7 @@ local default_no_more_input = {
 local item_options = {
   'Save progress',
   'Checkpoint',
+  'Half progress',
   'Refinement',
 }
 
