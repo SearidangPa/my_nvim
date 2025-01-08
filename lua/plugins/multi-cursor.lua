@@ -23,8 +23,11 @@ return {
       mc.lineSkipCursor(1)
     end, { noremap = true, desc = 'Skip cursor below' })
 
-    -- set({ 'n', 'v' }, '<leader>x', mc.deleteCursor, { noremap = true, desc = 'Delete cursor' })
-    -- set({ 'n', 'v' }, '<c-q>', mc.toggleCursor, { noremap = true, desc = 'Toggle cursor' })
+    set({"n", "v"}, "<leader>cn", function() mc.matchAddCursor(1) end, { noremap = true, desc = '[C]ursor [n]ext' })
+     set({"n", "v"}, "<leader>cN", function() mc.matchAddCursor(-1) end, { noremap = true, desc = '[C]ursor [N]ext' })
+
+    set({ 'n', 'v' }, '<leader>cx', mc.deleteCursor, { noremap = true, desc = '[C]ursor [x]delete' })
+    set({ 'n', 'v' }, '<leader>ct', mc.toggleCursor, { noremap = true, desc = '[C]ursor [t]oggle' })
 
     set('v', 'I', mc.insertVisual, { noremap = true, desc = 'Insert for each line of the visual section' })
     set('v', 'A', mc.appendVisual, { noremap = true, desc = 'Append for each line of the visual section' })
