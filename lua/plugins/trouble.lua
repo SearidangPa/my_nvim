@@ -13,9 +13,9 @@ return {
         desc = '[T]oggle [D]iagnostics',
       },
       {
-        '<localleader>td',
+        '<localleader>xd',
         '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-        desc = '[T]oggle [D]iagnostics for the current buffer',
+        desc = 'Toggle [D]iagnostics for the current buffer',
       },
       {
         '<leader>ts',
