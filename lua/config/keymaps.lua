@@ -23,7 +23,6 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- =================== Tabs ===================
 map('n', '[t', ':tabprev<CR>', map_opt 'Previous [t]ab')
 map('n', ']t', ':tabnext<CR>', map_opt 'Next [t]ab')
-vim.keymap.set('n', '<leader>nt', ':tabnew<CR>', map_opt '[N]ew [T]ab')
 
 -- =================== delete ===================
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
