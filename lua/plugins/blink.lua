@@ -30,10 +30,11 @@ return {
       signature = { enabled = true },
 
       sources = {
-        default = { 'lsp', 'path', 'luasnip', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
       },
 
       snippets = {
+        preset = 'luasnip',
         expand = function(snippet)
           require('luasnip').lsp_expand(snippet)
         end,
