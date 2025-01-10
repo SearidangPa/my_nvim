@@ -8,6 +8,12 @@ local extras = require 'luasnip.extras'
 local rep = extras.rep
 local fmta = require('luasnip.extras.fmt').fmta
 
+local firstLetter = function(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower()
+  return lower
+end
+
 local function kebabToCamelCase(args)
   local input = args[1][1]
   print('input' .. input)
@@ -54,7 +60,7 @@ import (
 )
 
 func init() {
-	var <flag_var>, userID string
+	var <flag_var> string
 	<apiInvoke>InvokeStr := "<cmd_invoke_str>"
 	<apiInit>Cmd := &cobra.Command{
 		Use:   <apiUse>InvokeStr,
@@ -63,7 +69,7 @@ func init() {
 	rootCmd.AddCommand(<apiAddCmd>Cmd)
 	logging.IniLog()
 
-	<apiFlag>Cmd.Flags().StringVarP(&userID, "user", "u", "", "user id")
+	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc")
 
 	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
 	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
@@ -98,7 +104,10 @@ func <apiImplement>CLI(<fn_args>) {
           f(parseJoin, { 1 }),
           i(1, 'short_desc'),
         }),
-        flag_var = i(4),
+        flag_var = i(4, 'path'),
+        flag_var_str = rep(4),
+        first_letter_flag_var = f(firstLetter, { 4 }),
+        flag_var_desc = rep(4),
         requiredFlag = i(5),
 
         choiceNode = c(6, {
