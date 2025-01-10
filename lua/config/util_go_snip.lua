@@ -69,7 +69,7 @@ func init() {
 	rootCmd.AddCommand(<apiAddCmd>Cmd)
 	logging.IniLog()
 
-	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc")
+	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc>")
 
 	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
 	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
@@ -108,6 +108,7 @@ func <apiImplement>CLI(<fn_args>) {
         flag_var_str = rep(4),
         first_letter_flag_var = f(firstLetter, { 4 }),
         flag_var_desc = rep(4),
+        flag_var_val = rep(4),
         requiredFlag = i(5),
 
         choiceNode = c(6, {
