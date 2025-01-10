@@ -48,7 +48,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'cli',
+    'ncl',
     fmta(
       [[
 //go:build windows
