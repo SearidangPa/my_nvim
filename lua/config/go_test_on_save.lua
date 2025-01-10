@@ -1,4 +1,4 @@
-require 'config.util_find_test'
+require 'config.util_find_func'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 local mini_notify = require 'mini.notify'
