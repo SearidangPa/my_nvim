@@ -3,6 +3,7 @@ M = {
   build = (function()
     return 'make install_jsregexp'
   end)(),
+  event = 'BufEnter',
 
   config = function()
     local ls = require 'luasnip'
