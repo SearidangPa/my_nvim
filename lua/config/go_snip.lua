@@ -1,3 +1,4 @@
+require 'config.util_find_func'
 local ls = require 'luasnip'
 local c = ls.choice_node
 local s = ls.snippet
@@ -173,6 +174,11 @@ ls.add_snippets('go', {
   ),
 })
 
+local function go_ret_vals_nearest_func_decl()
+  local func_name = Find_nearest_function()
+  return go_ret_vals { func_name }
+end
+
 ls.add_snippets('go', {
   s(
     'ife',
@@ -183,7 +189,7 @@ ls.add_snippets('go', {
         }
       ]],
       {
-        dynamicRet = d(1, go_ret_vals, { 1 }),
+        dynamicRet = d(1, go_ret_vals_nearest_func_decl, {}),
       }
     )
   ),
