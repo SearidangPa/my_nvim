@@ -71,9 +71,7 @@ Find_all_tests = function(go_bufnr)
   return res
 end
 
-
-
-local function find_nearest_function()
+function Find_nearest_function()
   local parser = vim.treesitter.get_parser(0, 'go')
   if not parser then
     print("Treesitter parser not found for Go")
