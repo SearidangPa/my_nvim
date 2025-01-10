@@ -48,84 +48,6 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ncl',
-    fmta(
-      [[
-//go:build windows
-
-package cli
-
-import (
-    log "github.com/sirupsen/logrus"
-)
-
-func init() {
-	var <flag_var> string
-	<apiInvoke>InvokeStr := "<cmd_invoke_str>"
-	<apiInit>Cmd := &cobra.Command{
-		Use:   <apiUse>InvokeStr,
-		Short: "<short_desc>",
-	}
-	rootCmd.AddCommand(<apiAddCmd>Cmd)
-	logging.IniLog()
-
-	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc>")
-
-	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
-	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
-		<apiCall>CLI(<fn_args_call>)
-	}
-}
-
-func <apiImplement>CLI(<fn_args>) {
-      <choiceNode>
-      if err != nil {
-          log.Fatalf(<errFmt>)
-      }
-      <finish>
-}
-      ]],
-      {
-        apiInvoke = c(2, {
-          f(kebabToCamelCase, { 1 }),
-          i(2, ''),
-        }),
-        apiInit = rep(2),
-        apiUse = rep(2),
-        apiAddCmd = rep(2),
-        apiFlag = rep(2),
-        apiMarkFlag = rep(2),
-        apiRun = rep(2),
-        apiCall = rep(2),
-        apiImplement = rep(2),
-
-        cmd_invoke_str = i(1, 'cmd_invoke_str'),
-        short_desc = c(3, {
-          f(parseJoin, { 1 }),
-          i(1, 'short_desc'),
-        }),
-        flag_var = i(4, 'path'),
-        flag_var_str = rep(4),
-        first_letter_flag_var = f(firstLetter, { 4 }),
-        flag_var_desc = rep(4),
-        flag_var_val = rep(4),
-        requiredFlag = i(5),
-
-        choiceNode = c(6, {
-          fmta([[<val>, err := <funcName>]], { val = i(1, 'val'), funcName = i(2, 'funcName') }),
-          fmta([[err := <funcName>]], { funcName = i(1, 'funcName') }),
-        }),
-        fn_args = i(7),
-        fn_args_call = i(8),
-        errFmt = i(9),
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
     'ef', -- error fatal
     fmta(
       [[
@@ -210,7 +132,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_init_file',
+    'test_init_fp',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -279,6 +201,84 @@ ls.add_snippets('go', {
             package <finish>
         ]],
       {
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ncl',
+    fmta(
+      [[
+//go:build windows
+
+package cli
+
+import (
+    log "github.com/sirupsen/logrus"
+)
+
+func init() {
+	var <flag_var> string
+	<apiInvoke>InvokeStr := "<cmd_invoke_str>"
+	<apiInit>Cmd := &cobra.Command{
+		Use:   <apiUse>InvokeStr,
+		Short: "<short_desc>",
+	}
+	rootCmd.AddCommand(<apiAddCmd>Cmd)
+	logging.IniLog()
+
+	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc>")
+
+	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
+	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
+		<apiCall>CLI(<fn_args_call>)
+	}
+}
+
+func <apiImplement>CLI(<fn_args>) {
+      <choiceNode>
+      if err != nil {
+          log.Fatalf(<errFmt>)
+      }
+      <finish>
+}
+      ]],
+      {
+        apiInvoke = c(2, {
+          f(kebabToCamelCase, { 1 }),
+          i(2, ''),
+        }),
+        apiInit = rep(2),
+        apiUse = rep(2),
+        apiAddCmd = rep(2),
+        apiFlag = rep(2),
+        apiMarkFlag = rep(2),
+        apiRun = rep(2),
+        apiCall = rep(2),
+        apiImplement = rep(2),
+
+        cmd_invoke_str = i(1, 'cmd_invoke_str'),
+        short_desc = c(3, {
+          f(parseJoin, { 1 }),
+          i(1, 'short_desc'),
+        }),
+        flag_var = i(4, 'path'),
+        flag_var_str = rep(4),
+        first_letter_flag_var = f(firstLetter, { 4 }),
+        flag_var_desc = rep(4),
+        flag_var_val = rep(4),
+        requiredFlag = i(5),
+
+        choiceNode = c(6, {
+          fmta([[<val>, err := <funcName>]], { val = i(1, 'val'), funcName = i(2, 'funcName') }),
+          fmta([[err := <funcName>]], { funcName = i(1, 'funcName') }),
+        }),
+        fn_args = i(7),
+        fn_args_call = i(8),
+        errFmt = i(9),
         finish = i(0),
       }
     )
