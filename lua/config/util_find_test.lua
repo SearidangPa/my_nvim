@@ -69,3 +69,52 @@ Find_all_tests = function(go_bufnr)
   end
   return res
 end
+
+
+
+local function find_nearest_function()
+  local ts_utils = require('nvim-treesitter.ts_utils')
+  local parser = vim.treesitter.get_parser(0, 'go')
+  if not parser then
+    print("Treesitter parser not found for Go")
+    return
+  end
+
+  local tree = parser:parse()[1]
+  if not tree then
+    print("Parse tree not found")
+    return
+  end
+
+  -- Get the current node under the cursor
+  local cursor_node = ts_utils.get_node_at_cursor()
+  if not cursor_node then
+    print("No Treesitter node found at cursor")
+    return
+  end
+
+  local function_node = cursor_node
+
+  -- Traverse upwards to find the nearest function declaration node
+  while function_node do
+    if function_node:type() == 'function_declaration' then
+      -- Get the child node of type 'identifier' (the function name)
+      for child in function_node:iter_children() do
+        if child:type() == 'identifier' then
+          local function_name = get_node_text(child, 0)
+          print("Nearest function: " .. function_name)
+          return function_name
+        end
+      end
+    end
+    function_node = function_node:parent()
+  end
+
+  print("No enclosing function declaration found")
+end
+
+-- Map the function to a keybinding for convenience
+vim.keymap.set('n', '<leader>nf', function()
+  find_nearest_function()
+end, { desc = 'Find nearest function' })
+

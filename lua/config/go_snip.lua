@@ -173,20 +173,20 @@ ls.add_snippets('go', {
   ),
 })
 
-ls.add_snippets('go', {
-  s(
-    'ifer',
-    fmta(
-      [[
-        if err != nil {
-            return <dynamicRet>
-        }
-      ]],
-      {
-        dynamicRet = d(1, go_ret_vals, { 1 }),
-      }
-    )
-  ),
-})
+-- ls.add_snippets('go', {
+--   s(
+--     'ife',
+--     fmta(
+--       [[
+--         if err != nil {
+--             return <dynamicRet>
+--         }
+--       ]],
+--       {
+--         dynamicRet = d(1, go_ret_vals, { 1 }),
+--       }
+--     )
+--   ),
+-- })
 
 require 'config.util_go_snip'
