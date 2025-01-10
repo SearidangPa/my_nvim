@@ -181,7 +181,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'ife',
+    'ifer',
     fmta(
       [[
         if err != nil {

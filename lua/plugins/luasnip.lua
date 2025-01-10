@@ -1,4 +1,4 @@
-M = {
+return {
   'L3MON4D3/LuaSnip',
   build = (function()
     return 'make install_jsregexp'
@@ -72,4 +72,3 @@ M = {
   end,
 }
 
-return M
