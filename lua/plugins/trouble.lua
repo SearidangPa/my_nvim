@@ -39,6 +39,7 @@ return {
       },
     },
     config = function()
+      local tr = require 'trouble'
       vim.keymap.set('n', '<leader>xn', function()
         ---@diagnostic disable-next-line: missing-fields
         tr.next {}
