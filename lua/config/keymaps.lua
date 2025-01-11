@@ -27,7 +27,7 @@ map('n', ']t', ':tabnext<CR>', map_opt 'Next [t]ab')
 -- =================== delete ===================
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 
--- =================== Insert Empty line ===================
+-- =================== Insert Assistance ===================
 vim.api.nvim_set_keymap('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 vim.keymap.set('i', '<M-(>', '()<left>', { noremap = true, silent = true, desc = 'Insert ()' })
