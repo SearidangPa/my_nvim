@@ -51,12 +51,13 @@ return {
       completion = {
         menu = {
           draw = {
-            columns = { { 'label' }, { 'item_idx' } },
+            columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
             components = {
               item_idx = {
                 text = function(ctx)
                   return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx)
                 end,
+                highlight = 'BlinkCmpItemIdx',
               },
             },
           },
