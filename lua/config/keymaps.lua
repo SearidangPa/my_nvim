@@ -104,7 +104,7 @@ vim.api.nvim_create_user_command('RenameLowercase', function()
   RenameAndLowercase()
 end, {})
 
-vim.keymap.set('n', '<localleader>ts', function()
+vim.keymap.set('n', '<leader>ts', function()
   require('spectre').toggle()
 end, { noremap = true, silent = true, desc = '[T]oggle [S]pectre' })
 
