@@ -25,7 +25,7 @@ return {
           desc = 'previous query',
         },
         ['replace_cmd'] = {
-          map = '<localleader>cr',
+          map = '<leader>cr',
           cmd = "<cmd>lua require('spectre.actions').replace_cmd()<CR>",
           desc = '[C]ommand [R]eplace',
         },
