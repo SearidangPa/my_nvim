@@ -60,25 +60,18 @@ end, { desc = 'Open diagnostic [f]loat' })
       ================== Copilot ===================
 --]]
 
-map('i', '<M-l>', function()
-  local accept = vim.fn['copilot#AcceptLine']
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-  res = res .. '\n'
-  vim.api.nvim_feedkeys(res, 'n', false)
-end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
-
 map('i', '<C-l>', function()
   local accept = vim.fn['copilot#AcceptLine']
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 
-map('i', '<M-y>', function()
+map('i', '<C-j>', function()
   local accept = vim.fn['copilot#Accept']
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
   res = res .. '\n'
   vim.api.nvim_feedkeys(res, 'n', false)
-end, { expr = true, remap = false, desc = 'Copilot Accept' })
+end, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
 -- [[
 -- ================== Rename the first letter
