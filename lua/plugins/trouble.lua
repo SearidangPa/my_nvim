@@ -8,7 +8,7 @@ return {
     cmd = 'Trouble',
     keys = {
       {
-        '<leader>td',
+        '<leader>xd',
         '<cmd>Trouble diagnostics toggle<cr>',
         desc = '[T]oggle [D]iagnostics',
       },
@@ -18,22 +18,22 @@ return {
         desc = 'Toggle [D]iagnostics for the current buffer',
       },
       {
-        '<leader>ts',
+        '<leader>xs',
         '<cmd>Trouble symbols toggle focus=false<cr>',
         desc = '[T]oggle [S]ymbols',
       },
       {
-        '<leader>tl',
+        '<leader>xls',
         '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
         desc = '[T]oggle [L]SP Definitions / references / ... (Trouble)',
       },
-      -- {
-      --   '<leader>xl',
-      --   '<cmd>Trouble loclist toggle<cr>',
-      --   desc = '[T]rouble [L]ocation list (Trouble)',
-      -- },
       {
-        '<leader>tq',
+        '<leader>xll',
+        '<cmd>Trouble loclist toggle<cr>',
+        desc = '[T]rouble [L]ocation list (Trouble)',
+      },
+      {
+        '<leader>xq',
         '<cmd>Trouble qflist toggle<cr>',
         desc = '[T]oggle [Q]uickfix',
       },
