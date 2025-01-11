@@ -31,6 +31,8 @@ map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 vim.api.nvim_set_keymap('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 
+vim.api.nvim_set_keymap('i', '<M-(', '()', map_opt 'Insert ()')
+
 -- =================== Esc Insert Mode ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 

@@ -8,9 +8,9 @@ return {
     cmd = 'Trouble',
     keys = {
       {
-        '<leader>xd',
+        '<leader>xx',
         '<cmd>Trouble diagnostics toggle<cr>',
-        desc = '[T]oggle [D]iagnostics',
+        desc = 'Toggle Trouble Diagnostics',
       },
       {
         '<localleader>xd',
@@ -23,14 +23,9 @@ return {
         desc = '[T]oggle [S]ymbols',
       },
       {
-        '<leader>xls',
+        '<leader>xl',
         '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
         desc = '[T]oggle [L]SP Definitions / references / ... (Trouble)',
-      },
-      {
-        '<leader>xll',
-        '<cmd>Trouble loclist toggle<cr>',
-        desc = '[T]rouble [L]ocation list (Trouble)',
       },
       {
         '<leader>xq',
