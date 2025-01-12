@@ -1,3 +1,8 @@
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
+local nui_input = require 'nui.input'
+local event = require('nui.utils.autocmd').event
+
 vim.api.nvim_create_autocmd('TermOpen', {
   group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
   callback = function()
@@ -79,8 +84,65 @@ end
 
 vim.keymap.set('n', '<leader>st', small_terminal, { desc = '[S]mall [T]erminal' })
 
-vim.keymap.set('n', '<leader>xst', function()
-  vim.fn.chansend(job_id, 're;st\n')
-end, { desc = 'Send re;st to terminal' })
+local choice_options = {
+  'echo "lol"',
+  'ls -la',
+  'echo "re;st',
+}
+
+local function handle_choice(choice)
+  if not choice then
+    make_notify 'No choice selected'
+    return
+  end
+
+  local nui_input_options = {
+    prompt = '> ',
+    default_value = string.format('%s\n', choice),
+    on_submit = function(value)
+      vim.fn.chansend(job_id, value)
+    end,
+  }
+
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.25)
+  local row = math.floor((vim.o.columns - width))
+  local col = math.floor((vim.o.lines - height))
+
+  local popup_option = {
+    position = { row = row, col = col },
+    size = { width = 120 },
+    border = {
+      style = 'rounded',
+      text = {
+        top = '[My Lovely Commit Message]',
+        top_align = 'center',
+      },
+    },
+    win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
+  }
+
+  local input = nui_input(popup_option, nui_input_options)
+  input:mount()
+
+  input:on(event.BufLeave, function()
+    input:unmount()
+  end)
+end
+
+local function send_command_to_terminal()
+  local opts = {
+    prompt = 'Select command to send to terminal',
+    format_item = function(item)
+      return item
+    end,
+  }
+
+  vim.ui.select(choice_options, opts, function(choice)
+    handle_choice(choice)
+  end)
+end
+
+vim.keymap.set('n', '<leader>xc', send_command_to_terminal, { desc = 'e[x]ecute [C]ommand in terminal' })
 
 return {}

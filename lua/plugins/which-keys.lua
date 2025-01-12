@@ -27,7 +27,7 @@ return {
       { '<leader>w', group = '[W]orkspace' },
 
       { '<localleader>s', group = '[S]earch plugin' },
-      { '<localleader>x', group = 'e[X]cute' },
+      { '<leader>x', group = 'e[X]cute' },
     },
   },
 }

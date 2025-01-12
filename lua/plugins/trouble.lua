@@ -10,10 +10,10 @@ return {
       {
         '<leader>xx',
         '<cmd>Trouble diagnostics toggle<cr>',
-        desc = 'Toggle Trouble Diagnostics',
+        desc = '[x] Trouble Diagnostics',
       },
       {
-        '<localleader>td',
+        '<leader>td',
         '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
         desc = 'Toggle [D]iagnostics for the current buffer',
       },
@@ -28,9 +28,9 @@ return {
         desc = '[T]oggle [L]SP Definitions / references / ... (Trouble)',
       },
       {
-        '<leader>xq',
+        '<leader>tq',
         '<cmd>Trouble qflist toggle<cr>',
-        desc = 'Toggle Trouble Quickfix',
+        desc = '[T]oggle Trouble [Q]uickfix',
       },
     },
   },
