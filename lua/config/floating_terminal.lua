@@ -82,7 +82,7 @@ local function small_terminal()
   return job_id
 end
 
-vim.keymap.set('n', '<leader>xt', small_terminal, { desc = 'Small [T]erminal' })
+vim.keymap.set('n', '<localleader>ts', small_terminal, { desc = '[T]erminal [S]mall' })
 
 local choice_options = {
   'echo "lol"',
@@ -143,6 +143,6 @@ local function send_command_to_terminal()
   end)
 end
 
-vim.keymap.set('n', '<leader>xc', send_command_to_terminal, { desc = 'e[x]ecute [C]ommand in terminal' })
+vim.keymap.set('n', '<localleader>tc', send_command_to_terminal, { desc = '[T]erminal [C]ommand' })
 
 return {}
