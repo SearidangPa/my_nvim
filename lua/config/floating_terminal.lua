@@ -1,13 +1,27 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local term_channel_id = 0
+local floating_term_chan = 0
+local small_terminal_chan = 0
 
 local state = {
   floating = {
     buf = -1,
     win = -1,
   },
+}
+
+local function map_opt(desc)
+  return { noremap = true, silent = false, desc = desc }
+end
+
+local choice_options = {
+  'gst',
+  'rds',
+  '<Ctrl-C>',
+  '========= windows only ===========',
+  'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
+  're;st',
 }
 
 vim.api.nvim_create_autocmd('TermOpen', {
@@ -59,60 +73,34 @@ local toggle_floating_terminal = function()
       vim.cmd.term()
     end
 
-    term_channel_id = vim.bo.channel
-    print('term_channel_id here' .. term_channel_id)
+    floating_term_chan = vim.bo.channel
   end
 end
 
-local function map_opt(desc)
-  return { noremap = true, silent = false, desc = desc }
-end
-
-vim.keymap.set({ 't', 'n' }, '<localleader>ti', function()
-  toggle_floating_terminal()
-  vim.api.nvim_feedkeys('i', 'n', true)
-end, map_opt '[T]erminal [I]nsert')
-
-vim.keymap.set({ 't', 'n' }, '<localleader>tt', function()
-  toggle_floating_terminal()
-end, map_opt '[T]erminal [T]oggle')
-
-local choice_options = {
-  'gst',
-  'rds',
-  '<Ctrl-C>',
-  '========= windows only ===========',
-  'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
-  're;st',
-}
-
-local function handle_choice(choice, channel_id, is_small_terminal)
-  if not choice then
-    make_notify 'No choice selected'
-    return
-  end
-
-  if not is_small_terminal then
-    vim.api.nvim_feedkeys('i', 'n', true)
-    if choice == '<Ctrl-C>' then
-      vim.fn.chansend(channel_id, '\x03')
-    else
-      vim.fn.chansend(channel_id, string.format('%s\n', choice))
-    end
-
+local function handle_choice(choice, is_float)
+  local channel_id
+  if is_float then
     if not vim.api.nvim_win_is_valid(state.floating.win) then
       toggle_floating_terminal()
     end
-    vim.api.nvim_feedkeys('<Esc><Esc>', 'i', true)
+    channel_id = floating_term_chan
+  else
+    channel_id = small_terminal_chan
+  end
 
-    -- local term_view_timer = 3000 -- milliseconds
-    -- vim.defer_fn(function()
-    --   toggle_floating_terminal()
-    -- end, term_view_timer)
+  if choice == '<Ctrl-C>' then
+    vim.fn.chansend(channel_id, '\x03')
+  else
+    vim.fn.chansend(channel_id, string.format('%s\r', choice))
+  end
+
+  if is_float then
+    local line_count = vim.api.nvim_buf_line_count(state.floating.buf)
+    vim.api.nvim_win_set_cursor(state.floating.win, { line_count, 0 })
   end
 end
 
-local function send_command_to_terminal(channel_id, is_small_terminal)
+local function send_command_to_terminal(is_float)
   local opts = {
     prompt = 'Select command to send to terminal',
     format_item = function(item)
@@ -120,30 +108,15 @@ local function send_command_to_terminal(channel_id, is_small_terminal)
     end,
   }
 
-  -- if not is_small_terminal then
-  --   if not vim.api.nvim_win_is_valid(state.floating.win) then
-  --     state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
-  --     if vim.fn.has 'win32' == 1 then
-  --       vim.cmd.term 'powershell.exe'
-  --     else
-  --       vim.cmd.term()
-  --     end
-  --     channel_id = vim.bo.channel
-  --     vim.api.nvim_win_hide(state.floating.win)
-  --   end
-  -- end
-
   vim.ui.select(choice_options, opts, function(choice)
-    handle_choice(choice, channel_id, is_small_terminal)
+    if not choice then
+      make_notify 'No choice selected'
+      return
+    end
+    handle_choice(choice, is_float)
   end)
 end
 
-vim.keymap.set('n', '<localleader>tc', function()
-  print('term_channel_id', term_channel_id)
-  send_command_to_terminal(term_channel_id, false)
-end, { desc = '[T]erminal [C]ommand' })
-
-local small_terminal_chan = 0
 local function small_terminal()
   vim.cmd.vnew()
   if vim.fn.has 'win32' == 1 then
@@ -159,10 +132,14 @@ local function small_terminal()
   return small_terminal_chan
 end
 
-vim.keymap.set('n', '<localleader>ts', small_terminal, { desc = '[S]mall [T]erminal' })
+vim.keymap.set('n', '<localleader>tc', function()
+  send_command_to_terminal(true)
+end, { desc = '[T]erminal [C]ommand' })
 
 vim.keymap.set('n', '<localleader>tx', function()
-  send_command_to_terminal(small_terminal_chan, true)
+  send_command_to_terminal(false)
 end, { desc = '[T]erminal e[x]ecute' })
 
+vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
+vim.keymap.set('n', '<localleader>ts', small_terminal, { desc = '[S]mall [T]erminal' })
 return {}
