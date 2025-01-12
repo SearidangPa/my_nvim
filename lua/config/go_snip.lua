@@ -152,7 +152,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'er', -- error return
+    'val', -- error return
     fmta(
       [[
         <choiceNode> <funcName>(<args>)

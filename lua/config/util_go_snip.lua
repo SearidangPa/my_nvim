@@ -48,7 +48,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ef', -- error fatal
+    'valfat', -- error fatal
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
@@ -115,7 +115,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_new',
+    'test_init',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -132,7 +132,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_init_fp',
+    'test_init_with_file_placeholder',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -154,7 +154,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_fn',
+    'test_util_fn',
     fmta(
       [[
         func <funcName>(t *testing.T, <args>) {
@@ -172,7 +172,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ne', -- no error
+    'valne', -- no error
     fmta(
       [[
           <choiceNode>
@@ -209,7 +209,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ncl',
+    'cli_init',
     fmta(
       [[
 //go:build windows
