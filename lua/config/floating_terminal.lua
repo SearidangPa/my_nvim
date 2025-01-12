@@ -65,7 +65,6 @@ local toggle_floating_terminal = function()
   end
 end
 
-vim.api.nvim_create_user_command('Floaterminal', toggle_floating_terminal, {})
 vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, { noremap = true, silent = true, desc = '[T]oggle floating [t]erminal' })
 
 local choice_options = {
