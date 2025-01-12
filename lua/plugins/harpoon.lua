@@ -7,26 +7,26 @@ return {
     local harpoon = require 'harpoon'
     harpoon:setup {}
 
-    vim.keymap.set('n', 'ha', function()
+    vim.keymap.set('n', '<localleader>a', function()
       harpoon:list():add()
-    end, { desc = '[H]arpoon [A]dd' })
+    end, { desc = 'harpoon [A]dd' })
 
-    vim.keymap.set('n', 'hl', function()
+    vim.keymap.set('n', '<localleader>l', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
-    end, { desc = '[H]arpoon [L]ist' })
+    end, { desc = 'harpoon [L]ist' })
 
-    vim.keymap.set('n', 'hn', function()
+    vim.keymap.set('n', '<localleader>n', function()
       harpoon:list():next()
-    end, { desc = '[H]arpoon [N]ext' })
+    end, { desc = 'harpoon [N]ext' })
 
-    vim.keymap.set('n', 'hp', function()
+    vim.keymap.set('n', '<localleader>p', function()
       harpoon:list():prev()
     end, { desc = '[H]arpoon [P]rev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6, 7 } do
-      vim.keymap.set('n', string.format('h%d', idx), function()
+      vim.keymap.set('n', string.format('<localleader>%d', idx), function()
         harpoon:list():select(idx)
-      end, { desc = string.format('[H]arpoon %d', idx) })
+      end, { desc = string.format('harpoon %d', idx) })
     end
   end,
 }
