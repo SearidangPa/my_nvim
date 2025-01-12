@@ -79,50 +79,6 @@ local toggle_floating_terminal = function()
   end
 end
 
-local function handle_choice(choice, is_float)
-  local channel_id, buf, win
-  if is_float then
-    if not vim.api.nvim_win_is_valid(floating_term_state.win) then
-      toggle_floating_terminal()
-    end
-    channel_id = floating_term_state.chan
-    buf = floating_term_state.buf
-    win = floating_term_state.win
-  else
-    channel_id = small_term_state.chan
-    buf = small_term_state.buf
-    win = small_term_state.win
-  end
-
-  if choice == '<Ctrl-C>' then
-    vim.fn.chansend(channel_id, '\x03')
-  else
-    vim.fn.chansend(channel_id, string.format('%s\n', choice))
-  end
-
-  local line_count = vim.api.nvim_buf_line_count(buf)
-  vim.api.nvim_win_set_cursor(win, { line_count, 0 })
-
-  vim.api.nvim_feedkeys('<C-w><C-k>', 'n', false)
-end
-
-local function send_command_to_terminal(is_float)
-  local opts = {
-    prompt = 'Select command to send to terminal',
-    format_item = function(item)
-      return item
-    end,
-  }
-
-  vim.ui.select(choice_options, opts, function(choice)
-    if not choice then
-      make_notify 'No choice selected'
-      return
-    end
-    handle_choice(choice, is_float)
-  end)
-end
-
 local function small_terminal()
   vim.cmd.vnew()
   if vim.fn.has 'win32' == 1 then
@@ -163,6 +119,51 @@ local function toggle_small_terminal()
   small_term_state.chan = vim.bo.channel
 end
 
+local function handle_choice(choice, is_float)
+  local channel_id, buf, win
+  if is_float then
+    if not vim.api.nvim_win_is_valid(floating_term_state.win) then
+      toggle_floating_terminal()
+    end
+    channel_id = floating_term_state.chan
+    buf = floating_term_state.buf
+    win = floating_term_state.win
+  else
+    if not vim.api.nvim_win_is_valid(small_term_state.win) then
+      toggle_small_terminal()
+    end
+    channel_id = small_term_state.chan
+    buf = small_term_state.buf
+    win = small_term_state.win
+  end
+
+  if choice == '<Ctrl-C>' then
+    vim.fn.chansend(channel_id, '\x03')
+  else
+    vim.fn.chansend(channel_id, string.format('%s\n', choice))
+  end
+
+  local line_count = vim.api.nvim_buf_line_count(buf)
+  vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+end
+
+local function send_command_to_terminal(is_float)
+  local opts = {
+    prompt = 'Select command to send to terminal',
+    format_item = function(item)
+      return item
+    end,
+  }
+
+  vim.ui.select(choice_options, opts, function(choice)
+    if not choice then
+      make_notify 'No choice selected'
+      return
+    end
+    handle_choice(choice, is_float)
+  end)
+end
+
 vim.keymap.set('n', '<localleader>tc', function()
   send_command_to_terminal(true)
 end, { desc = '[T]erminal [C]ommand' })
@@ -174,7 +175,6 @@ end, { desc = '[T]erminal e[x]ecute' })
 vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
 
 vim.keymap.set('n', '<localleader>ts', function()
-  small_terminal()
   send_command_to_terminal(false)
 end, { desc = '[S]mall [T]erminal' })
 
