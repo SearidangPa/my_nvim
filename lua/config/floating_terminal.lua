@@ -80,14 +80,18 @@ local toggle_floating_terminal = function()
 end
 
 local function handle_choice(choice, is_float)
-  local channel_id
+  local channel_id, buf, win
   if is_float then
     if not vim.api.nvim_win_is_valid(floating_term_state.win) then
       toggle_floating_terminal()
     end
     channel_id = floating_term_state.chan
+    buf = floating_term_state.buf
+    win = floating_term_state.win
   else
     channel_id = small_term_state.chan
+    buf = small_term_state.buf
+    win = small_term_state.win
   end
 
   if choice == '<Ctrl-C>' then
@@ -96,10 +100,8 @@ local function handle_choice(choice, is_float)
     vim.fn.chansend(channel_id, string.format('%s\n', choice))
   end
 
-  if is_float then
-    local line_count = vim.api.nvim_buf_line_count(floating_term_state.buf)
-    vim.api.nvim_win_set_cursor(floating_term_state.win, { line_count, 0 })
-  end
+  local line_count = vim.api.nvim_buf_line_count(buf)
+  vim.api.nvim_win_set_cursor(win, { line_count, 0 })
 end
 
 local function send_command_to_terminal(is_float)
@@ -126,10 +128,36 @@ local function small_terminal()
   else
     vim.cmd.term()
   end
-
   vim.cmd.wincmd 'J'
+
   local small_term_height = 12
   vim.api.nvim_win_set_height(0, small_term_height)
+  small_term_state.buf = vim.api.nvim_get_current_buf()
+  small_term_state.win = vim.api.nvim_get_current_win()
+  small_term_state.chan = vim.bo.channel
+end
+
+local function toggle_small_terminal()
+  if vim.api.nvim_win_is_valid(small_term_state.win) then
+    vim.api.nvim_win_hide(small_term_state.win)
+    return
+  end
+
+  if not vim.api.nvim_buf_is_valid(small_term_state.buf) then
+    small_terminal()
+    return
+  end
+
+  small_term_state.win = vim.api.nvim_open_win(small_term_state.buf, true, {
+    relative = 'editor',
+    width = vim.o.columns,
+    height = 12,
+    row = vim.o.lines - 12,
+    col = 0,
+    style = 'minimal',
+  })
+  vim.cmd.wincmd 'J'
+
   small_term_state.chan = vim.bo.channel
 end
 
@@ -147,4 +175,8 @@ vim.keymap.set('n', '<localleader>ts', function()
   small_terminal()
   send_command_to_terminal(false)
 end, { desc = '[S]mall [T]erminal' })
+
+vim.keymap.set('n', '<localleader><localleader>', function()
+  toggle_small_terminal()
+end, { desc = 'Toggle small terminal' })
 return {}
