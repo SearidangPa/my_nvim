@@ -10,12 +10,12 @@ return {
       {
         '<leader>xx',
         '<cmd>Trouble diagnostics toggle<cr>',
-        desc = '[x] Trouble Diagnostics',
+        desc = '[x] Diagnostics',
       },
       {
-        '<leader>td',
+        '<leader>xb',
         '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-        desc = 'Toggle [D]iagnostics for the current buffer',
+        desc = '[x] current [b]uffer',
       },
       {
         '<leader>ts',
