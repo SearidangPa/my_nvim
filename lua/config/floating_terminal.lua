@@ -4,11 +4,14 @@ local make_notify = mini_notify.make_notify {}
 local floating_term_chan = 0
 local small_terminal_chan = 0
 
-local state = {
-  floating = {
-    buf = -1,
-    win = -1,
-  },
+local floating = {
+  buf = -1,
+  win = -1,
+}
+
+local small_terminal_state = {
+  buf = -1,
+  win = -1,
 }
 
 local function map_opt(desc)
@@ -60,13 +63,13 @@ function Create_floating_window(buf_intput)
 end
 
 local toggle_floating_terminal = function()
-  if vim.api.nvim_win_is_valid(state.floating.win) then
-    vim.api.nvim_win_hide(state.floating.win)
+  if vim.api.nvim_win_is_valid(floating.win) then
+    vim.api.nvim_win_hide(floating.win)
     return
   end
 
-  state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
-  if vim.bo[state.floating.buf].buftype ~= 'terminal' then
+  floating.buf, floating.win = Create_floating_window(floating.buf)
+  if vim.bo[floating.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
     else
@@ -80,7 +83,7 @@ end
 local function handle_choice(choice, is_float)
   local channel_id
   if is_float then
-    if not vim.api.nvim_win_is_valid(state.floating.win) then
+    if not vim.api.nvim_win_is_valid(floating.win) then
       toggle_floating_terminal()
     end
     channel_id = floating_term_chan
@@ -95,8 +98,8 @@ local function handle_choice(choice, is_float)
   end
 
   if is_float then
-    local line_count = vim.api.nvim_buf_line_count(state.floating.buf)
-    vim.api.nvim_win_set_cursor(state.floating.win, { line_count, 0 })
+    local line_count = vim.api.nvim_buf_line_count(floating.buf)
+    vim.api.nvim_win_set_cursor(floating.win, { line_count, 0 })
   end
 end
 
