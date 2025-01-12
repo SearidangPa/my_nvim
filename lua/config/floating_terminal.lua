@@ -34,6 +34,29 @@ vim.api.nvim_create_autocmd('TermOpen', {
   end,
 })
 
+local function focus_above_small_terminal()
+  if not vim.api.nvim_win_is_valid(small_term_state.win) then
+    return
+  end
+
+  local small_term_pos = vim.api.nvim_win_get_position(small_term_state.win)
+  local windows = vim.api.nvim_tabpage_list_wins(0)
+
+  local target_win = nil
+  for _, win in ipairs(windows) do
+    if win ~= small_term_state.win then
+      local pos = vim.api.nvim_win_get_position(win)
+      if pos[1] < small_term_pos[1] then
+        target_win = win
+      end
+    end
+  end
+
+  if target_win then
+    vim.api.nvim_set_current_win(target_win)
+  end
+end
+
 function Create_floating_window(buf_intput)
   buf_intput = buf_intput or -1
   local width = math.floor(vim.o.columns * 0.9)
@@ -145,9 +168,13 @@ local function handle_choice(choice, is_float)
 
   local line_count = vim.api.nvim_buf_line_count(buf)
   vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+
+  if not is_float then
+    focus_above_small_terminal()
+  end
 end
 
-local function send_command_to_terminal(is_float)
+local function send_command_toggle_term(is_float)
   local opts = {
     prompt = 'Select command to send to terminal',
     format_item = function(item)
@@ -165,19 +192,14 @@ local function send_command_to_terminal(is_float)
 end
 
 vim.keymap.set('n', '<localleader>tc', function()
-  send_command_to_terminal(true)
+  send_command_toggle_term(true)
 end, { desc = '[T]erminal [C]ommand' })
 
-vim.keymap.set('n', '<localleader>tx', function()
-  send_command_to_terminal(false)
-end, { desc = '[T]erminal e[x]ecute' })
-
-vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
-
 vim.keymap.set('n', '<localleader>ts', function()
-  send_command_to_terminal(false)
+  send_command_toggle_term(false)
 end, { desc = '[S]mall [T]erminal' })
 
+vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
 vim.keymap.set('n', '<localleader><localleader>', function()
   toggle_small_terminal()
 end, { desc = 'Toggle small terminal' })
