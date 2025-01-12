@@ -79,12 +79,10 @@ vim.keymap.set({ 't', 'n' }, '<localleader>tt', function()
 end, map_opt '[T]erminal [T]oggle')
 
 local choice_options = {
-  'ls -la',
-  'gst',
-  'pwd',
-
   '',
-  '========= windows ===========',
+  'gst',
+
+  '========= windows only ===========',
   'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
   're;st',
 }
