@@ -8,7 +8,7 @@ end
 local map = vim.keymap.set
 
 local function map_opt(desc)
-  return { noremap = true, silent = true, desc = desc }
+  return { noremap = true, silent = false, desc = desc }
 end
 
 -- =================== Window Navigation ===================
@@ -102,8 +102,8 @@ vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt '[R]ename and
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and [l]owercase first character')
 
 -- ================== local leader===================
-vim.keymap.set('n', '<localleader>w', ':wa<CR>', { noremap = false, desc = '[W]rite all' })
-vim.keymap.set('n', '<localleader>xx', '<cmd>source % CR>', map_opt 'Source the current lua file')
+vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite [a]ll')
+vim.keymap.set('n', '<localleader>x', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- =================== theme ==================
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')

@@ -82,12 +82,12 @@ local function small_terminal()
   return job_id
 end
 
-vim.keymap.set('n', '<leader>st', small_terminal, { desc = '[S]mall [T]erminal' })
+vim.keymap.set('n', '<leader>xt', small_terminal, { desc = 'Small [T]erminal' })
 
 local choice_options = {
   'echo "lol"',
   'ls -la',
-  'echo "re;st',
+  'echo "re;st"',
 }
 
 local function handle_choice(choice)
@@ -98,9 +98,9 @@ local function handle_choice(choice)
 
   local nui_input_options = {
     prompt = '> ',
-    default_value = string.format('%s\n', choice),
+    default_value = choice,
     on_submit = function(value)
-      vim.fn.chansend(job_id, value)
+      vim.fn.chansend(job_id, value .. '\n')
     end,
   }
 
@@ -115,7 +115,7 @@ local function handle_choice(choice)
     border = {
       style = 'rounded',
       text = {
-        top = '[My Lovely Commit Message]',
+        top = '[My lovely command to send to terminal]',
         top_align = 'center',
       },
     },

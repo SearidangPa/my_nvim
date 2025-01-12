@@ -17,7 +17,6 @@ return {
       { '<leader>n', group = '[N]ew' },
       { '<leader>p', group = 'git [P]ush' },
       { '<leader>q', group = '[Q]uickfix' },
-      { '<leader>g', group = '[G]o' },
       { '<leader>q', group = '[Q]uickfix' },
       { '<leader>gm', group = '[G]o [M]od' },
       { '<leader>r', group = '[R]ename' },
@@ -25,9 +24,12 @@ return {
       { '<leader>t', group = '[T]oggle' },
       { '<leader>tc', group = '[T]oggle [C]olorscheme', mode = 'n', expr = false, noremap = true },
       { '<leader>w', group = '[W]orkspace' },
+      { '<leader>x', group = '[x]' },
+      { '<leader>g', group = '[G]o' },
 
       { '<localleader>s', group = '[S]earch plugin' },
-      { '<leader>x', group = 'e[X]cute' },
+      { '<localleader>x', group = '[Ex]ecute' },
+      { '<localleader>t', group = '[T]erminal' },
     },
   },
 }
