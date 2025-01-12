@@ -102,6 +102,7 @@ local function handle_choice(choice, is_float)
 
   local line_count = vim.api.nvim_buf_line_count(buf)
   vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+  vim.api.nvim_feedkeys('<C-w><C-k>', 'n', false)
 end
 
 local function send_command_to_terminal(is_float)
