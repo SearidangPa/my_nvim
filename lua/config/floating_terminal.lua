@@ -1,7 +1,5 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
-local nui_input = require 'nui.input'
-local event = require('nui.utils.autocmd').event
 
 local term_channel_id = 0
 
@@ -62,6 +60,7 @@ local toggle_floating_terminal = function()
     end
 
     term_channel_id = vim.bo.channel
+    print('term_channel_id here' .. term_channel_id)
   end
 end
 
@@ -79,61 +78,41 @@ vim.keymap.set({ 't', 'n' }, '<localleader>tt', function()
 end, map_opt '[T]erminal [T]oggle')
 
 local choice_options = {
-  '',
   'gst',
-
+  'rds',
+  '<Ctrl-C>',
   '========= windows only ===========',
   'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
   're;st',
 }
 
-local function handle_choice(choice)
+local function handle_choice(choice, channel_id, is_small_terminal)
   if not choice then
     make_notify 'No choice selected'
     return
   end
 
-  local nui_input_options = {
-    prompt = '> ',
-    default_value = choice,
-    on_submit = function(value)
-      vim.fn.chansend(term_channel_id, string.format('%s\n', value))
-    end,
-  }
+  if not is_small_terminal then
+    vim.api.nvim_feedkeys('i', 'n', true)
+    if choice == '<Ctrl-C>' then
+      vim.fn.chansend(channel_id, '\x03')
+    else
+      vim.fn.chansend(channel_id, string.format('%s\n', choice))
+    end
 
-  local width = math.floor(vim.o.columns * 0.9)
-  local height = math.floor(vim.o.lines * 0.25)
-  local row = math.floor((vim.o.columns - width))
-  local col = math.floor((vim.o.lines - height))
-
-  local popup_option = {
-    position = { row = row, col = col },
-    size = { width = 120 },
-    border = {
-      style = 'rounded',
-      text = {
-        top = '[My lovely command to send to terminal]',
-        top_align = 'center',
-      },
-    },
-    win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
-  }
-
-  local input = nui_input(popup_option, nui_input_options)
-  input:mount()
-
-  input:on(event.BufLeave, function()
-    input:unmount()
-    toggle_floating_terminal()
-
-    local term_view_timer = 3000 -- 5000 milliseconds (5 seconds)
-    vim.defer_fn(function()
+    if not vim.api.nvim_win_is_valid(state.floating.win) then
       toggle_floating_terminal()
-    end, term_view_timer)
-  end)
+    end
+    vim.api.nvim_feedkeys('<Esc><Esc>', 'i', true)
+
+    -- local term_view_timer = 3000 -- milliseconds
+    -- vim.defer_fn(function()
+    --   toggle_floating_terminal()
+    -- end, term_view_timer)
+  end
 end
 
-local function send_command_to_terminal()
+local function send_command_to_terminal(channel_id, is_small_terminal)
   local opts = {
     prompt = 'Select command to send to terminal',
     format_item = function(item)
@@ -141,22 +120,49 @@ local function send_command_to_terminal()
     end,
   }
 
-  if not vim.api.nvim_win_is_valid(state.floating.win) then
-    state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
-    if vim.fn.has 'win32' == 1 then
-      vim.cmd.term 'powershell.exe'
-    else
-      vim.cmd.term()
-    end
-    term_channel_id = vim.bo.channel
-    vim.api.nvim_win_hide(state.floating.win)
-  end
+  -- if not is_small_terminal then
+  --   if not vim.api.nvim_win_is_valid(state.floating.win) then
+  --     state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
+  --     if vim.fn.has 'win32' == 1 then
+  --       vim.cmd.term 'powershell.exe'
+  --     else
+  --       vim.cmd.term()
+  --     end
+  --     channel_id = vim.bo.channel
+  --     vim.api.nvim_win_hide(state.floating.win)
+  --   end
+  -- end
 
   vim.ui.select(choice_options, opts, function(choice)
-    handle_choice(choice)
+    handle_choice(choice, channel_id, is_small_terminal)
   end)
 end
 
-vim.keymap.set('n', '<localleader>tc', send_command_to_terminal, { desc = '[T]erminal [C]ommand' })
+vim.keymap.set('n', '<localleader>tc', function()
+  print('term_channel_id', term_channel_id)
+  send_command_to_terminal(term_channel_id, false)
+end, { desc = '[T]erminal [C]ommand' })
+
+local small_terminal_chan = 0
+local function small_terminal()
+  vim.cmd.vnew()
+  if vim.fn.has 'win32' == 1 then
+    vim.cmd.term 'powershell.exe'
+  else
+    vim.cmd.term()
+  end
+
+  vim.cmd.wincmd 'J'
+  local small_term_height = 12
+  vim.api.nvim_win_set_height(0, small_term_height)
+  small_terminal_chan = vim.bo.channel
+  return small_terminal_chan
+end
+
+vim.keymap.set('n', '<localleader>ts', small_terminal, { desc = '[S]mall [T]erminal' })
+
+vim.keymap.set('n', '<localleader>tx', function()
+  send_command_to_terminal(small_terminal_chan, true)
+end, { desc = '[T]erminal e[x]ecute' })
 
 return {}
