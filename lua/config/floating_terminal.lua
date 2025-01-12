@@ -125,6 +125,11 @@ local function handle_choice(choice)
   input:on(event.BufLeave, function()
     input:unmount()
     toggle_floating_terminal()
+
+    local term_view_timer = 3000 -- 5000 milliseconds (5 seconds)
+    vim.defer_fn(function()
+      toggle_floating_terminal()
+    end, term_view_timer)
   end)
 end
 
@@ -135,6 +140,17 @@ local function send_command_to_terminal()
       return item
     end,
   }
+
+  if not vim.api.nvim_win_is_valid(state.floating.win) then
+    state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
+    if vim.fn.has 'win32' == 1 then
+      vim.cmd.term 'powershell.exe'
+    else
+      vim.cmd.term()
+    end
+    term_channel_id = vim.bo.channel
+    vim.api.nvim_win_hide(state.floating.win)
+  end
 
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice)
