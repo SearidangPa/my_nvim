@@ -91,7 +91,7 @@ local function handle_choice(choice, is_float)
   if choice == '<Ctrl-C>' then
     vim.fn.chansend(channel_id, '\x03')
   else
-    vim.fn.chansend(channel_id, string.format('%s\r', choice))
+    vim.fn.chansend(channel_id, string.format('%s\n', choice))
   end
 
   if is_float then
