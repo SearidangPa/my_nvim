@@ -141,5 +141,9 @@ vim.keymap.set('n', '<localleader>tx', function()
 end, { desc = '[T]erminal e[x]ecute' })
 
 vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
-vim.keymap.set('n', '<localleader>ts', small_terminal, { desc = '[S]mall [T]erminal' })
+
+vim.keymap.set('n', '<localleader>ts', function()
+  small_terminal()
+  send_command_to_terminal(false)
+end, { desc = '[S]mall [T]erminal' })
 return {}
