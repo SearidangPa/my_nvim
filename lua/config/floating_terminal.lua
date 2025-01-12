@@ -124,6 +124,7 @@ local function handle_choice(choice)
 
   input:on(event.BufLeave, function()
     input:unmount()
+    toggle_floating_terminal()
   end)
 end
 
