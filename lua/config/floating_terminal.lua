@@ -3,6 +3,15 @@ local make_notify = mini_notify.make_notify {}
 local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 
+local term_channel_id = 0
+
+local state = {
+  floating = {
+    buf = -1,
+    win = -1,
+  },
+}
+
 vim.api.nvim_create_autocmd('TermOpen', {
   group = vim.api.nvim_create_augroup('custom-term-open', { clear = true }),
   callback = function()
@@ -38,14 +47,6 @@ function Create_floating_window(buf_intput)
   return buf, win
 end
 
-local state = {
-  floating = {
-    buf = -1,
-    win = -1,
-  },
-}
-
-local job_id = 0
 local toggle_floating_terminal = function()
   if vim.api.nvim_win_is_valid(state.floating.win) then
     vim.api.nvim_win_hide(state.floating.win)
@@ -60,16 +61,31 @@ local toggle_floating_terminal = function()
       vim.cmd.term()
     end
 
-    job_id = vim.bo.channel
-    vim.api.nvim_feedkeys('i', 'n', true)
+    term_channel_id = vim.bo.channel
   end
 end
 
-vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, { noremap = true, silent = true, desc = '[T]oggle floating [t]erminal' })
+local function map_opt(desc)
+  return { noremap = true, silent = false, desc = desc }
+end
+
+vim.keymap.set({ 't', 'n' }, '<localleader>ti', function()
+  toggle_floating_terminal()
+  vim.api.nvim_feedkeys('i', 'n', true)
+end, map_opt '[T]erminal [I]nsert')
+
+vim.keymap.set({ 't', 'n' }, '<localleader>tt', function()
+  toggle_floating_terminal()
+end, map_opt '[T]erminal [T]oggle')
 
 local choice_options = {
   'ls -la',
   'gst',
+  'pwd',
+  '',
+  '=========pwsh only===========',
+  'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
+  're;st',
 }
 
 local function handle_choice(choice)
@@ -82,7 +98,7 @@ local function handle_choice(choice)
     prompt = '> ',
     default_value = choice,
     on_submit = function(value)
-      vim.fn.chansend(job_id, value .. '\n')
+      vim.fn.chansend(term_channel_id, string.format('%s\n', value))
     end,
   }
 

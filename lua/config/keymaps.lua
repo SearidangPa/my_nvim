@@ -103,7 +103,7 @@ vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and 
 
 -- ================== local leader===================
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite [a]ll')
-vim.keymap.set('n', '<localleader>x', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
+vim.keymap.set('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- =================== theme ==================
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
