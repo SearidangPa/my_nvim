@@ -82,8 +82,9 @@ local choice_options = {
   'ls -la',
   'gst',
   'pwd',
+
   '',
-  '=========pwsh only===========',
+  '========= windows ===========',
   'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
   're;st',
 }
