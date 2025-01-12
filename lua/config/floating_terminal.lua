@@ -1,17 +1,16 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local floating_term_chan = 0
-local small_terminal_chan = 0
-
-local floating = {
+local floating_term_state = {
   buf = -1,
   win = -1,
+  chan = 0,
 }
 
-local small_terminal_state = {
+local small_term_state = {
   buf = -1,
   win = -1,
+  chan = 0,
 }
 
 local function map_opt(desc)
@@ -63,32 +62,32 @@ function Create_floating_window(buf_intput)
 end
 
 local toggle_floating_terminal = function()
-  if vim.api.nvim_win_is_valid(floating.win) then
-    vim.api.nvim_win_hide(floating.win)
+  if vim.api.nvim_win_is_valid(floating_term_state.win) then
+    vim.api.nvim_win_hide(floating_term_state.win)
     return
   end
 
-  floating.buf, floating.win = Create_floating_window(floating.buf)
-  if vim.bo[floating.buf].buftype ~= 'terminal' then
+  floating_term_state.buf, floating_term_state.win = Create_floating_window(floating_term_state.buf)
+  if vim.bo[floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
     else
       vim.cmd.term()
     end
 
-    floating_term_chan = vim.bo.channel
+    floating_term_state.chan = vim.bo.channel
   end
 end
 
 local function handle_choice(choice, is_float)
   local channel_id
   if is_float then
-    if not vim.api.nvim_win_is_valid(floating.win) then
+    if not vim.api.nvim_win_is_valid(floating_term_state.win) then
       toggle_floating_terminal()
     end
-    channel_id = floating_term_chan
+    channel_id = floating_term_state.chan
   else
-    channel_id = small_terminal_chan
+    channel_id = small_term_state.chan
   end
 
   if choice == '<Ctrl-C>' then
@@ -98,8 +97,8 @@ local function handle_choice(choice, is_float)
   end
 
   if is_float then
-    local line_count = vim.api.nvim_buf_line_count(floating.buf)
-    vim.api.nvim_win_set_cursor(floating.win, { line_count, 0 })
+    local line_count = vim.api.nvim_buf_line_count(floating_term_state.buf)
+    vim.api.nvim_win_set_cursor(floating_term_state.win, { line_count, 0 })
   end
 end
 
@@ -131,8 +130,7 @@ local function small_terminal()
   vim.cmd.wincmd 'J'
   local small_term_height = 12
   vim.api.nvim_win_set_height(0, small_term_height)
-  small_terminal_chan = vim.bo.channel
-  return small_terminal_chan
+  small_term_state.chan = vim.bo.channel
 end
 
 vim.keymap.set('n', '<localleader>tc', function()
