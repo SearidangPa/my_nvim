@@ -102,7 +102,7 @@ vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt '[R]ename and
 vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and [l]owercase first character')
 
 -- ================== local leader===================
-vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite [a]ll')
+vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt 'Write all')
 vim.keymap.set('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- =================== theme ==================

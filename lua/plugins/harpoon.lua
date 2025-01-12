@@ -21,7 +21,7 @@ return {
 
     vim.keymap.set('n', '<localleader>p', function()
       harpoon:list():prev()
-    end, { desc = '[H]arpoon [P]rev' })
+    end, { desc = 'harpoon [P]rev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6, 7 } do
       vim.keymap.set('n', string.format('<localleader>%d', idx), function()
