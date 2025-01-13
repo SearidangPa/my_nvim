@@ -121,7 +121,7 @@ local function git_commit_with_message_prompt(on_success_cb)
   end)
 end
 
-local function push_all()
+local function push_add_all()
   git_add_all(function()
     git_commit_with_message_prompt(function()
       git_push()
@@ -129,7 +129,7 @@ local function push_all()
   end)
 end
 
-vim.keymap.set('n', '<leader>pa', push_all, {
+vim.keymap.set('n', '<leader>pa', push_add_all, {
   noremap = true,
   silent = true,
   desc = '[P]ush [A]dd all',
