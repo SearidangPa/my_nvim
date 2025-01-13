@@ -132,7 +132,7 @@ end
 vim.keymap.set('n', '<leader>pa', push_all, {
   noremap = true,
   silent = true,
-  desc = '[P]ush [A]ll',
+  desc = '[P]ush [A]dd all',
 })
 
 return {}
