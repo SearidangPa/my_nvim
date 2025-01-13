@@ -57,8 +57,9 @@ vim.api.nvim_create_user_command('ToggleErrors', function()
   toggle_float(errors)
 end, {})
 
-vim.keymap.set('n', '<leader>mo', ':ToggleOutput<CR>', { desc = 'Toggle [O]utput for command' })
-vim.keymap.set('n', '<leader>me', ':ToggleErrors<CR>', { desc = 'Toggle [E]rrors for command' })
+vim.keymap.set('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput for command' })
+vim.keymap.set('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for command' })
+
 vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy' })
 vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
