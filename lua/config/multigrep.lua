@@ -94,6 +94,14 @@ M.setup = function()
       prompt_title = 'no regex',
     }
   end, { desc = '[S]earch [N]o regex' })
+
+  vim.keymap.set('n', '<localleader>sm', function()
+    live_search {
+      args_constructor = construct_args_multigrep,
+      prompt_title = 'multi grep',
+      cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
+    }
+  end, { desc = '[S]earch [M]ulti grep in plugins' })
 end
 
 return M
