@@ -28,7 +28,7 @@ return {
       map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       map('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      map('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      map('n', '<leader>sb', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       map('n', '<leader>en', function()
         builtin.find_files {
@@ -60,7 +60,7 @@ return {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch [/] in Open Files' })
+      end, { desc = '[S]earch Grep [/] in Open Files' })
     end
 
     local opts = {
