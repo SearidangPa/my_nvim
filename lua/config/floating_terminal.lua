@@ -200,7 +200,7 @@ vim.keymap.set('n', '<localleader>ts', function()
 end, { desc = '[S]mall [T]erminal' })
 
 vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, map_opt '[T]erminal [T]oggle')
-vim.keymap.set('n', '<localleader><localleader>', function()
+vim.keymap.set('n', '<leader><leader>', function()
   toggle_small_terminal()
 end, { desc = 'Toggle small terminal' })
 return {}
