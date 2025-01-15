@@ -22,8 +22,8 @@ local choice_options_unix = {
 }
 
 local choice_options_win = {
-  'dr;rds',
-  'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
+  'dr; rds',
+  'un; Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
   're;st',
 }
 
