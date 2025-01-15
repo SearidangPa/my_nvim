@@ -32,9 +32,6 @@ vim.api.nvim_set_keymap('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 vim.api.nvim_set_keymap('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 vim.keymap.set('i', '<M-(>', '()<left>', { noremap = true, silent = true, desc = 'Insert ()' })
 
--- =================== Esc Insert Mode ===================
-map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
-
 -- -- =================== Quickfix ===================
 map('n', '<leader>ql', function()
   vim.diagnostic.setqflist()
