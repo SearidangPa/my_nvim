@@ -17,11 +17,12 @@ local function map_opt(desc)
   return { noremap = true, silent = false, desc = desc }
 end
 
-local choice_options = {
-  'gst',
-  'rds',
-  '<Ctrl-C>',
-  '========= windows only ===========',
+local choice_options_unix = {
+  'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
+}
+
+local choice_options_win = {
+  'dr;rds',
   'un;Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force',
   're;st',
 }
@@ -181,6 +182,13 @@ local function send_command_toggle_term(is_float)
       return item
     end,
   }
+
+  local choice_options
+  if vim.fn.has 'win32' == 1 then
+    choice_options = choice_options_win
+  else
+    choice_options = choice_options_unix
+  end
 
   vim.ui.select(choice_options, opts, function(choice)
     if not choice then
