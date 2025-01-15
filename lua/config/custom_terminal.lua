@@ -23,7 +23,7 @@ local choice_options_unix = {
 
 local choice_options_win = {
   'dr; rds',
-  'un; Remove-Item -Path ~\\Documents\\Prevel_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
+  'un; Remove-Item -Path ~\\Documents\\Preveil_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
   're;st',
 }
 
@@ -164,7 +164,7 @@ local function handle_choice(choice, is_float)
   if choice == '<Ctrl-C>' then
     vim.fn.chansend(channel_id, '\x03')
   else
-    vim.fn.chansend(channel_id, string.format('%s\n', choice))
+    vim.fn.chansend(channel_id, string.format('%s\r\n', choice))
   end
 
   local line_count = vim.api.nvim_buf_line_count(buf)
