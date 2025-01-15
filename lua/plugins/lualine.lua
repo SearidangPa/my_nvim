@@ -47,6 +47,15 @@ return {
 
   config = function()
     local ll = require 'lualine'
+    require 'config.util_find_func'
+
+    local function nearest_func_name_if_exists()
+      if Find_nearest_function() then
+        return Find_nearest_function()
+      end
+      return ''
+    end
+
     ll.setup {
       options = {
         globalstatus = true,
@@ -74,7 +83,7 @@ return {
       },
       tabline = {
         lualine_a = {},
-        lualine_b = {},
+        lualine_b = { nearest_func_name_if_exists },
         lualine_c = {},
         lualine_x = {},
         lualine_y = { get_harpoon_filenames },

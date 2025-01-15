@@ -75,19 +75,19 @@ function Find_nearest_function()
   local parser = vim.treesitter.get_parser(0, 'go')
   if not parser then
     print 'Treesitter parser not found for Go'
-    return
+    return ""
   end
 
   local tree = parser:parse()[1]
   if not tree then
     print 'Parse tree not found'
-    return
+    return ""
   end
 
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
     print 'No Treesitter node found at cursor'
-    return
+    return ""
   end
 
   local function_node = cursor_node
@@ -97,7 +97,6 @@ function Find_nearest_function()
       for child in function_node:iter_children() do
         if child:type() == 'identifier' then
           local function_name = get_node_text(child, 0)
-          print(function_node)
           return function_name
         end
       end
@@ -105,5 +104,4 @@ function Find_nearest_function()
     function_node = function_node:parent()
   end
 
-  print 'No enclosing function declaration found'
 end
