@@ -48,19 +48,19 @@ return {
         }
       end, { desc = '[S]earch Plugin by [G]rep' })
 
-      map('n', '<leader>/', function()
+      map('n', '<leader>s/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
           previewer = false,
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
-      map('n', '<leader>s/', function()
+      map('n', '<leader>so', function()
         builtin.live_grep {
           grep_open_files = true,
           prompt_title = 'Live Grep in Open Files',
         }
-      end, { desc = '[S]earch Grep [/] in Open Files' })
+      end, { desc = '[S]earch Grep in [O]pen Files' })
     end
 
     local opts = {
