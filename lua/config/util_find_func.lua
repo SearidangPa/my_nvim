@@ -86,7 +86,6 @@ function Find_nearest_function()
 
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
-    print 'No Treesitter node found at cursor'
     return ""
   end
 
