@@ -3,12 +3,14 @@ local make_notify = mini_notify.make_notify {}
 
 Choice_options_unix = {
   'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
+  'gfl',
 }
 
 Choice_options_win = {
   'dr; rds',
   'un; Remove-Item -Path ~\\Documents\\Preveil_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
   're;st',
+  'gfl',
 }
 
 vim.api.nvim_create_autocmd('TermOpen', {
