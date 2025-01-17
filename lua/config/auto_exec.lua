@@ -33,6 +33,16 @@ vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = Start_job { cmd = cmd }
 end, {})
 
+vim.api.nvim_create_user_command('GitPull', function()
+  local cmd
+  if vim.fn.has 'win32' == 1 then
+    cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'git fetch && git pull' }
+  else
+    cmd = { 'git', 'fetch', '&&', 'git', 'pull' }
+  end
+  _, output, errors = Start_job { cmd = cmd }
+end, {})
+
 local linter_ns = vim.api.nvim_create_namespace 'cloud_drive_linter'
 vim.api.nvim_create_user_command('MakeLint', function()
   local cmd
