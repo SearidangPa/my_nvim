@@ -50,8 +50,9 @@ return {
     require 'config.util_find_func'
 
     local function nearest_func_name_if_exists()
-      if Find_nearest_function() then
-        return Find_nearest_function()
+      local nearest_func = Find_nearest_function()
+      if nearest_func then
+        return nearest_func
       end
       return ''
     end
