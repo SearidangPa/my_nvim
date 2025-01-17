@@ -49,6 +49,7 @@ require('lazy').setup {
     'tpope/vim-fugitive', -- Git commands in Neovim
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
     { 'github/copilot.vim' },
+    'sjl/gundo.vim', -- Visualize your undo tree
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
   change_detection = { enabled = false },
