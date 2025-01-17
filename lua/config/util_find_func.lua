@@ -80,6 +80,7 @@ function Find_nearest_function()
 
   local tree = parser:parse()[1]
   if not tree then
+    print 'Parse tree not found'
     return ""
   end
 
