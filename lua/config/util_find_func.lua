@@ -80,13 +80,11 @@ function Find_nearest_function()
 
   local tree = parser:parse()[1]
   if not tree then
-    print 'Parse tree not found'
     return ""
   end
 
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
-    print 'No Treesitter node found at cursor'
     return ""
   end
 
