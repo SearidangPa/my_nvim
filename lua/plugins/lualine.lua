@@ -71,7 +71,7 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 4 } },
-        lualine_x = {},
+        lualine_x = { nearest_func_name_if_exists },
         lualine_y = {},
         lualine_z = {
           {
@@ -83,7 +83,7 @@ return {
       },
       tabline = {
         lualine_a = {},
-        lualine_b = { nearest_func_name_if_exists },
+        lualine_b = {},
         lualine_c = {},
         lualine_x = {},
         lualine_y = { get_harpoon_filenames },
