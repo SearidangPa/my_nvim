@@ -50,8 +50,9 @@ return {
     require 'config.util_find_func'
 
     local function nearest_func_name_if_exists()
-      if Find_nearest_function() then
-        return Find_nearest_function()
+      local nearest_func = Find_nearest_function()
+      if nearest_func then
+        return nearest_func
       end
       return ''
     end
@@ -71,7 +72,7 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 4 } },
-        lualine_x = {},
+        lualine_x = { nearest_func_name_if_exists },
         lualine_y = {},
         lualine_z = {
           {
@@ -83,7 +84,7 @@ return {
       },
       tabline = {
         lualine_a = {},
-        lualine_b = { nearest_func_name_if_exists },
+        lualine_b = {},
         lualine_c = {},
         lualine_x = {},
         lualine_y = { get_harpoon_filenames },
