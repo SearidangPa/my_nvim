@@ -71,6 +71,12 @@ map('i', '<C-j>', function()
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
+map('i', '<M-f>', function()
+  local accept = vim.fn['copilot#AcceptWord']
+  local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
+  vim.api.nvim_feedkeys(res, 'n', false)
+end, { expr = true, remap = false, desc = 'Copilot Accept Word' })
+
 -- [[
 -- ================== Rename the first letter
 -- ]]
