@@ -127,3 +127,12 @@ Start_job = function(opts)
 
   return job_id, output, errors
 end
+
+function Contains(tbl, value)
+  for _, v in ipairs(tbl) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end

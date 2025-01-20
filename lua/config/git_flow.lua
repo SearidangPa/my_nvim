@@ -69,15 +69,6 @@ Commit: %s]]
   }
 end
 
-local function contains(tbl, value)
-  for _, v in ipairs(tbl) do
-    if v == value then
-      return true
-    end
-  end
-  return false
-end
-
 local function handle_choice(choice, on_success_cb)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
@@ -86,7 +77,7 @@ local function handle_choice(choice, on_success_cb)
 
   commit_msg = choice
 
-  if contains(default_no_more_input, choice) then
+  if Contains(default_no_more_input, choice) then
     perform_commit(on_success_cb)
     return
   end

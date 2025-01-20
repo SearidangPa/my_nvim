@@ -1,15 +1,15 @@
+require 'config.util_start_job'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 
-Choice_options_unix = {
-  '',
+local choice_options_unix = {
   'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
   'gfl',
 }
 
-Choice_options_win = {
+local choice_options_win = {
   'dr; rds',
   'un; Remove-Item -Path ~\\Documents\\Preveil_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
   're;st',
@@ -33,10 +33,11 @@ function Send_command_toggle_term(opts)
   }
   local choice_options
   if vim.fn.has 'win32' == 1 then
-    choice_options = Choice_options_win
+    choice_options = vim.deepcopy(choice_options_win)
   else
-    choice_options = Choice_options_unix
+    choice_options = vim.deepcopy(choice_options_unix)
   end
+  table.insert(choice_options, 1, '')
 
   vim.ui.select(choice_options, ui_select_opts, function(choice)
     if not choice then
@@ -90,13 +91,31 @@ function Handle_choice(opts)
   channel_id = term_state.chan
   buf = term_state.buf
 
-  local row = vim.o.columns
-  -- local col = vim.o.lines
-  local col = math.floor(vim.o.columns * 0.9)
+  local default_choice_options
+  local end_of_line
+  if vim.fn.has 'win32' == 1 then
+    default_choice_options = choice_options_win
+    end_of_line = '\r\n'
+  else
+    default_choice_options = choice_options_unix
+    end_of_line = '\n'
+  end
+
+  if Contains(default_choice_options, choice) then
+    if choice == '<Ctrl-C>' then
+      vim.fn.chansend(channel_id, '\x03')
+    else
+      vim.fn.chansend(channel_id, string.format('%s%s', choice, end_of_line))
+    end
+    return
+  end
+
+  local row = 2
+  local col = math.floor(vim.o.columns * 0.25)
 
   local popup_option = {
     position = { row = row, col = col },
-    size = { width = 120 },
+    size = { width = 100 },
     border = {
       style = 'rounded',
       text = {
@@ -108,15 +127,10 @@ function Handle_choice(opts)
   }
   local nui_input_options = {
     prompt = '> ',
-    default_value = choice,
+    default_value = '',
     on_submit = function(value)
       choice = value
-      if choice == '<Ctrl-C>' then
-        vim.fn.chansend(channel_id, '\x03')
-      else
-        vim.fn.chansend(channel_id, string.format('%s\r\n', choice))
-      end
-
+      vim.fn.chansend(channel_id, string.format('%s\r\n', choice))
       local line_count = vim.api.nvim_buf_line_count(buf)
       vim.api.nvim_win_set_cursor(win, { line_count, 0 })
     end,
