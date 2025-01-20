@@ -7,7 +7,7 @@ local event = require('nui.utils.autocmd').event
 -- local width = math.floor(vim.o.columns * 0.9)
 local height = math.floor(vim.o.lines * 0.25)
 local row = math.floor((vim.o.lines - height) / 2)
-local col = math.floor((vim.o.columns / 6))
+local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
   '',
@@ -27,7 +27,7 @@ local commit_msg = ''
 
 local popup_option = {
   position = { row = row, col = col },
-  size = { width = 115 },
+  size = { width = 100 },
   border = {
     style = 'rounded',
     text = {
