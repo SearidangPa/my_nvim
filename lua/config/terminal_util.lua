@@ -90,10 +90,9 @@ function Handle_choice(opts)
   channel_id = term_state.chan
   buf = term_state.buf
 
-  local width = math.floor(vim.o.columns * 0.9)
-  local height = math.floor(vim.o.lines * 0.25)
-  local row = math.floor((vim.o.columns - width))
-  local col = math.floor((vim.o.lines - height))
+  local row = vim.o.columns
+  -- local col = vim.o.lines
+  local col = math.floor(vim.o.columns * 0.9)
 
   local popup_option = {
     position = { row = row, col = col },

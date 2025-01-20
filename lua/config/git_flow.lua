@@ -6,8 +6,8 @@ local event = require('nui.utils.autocmd').event
 
 local width = math.floor(vim.o.columns * 0.9)
 local height = math.floor(vim.o.lines * 0.25)
-local row = math.floor((vim.o.columns - width))
-local col = math.floor((vim.o.lines - height))
+local row = math.floor((vim.o.lines - height) / 2)
+local col = math.floor((vim.o.columns - width) / 2)
 
 local default_no_more_input = {
   '',
