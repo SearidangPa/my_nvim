@@ -283,7 +283,7 @@ end, {})
 vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[G]o Test on save' })
 vim.keymap.set('n', '<leader>go', ':GoOutputTest<CR>', { desc = '[G]o [O]utput Test ' })
 vim.keymap.set('n', '<leader>gc', ':GoClearTestOnSave<CR>', { desc = '[G]o [c]lear test on save' })
-vim.keymap.set('n', '<leader>ga', ':GoTestOnSaveAll<CR>', { desc = '[g]o test [a]ll on save' })
+vim.keymap.set('n', '<leader>ga', ':GoTestOnSaveAll<CR>', { desc = '[G]o test [a]ll on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
