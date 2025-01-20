@@ -27,7 +27,7 @@ local commit_msg = ''
 
 local popup_option = {
   position = { row = row, col = col },
-  size = { width = 120 },
+  size = { width = 115 },
   border = {
     style = 'rounded',
     text = {
