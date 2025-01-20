@@ -4,10 +4,10 @@ local make_notify = mini_notify.make_notify {}
 local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 
-local width = math.floor(vim.o.columns * 0.9)
+-- local width = math.floor(vim.o.columns * 0.9)
 local height = math.floor(vim.o.lines * 0.25)
 local row = math.floor((vim.o.lines - height) / 2)
-local col = math.floor((vim.o.columns - width) / 2)
+local col = math.floor((vim.o.columns / 6))
 
 local default_no_more_input = {
   '',
