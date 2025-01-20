@@ -1,7 +1,10 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
+local nui_input = require 'nui.input'
+local event = require('nui.utils.autocmd').event
 
 Choice_options_unix = {
+  '',
   'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
   'gfl',
 }
@@ -87,16 +90,46 @@ function Handle_choice(opts)
   channel_id = term_state.chan
   buf = term_state.buf
 
-  if choice == '<Ctrl-C>' then
-    vim.fn.chansend(channel_id, '\x03')
-  else
-    vim.fn.chansend(channel_id, string.format('%s\r\n', choice))
-  end
+  local width = math.floor(vim.o.columns * 0.9)
+  local height = math.floor(vim.o.lines * 0.25)
+  local row = math.floor((vim.o.columns - width))
+  local col = math.floor((vim.o.lines - height))
 
-  local line_count = vim.api.nvim_buf_line_count(buf)
-  vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+  local popup_option = {
+    position = { row = row, col = col },
+    size = { width = 120 },
+    border = {
+      style = 'rounded',
+      text = {
+        top = '[Send Command]',
+        top_align = 'center',
+      },
+    },
+    win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
+  }
+  local nui_input_options = {
+    prompt = '> ',
+    default_value = choice,
+    on_submit = function(value)
+      choice = value
+      if choice == '<Ctrl-C>' then
+        vim.fn.chansend(channel_id, '\x03')
+      else
+        vim.fn.chansend(channel_id, string.format('%s\r\n', choice))
+      end
 
-  if not is_float then
-    focus_above_small_terminal(term_state)
-  end
+      local line_count = vim.api.nvim_buf_line_count(buf)
+      vim.api.nvim_win_set_cursor(win, { line_count, 0 })
+    end,
+  }
+
+  local input = nui_input(popup_option, nui_input_options)
+  input:mount()
+
+  input:on(event.BufLeave, function()
+    input:unmount()
+    if not is_float then
+      focus_above_small_terminal(term_state)
+    end
+  end)
 end
