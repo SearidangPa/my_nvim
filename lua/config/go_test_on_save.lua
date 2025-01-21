@@ -280,9 +280,10 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
 
-vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
+vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[G]o [T]est on save' })
 vim.keymap.set('n', '<leader>go', ':GoOutputTest<CR>', { desc = '[G]o [O]utput Test ' })
-vim.keymap.set('n', '<leader>gc', ':GoClearTestOnSave<CR>', { desc = '[g]o [c]lear test on save' })
+vim.keymap.set('n', '<leader>gc', ':GoClearTestOnSave<CR>', { desc = '[G]o [C]lear test on save' })
+vim.keymap.set('n', '<leader>ga', ':GoTestOnSaveAll<CR>', { desc = '[G]o test [A]ll on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSave', function()
   vim.env.UKS = 'others'
