@@ -4,6 +4,8 @@ local get_node_text = vim.treesitter.get_node_text
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
+local group, ns
+
 local job_id = -1
 local ignored_actions = {
   pause = true,
@@ -105,22 +107,7 @@ local go_test_all_output = function(state)
   vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
 end
 
-local create_tests_user_command = function(bufnr, state, group, ns)
-  vim.api.nvim_create_user_command('GoTestOutputAll', function()
-    go_test_all_output(state)
-  end, {})
-  vim.api.nvim_create_user_command('GoOutputTest', function()
-    go_test_one_output(state)
-  end, {})
-
-  vim.api.nvim_buf_create_user_command(bufnr, 'GoClearTestOnSave', function()
-    vim.api.nvim_del_augroup_by_id(group)
-    vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
-    vim.diagnostic.reset()
-  end, {})
-end
-
-local on_exit_fn = function(state, bufnr, ns)
+local on_exit_fn = function(state, bufnr)
   job_id = -1
   make_notify 'Test finished'
   local failed = {}
@@ -153,13 +140,18 @@ local function clean_up_prev_job()
   end
 end
 
-local attach_to_buffer = function(bufnr, command, group, ns)
+local attach_to_buffer = function(bufnr, command)
   local state = {
     bufnr = bufnr,
     tests = {},
     all_output = {},
   }
-  create_tests_user_command(bufnr, state, group, ns)
+  vim.api.nvim_create_user_command('GoTestOutputAll', function()
+    go_test_all_output(state)
+  end, {})
+  vim.api.nvim_create_user_command('GoOutputTest', function()
+    go_test_one_output(state)
+  end, {})
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -233,26 +225,12 @@ local attach_to_buffer = function(bufnr, command, group, ns)
         end,
 
         on_exit = function()
-          on_exit_fn(state, bufnr, ns)
+          on_exit_fn(state, bufnr)
         end,
       })
     end,
   })
 end
-
-vim.api.nvim_create_user_command('GoTestOnSaveAll', function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  local concatTestName = ''
-  for testName, _ in pairs(testsInCurrBuf) do
-    concatTestName = concatTestName .. testName .. '|'
-  end
-  concatTestName = concatTestName:sub(1, -2) -- remove the last |
-  local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  local group = vim.api.nvim_create_augroup('live_test', { clear = true })
-  local ns = vim.api.nvim_create_namespace 'live_go_test'
-  attach_to_buffer(bufnr, command, group, ns)
-end, {})
 
 local function get_enclosing_test()
   local _, testName = get_enclosing_fn_info()
@@ -267,20 +245,55 @@ local function get_enclosing_test()
   return testName
 end
 
+local clear_previous_group_and_ns_if_exists = function()
+  if group == nil or ns == nil then
+    return
+  end
+  local ok, _ = pcall(vim.api.nvim_get_autocmds, { group = 'live_go_test_group' })
+  if not ok then
+    return
+  end
+  vim.api.nvim_del_augroup_by_name 'live_go_test_group'
+  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
+  vim.diagnostic.reset()
+end
+
 local attach_single_test = function()
   local test_name = get_enclosing_test()
   make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
-  local group = vim.api.nvim_create_augroup('live_test', { clear = true })
-  local ns = vim.api.nvim_create_namespace 'live_go_test'
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command, group, ns)
+  group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
+  ns = vim.api.nvim_create_namespace 'live_go_test_ns'
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
 vim.api.nvim_create_user_command('GoTestOnSave', function()
+  clear_previous_group_and_ns_if_exists()
   attach_single_test()
 end, {})
 
+<<<<<<< Updated upstream
 vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[G]o [T]est on save' })
+=======
+vim.api.nvim_create_user_command('GoTestOnSaveAll', function()
+  clear_previous_group_and_ns_if_exists()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  local concatTestName = ''
+  for testName, _ in pairs(testsInCurrBuf) do
+    concatTestName = concatTestName .. testName .. '|'
+  end
+  concatTestName = concatTestName:sub(1, -2) -- remove the last |
+  local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
+  group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
+  ns = vim.api.nvim_create_namespace 'live_go_test_ns'
+  attach_to_buffer(bufnr, command)
+end, {})
+
+vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_ns_if_exists, {})
+
+vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
+>>>>>>> Stashed changes
 vim.keymap.set('n', '<leader>go', ':GoOutputTest<CR>', { desc = '[G]o [O]utput Test ' })
 vim.keymap.set('n', '<leader>gc', ':GoClearTestOnSave<CR>', { desc = '[G]o [C]lear test on save' })
 vim.keymap.set('n', '<leader>ga', ':GoTestOnSaveAll<CR>', { desc = '[G]o test [A]ll on save' })
