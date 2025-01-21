@@ -272,9 +272,6 @@ vim.api.nvim_create_user_command('GoTestOnSave', function()
   attach_single_test()
 end, {})
 
-<<<<<<< Updated upstream
-vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[G]o [T]est on save' })
-=======
 vim.api.nvim_create_user_command('GoTestOnSaveAll', function()
   clear_previous_group_and_ns_if_exists()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -293,7 +290,6 @@ end, {})
 vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_ns_if_exists, {})
 
 vim.keymap.set('n', '<leader>gt', ':GoTestOnSave<CR>', { desc = '[T]oggle [G]o Test on save' })
->>>>>>> Stashed changes
 vim.keymap.set('n', '<leader>go', ':GoOutputTest<CR>', { desc = '[G]o [O]utput Test ' })
 vim.keymap.set('n', '<leader>gc', ':GoClearTestOnSave<CR>', { desc = '[G]o [C]lear test on save' })
 vim.keymap.set('n', '<leader>ga', ':GoTestOnSaveAll<CR>', { desc = '[G]o test [A]ll on save' })
