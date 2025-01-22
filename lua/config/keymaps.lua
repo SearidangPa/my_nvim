@@ -112,4 +112,7 @@ vim.keymap.set('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute c
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
 vim.keymap.set('n', '<leader>tcd', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [D]ark')
 
+local function go_to_next_function_call() end
+
+vim.keymap.set('n', ']m', go_to_next_function_call, map_opt 'Jump to the next function call')
 return {}
