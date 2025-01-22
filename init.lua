@@ -31,7 +31,8 @@ vim.opt.foldcolumn = '0'
 vim.opt.foldtext = ''
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 1
-vim.opt.foldnestmax = 4
+vim.opt.foldnestmax = 3
+vim.opt.foldminlines = 6
 
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
