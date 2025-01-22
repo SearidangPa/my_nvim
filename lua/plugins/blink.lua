@@ -31,7 +31,7 @@ return {
       sources = {
         default = { 'lsp', 'path', 'snippets', 'buffer' },
         -- Disable cmdline completions
-        cmdline = {},
+        -- cmdline = {},
       },
 
       snippets = {
