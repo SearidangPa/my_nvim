@@ -151,3 +151,47 @@ local function move_to_next_field_identifier()
 end
 
 vim.keymap.set("n", "]f", move_to_next_field_identifier, { desc = "Move to next field_identifier"})
+
+local function move_to_previous_field_identifier()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+
+  local ts = vim.treesitter
+  local parser = ts.get_parser(bufnr, "go")
+  local tree = parser:parse()[1]
+  local root = tree:root()
+
+  local function find_previous(node, row, col, target_type)
+    local previous_node = nil
+
+    local function search(node, row, col)
+      for child in node:iter_children() do
+        if child:type() == target_type then
+          local start_row, start_col = child:range()
+
+          if start_row < row or (start_row == row and start_col < col) then
+            previous_node = child
+          end
+        end
+        search(child, row, col)
+      end
+    end
+
+    -- Start the search
+    search(node, row, col)
+    return previous_node
+  end
+
+  local previous_node = find_previous(root, current_row, current_col, "field_identifier")
+
+  if previous_node then
+    local start_row, start_col = previous_node:range()
+    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+  else
+    print("No previous field_identifier found")
+  end
+end
+
+-- Keymap for moving backward
+vim.keymap.set("n", "[f", move_to_previous_field_identifier, { desc = "Move to previous field_identifier" })
