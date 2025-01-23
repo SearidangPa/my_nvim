@@ -38,12 +38,18 @@ local add_golang_test = function(bufnr, state, entry)
     name = entry.Test,
     line = testLine - 1,
     output = {},
+    fail_at_line = 0,
   }
 end
 
 local add_golang_output = function(state, entry)
   assert(state.tests, vim.inspect(state))
+  local trimmed_output = vim.trim(entry.Output)
+  local file, line = string.match(trimmed_output, '([%w_]+%.go):(%d+):')
   table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
+  if file and line then
+    state.tests[make_key(entry)].fail_at_line = tonumber(line)
+  end
 end
 
 local mark_outcome = function(state, entry)
@@ -217,6 +223,14 @@ local attach_to_buffer = function(bufnr, command)
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
                 vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
+              end
+              if test.fail_at_line > 0 then
+                local current_time = os.date '%H:%M:%S'
+                extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, ns, test.fail_at_line - 1, -1, {
+                  virt_text = {
+                    { string.format(' \t%s %s', '❌', current_time) },
+                  },
+                })
               end
             end
 
