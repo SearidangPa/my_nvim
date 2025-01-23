@@ -25,9 +25,9 @@ return {
       map('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       map('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+      map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch [.] Git Branches' })
       map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-      map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch [.] Git Branches' })
       map('n', '<leader>s.', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
       map('n', '<leader>en', function()
