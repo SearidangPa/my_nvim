@@ -111,12 +111,42 @@ end
 vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
 vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
 
+function Nearest_function_decl()
+  local parser = vim.treesitter.get_parser(0, 'go')
+  if not parser then
+    print 'Treesitter parser not found for Go'
+    return ""
+  end
 
+  local tree = parser:parse()[1]
+  if not tree then
+    print 'Parse tree not found'
+    return ""
+  end
 
+  local cursor_node = ts_utils.get_node_at_cursor()
+  if not cursor_node then
+    print 'Cursor node not found'
+    return ""
+  end
 
+  local function_node = cursor_node
 
+  while function_node do
+    if function_node:type() == 'function_declaration' then
+      for child in function_node:iter_children() do
+        if child:type() == 'identifier' then
+          local function_name = get_node_text(child, 0)
+          print(function_name)
+          return function_name
+        end
+      end
+    end
+    function_node = function_node:parent()
+  end
 
+  print 'No function declaration found'
+end
 
-
-
-
+vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
+vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
