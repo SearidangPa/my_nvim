@@ -117,12 +117,14 @@ local function move_to_nearest_field_identifier()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row = cursor_pos[1]
 
+  -- Use Treesitter to parse the syntax tree and search for the target
   local ts = vim.treesitter
-  local parser = ts.get_parser(bufnr, "go") 
+  local parser = ts.get_parser(bufnr, "go") -- Change 'go' to your language
   local tree = parser:parse()[1]
   local root = tree:root()
 
-  local function find_nearest_func_call(node, row, target_type)
+  -- Helper function to find the nearest node
+  local function find_nearest(node, row, target_type)
     local nearest_node, nearest_row_diff = nil, math.huge
 
     for child in node:iter_children() do
@@ -134,9 +136,8 @@ local function move_to_nearest_field_identifier()
           nearest_node, nearest_row_diff = child, row_diff
         end
       end
-
       -- Recursively check children
-      local descendant = find_nearest_func_call(child, row, target_type)
+      local descendant = find_nearest(child, row, target_type)
       if descendant then
         local descendant_row = descendant:range()
         local descendant_diff = math.abs(descendant_row - row)
@@ -148,12 +149,18 @@ local function move_to_nearest_field_identifier()
     return nearest_node
   end
 
-  local target_node = find_nearest_func_call(root, current_row - 1, "field_identifier")
+  -- Find the nearest field_identifier
+  local target_node = find_nearest(root, current_row - 1, "field_identifier")
 
   if target_node then
+    -- Move the cursor to the start of the field_identifier
     local start_row, start_col = target_node:range()
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    print("Moved to nearest field_identifier")
+  else
+    print("No field_identifier found nearby")
   end
 end
 
-vim.keymap.set("n", "]m", move_to_nearest_field_identifier, {  desc = "Move to nearest field_identifier" })
+-- Bind the function to a keymap (optional)
+vim.keymap.set("n", "<leader>mf", move_to_nearest_field_identifier, {  desc = "Move to nearest field_identifier" })
