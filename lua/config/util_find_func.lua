@@ -131,10 +131,12 @@ local function move_to_next_field_identifier()
       end
 
       local descendant = find_next(child, row, col, target_type)
+
       if descendant then
         return descendant
       end
     end
+
     return nil
   end
 
