@@ -71,7 +71,7 @@ Find_all_tests = function(go_bufnr)
   return res
 end
 
-function Find_nearest_function_decl()
+function Nearest_function_decl()
   local parser = vim.treesitter.get_parser(0, 'go')
   if not parser then
     print 'Treesitter parser not found for Go'
@@ -108,9 +108,8 @@ function Find_nearest_function_decl()
   print 'No function declaration found'
 end
 
-vim.api.nvim_create_user_command('FindNearestFunction',Find_nearest_function_decl, {})
-
-vim.keymap.set('n', '<leader>nf', Find_nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
+vim.api.nvim_create_user_command('FindNearestFunction',Nearest_function_decl, {})
+vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
 
 
 
