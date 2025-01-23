@@ -102,5 +102,23 @@ function Find_nearest_function()
     end
     function_node = function_node:parent()
   end
-
 end
+
+vim.api.nvim_create_user_command('FindNearestFunction', function ()
+  local function_name = Find_nearest_function()
+  if function_name == "" then
+    print 'No function found'
+    return
+  end
+  print(function_name)
+end, {})
+
+
+
+
+
+
+
+
+
+
