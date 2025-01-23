@@ -1,4 +1,42 @@
-local function get_harpoon_filenames(after_three_files)
+local function get_harpoon_filenames_second_half()
+  local harpoon = require 'harpoon'
+  local root_dir = harpoon:list().config:get_root_dir()
+  local harpoonList = harpoon:list()
+  local length = harpoonList:length()
+
+  if length < 4 then
+    return ''
+  end
+
+  local os_sep = '/'
+  if vim.fn.has 'win32' == 1 then
+    os_sep = '\\'
+  end
+
+  local list_names = ''
+  local current_file_path = vim.api.nvim_buf_get_name(0)
+
+  for i = 4, length do
+    local display_sep = ' | '
+    local val_at_index = harpoonList:get(i)
+    local path = val_at_index.value
+    local tokens = vim.split(path, os_sep)
+    local fullpath = root_dir .. os_sep .. path
+
+    if fullpath == current_file_path then
+      list_names = list_names .. display_sep .. '%#TabLineSel#' .. tokens[#tokens] .. '%#TabLine#'
+    else
+      list_names = list_names .. display_sep .. tokens[#tokens]
+    end
+  end
+
+  -- remove the first separator
+  list_names = list_names:sub(4)
+
+  return list_names
+end
+
+local function get_harpoon_filenames_first_three()
   local harpoon = require 'harpoon'
   local root_dir = harpoon:list().config:get_root_dir()
   local harpoonList = harpoon:list()
@@ -12,7 +50,7 @@ local function get_harpoon_filenames(after_three_files)
   local list_names = ''
   local current_file_path = vim.api.nvim_buf_get_name(0)
 
-  for i = 1, length do
+  for i = 1, 3 do
     local display_sep = ' | '
     local val_at_index = harpoonList:get(i)
     local path = val_at_index.value
@@ -63,7 +101,7 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 4 } },
         lualine_x = {},
-        lualine_y = {},
+        lualine_y = { get_harpoon_filenames_second_half },
         lualine_z = {
           {
             'harpoon2',
@@ -77,7 +115,7 @@ return {
         lualine_b = {},
         lualine_c = {},
         lualine_x = {},
-        lualine_y = { get_harpoon_filenames },
+        lualine_y = { get_harpoon_filenames_first_three },
         lualine_z = {},
       },
     }
