@@ -47,15 +47,6 @@ return {
 
   config = function()
     local ll = require 'lualine'
-    require 'config.util_find_func'
-
-    local function nearest_func_name_if_exists()
-      local nearest_func = Find_nearest_function()
-      if nearest_func then
-        return nearest_func
-      end
-      return ''
-    end
 
     ll.setup {
       options = {
@@ -72,7 +63,7 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 4 } },
-        lualine_x = { nearest_func_name_if_exists },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = {
           {
