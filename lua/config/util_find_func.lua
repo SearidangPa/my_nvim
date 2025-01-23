@@ -108,7 +108,7 @@ function Nearest_function_decl()
   print 'No function declaration found'
 end
 
-vim.api.nvim_create_user_command('FindNearestFunction',Nearest_function_decl, {})
+vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
 vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
 
 
