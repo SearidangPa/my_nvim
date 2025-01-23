@@ -30,6 +30,13 @@ return {
       map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       map('n', '<leader>s.', builtin.buffers, { desc = '[ ] Find existing buffers' })
 
+      map('n', '<leader>s/', function()
+        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+          winblend = 10,
+          previewer = false,
+        })
+      end, { desc = '[/] Fuzzily search in current buffer' })
+
       map('n', '<leader>en', function()
         builtin.find_files {
           cwd = vim.fn.stdpath 'config',
@@ -47,13 +54,6 @@ return {
           cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
         }
       end, { desc = '[S]earch Plugin by [G]rep' })
-
-      map('n', '<leader>s/', function()
-        builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-          winblend = 10,
-          previewer = false,
-        })
-      end, { desc = '[/] Fuzzily search in current buffer' })
     end
 
     local opts = {
