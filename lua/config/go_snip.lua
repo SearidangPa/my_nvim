@@ -175,7 +175,7 @@ ls.add_snippets('go', {
 })
 
 local function go_ret_vals_nearest_func_decl()
-  local func_name = Find_nearest_function()
+  local func_name = Find_nearest_function_decl()
   return go_ret_vals { func_name }
 end
 
