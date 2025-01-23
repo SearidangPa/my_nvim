@@ -29,6 +29,7 @@ return {
       map('n', '<leader>st', builtin.git_status, { desc = '[S]earch [D]iagnostics' })
       map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       map('n', '<leader>s.', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      map('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
 
       map('n', '<leader>s/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
