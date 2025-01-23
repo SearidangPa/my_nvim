@@ -1,4 +1,4 @@
-local function get_harpoon_filenames()
+local function get_harpoon_filenames(after_three_files)
   local harpoon = require 'harpoon'
   local root_dir = harpoon:list().config:get_root_dir()
   local harpoonList = harpoon:list()
@@ -11,7 +11,6 @@ local function get_harpoon_filenames()
 
   local list_names = ''
   local current_file_path = vim.api.nvim_buf_get_name(0)
-  -- vim.api.nvim_set_hl(0, 'TabLineSel', { fg = 'black', bg = '#90ee90' })
 
   for i = 1, length do
     local display_sep = ' | '
