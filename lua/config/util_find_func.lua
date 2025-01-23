@@ -111,42 +111,56 @@ end
 vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
 vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
 
-function Nearest_function_decl()
-  local parser = vim.treesitter.get_parser(0, 'go')
-  if not parser then
-    print 'Treesitter parser not found for Go'
-    return ""
-  end
+local function move_to_nearest_field_identifier()
+  -- Get the current buffer and cursor position
+  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local current_row = cursor_pos[1]
 
+  -- Use Treesitter to parse the syntax tree and search for the target
+  local ts = vim.treesitter
+  local parser = ts.get_parser(bufnr, "go") -- Change 'go' to your language
   local tree = parser:parse()[1]
-  if not tree then
-    print 'Parse tree not found'
-    return ""
-  end
+  local root = tree:root()
 
-  local cursor_node = ts_utils.get_node_at_cursor()
-  if not cursor_node then
-    print 'Cursor node not found'
-    return ""
-  end
+  -- Helper function to find the nearest node
+  local function find_nearest(node, row, target_type)
+    local nearest_node, nearest_row_diff = nil, math.huge
 
-  local function_node = cursor_node
+    for child in node:iter_children() do
+      if child:type() == target_type then
+        local start_row = child:range() -- Get start row of the node
+        local row_diff = math.abs(start_row - row)
 
-  while function_node do
-    if function_node:type() == 'function_declaration' then
-      for child in function_node:iter_children() do
-        if child:type() == 'identifier' then
-          local function_name = get_node_text(child, 0)
-          print(function_name)
-          return function_name
+        if row_diff < nearest_row_diff then
+          nearest_node, nearest_row_diff = child, row_diff
+        end
+      end
+      -- Recursively check children
+      local descendant = find_nearest(child, row, target_type)
+      if descendant then
+        local descendant_row = descendant:range()
+        local descendant_diff = math.abs(descendant_row - row)
+        if descendant_diff < nearest_row_diff then
+          nearest_node, nearest_row_diff = descendant, descendant_diff
         end
       end
     end
-    function_node = function_node:parent()
+    return nearest_node
   end
 
-  print 'No function declaration found'
+  -- Find the nearest field_identifier
+  local target_node = find_nearest(root, current_row - 1, "field_identifier")
+
+  if target_node then
+    -- Move the cursor to the start of the field_identifier
+    local start_row, start_col = target_node:range()
+    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    print("Moved to nearest field_identifier")
+  else
+    print("No field_identifier found nearby")
+  end
 end
 
-vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
-vim.keymap.set('n', '<leader>nf', Nearest_function_decl, {desc = '[N]earest [F]unction Declaration'})
+-- Bind the function to a keymap (optional)
+vim.keymap.set("n", "<leader>mf", move_to_nearest_field_identifier, {  desc = "Move to nearest field_identifier" })
