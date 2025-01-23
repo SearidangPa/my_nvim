@@ -93,16 +93,13 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
-vim.api.nvim_create_user_command('RenameCapitalize', function()
+vim.keymap.set('n', '<leader>rc', function()
   RenameAndCapitalize()
-end, {})
+end, map_opt '[R]ename and [C]apitalize first character')
 
-vim.api.nvim_create_user_command('RenameLowercase', function()
+vim.keymap.set('n', '<leader>rl', function()
   RenameAndLowercase()
-end, {})
-
-vim.keymap.set('n', '<leader>rc', ':RenameCapitalize<CR>', map_opt '[R]ename and [c]apitalize first character')
-vim.keymap.set('n', '<leader>rl', ':RenameLowercase<CR>', map_opt '[R]ename and [l]owercase first character')
+end, map_opt '[R]ename and [L]owercase first character')
 
 -- ================== local leader===================
 vim.keymap.set('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
