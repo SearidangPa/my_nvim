@@ -1,10 +1,16 @@
-local function get_harpoon_filenames_second_half()
+local function get_harpoon_filenames(opts)
   local harpoon = require 'harpoon'
   local root_dir = harpoon:list().config:get_root_dir()
   local harpoonList = harpoon:list()
   local length = harpoonList:length()
 
-  if length < 4 then
+  local start_index = opts.start_index or 1
+  local end_index = opts.end_index or 3
+  if end_index > length then
+    end_index = length
+  end
+
+  if length < start_index then
     return ''
   end
 
@@ -16,7 +22,7 @@ local function get_harpoon_filenames_second_half()
   local list_names = ''
   local current_file_path = vim.api.nvim_buf_get_name(0)
 
-  for i = 4, length do
+  for i = start_index, end_index do
     local display_sep = ' | '
     local val_at_index = harpoonList:get(i)
     local path = val_at_index.value
@@ -36,38 +42,18 @@ local function get_harpoon_filenames_second_half()
   return list_names
 end
 
+local function get_harpoon_filenames_second_half()
+  return get_harpoon_filenames {
+    start_index = 4,
+    end_index = 6,
+  }
+end
+
 local function get_harpoon_filenames_first_three()
-  local harpoon = require 'harpoon'
-  local root_dir = harpoon:list().config:get_root_dir()
-  local harpoonList = harpoon:list()
-  local length = harpoonList:length()
-
-  local os_sep = '/'
-  if vim.fn.has 'win32' == 1 then
-    os_sep = '\\'
-  end
-
-  local list_names = ''
-  local current_file_path = vim.api.nvim_buf_get_name(0)
-
-  for i = 1, 3 do
-    local display_sep = ' | '
-    local val_at_index = harpoonList:get(i)
-    local path = val_at_index.value
-    local tokens = vim.split(path, os_sep)
-    local fullpath = root_dir .. os_sep .. path
-
-    if fullpath == current_file_path then
-      list_names = list_names .. display_sep .. '%#TabLineSel#' .. tokens[#tokens] .. '%#TabLine#'
-    else
-      list_names = list_names .. display_sep .. tokens[#tokens]
-    end
-  end
-
-  -- remove the first separator
-  list_names = list_names:sub(4)
-
-  return list_names
+  return get_harpoon_filenames {
+    start_index = 1,
+    end_index = 3,
+  }
 end
 
 return {
