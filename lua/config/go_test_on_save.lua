@@ -7,9 +7,9 @@ local make_notify = mini_notify.make_notify {}
 local attach_instace = {
   group = -1,
   ns = -1,
+  job_id = -1,
 }
 
-local job_id = -1
 local ignored_actions = {
   pause = true,
   cont = true,
@@ -64,7 +64,7 @@ local mark_outcome = function(state, entry)
 end
 
 local on_exit_fn = function(state, bufnr)
-  job_id = -1
+  attach_instace.job_id = -1
   local failed = {}
   for _, test in pairs(state.tests) do
     if not test.line or test.success then
@@ -238,13 +238,6 @@ local attach_all_go_test_in_buf = function()
   attach_to_buffer(bufnr, command)
 end
 
-local attach_all_go_test = function()
-  clear_group_ns()
-  local command = { 'go', 'test', './...', '-json', '-v' }
-  new_attach_instance()
-  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
-end
-
 local attach_go_test_one = function()
   clear_group_ns()
   attach_one_test()
@@ -252,7 +245,6 @@ end
 
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
 vim.api.nvim_create_user_command('GoTestOnSaveBuf', attach_all_go_test_in_buf, {})
-vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_all_go_test, {})
 vim.api.nvim_create_user_command('ClearGoTestOnSave', clear_group_ns, {})
 
 vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
