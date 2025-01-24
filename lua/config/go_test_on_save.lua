@@ -116,9 +116,9 @@ local attach_to_buffer = function(bufnr, command)
     group = attach_instace.group,
     pattern = '*.go',
     callback = function()
-      Clean_up_prev_job(job_id)
+      Clean_up_prev_job(attach_instace.job_id)
 
-      job_id = vim.fn.jobstart(command, {
+      attach_instace.job_id = vim.fn.jobstart(command, {
         stdout_buffered = true,
         on_stdout = function(_, data)
           if not data then
