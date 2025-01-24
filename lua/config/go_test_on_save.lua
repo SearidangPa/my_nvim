@@ -242,8 +242,7 @@ local attach_all_go_test = function()
   clear_group_ns()
   local command = { 'go', 'test', './...', '-json', '-v' }
   new_attach_instance()
-  local bufnr = vim.api.nvim_get_current_buf()
-  attach_to_buffer(bufnr, command)
+  attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
 local attach_go_test_one = function()
