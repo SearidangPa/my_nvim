@@ -44,3 +44,21 @@ function Clean_up_prev_job(job_id)
     vim.diagnostic.reset()
   end
 end
+
+Go_test_all_output = function(test_state, win_state)
+  if vim.api.nvim_win_is_valid(win_state.floating.win) then
+    vim.api.nvim_win_hide(win_state.floating.win)
+    return
+  end
+
+  local content = {}
+  for _, decodedLine in ipairs(test_state.all_output) do
+    local output = decodedLine.Output
+    if output then
+      local trimmed_str = string.gsub(output, '\n', '')
+      table.insert(content, trimmed_str)
+    end
+  end
+  win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+  vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
+end

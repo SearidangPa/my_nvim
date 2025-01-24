@@ -74,24 +74,6 @@ local go_test_one_output = function(state)
   end
 end
 
-local go_test_all_output = function(state)
-  if vim.api.nvim_win_is_valid(win_state.floating.win) then
-    vim.api.nvim_win_hide(win_state.floating.win)
-    return
-  end
-
-  local content = {}
-  for _, decodedLine in ipairs(state.all_output) do
-    local output = decodedLine.Output
-    if output then
-      local trimmed_str = string.gsub(output, '\n', '')
-      table.insert(content, trimmed_str)
-    end
-  end
-  win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
-  vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
-end
-
 local on_exit_fn = function(state, bufnr)
   job_id = -1
   local failed = {}
@@ -123,17 +105,17 @@ local on_exit_fn = function(state, bufnr)
 end
 
 local attach_to_buffer = function(bufnr, command)
-  local state = {
+  local test_state = {
     bufnr = bufnr,
     tests = {},
     all_output = {},
   }
   local function output_one_go_test()
-    go_test_one_output(state)
+    go_test_one_output(test_state)
   end
 
   local function output_go_test_all()
-    go_test_all_output(state)
+    Go_test_all_output(test_state, win_state)
   end
 
   vim.api.nvim_create_user_command('OutputAllTest', output_go_test_all, {})
@@ -160,31 +142,31 @@ local attach_to_buffer = function(bufnr, command)
             end
             local decoded = vim.json.decode(line)
             assert(decoded, 'Failed to decode: ' .. line)
-            table.insert(state.all_output, decoded)
+            table.insert(test_state.all_output, decoded)
 
             if ignored_actions[decoded.Action] then
               goto continue
             end
 
             if decoded.Action == 'run' then
-              add_golang_test(bufnr, state, decoded)
+              add_golang_test(bufnr, test_state, decoded)
               goto continue
             end
 
             if decoded.Action == 'output' then
               if decoded.Test then
-                add_golang_output(state, decoded)
+                add_golang_output(test_state, decoded)
               end
               goto continue
             end
 
-            local test = state.tests[make_key(decoded)]
+            local test = test_state.tests[make_key(decoded)]
             if not test then
               goto continue
             end
 
             if decoded.Action == 'pass' then
-              mark_outcome(state, decoded)
+              mark_outcome(test_state, decoded)
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
@@ -200,7 +182,7 @@ local attach_to_buffer = function(bufnr, command)
             end
 
             if decoded.Action == 'fail' then
-              mark_outcome(state, decoded)
+              mark_outcome(test_state, decoded)
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
                 vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
@@ -220,7 +202,7 @@ local attach_to_buffer = function(bufnr, command)
         end,
 
         on_exit = function()
-          on_exit_fn(state, bufnr)
+          on_exit_fn(test_state, bufnr)
         end,
       })
     end,
@@ -249,11 +231,6 @@ local attach_one_test = function()
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
-local attach_go_test_one = function()
-  clear_previous_group_and_ns_if_exists()
-  attach_one_test()
-end
-
 local attach_go_test_all = function()
   clear_previous_group_and_ns_if_exists()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -267,6 +244,11 @@ local attach_go_test_all = function()
   group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
   ns = vim.api.nvim_create_namespace 'live_go_test_ns'
   attach_to_buffer(bufnr, command)
+end
+
+local attach_go_test_one = function()
+  clear_previous_group_and_ns_if_exists()
+  attach_one_test()
 end
 
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
