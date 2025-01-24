@@ -62,3 +62,18 @@ Go_test_all_output = function(test_state, win_state)
   win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
   vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
 end
+
+Go_test_one_output = function(test_state, win_state)
+  if vim.api.nvim_win_is_valid(win_state.floating.win) then
+    vim.api.nvim_win_hide(win_state.floating.win)
+    return
+  end
+
+  local _, testName = Get_enclosing_fn_info()
+  for _, test in pairs(test_state.tests) do
+    if test.name == testName then
+      win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+      vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, test.output)
+    end
+  end
+end

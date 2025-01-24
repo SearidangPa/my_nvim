@@ -59,21 +59,6 @@ local mark_outcome = function(state, entry)
   test.success = entry.Action == 'pass'
 end
 
-local go_test_one_output = function(state)
-  if vim.api.nvim_win_is_valid(win_state.floating.win) then
-    vim.api.nvim_win_hide(win_state.floating.win)
-    return
-  end
-
-  local _, testName = Get_enclosing_fn_info()
-  for _, test in pairs(state.tests) do
-    if test.name == testName then
-      win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
-      vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, test.output)
-    end
-  end
-end
-
 local on_exit_fn = function(state, bufnr)
   job_id = -1
   local failed = {}
@@ -111,7 +96,7 @@ local attach_to_buffer = function(bufnr, command)
     all_output = {},
   }
   local function output_one_go_test()
-    go_test_one_output(test_state)
+    Go_test_one_output(test_state, win_state)
   end
 
   local function output_go_test_all()
@@ -209,7 +194,7 @@ local attach_to_buffer = function(bufnr, command)
   })
 end
 
-local clear_previous_group_and_ns_if_exists = function()
+local clear_group_ns = function()
   if group == nil or ns == nil then
     return
   end
@@ -231,8 +216,8 @@ local attach_one_test = function()
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
-local attach_go_test_all = function()
-  clear_previous_group_and_ns_if_exists()
+local attach_all_go_test_in_buf = function()
+  clear_group_ns()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   local concatTestName = ''
@@ -247,16 +232,16 @@ local attach_go_test_all = function()
 end
 
 local attach_go_test_one = function()
-  clear_previous_group_and_ns_if_exists()
+  clear_group_ns()
   attach_one_test()
 end
 
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
-vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_go_test_all, {})
-vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_ns_if_exists, {})
+vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_all_go_test_in_buf, {})
+vim.api.nvim_create_user_command('GoClearTestOnSave', clear_group_ns, {})
 
 vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
-vim.keymap.set('n', '<leader>gc', clear_previous_group_and_ns_if_exists, { desc = '[G]o [C]lear test on save' })
+vim.keymap.set('n', '<leader>gc', clear_group_ns, { desc = '[G]o [C]lear test on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSaveDev', function()
   vim.env.UKS = 'others'
