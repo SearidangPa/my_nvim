@@ -4,7 +4,11 @@ require 'config.util_go_test_on_save'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local group, ns
+local attach_instace = {
+  group = -1,
+  ns = -1,
+}
+
 local job_id = -1
 local ignored_actions = {
   pause = true,
@@ -86,7 +90,7 @@ local on_exit_fn = function(state, bufnr)
     make_notify 'Test passed'
   end
 
-  vim.diagnostic.set(ns, bufnr, failed, {})
+  vim.diagnostic.set(attach_instace.ns, bufnr, failed, {})
 end
 
 local attach_to_buffer = function(bufnr, command)
@@ -109,7 +113,7 @@ local attach_to_buffer = function(bufnr, command)
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
-    group = group,
+    group = attach_instace.group,
     pattern = '*.go',
     callback = function()
       Clean_up_prev_job(job_id)
@@ -155,11 +159,11 @@ local attach_to_buffer = function(bufnr, command)
 
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
-                vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
+                vim.api.nvim_buf_del_extmark(bufnr, attach_instace.ns, test_extmark_id)
               end
 
               local current_time = os.date '%H:%M:%S'
-              extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, -1, {
+              extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, attach_instace.ns, test.line, -1, {
                 virt_text = {
                   { string.format('%s %s', '✅', current_time) },
                 },
@@ -170,11 +174,11 @@ local attach_to_buffer = function(bufnr, command)
               mark_outcome(test_state, decoded)
               local test_extmark_id = extmark_ids[test.name]
               if test_extmark_id then
-                vim.api.nvim_buf_del_extmark(bufnr, ns, test_extmark_id)
+                vim.api.nvim_buf_del_extmark(bufnr, attach_instace.ns, test_extmark_id)
               end
               if test.fail_at_line > 0 then
                 local current_time = os.date '%H:%M:%S'
-                extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, ns, test.fail_at_line - 1, -1, {
+                extmark_ids[test.name] = vim.api.nvim_buf_set_extmark(bufnr, attach_instace.ns, test.fail_at_line - 1, -1, {
                   virt_text = {
                     { string.format(' \t%s %s', '❌', current_time) },
                   },
@@ -195,7 +199,7 @@ local attach_to_buffer = function(bufnr, command)
 end
 
 local clear_group_ns = function()
-  if group == nil or ns == nil then
+  if attach_instace.group == nil or attach_instace.ns == nil then
     return
   end
   local ok, _ = pcall(vim.api.nvim_get_autocmds, { group = 'live_go_test_group' })
@@ -203,16 +207,20 @@ local clear_group_ns = function()
     return
   end
   vim.api.nvim_del_augroup_by_name 'live_go_test_group'
-  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), ns, 0, -1)
+  vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), attach_instace.ns, 0, -1)
   vim.diagnostic.reset()
+end
+
+local new_attach_instance = function()
+  attach_instace.group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
+  attach_instace.ns = vim.api.nvim_create_namespace 'live_go_test_ns'
 end
 
 local attach_one_test = function()
   local test_name = Get_enclosing_test()
   make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
-  group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
-  ns = vim.api.nvim_create_namespace 'live_go_test_ns'
+  new_attach_instance()
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
@@ -226,8 +234,15 @@ local attach_all_go_test_in_buf = function()
   end
   concatTestName = concatTestName:sub(1, -2) -- remove the last |
   local command = { 'go', 'test', './...', '-json', '-v', '-run', string.format('%s', concatTestName) }
-  group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
-  ns = vim.api.nvim_create_namespace 'live_go_test_ns'
+  new_attach_instance()
+  attach_to_buffer(bufnr, command)
+end
+
+local attach_all_go_test = function()
+  clear_group_ns()
+  local command = { 'go', 'test', './...', '-json', '-v' }
+  new_attach_instance()
+  local bufnr = vim.api.nvim_get_current_buf()
   attach_to_buffer(bufnr, command)
 end
 
@@ -237,8 +252,9 @@ local attach_go_test_one = function()
 end
 
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
-vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_all_go_test_in_buf, {})
-vim.api.nvim_create_user_command('GoClearTestOnSave', clear_group_ns, {})
+vim.api.nvim_create_user_command('GoTestOnSaveBuf', attach_all_go_test_in_buf, {})
+vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_all_go_test, {})
+vim.api.nvim_create_user_command('ClearGoTestOnSave', clear_group_ns, {})
 
 vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
 vim.keymap.set('n', '<leader>gc', clear_group_ns, { desc = '[G]o [C]lear test on save' })
