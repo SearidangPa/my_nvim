@@ -85,9 +85,9 @@ local on_exit_fn = function(state, bufnr)
   end
 
   if #failed == 0 then
-    make_notify 'Test failed'
-  else
     make_notify 'Test passed'
+  else
+    make_notify 'Test failed'
   end
 
   vim.diagnostic.set(attach_instace.ns, bufnr, failed, {})
