@@ -59,9 +59,9 @@ local on_exit_fn = function(test_state)
   end
 
   if test_outcome then
-    make_notify 'Test passed'
+    make_notify 'Tests passed'
   else
-    make_notify 'Test failed'
+    make_notify 'Tests failed'
   end
 end
 
