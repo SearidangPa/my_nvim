@@ -38,7 +38,7 @@ function Send_command_toggle_term(opts)
   else
     choice_options = vim.deepcopy(choice_options_unix)
   end
-  table.insert(choice_options, 1, '')
+  table.insert(choice_options, #choice_options + 1, '')
 
   vim.ui.select(choice_options, ui_select_opts, function(choice)
     if not choice then
