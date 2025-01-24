@@ -152,7 +152,7 @@ local attach_to_buffer = function(bufnr, command)
     tests = {},
     all_output = {},
   }
-  local function output_go_test()
+  local function output_one_go_test()
     go_test_one_output(state)
   end
 
@@ -160,8 +160,9 @@ local attach_to_buffer = function(bufnr, command)
     go_test_all_output(state)
   end
 
-  vim.api.nvim_create_user_command('GoTestOutputAll', output_go_test_all, {})
-  vim.api.nvim_create_user_command('GoOutputTest', output_go_test, {})
+  vim.api.nvim_create_user_command('OutputAllTest', output_go_test_all, {})
+  vim.api.nvim_create_user_command('OutputOneTest', output_one_go_test, {})
+  vim.keymap.set('n', '<leader>go', output_one_go_test, { desc = '[G]o [O]utput Test ' })
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -310,7 +311,6 @@ vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_go_test_all, {})
 vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_ns_if_exists, {})
 
 vim.keymap.set('n', '<leader>gt', attach_go_test_on_save, { desc = '[T]oggle [G]o Test on save' })
-vim.keymap.set('n', '<leader>go', ':GoOutputTest<CR>', { desc = '[G]o [O]utput Test ' })
 vim.keymap.set('n', '<leader>gc', clear_previous_group_and_ns_if_exists, { desc = '[G]o [C]lear test on save' })
 vim.keymap.set('n', '<leader>ga', attach_go_test_all, { desc = '[G]o test [A]ll on save' })
 
