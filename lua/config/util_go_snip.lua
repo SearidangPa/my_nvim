@@ -32,7 +32,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'iffat',
+    'ifa',
     fmta(
       [[
       if err != nil{
@@ -48,7 +48,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'valfat', -- error fatal
+    'efa', -- error fatal
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
@@ -115,7 +115,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_init',
+    'tn',
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
@@ -132,29 +132,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'test_init_with_file_placeholder',
-    fmta(
-      [[
-          func Test_<Name>(t *testing.T) {
-                  tr := initTestResource(t, withConnectSyncRoot())
-                  defer tr.cleanUp()
-                  f1 := "file1.txt"
-                  fp := filepath.Join(tr.syncRootPath, f1)
-                  entryUUID := createAFilePlaceholderUnderRoot(tr, t, f1)
-                  <body>
-          }
-    ]],
-      {
-        Name = i(1, 'Name'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'test_util_fn',
+    'tfn',
     fmta(
       [[
         func <funcName>(t *testing.T, <args>) {
@@ -172,7 +150,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'valne', -- no error
+    'ene', -- no error
     fmta(
       [[
           <choiceNode>
@@ -209,7 +187,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'cli_init',
+    'cl',
     fmta(
       [[
 //go:build windows

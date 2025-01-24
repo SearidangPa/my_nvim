@@ -152,7 +152,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'val', -- error return
+    'efi', -- error return
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
@@ -181,7 +181,7 @@ end
 
 ls.add_snippets('go', {
   s(
-    'ifer',
+    'ife',
     fmta(
       [[
         if err != nil {
