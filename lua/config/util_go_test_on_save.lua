@@ -1,7 +1,7 @@
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local get_node_text = vim.treesitter.get_node_text
 
-local mini_notify = require 'mini_notify'
+local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
 function Get_enclosing_fn_info()
