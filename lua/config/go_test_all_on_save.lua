@@ -49,8 +49,10 @@ end
 local on_exit_fn = function(test_state)
   attach_instace.job_id = -1
   local test_outcome = true
+  local failed_tests = {}
   for _, test in pairs(test_state.tests) do
     if not test.success then
+      table.insert(failed_tests, test.name)
       print('Test failed: ' .. test.name)
       test_outcome = false
     else
@@ -61,7 +63,7 @@ local on_exit_fn = function(test_state)
   if test_outcome then
     make_notify 'Tests passed'
   else
-    make_notify 'Tests failed'
+    make_notify('Tests failed:\n' .. table.concat(failed_tests, '\n'))
   end
 end
 
@@ -129,7 +131,7 @@ local attach_on_write = function(command)
   })
 end
 
-local clear_group_ns = function()
+local clear_group = function()
   if attach_instace.group == nil then
     return
   end
@@ -139,15 +141,14 @@ local clear_group_ns = function()
   end
 end
 
-local new_attach_instance = function()
+local new_attach_group = function()
   attach_instace.group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
 end
 
 local attach_all_go_test = function()
-  clear_group_ns()
-  new_attach_instance()
-  local command = { 'go', 'test', './...', '-json', '-v' }
-  attach_on_write(command)
+  clear_group()
+  new_attach_group()
+  attach_on_write { 'go', 'test', './...', '-json', '-v' }
 end
 
 vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_all_go_test, {})
