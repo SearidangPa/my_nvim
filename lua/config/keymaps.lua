@@ -64,7 +64,7 @@ map('i', '<C-l>', function()
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 
-map('i', '<C-j>', function()
+map('i', '<M-y>', function()
   local accept = vim.fn['copilot#Accept']
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
   res = res .. '\n'
