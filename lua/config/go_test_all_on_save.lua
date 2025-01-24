@@ -51,8 +51,10 @@ local on_exit_fn = function(test_state)
   local test_outcome = true
   for _, test in pairs(test_state.tests) do
     if not test.success then
+      print('Test failed: ' .. test.name)
       test_outcome = false
-      break
+    else
+      print('Test passed: ' .. test.name)
     end
   end
 
