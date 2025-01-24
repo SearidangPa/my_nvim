@@ -312,11 +312,16 @@ vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_n
 
 vim.keymap.set('n', '<leader>gt', attach_go_test_on_save, { desc = '[T]oggle [G]o Test on save' })
 vim.keymap.set('n', '<leader>gc', clear_previous_group_and_ns_if_exists, { desc = '[G]o [C]lear test on save' })
-vim.keymap.set('n', '<leader>ga', attach_go_test_all, { desc = '[G]o test [A]ll on save' })
 
-vim.api.nvim_create_user_command('DriveTestOnSave', function()
+vim.api.nvim_create_user_command('DriveTestOnSaveDev', function()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
+  attach_single_test()
+end, {})
+
+vim.api.nvim_create_user_command('DriveTestOnSaveStaging', function()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'staging'
   attach_single_test()
 end, {})
 
