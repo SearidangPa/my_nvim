@@ -1,11 +1,10 @@
 require 'config.util_find_func'
-local ts_utils = require 'nvim-treesitter.ts_utils'
-local get_node_text = vim.treesitter.get_node_text
+require 'config.util_go_test_on_save'
+
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
 local group, ns
-
 local job_id = -1
 local ignored_actions = {
   pause = true,
@@ -60,33 +59,13 @@ local mark_outcome = function(state, entry)
   test.success = entry.Action == 'pass'
 end
 
-local function get_enclosing_fn_info()
-  local node = ts_utils.get_node_at_cursor()
-  while node do
-    if node:type() ~= 'function_declaration' then
-      node = node:parent() -- Traverse up the node tree to find a function node
-      goto continue
-    end
-
-    local func_name_node = node:child(1)
-    if func_name_node then
-      local func_name = get_node_text(func_name_node, 0)
-      local startLine, _, _ = node:start()
-      return startLine + 1, func_name -- +1 to convert 0-based to 1-based lua indexing system
-    end
-    ::continue::
-  end
-
-  return nil
-end
-
 local go_test_one_output = function(state)
   if vim.api.nvim_win_is_valid(win_state.floating.win) then
     vim.api.nvim_win_hide(win_state.floating.win)
     return
   end
 
-  local _, testName = get_enclosing_fn_info()
+  local _, testName = Get_enclosing_fn_info()
   for _, test in pairs(state.tests) do
     if test.name == testName then
       win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
@@ -115,7 +94,6 @@ end
 
 local on_exit_fn = function(state, bufnr)
   job_id = -1
-  make_notify 'Test finished'
   local failed = {}
   for _, test in pairs(state.tests) do
     if not test.line or test.success then
@@ -135,15 +113,13 @@ local on_exit_fn = function(state, bufnr)
     ::continue::
   end
 
-  vim.diagnostic.set(ns, bufnr, failed, {})
-end
-
-local function clean_up_prev_job()
-  if job_id ~= -1 then
-    make_notify(string.format('Stopping job: %d', job_id))
-    vim.fn.jobstop(job_id)
-    vim.diagnostic.reset()
+  if #failed == 0 then
+    make_notify 'Test failed'
+  else
+    make_notify 'Test passed'
   end
+
+  vim.diagnostic.set(ns, bufnr, failed, {})
 end
 
 local attach_to_buffer = function(bufnr, command)
@@ -169,7 +145,7 @@ local attach_to_buffer = function(bufnr, command)
     group = group,
     pattern = '*.go',
     callback = function()
-      clean_up_prev_job()
+      Clean_up_prev_job(job_id)
 
       job_id = vim.fn.jobstart(command, {
         stdout_buffered = true,
@@ -251,19 +227,6 @@ local attach_to_buffer = function(bufnr, command)
   })
 end
 
-local function get_enclosing_test()
-  local _, testName = get_enclosing_fn_info()
-  if not testName then
-    print 'Not in a function'
-    return nil
-  end
-  if not string.match(testName, 'Test_') then
-    print(string.format('Not in a test function: %s', testName))
-    return nil
-  end
-  return testName
-end
-
 local clear_previous_group_and_ns_if_exists = function()
   if group == nil or ns == nil then
     return
@@ -278,7 +241,7 @@ local clear_previous_group_and_ns_if_exists = function()
 end
 
 local attach_single_test = function()
-  local test_name = get_enclosing_test()
+  local test_name = Get_enclosing_test()
   make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
   group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
