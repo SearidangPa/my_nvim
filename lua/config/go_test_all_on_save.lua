@@ -9,6 +9,13 @@ local attach_instace = {
   job_id = -1,
 }
 
+local win_state = {
+  floating = {
+    buf = -1,
+    win = -1,
+  },
+}
+
 local ignored_actions = {
   pause = true,
   cont = true,
@@ -25,24 +32,24 @@ local make_key = function(entry)
   return string.format('%s/%s', entry.Package, entry.Test)
 end
 
-local add_golang_test = function(state, entry)
-  state.tests[make_key(entry)] = {
+local add_golang_test = function(test_state, entry)
+  test_state.tests[make_key(entry)] = {
     name = entry.Test,
   }
 end
 
-local mark_outcome = function(state, entry)
-  local test = state.tests[make_key(entry)]
+local mark_outcome = function(test_state, entry)
+  local test = test_state.tests[make_key(entry)]
   if not test then
     return
   end
   test.success = entry.Action == 'pass'
 end
 
-local on_exit_fn = function(state)
+local on_exit_fn = function(test_state)
   attach_instace.job_id = -1
   local test_outcome = true
-  for _, test in pairs(state.tests) do
+  for _, test in pairs(test_state.tests) do
     if not test.success then
       test_outcome = false
       break
@@ -59,7 +66,15 @@ end
 local attach_on_write = function(command)
   local test_state = {
     tests = {},
+    all_output = {},
   }
+
+  local function output_go_test_all()
+    Go_test_all_output(test_state, win_state)
+  end
+
+  vim.api.nvim_create_user_command('OutputAllTest', output_go_test_all, {})
+  vim.keymap.set('n', '<leader>go', output_go_test_all, { desc = '[G]o [O]utput Test ' })
 
   vim.api.nvim_create_autocmd('BufWritePost', {
     group = attach_instace.group,
@@ -128,8 +143,8 @@ end
 
 local attach_all_go_test = function()
   clear_group_ns()
-  local command = { 'go', 'test', './...', '-json', '-v' }
   new_attach_instance()
+  local command = { 'go', 'test', './...', '-json', '-v' }
   attach_on_write(command)
 end
 

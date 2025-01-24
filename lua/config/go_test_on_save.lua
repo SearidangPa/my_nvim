@@ -16,6 +16,7 @@ local ignored_actions = {
   start = true,
   skip = true,
 }
+
 local win_state = {
   floating = {
     buf = -1,
@@ -32,12 +33,12 @@ local make_key = function(entry)
   return string.format('%s/%s', entry.Package, entry.Test)
 end
 
-local add_golang_test = function(bufnr, state, entry)
+local add_golang_test = function(bufnr, test_state, entry)
   local testLine = Find_test_line_by_name(bufnr, entry.Test)
   if not testLine then
     testLine = 0
   end
-  state.tests[make_key(entry)] = {
+  test_state.tests[make_key(entry)] = {
     name = entry.Test,
     line = testLine - 1,
     output = {},
@@ -45,28 +46,28 @@ local add_golang_test = function(bufnr, state, entry)
   }
 end
 
-local add_golang_output = function(state, entry)
-  assert(state.tests, vim.inspect(state))
+local add_golang_output = function(test_state, entry)
+  assert(test_state.tests, vim.inspect(test_state))
   local trimmed_output = vim.trim(entry.Output)
   local file, line = string.match(trimmed_output, '([%w_]+%.go):(%d+):')
-  table.insert(state.tests[make_key(entry)].output, vim.trim(entry.Output))
+  table.insert(test_state.tests[make_key(entry)].output, vim.trim(entry.Output))
   if file and line then
-    state.tests[make_key(entry)].fail_at_line = tonumber(line)
+    test_state.tests[make_key(entry)].fail_at_line = tonumber(line)
   end
 end
 
-local mark_outcome = function(state, entry)
-  local test = state.tests[make_key(entry)]
+local mark_outcome = function(test_state, entry)
+  local test = test_state.tests[make_key(entry)]
   if not test then
     return
   end
   test.success = entry.Action == 'pass'
 end
 
-local on_exit_fn = function(state, bufnr)
+local on_exit_fn = function(test_state, bufnr)
   attach_instace.job_id = -1
   local failed = {}
-  for _, test in pairs(state.tests) do
+  for _, test in pairs(test_state.tests) do
     if not test.line or test.success then
       goto continue
     end
