@@ -110,7 +110,7 @@ end
 
 vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl, {})
 
-local function move_to_next_field_identifier()
+local function move_to_next_valid_field_identifier()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -120,39 +120,41 @@ local function move_to_next_field_identifier()
   local tree = parser:parse()[1]
   local root = tree:root()
 
-  local function find_next(node, row, col, target_type)
-    for child in node:iter_children() do
-      if child:type() == target_type then
-        local start_row, start_col = child:range()
+  local function is_valid_field_identifier(node)
+    local parent = node:parent()
+    return parent and parent:type() == "selector_expression" and parent:parent() and parent:parent():type() == "call_expression"
+  end
 
+  local function find_next(node, row, col)
+    for child in node:iter_children() do
+      if child:type() == "field_identifier" and is_valid_field_identifier(child) then
+        local start_row, start_col = child:range()
         if start_row > row or (start_row == row and start_col > col) then
           return child
         end
       end
 
-      local descendant = find_next(child, row, col, target_type)
-
+      local descendant = find_next(child, row, col)
       if descendant then
         return descendant
       end
     end
-
     return nil
   end
 
-  local next_node = find_next(root, current_row, current_col, "field_identifier")
+  local next_node = find_next(root, current_row, current_col)
 
   if next_node then
     local start_row, start_col = next_node:range()
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
   else
-    print("No further field_identifier found")
+    print("No further valid field_identifier found")
   end
 end
 
-vim.keymap.set("n", "]f", move_to_next_field_identifier, { desc = "Move to next field_identifier"})
+vim.keymap.set("n", "]f", move_to_next_valid_field_identifier, { desc = "Move to next valid field_identifier" })
 
-local function move_to_previous_field_identifier()
+local function move_to_previous_valid_field_identifier()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -162,14 +164,18 @@ local function move_to_previous_field_identifier()
   local tree = parser:parse()[1]
   local root = tree:root()
 
-  local function find_previous(node, row, col, target_type)
+  local function is_valid_field_identifier(node)
+    local parent = node:parent()
+    return parent and parent:type() == "selector_expression" and parent:parent() and parent:parent():type() == "call_expression"
+  end
+
+  local function find_previous(node, row, col)
     local previous_node = nil
 
     local function search(node, row, col)
       for child in node:iter_children() do
-        if child:type() == target_type then
+        if child:type() == "field_identifier" and is_valid_field_identifier(child) then
           local start_row, start_col = child:range()
-
           if start_row < row or (start_row == row and start_col < col) then
             previous_node = child
           end
@@ -178,20 +184,18 @@ local function move_to_previous_field_identifier()
       end
     end
 
-    -- Start the search
     search(node, row, col)
     return previous_node
   end
 
-  local previous_node = find_previous(root, current_row, current_col, "field_identifier")
+  local previous_node = find_previous(root, current_row, current_col)
 
   if previous_node then
     local start_row, start_col = previous_node:range()
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
   else
-    print("No previous field_identifier found")
+    print("No previous valid field_identifier found")
   end
 end
 
--- Keymap for moving backward
-vim.keymap.set("n", "[f", move_to_previous_field_identifier, { desc = "Move to previous field_identifier" })
+vim.keymap.set("n", "[f", move_to_previous_valid_field_identifier, { desc = "Move to previous valid field_identifier" })

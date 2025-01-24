@@ -14,6 +14,7 @@ local choice_options_win = {
   'un; Remove-Item -Path ~\\Documents\\Preveil_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
   're;st',
   'gfl',
+  'tu',
 }
 
 vim.api.nvim_create_autocmd('TermOpen', {
