@@ -50,15 +50,18 @@ local on_exit_fn = function(test_state)
   attach_instace.job_id = -1
   local test_outcome = true
   local failed_tests = {}
+  local passed_tests = {}
   for _, test in pairs(test_state.tests) do
     if not test.success then
       table.insert(failed_tests, test.name)
-      print('Test failed: ' .. test.name)
       test_outcome = false
     else
-      print('Test passed: ' .. test.name)
+      table.insert(passed_tests, test.name)
     end
   end
+
+  print('Passed tests:\n  ' .. table.concat(passed_tests, '\n  '))
+  print('Failed tests:\n  ' .. table.concat(failed_tests, '\n  '))
 
   if test_outcome then
     make_notify 'Tests passed'
