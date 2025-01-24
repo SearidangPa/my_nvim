@@ -240,7 +240,7 @@ local clear_previous_group_and_ns_if_exists = function()
   vim.diagnostic.reset()
 end
 
-local attach_single_test = function()
+local attach_one_test = function()
   local test_name = Get_enclosing_test()
   make_notify(string.format('Attaching test: %s', test_name))
   local command = { 'go', 'test', './...', '-json', '-v', '-run', test_name }
@@ -249,9 +249,9 @@ local attach_single_test = function()
   attach_to_buffer(vim.api.nvim_get_current_buf(), command)
 end
 
-local attach_go_test_on_save = function()
+local attach_go_test_one = function()
   clear_previous_group_and_ns_if_exists()
-  attach_single_test()
+  attach_one_test()
 end
 
 local attach_go_test_all = function()
@@ -269,23 +269,23 @@ local attach_go_test_all = function()
   attach_to_buffer(bufnr, command)
 end
 
-vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_on_save, {})
+vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
 vim.api.nvim_create_user_command('GoTestOnSaveAll', attach_go_test_all, {})
 vim.api.nvim_create_user_command('GoClearTestOnSave', clear_previous_group_and_ns_if_exists, {})
 
-vim.keymap.set('n', '<leader>gt', attach_go_test_on_save, { desc = '[T]oggle [G]o Test on save' })
+vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
 vim.keymap.set('n', '<leader>gc', clear_previous_group_and_ns_if_exists, { desc = '[G]o [C]lear test on save' })
 
 vim.api.nvim_create_user_command('DriveTestOnSaveDev', function()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  attach_single_test()
+  attach_one_test()
 end, {})
 
 vim.api.nvim_create_user_command('DriveTestOnSaveStaging', function()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  attach_single_test()
+  attach_one_test()
 end, {})
 
 return {}
