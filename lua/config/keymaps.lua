@@ -77,6 +77,16 @@ map('i', '<M-f>', function()
   vim.api.nvim_feedkeys(res, 'n', false)
 end, { expr = true, remap = false, desc = 'Copilot Accept Word' })
 
+map('i', '<Tab>', function()
+  local accept = vim.fn['copilot#Accept']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  if res == '' then
+    vim.api.nvim_feedkeys('<Tab>', 'n', false)
+  else
+    vim.api.nvim_feedkeys(res, 'n', false)
+  end
+end, { expr = true, remap = false, desc = 'Copilot Accept' })
+
 -- [[
 -- ================== Rename the first letter
 -- ]]
