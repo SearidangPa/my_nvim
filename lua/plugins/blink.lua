@@ -19,6 +19,7 @@ return {
     'saghen/blink.cmp',
     dependencies = {
       { 'L3MON4D3/LuaSnip', version = 'v2.*' },
+      { 'mikavilpas/blink-ripgrep.nvim' },
     },
     version = '*',
     opts = {
@@ -29,7 +30,13 @@ return {
       signature = { enabled = true },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'ripgrep' },
+        providers = {
+          ripgrep = {
+            module = 'blink-ripgrep',
+            name = 'Ripgrep',
+          },
+        },
       },
 
       snippets = {
