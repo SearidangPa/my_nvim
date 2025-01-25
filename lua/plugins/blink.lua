@@ -35,13 +35,6 @@ return {
           ripgrep = {
             module = 'blink-ripgrep',
             name = 'Ripgrep',
-            transform_items = function(_, items)
-              for _, item in ipairs(items) do
-                -- example: append a description to easily distinguish rg results
-                item.kind_icon = 'rg'
-              end
-              return items
-            end,
           },
         },
       },
