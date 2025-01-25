@@ -244,23 +244,25 @@ local attach_go_test_one = function()
   attach_one_test()
 end
 
-vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
-vim.api.nvim_create_user_command('GoTestOnSaveBuf', attach_all_go_test_in_buf, {})
-vim.api.nvim_create_user_command('ClearGoTestOnSave', clear_group_ns, {})
-
-vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
-vim.keymap.set('n', '<leader>gc', clear_group_ns, { desc = '[G]o [C]lear test on save' })
-
-vim.api.nvim_create_user_command('DriveTestOnSaveDev', function()
+local function drive_test_on_save_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
   attach_one_test()
-end, {})
+end
+vim.api.nvim_create_user_command('DriveTestOnSaveDev', drive_test_on_save_dev, {})
 
 vim.api.nvim_create_user_command('DriveTestOnSaveStaging', function()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
   attach_one_test()
 end, {})
+
+vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test_one, {})
+vim.api.nvim_create_user_command('GoTestOnSaveBuf', attach_all_go_test_in_buf, {})
+vim.api.nvim_create_user_command('ClearGoTestOnSave', clear_group_ns, {})
+
+vim.keymap.set('n', '<leader>gt', attach_go_test_one, { desc = '[T]oggle [G]o Test on save' })
+vim.keymap.set('n', '<leader>dt', drive_test_on_save_dev, { desc = '[D]rive [T]est on save' })
+vim.keymap.set('n', '<leader>gc', clear_group_ns, { desc = '[G]o [C]lear test on save' })
 
 return {}

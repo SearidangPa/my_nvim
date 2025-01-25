@@ -132,29 +132,15 @@ vim.keymap.set('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 local function go_to_next_function_call() end
 
 vim.keymap.set('n', ']m', go_to_next_function_call, map_opt 'Jump to the next function call')
+-- movement
+vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { silent = true })
 
-local function open_file_under_cursor_in_the_panel_above()
-  local target = vim.fn.expand '<cfile>'
-  local full_path_with_suffix = vim.fn.expand '<cWORD>'
-  local telescope = require 'telescope.builtin'
-
-  vim.api.nvim_command 'wincmd k'
-
-  if vim.loop.fs_stat(target) then
-    vim.api.nvim_command(string.format('e %s', full_path_with_suffix))
-  elseif telescope then
-    telescope.find_files {
-      prompt_prefix = '🪿 ',
-      default_text = full_path_with_suffix,
-      wrap_results = true,
-      find_command = { 'rg', '--files', '--no-require-git' },
-    }
-  else
-    error(string.format('File %s does not exist', target))
-  end
-end
-
--- Opens file under cursor in the panel above
-vim.keymap.set('n', 'gf', open_file_under_cursor_in_the_panel_above, { silent = true })
-
+-- swapping
+vim.keymap.set('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
+vim.keymap.set('n', '<M-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
+vim.keymap.set('n', '<M-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
+vim.keymap.set('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 return {}

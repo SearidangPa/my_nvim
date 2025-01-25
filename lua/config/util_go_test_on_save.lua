@@ -76,4 +76,7 @@ Go_test_one_output = function(test_state, win_state)
       vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, test.output)
     end
   end
+
+  -- set buffer type for log highlighting
+  vim.bo[win_state.floating.buf].filetype = 'log'
 end
