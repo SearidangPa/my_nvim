@@ -11,6 +11,8 @@ local function generate_keymap()
     }
   end
 
+  keymap['<C-k>'] = {}
+
   return keymap
 end
 
@@ -18,8 +20,8 @@ return {
   {
     'saghen/blink.cmp',
     dependencies = {
-      { 'L3MON4D3/LuaSnip', version = 'v2.*' },
       { 'mikavilpas/blink-ripgrep.nvim' },
+      { 'L3MON4D3/LuaSnip', version = 'v2.*' },
     },
     version = '*',
     opts = {
