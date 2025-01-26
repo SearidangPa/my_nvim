@@ -130,10 +130,10 @@ vim.keymap.set('n', '<Tab>', 'za', map_opt 'Toggle fold')
 vim.keymap.set('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- Treewalker movement
-vim.keymap.set({ 'n', 'v' }, '<S-k>', '<cmd>Treewalker Up<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<S-j>', '<cmd>Treewalker Down<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<S-h>', '<cmd>Treewalker Left<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<S-l>', '<cmd>Treewalker Right<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { silent = true })
 
 -- Treewalker swapping
 vim.keymap.set('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })

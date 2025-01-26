@@ -175,7 +175,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'ene', -- no error
+    'ne', -- no error
     fmta(
       [[
           <choiceNode>
@@ -184,9 +184,9 @@ ls.add_snippets('go', {
       ]],
       {
         choiceNode = c(1, {
-          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
-          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
+          fmta([[<val>, err := <func>]], { val = i(2, 'val'), func = i(1, 'func') }),
+          fmta([[err = <func>]], { func = i(1, 'func') }),
+          fmta([[err := <func>]], { func = i(1, 'func') }),
         }),
         finish = i(0),
       }

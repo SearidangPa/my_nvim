@@ -5,6 +5,7 @@ return {
     config = function()
       local ls = require 'luasnip'
       local types = require 'luasnip.util.types'
+      local extras = require 'luasnip.extras'
 
       ls.config.setup {
         history = true,
@@ -14,10 +15,8 @@ return {
         ext_opts = {
           [types.choiceNode] = {
             active = {
+              hl_group = 'GruvboxBlue',
               virt_text = { { '<-', 'GruvboxOrange' } },
-            },
-            unvisited = {
-              virt_text = { { '○', 'GruvboxOrange' } },
             },
           },
         },
@@ -62,6 +61,15 @@ return {
           ls.change_choice(1)
         end
       end, { silent = true })
+
+      -- inoremap <c-u> <cmd>lua require("luasnip.extras.select_choice")()<cr>
+      vim.keymap.set('n', '<leader>sc', function()
+        local ls = require 'luasnip'
+        if ls.choice_active() then
+          ls.select_choice()
+        end
+      end, { silent = true, expr = false, desc = 'Select choice' })
+
       require 'config.go_snip'
     end,
   },
