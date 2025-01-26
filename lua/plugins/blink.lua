@@ -1,6 +1,6 @@
 local function generate_keymap()
   local keymap = {}
-  keymap.preset = 'default' -- Explicit assignment to avoid conflicts
+  keymap.preset = 'none' -- Explicit assignment to avoid conflicts
 
   for i = 1, 10 do
     local key = i == 10 and '<A-0>' or ('<A-' .. i .. '>')
@@ -11,7 +11,17 @@ local function generate_keymap()
     }
   end
 
-  keymap['<C-k>'] = {}
+  keymap['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' }
+  keymap['<C-e>'] = { 'hide' }
+  keymap['<C-y>'] = { 'select_and_accept' }
+  keymap['<Up>'] = { 'select_prev', 'fallback' }
+  keymap['<Down>'] = { 'select_next', 'fallback' }
+  keymap['<C-p>'] = { 'select_prev', 'fallback' }
+  keymap['<C-n>'] = { 'select_next', 'fallback' }
+  keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
+  keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
+  keymap['<Tab>'] = { 'snippet_forward', 'fallback' }
+  keymap['<S-Tab>'] = { 'snippet_backward', 'fallback' }
 
   return keymap
 end
