@@ -62,11 +62,11 @@ return {
         end
       end, { silent = true })
 
-      -- inoremap <c-u> <cmd>lua require("luasnip.extras.select_choice")()<cr>
-      vim.keymap.set('n', '<leader>sc', function()
+      vim.keymap.set({ 's', 'n' }, '<leader>sc', function()
         local ls = require 'luasnip'
         if ls.choice_active() then
-          ls.select_choice()
+          local extras = require 'luasnip.extras'
+          extras.select_choice()
         end
       end, { silent = true, expr = false, desc = 'Select choice' })
 
