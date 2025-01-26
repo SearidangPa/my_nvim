@@ -12,7 +12,6 @@ local function generate_keymap()
   end
 
   keymap['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' }
-  keymap['<C-e>'] = { 'hide' }
   keymap['<C-y>'] = { 'select_and_accept' }
   keymap['<Up>'] = { 'select_prev', 'fallback' }
   keymap['<Down>'] = { 'select_next', 'fallback' }

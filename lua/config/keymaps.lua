@@ -128,6 +128,8 @@ vim.keymap.set('n', '<Tab>', 'za', map_opt 'Toggle fold')
 
 -- =================== Navigation ===================
 vim.keymap.set('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
+vim.keymap.set('i', '<C-e>', '<End>', map_opt 'Move to the end of the line')
+vim.keymap.set('i', '<C-a>', '<Esc>I', map_opt 'Move to the beginning of the line')
 
 -- Treewalker movement
 vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { silent = true })
