@@ -129,10 +129,6 @@ vim.keymap.set('n', '<Tab>', 'za', map_opt 'Toggle fold')
 -- =================== Navigation ===================
 vim.keymap.set('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 
-local function go_to_next_function_call() end
-
-vim.keymap.set('n', ']m', go_to_next_function_call, map_opt 'Jump to the next function call')
-
 -- Treewalker movement
 vim.keymap.set({ 'n', 'v' }, '<S-k>', '<cmd>Treewalker Up<cr>', { silent = true })
 vim.keymap.set({ 'n', 'v' }, '<S-j>', '<cmd>Treewalker Down<cr>', { silent = true })
@@ -150,19 +146,4 @@ vim.keymap.set('n', '<leader>ce', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { silent = true, desc = '[C]lear [E]xtmarks' })
 
--- =================== Snippets ===================
-local ls = require 'luasnip'
-vim.keymap.set({ 'i', 's' }, '<c-k>', function()
-  return vim.snippet.active { direction = 1 } and vim.snippet.jump(1)
-end, { silent = true })
-
-vim.keymap.set({ 'i', 's' }, '<c-j>', function()
-  return vim.snippet.active { direction = -1 } and vim.snippet.jump(-1)
-end, { silent = true })
-
-vim.keymap.set({ 'i', 's' }, '<C-]>', function()
-  if ls.choice_active() then
-    ls.change_choice(1)
-  end
-end, { silent = true })
 return {}
