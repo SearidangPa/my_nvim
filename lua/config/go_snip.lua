@@ -20,6 +20,7 @@ ls.add_snippets('go', {
         if err != nil {
             return <dynamicRet>
         }
+        <finish>
       ]],
       {
         choiceNode = c(3, {
@@ -30,6 +31,7 @@ ls.add_snippets('go', {
         funcName = i(1, 'funcName'),
         args = i(2, ''),
         dynamicRet = d(4, Go_ret_vals, { 1 }),
+        finish = i(0),
       }
     )
   ),
@@ -43,9 +45,11 @@ ls.add_snippets('go', {
         if err != nil {
             return <dynamicRet>
         }
+        <finish>
       ]],
       {
         dynamicRet = d(1, Go_ret_vals_nearest_func_decl, {}),
+        finish = i(0),
       }
     )
   ),
@@ -99,7 +103,7 @@ ls.add_snippets('go', {
     fmta(
       [[
         func <funcName>(<args>) <choiceNode> {
-              <body>
+              <finish>
         }
       ]],
       {
@@ -110,7 +114,7 @@ ls.add_snippets('go', {
           t ' ',
           i(nil, 'returnType'),
         }),
-        body = i(0),
+        finish = i(0),
       }
     )
   ),
@@ -122,13 +126,13 @@ ls.add_snippets('go', {
     fmta(
       [[
           func (<inst> *<Type>) String() string {
-                  <body>
+                  <finish>
           }
       ]],
       {
         Type = i(1, 'Type'),
         inst = f(LowerFirst, { 1 }),
-        body = i(0),
+        finish = i(0),
       }
     )
   ),
@@ -140,12 +144,12 @@ ls.add_snippets('go', {
     fmta(
       [[
           func Test_<Name>(t *testing.T) {
-                  <body>
+                  <finish>
           }
     ]],
       {
         Name = i(1, 'Name'),
-        body = i(0),
+        finish = i(0),
       }
     )
   ),
@@ -157,13 +161,13 @@ ls.add_snippets('go', {
     fmta(
       [[
         func <funcName>(t *testing.T, <args>) {
-              <body>
+              <finish>
         }
       ]],
       {
         funcName = i(1, 'funcName'),
         args = i(2, 'args'),
-        body = i(0),
+        finish = i(0),
       }
     )
   ),
