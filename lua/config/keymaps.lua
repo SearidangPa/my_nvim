@@ -146,12 +146,4 @@ vim.keymap.set('n', '<leader>ce', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { silent = true, desc = '[C]lear [E]xtmarks' })
 
-local sl = require 'luasnip.extras.snippet_list'
-local function snip_info(snippet)
-  return { name = snippet.name }
-end
-vim.keymap.set('n', '<leader>ls', function()
-  sl.open { snip_info = snip_info }
-end, { silent = true, desc = '[L]ist [S]nippets' })
-
 return {}
