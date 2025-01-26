@@ -13,7 +13,7 @@ return {
       ext_opts = {
         [types.choiceNode] = {
           active = {
-            virt_text = { { '●', 'GruvboxOrange' } },
+            virt_text = { { '<-', 'GruvboxOrange' } },
           },
           unvisited = {
             virt_text = { { '○', 'GruvboxOrange' } },
@@ -47,20 +47,6 @@ return {
 
       return ls.jumpable(-1) and ls.jump(-1)
     end
-
-    vim.keymap.set({ 'i', 's' }, '<c-k>', function()
-      return vim.snippet.active { direction = 1 } and vim.snippet.jump(1)
-    end, { silent = true })
-
-    vim.keymap.set({ 'i', 's' }, '<c-j>', function()
-      return vim.snippet.active { direction = -1 } and vim.snippet.jump(-1)
-    end, { silent = true })
-
-    vim.keymap.set({ 'i', 's' }, '<C-]>', function()
-      if ls.choice_active() then
-        ls.change_choice(1)
-      end
-    end, { silent = true })
 
     require 'config.go_snip'
   end,
