@@ -1,20 +1,48 @@
 local ls = require 'luasnip'
 local c = ls.choice_node
+local d = ls.dynamic_node
 local f = ls.function_node
-local s = ls.snippet
 local i = ls.insert_node
+local s = ls.snippet
 local t = ls.text_node
+local sn = ls.snippet_node
 local extras = require 'luasnip.extras'
-local rep = extras.rep
+local ts_locals = require 'nvim-treesitter.locals'
+local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
+local get_node_text = vim.treesitter.get_node_text
 
-local firstLetter = function(args)
+FirstLetter = function(args)
   local input = args[1][1] or ''
   local lower = input:sub(1, 1):lower()
   return lower
 end
 
-local function kebabToCamelCase(args)
+LowerFirst = function(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower() .. input:sub(2)
+  return lower
+end
+
+GetLastFuncName = function(args)
+  local input = args[1][1] or ''
+  ---@diagnostic disable-next-line: param-type-mismatch
+  local parts = vim.split(input, '.', true)
+  local res = parts[#parts] or ''
+  if res == '' then
+    return ''
+  end
+
+  return LowerFirst { { res } }
+end
+
+function KebabToCamelCase(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower()
+  return lower
+end
+
+function KebabToCamelCase(args)
   local input = args[1][1]
   print('input' .. input)
   local parts = vim.split(input, '-', { plain = true })
@@ -24,241 +52,126 @@ local function kebabToCamelCase(args)
   return table.concat(parts, '')
 end
 
-local function parseJoin(args)
+function ReplaceDashWithSpace(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
   return table.concat(parts, ' ')
 end
 
-ls.add_snippets('go', {
-  s(
-    'ifa',
-    fmta(
-      [[
-      if err != nil{
-        log.Fatalf("failed to <finish>
-      }
-      ]],
-      {
-        finish = i(0),
-      }
-    )
-  ),
-})
+function Go_ret_vals_nearest_func_decl()
+  local func_name = Nearest_function_decl()
+  return Go_ret_vals { func_name }
+end
 
-ls.add_snippets('go', {
-  s(
-    'efa', -- error fatal
-    fmta(
-      [[
-        <choiceNode> <funcName>(<args>)
-        if err != nil {
-            log.Fatalf("failed to <processedFuncName>, err: %v", err)
-        }
-        <finish>
-      ]],
-      {
-        choiceNode = c(3, {
-          fmta([[<res>, err := ]], { res = i(1, 'res') }),
-          t 'err = ',
-          t 'err := ',
-        }),
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        processedFuncName = GetLastFuncName { i(1, 'funcName') },
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'fn',
-    fmta(
-      [[
-        func <funcName>(<args>) <choiceNode> {
-              <body>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        choiceNode = c(3, {
-          t 'error',
-          t ' ',
-          i(nil, 'returnType'),
-        }),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'strf',
-    fmta(
-      [[
-          func (<inst> *<Type>) String() string {
-                  <body>
-          }
-      ]],
-      {
-        Type = i(1, 'Type'),
-        inst = f(lowerFirst, { 1 }),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'tn',
-    fmta(
-      [[
-          func Test_<Name>(t *testing.T) {
-                  <body>
-          }
-    ]],
-      {
-        Name = i(1, 'Name'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'tfn',
-    fmta(
-      [[
-        func <funcName>(t *testing.T, <args>) {
-              <body>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        body = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'ene', -- no error
-    fmta(
-      [[
-          <choiceNode>
-          require.NoError(t, err)
-          <finish>
-      ]],
-      {
-        choiceNode = c(1, {
-          fmta([[<val>, err := <funcName>(<args>)]], { val = i(1, 'val'), funcName = i(2, 'funcName'), args = i(3, 'args') }),
-          fmta([[err = <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-          fmta([[err := <funcName>(<args>)]], { funcName = i(1, 'funcName'), args = i(2, 'args') }),
-        }),
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'wb',
-    fmta(
-      [[
-            //go:build windows
-
-            package <finish>
-        ]],
-      {
-        finish = i(0),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'cl',
-    fmta(
-      [[
-//go:build windows
-
-package cli
-
-import (
-    log "github.com/sirupsen/logrus"
+-- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
+vim.treesitter.query.set(
+  'go',
+  'LuaSnip_Result',
+  [[ [
+    (method_declaration result: (_) @id)
+    (function_declaration result: (_) @id)
+    (func_literal result: (_) @id)
+  ] ]]
 )
 
-func init() {
-	var <flag_var> string
-	<apiInvoke>InvokeStr := "<cmd_invoke_str>"
-	<apiInit>Cmd := &cobra.Command{
-		Use:   <apiUse>InvokeStr,
-		Short: "<short_desc>",
-	}
-	rootCmd.AddCommand(<apiAddCmd>Cmd)
-	logging.IniLog()
+local function transform(text, info)
+  if text == 'int' then
+    return t '0'
+  elseif text == 'error' then
+    if info then
+      info.index = info.index + 1
+      return c(info.index, {
+        t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
+        sn(
+          nil,
+          fmta(
+            [[
+              eris.Wrapf(err, "failed to <funcName>, <moreInfo>")
+            ]],
+            {
+              funcName = f(function()
+                return GetLastFuncName { { info.func_name } }
+              end, {}),
+              moreInfo = i(1, 'additional_info'), -- Insert node for user input
+            }
+          )
+        ),
+      })
+    end
+  elseif text == 'bool' then
+    return t 'false'
+  elseif text == 'string' then
+    return t '""'
+  elseif text == 'uintptr' then
+    return t 'cldapi.Failed'
+  elseif string.find(text, '*', 1, true) then
+    return t 'nil'
+  else
+    return t(string.format('%s{}', text))
+  end
 
-	<apiFlag>Cmd.Flags().StringVarP(&<flag_var_val>, "<flag_var_str>", "<first_letter_flag_var>", "", "<flag_var_desc>")
+  return t(text)
+end
 
-	markFlagsRequired(<apiMarkFlag>Cmd, <requiredFlag>)
-	<apiRun>Cmd.Run = func(_ *cobra.Command, _ []string) {
-		<apiCall>CLI(<fn_args_call>)
-	}
+local handlers = {
+  ['parameter_list'] = function(node, info)
+    local result = {}
+    local count = node:named_child_count()
+    for idx = 0, count - 1 do
+      table.insert(result, transform(get_node_text(node:named_child(idx), 0), info))
+      if idx ~= count - 1 then
+        table.insert(result, t { ', ' })
+      end
+    end
+    return result
+  end,
+
+  ['type_identifier'] = function(node, info)
+    local text = get_node_text(node, 0)
+    return { transform(text, info) }
+  end,
 }
 
-func <apiImplement>CLI(<fn_args>) {
-      <choiceNode>
-      if err != nil {
-          log.Fatalf(<errFmt>)
-      }
-      <finish>
-}
-      ]],
-      {
-        apiInvoke = c(2, {
-          f(kebabToCamelCase, { 1 }),
-          i(2, ''),
-        }),
-        apiInit = rep(2),
-        apiUse = rep(2),
-        apiAddCmd = rep(2),
-        apiFlag = rep(2),
-        apiMarkFlag = rep(2),
-        apiRun = rep(2),
-        apiCall = rep(2),
-        apiImplement = rep(2),
+local function go_result_type(info)
+  local cursor_node = ts_utils.get_node_at_cursor()
+  if not cursor_node then
+    return { t 'nil' }
+  end
 
-        cmd_invoke_str = i(1, 'cmd_invoke_str'),
-        short_desc = c(3, {
-          f(parseJoin, { 1 }),
-          i(1, 'short_desc'),
-        }),
-        flag_var = i(4, 'path'),
-        flag_var_str = rep(4),
-        first_letter_flag_var = f(firstLetter, { 4 }),
-        flag_var_desc = rep(4),
-        flag_var_val = rep(4),
-        requiredFlag = i(5),
+  local scope = ts_locals.get_scope_tree(cursor_node, 0)
+  local function_node
+  for _, v in ipairs(scope) do
+    if v:type() == 'function_declaration' or v:type() == 'method_declaration' or v:type() == 'func_literal' then
+      function_node = v
+      break
+    end
+  end
 
-        choiceNode = c(6, {
-          fmta([[<val>, err := <funcName>]], { val = i(1, 'val'), funcName = i(2, 'funcName') }),
-          fmta([[err := <funcName>]], { funcName = i(1, 'funcName') }),
-        }),
-        fn_args = i(7),
-        fn_args_call = i(8),
-        errFmt = i(9),
-        finish = i(0),
-      }
-    )
-  ),
-})
+  local query = vim.treesitter.query.get('go', 'LuaSnip_Result')
+
+  if not query then
+    return { t 'nil' }
+  end
+
+  for _, node in query:iter_captures(function_node, 0) do
+    if not node then
+      return { t 'nil' }
+    end
+
+    local handlerFunc = handlers[node:type()]
+    if handlerFunc then
+      return handlerFunc(node, info)
+    end
+  end
+
+  return { t '' }
+end
+
+function Go_ret_vals(args)
+  local info = {
+    index = 0,
+    func_name = args[1][1] or 'unknown',
+  }
+  local result = go_result_type(info)
+  return sn(nil, result)
+end
