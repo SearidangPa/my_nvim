@@ -106,7 +106,7 @@ ls.add_snippets('go', {
       ]],
       {
         Type = i(1, 'Type'),
-        inst = f(LowerFirst, { 1 }),
+        inst = f(lowerFirst, { 1 }),
         body = i(0),
       }
     )

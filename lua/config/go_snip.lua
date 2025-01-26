@@ -23,7 +23,7 @@ vim.treesitter.query.set(
   ] ]]
 )
 
-LowerFirst = function(args)
+local lowerFirst = function(args)
   local input = args[1][1] or ''
   local lower = input:sub(1, 1):lower() .. input:sub(2)
   return lower
@@ -38,7 +38,7 @@ GetLastFuncName = function(args)
     return ''
   end
 
-  return LowerFirst { { res } }
+  return lowerFirst { { res } }
 end
 
 local transform = function(text, info)
