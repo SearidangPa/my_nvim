@@ -86,13 +86,13 @@ local function transform(text, info)
           nil,
           fmta(
             [[
-              eris.Wrapf(err, "failed to <funcName>, <moreInfo>")
+              eris.Wrapf(err, "failed to <funcName>, <moreInfo>
             ]],
             {
               funcName = f(function()
                 return GetLastFuncName { { info.func_name } }
               end, {}),
-              moreInfo = i(1, 'additional_info'), -- Insert node for user input
+              moreInfo = i(1, ''), -- Insert node for user input
             }
           )
         ),

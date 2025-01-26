@@ -148,4 +148,5 @@ vim.keymap.set('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true 
 vim.keymap.set('n', '<leader>ce', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { silent = true, desc = '[C]lear [E]xtmarks' })
+
 return {}
