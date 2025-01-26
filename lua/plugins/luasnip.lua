@@ -1,6 +1,6 @@
 return {
   'L3MON4D3/LuaSnip',
-  version = "v2.*",
+  version = 'v2.*',
   event = 'BufEnter',
 
   config = function()
@@ -17,10 +17,8 @@ return {
           active = {
             virt_text = { { '●', 'GruvboxOrange' } },
           },
-        },
-        [types.insertNode] = {
-          active = {
-            virt_text = { { '●', 'GruvboxBlue' } },
+          unvisited = {
+            virt_text = { { '○', 'GruvboxOrange' } },
           },
         },
       },
@@ -69,4 +67,3 @@ return {
     require 'config.go_snip'
   end,
 }
-

@@ -143,4 +143,9 @@ vim.keymap.set('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
 vim.keymap.set('n', '<M-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
 vim.keymap.set('n', '<M-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 vim.keymap.set('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
+
+-- clear all extmarks
+vim.keymap.set('n', '<leader>ce', function()
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end, { silent = true, desc = '[C]lear [E]xtmarks' })
 return {}

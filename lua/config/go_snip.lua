@@ -28,7 +28,7 @@ ls.add_snippets('go', {
           t 'err := ',
         }),
         funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
+        args = i(2, ''),
         dynamicRet = d(4, Go_ret_vals, { 1 }),
       }
     )
