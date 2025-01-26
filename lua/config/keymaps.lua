@@ -133,10 +133,10 @@ local function go_to_next_function_call() end
 
 vim.keymap.set('n', ']m', go_to_next_function_call, map_opt 'Jump to the next function call')
 -- movement
-vim.keymap.set({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>', { silent = true })
-vim.keymap.set({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<S-k>', '<cmd>Treewalker Up<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<S-j>', '<cmd>Treewalker Down<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<S-h>', '<cmd>Treewalker Left<cr>', { silent = true })
+vim.keymap.set({ 'n', 'v' }, '<S-l>', '<cmd>Treewalker Right<cr>', { silent = true })
 
 -- swapping
 vim.keymap.set('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
