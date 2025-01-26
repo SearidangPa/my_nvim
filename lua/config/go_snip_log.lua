@@ -7,11 +7,10 @@ local rep = extras.rep
 
 ls.add_snippets('go', {
   s(
-    'lg2',
+    'lg',
     fmta(
       [[
-        logEntry := log.WithFields(log.Fields{"<key1>": <val1>, "<key2>": <val2>})
-        <finish>
+        logEntry := log.WithFields(log.Fields{"<key1>": <val1>, "<key2>": <val2>, <finish>})
       ]],
       {
         val1 = i(1, ''),
