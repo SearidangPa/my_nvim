@@ -97,22 +97,19 @@ ls.add_snippets('go', {
   ),
 })
 
-local function clipboard_content()
-  return vim.fn.getreg '+' -- Retrieves the clipboard content
-end
-
 ls.add_snippets('go', {
   s(
-    'lg', -- error return
+    'lg2',
     fmta(
       [[
-        logEntry := log.WithFields(log.Fields{
-            "<val>" : <val>,
-            <finish>
-        })
+        logEntry := log.WithFields(log.Fields{"<key1>": <val1>, "<key2>": <val2>})
+        <finish>
       ]],
       {
-        val = f(clipboard_content),
+        val1 = i(1, ''),
+        key1 = rep(1),
+        val2 = i(2, ''),
+        key2 = rep(2),
         finish = i(0),
       }
     )
