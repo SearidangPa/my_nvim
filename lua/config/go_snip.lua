@@ -13,7 +13,7 @@ local rep = extras.rep
 
 ls.add_snippets('go', {
   s(
-    'efi', -- error return
+    'efi', -- error func if
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
