@@ -62,14 +62,6 @@ return {
         end
       end, { silent = true })
 
-      vim.keymap.set({ 's', 'n' }, '<leader>sc', function()
-        local ls = require 'luasnip'
-        if ls.choice_active() then
-          local extras = require 'luasnip.extras'
-          extras.select_choice()
-        end
-      end, { silent = true, expr = false, desc = 'Select choice' })
-
       require 'config.go_snip'
     end,
   },
