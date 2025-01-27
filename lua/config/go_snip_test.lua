@@ -26,13 +26,11 @@ ls.add_snippets('go', {
     'tfn',
     fmta(
       [[
-        func <funcName>(t *testing.T, <args>) {
-              <finish>
+        func <funcName>(t *testing.T, <finish>) {
         }
       ]],
       {
         funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
         finish = i(0),
       }
     )
