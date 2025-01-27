@@ -119,13 +119,6 @@ vim.keymap.set('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute c
 vim.keymap.set('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
 vim.keymap.set('n', '<leader>tcd', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [D]ark')
 
--- =================== fold ===================
-vim.keymap.set('n', '<leader>z', function()
-  vim.cmd 'normal! vaBzf'
-end, map_opt 'Fold current paragraph')
-
-vim.keymap.set('n', '<Tab>', 'za', map_opt 'Toggle fold')
-
 -- =================== Navigation ===================
 vim.keymap.set('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 vim.keymap.set('i', '<C-e>', '<End>', map_opt 'Move to the end of the line')
