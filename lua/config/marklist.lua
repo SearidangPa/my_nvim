@@ -148,9 +148,7 @@ local function toggle_mark_window()
     return
   end
 
-  ----------------------------------------------------------------------------
-  -- Group marks by filename and format them in a tree-like structure.
-  ----------------------------------------------------------------------------
+  -- Group marks by filename
   local grouped_marks = {}
   for _, m in ipairs(all_marks) do
     local filename = m.filename
@@ -160,20 +158,45 @@ local function toggle_mark_window()
     table.insert(grouped_marks[filename], m)
   end
 
+  -- We'll store the lines in this array, and keep track of filename line indices
   local lines = {}
+  local filename_line_indices = {} -- holds line numbers that are filenames
+
+  -- Build a tree-like display:
   for filename, marks in pairs(grouped_marks) do
-    -- Show the filename
+    -- Record the line index of this filename
+    local filename_line_idx = #lines -- zero-based index AFTER insertion
     table.insert(lines, filename)
-    -- Under each filename, list marks with an indent and tree arrow
+    table.sort(marks, function(a, b)
+      return a.mark < b.mark
+    end)
     for _, mark in ipairs(marks) do
-      table.insert(lines, string.format("  ├─ '%s': (%d, %d) -> %s", mark.mark, mark.line, mark.col, mark.text or ''))
+      table.insert(lines, string.format(" ├─'%s': %s", mark.mark, mark.text or ''))
     end
+    -- `filename_line_idx` was the index before adding the filename line.
+    -- So the real line for highlight is that index we just used.
+    filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  -- Render lines in the buffer
+  -- Write the lines into the buffer
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-  -- Use vim.keymap.set for a Lua function that calls jump_to_mark
+  ----------------------------------------------------------------------------
+  -- 1) Define a new highlight group for the filenames.
+  --    (We do it here so that it doesn't get reset on every new buffer.)
+  ----------------------------------------------------------------------------
+  vim.api.nvim_set_hl(0, 'MarkListFile', { fg = '#5097A4' })
+  -- Adjust the color code to your favorite "light green" or any other color.
+
+  ----------------------------------------------------------------------------
+  -- 2) Highlight each filename line using the new highlight group.
+  ----------------------------------------------------------------------------
+  for _, line_idx in ipairs(filename_line_indices) do
+    -- The 4th argument sets the start column to 0, the 5th to -1 => highlight entire line
+    vim.api.nvim_buf_add_highlight(buf, -1, 'MarkListFile', line_idx, 0, -1)
+  end
+
+  -- Attach a keymap to jump to the mark on pressing <Enter>
   vim.keymap.set('n', '<CR>', function()
     require('config.marklist').jump_to_mark()
   end, { noremap = true, silent = true, buffer = buf })
