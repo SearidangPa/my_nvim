@@ -54,63 +54,6 @@ end
 
 vim.keymap.set('n', '<leader>gm', select_mark, { desc = '[G]lobal [M]ark' })
 
-local function toggle_mark_window()
-  -- Define a buffer variable to track the window state
-  if not vim.g.mark_window_buf then
-    vim.g.mark_window_buf = nil
-  end
-  if not vim.g.mark_window_win then
-    vim.g.mark_window_win = nil
-  end
-
-  -- If the window is already open, close it
-  if vim.g.mark_window_win and vim.api.nvim_win_is_valid(vim.g.mark_window_win) then
-    vim.api.nvim_win_close(vim.g.mark_window_win, true)
-    vim.g.mark_window_buf = nil
-    vim.g.mark_window_win = nil
-    return
-  end
-
-  -- Create a new scratch buffer
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.g.mark_window_buf = buf
-
-  local total_width = vim.o.columns
-  local window_width = math.floor(total_width / 5)
-
-  -- Open a vertical split on the right for the buffer
-  vim.cmd 'vsplit'
-  local win = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_width(win, window_width)
-  vim.api.nvim_win_set_buf(win, buf)
-  vim.g.mark_window_win = win
-
-  -- Set buffer options for the mark display
-  vim.bo[buf].buftype = 'nofile'
-  vim.bo[buf].bufhidden = 'wipe'
-  vim.bo[buf].swapfile = false
-  vim.bo[buf].filetype = 'marklist'
-  vim.wo[win].number = false
-  vim.wo[win].relativenumber = false
-  vim.wo[win].wrap = false
-
-  -- Populate the buffer with global marks
-  local marks = get_global_marks()
-  if #marks == 0 then
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
-    return
-  end
-
-  local lines = {}
-  for _, mark in ipairs(marks) do
-    table.insert(lines, string.format("'%s': %s (%d, %d) -> %s", mark.mark, mark.filename, mark.line, mark.col, mark.text))
-  end
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-
-  -- Attach a keymap to jump to the mark on pressing <Enter>
-  vim.api.nvim_buf_set_keymap(buf, 'n', '<CR>', [[<cmd>lua require('marklist').jump_to_mark()<CR>]], { noremap = true, silent = true })
-end
-
 -- Function to jump to a selected mark
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf
@@ -127,9 +70,73 @@ local function jump_to_mark()
     return
   end
 
+  -- Switch back to the main window before jumping
+  if vim.g.main_window and vim.api.nvim_win_is_valid(vim.g.main_window) then
+    vim.api.nvim_set_current_win(vim.g.main_window)
+  end
+
   handle_mark_choice(mark)
+end
+
+local function toggle_mark_window()
+  if not vim.g.mark_window_buf then
+    vim.g.mark_window_buf = nil
+  end
+  if not vim.g.mark_window_win then
+    vim.g.mark_window_win = nil
+  end
+
+  -- Store the current window as the main window
+  vim.g.main_window = vim.api.nvim_get_current_win()
+
+  if vim.g.mark_window_win and vim.api.nvim_win_is_valid(vim.g.mark_window_win) then
+    vim.api.nvim_win_close(vim.g.mark_window_win, true)
+    vim.g.mark_window_buf = nil
+    vim.g.mark_window_win = nil
+    return
+  end
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.g.mark_window_buf = buf
+
+  local total_width = vim.o.columns
+  local window_width = math.floor(total_width / 5)
+
+  vim.cmd 'vsplit'
+  local win = vim.api.nvim_get_current_win()
+  vim.api.nvim_win_set_width(win, window_width)
+  vim.api.nvim_win_set_buf(win, buf)
+  vim.g.mark_window_win = win
+
+  vim.bo[buf].buftype = 'nofile'
+  vim.bo[buf].bufhidden = 'wipe'
+  vim.bo[buf].swapfile = false
+  vim.bo[buf].filetype = 'marklist'
+  vim.wo[win].number = false
+  vim.wo[win].relativenumber = false
+  vim.wo[win].wrap = false
+
+  local marks = get_global_marks()
+  if #marks == 0 then
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
+    return
+  end
+
+  local lines = {}
+  for _, mark in ipairs(marks) do
+    table.insert(lines, string.format("'%s': %s (%d, %d) -> %s", mark.mark, mark.filename, mark.line, mark.col, mark.text))
+  end
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  -- Attach a keymap to jump to the mark on pressing <Enter>
+  vim.keymap.set('n', '<CR>', function()
+    require('marklist').jump_to_mark()
+  end, { noremap = true, silent = true, buffer = buf })
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]ark [W]indow' })
 
-return {}
+return {
+  toggle_mark_window = toggle_mark_window,
+  jump_to_mark = jump_to_mark,
+}
