@@ -68,8 +68,7 @@ local function fold_err_blocks(bufnr)
     end
 
     local left_text = vim.treesitter.get_node_text(node, bufnr)
-    -- if string.find(left_text, 'err') then
-    if left_text == 'err' then
+    if string.find(left_text, 'err') then
       local current_node = node:parent()
       while current_node and current_node:type() ~= 'if_statement' do
         current_node = current_node:parent()
@@ -81,7 +80,7 @@ local function fold_err_blocks(bufnr)
         end_row = end_row
 
         if start_row <= end_row then
-          vim.cmd(string.format('%d,%dfold', start_row, end_row))
+          vim.cmd(string.format('%d,%dfold', start_row, end_row + 1))
         end
       end
     end
