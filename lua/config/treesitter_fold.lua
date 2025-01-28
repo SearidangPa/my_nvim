@@ -46,11 +46,12 @@ vim.api.nvim_create_user_command('FoldErrBlocks', function()
   fold_err_blocks(vim.api.nvim_get_current_buf())
 end, {})
 
-local function fold_expression_case(bufnr)
+local function fold_switch_case(bufnr)
   local query = vim.treesitter.query.parse(
     'go',
     [[
     (expression_case) @expr_case
+    (type_case) @type_case
   ]]
   )
 
@@ -81,6 +82,6 @@ local function fold_expression_case(bufnr)
   vim.api.nvim_win_set_cursor(0, current_cursor)
 end
 
-vim.api.nvim_create_user_command('FoldExprCase', function()
-  fold_expression_case(vim.api.nvim_get_current_buf())
+vim.api.nvim_create_user_command('FoldSwitchCase', function()
+  fold_switch_case(vim.api.nvim_get_current_buf())
 end, {})
