@@ -163,72 +163,12 @@ local function handle_mark_choice(choice)
   vim.cmd 'normal! zz'
 end
 
--- local function select_mark()
---   local marks = get_global_marks()
---   if #marks == 0 then
---     vim.notify('No global marks found', vim.log.levels.INFO)
---     return
---   end
---
---   local opts = {
---     prompt = 'Select mark:',
---     format_item = function(item)
---       return string.format("'%s': %s -> %s", item.mark, item.filename, item.text)
---     end,
---   }
---
---   vim.ui.select(marks, opts, function(choice)
---     handle_mark_choice(choice)
---   end)
--- end
-
--- select_mark()
-
-local function create_preview_window()
-  local buf = vim.api.nvim_create_buf(false, true)
-  local width = math.floor(vim.o.columns * 0.4)
-  local height = math.floor(vim.o.lines * 0.4)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = vim.o.columns - width - 2
-
-  local opts = {
-    relative = 'editor',
-    style = 'minimal',
-    border = 'rounded',
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-  }
-  local win = vim.api.nvim_open_win(buf, false, opts)
-  return buf, win
-end
-
-local function update_preview(buf, mark)
-  if not mark or not mark.bufnr or not mark.line then
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No preview available' })
-    return
-  end
-  local lines = vim.api.nvim_buf_get_lines(mark.bufnr, 0, -1, false)
-  local start_line = math.max(0, mark.line - 5)
-  local end_line = math.min(#lines, mark.line + 4)
-
-  local preview_lines = {}
-  for i = start_line, end_line do
-    preview_lines[#preview_lines + 1] = lines[i] or ''
-  end
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, preview_lines)
-  vim.api.nvim_buf_set_option(buf, 'modifiable', false)
-end
-
-local function select_mark_with_preview()
+local function select_mark()
   local marks = get_global_marks()
   if #marks == 0 then
     vim.notify('No global marks found', vim.log.levels.INFO)
     return
   end
-
-  local preview_buf, preview_win = create_preview_window()
 
   local opts = {
     prompt = 'Select mark:',
@@ -238,15 +178,9 @@ local function select_mark_with_preview()
   }
 
   vim.ui.select(marks, opts, function(choice)
-    if preview_win then
-      vim.api.nvim_win_close(preview_win, true)
-    end
     handle_mark_choice(choice)
-  end, function(selected)
-    update_preview(preview_buf, selected)
   end)
 end
 
-select_mark_with_preview()
-
+select_mark()
 return {}
