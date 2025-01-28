@@ -1,6 +1,6 @@
--- Gathers all global marks
 local function get_global_marks()
   local marks = {}
+  local cwd = vim.fn.getcwd() -- Get the current working directory
   for char = string.byte 'A', string.byte 'Z' do
     local mark = string.char(char)
     local pos = vim.fn.getpos("'" .. mark)
@@ -9,20 +9,24 @@ local function get_global_marks()
       local line = pos[2]
       local col = pos[3]
       local filepath = vim.fn.bufname(bufnr)
-      local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
-      table.insert(marks, {
-        mark = mark,
-        bufnr = bufnr,
-        filename = filename ~= '' and filename or '[No Name]',
-        line = line,
-        col = col,
-        text = vim.fn.getbufline(bufnr, line)[1],
-      })
+      local abs_filepath = vim.fn.fnamemodify(filepath, ':p') -- Convert to absolute path
+      -- Check if the file is under the current working directory
+      if abs_filepath:find(cwd, 1, true) then
+        local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
+        table.insert(marks, {
+          mark = mark,
+          bufnr = bufnr,
+          filename = filename ~= '' and filename or '[No Name]',
+          filepath = abs_filepath,
+          line = line,
+          col = col,
+          text = vim.fn.getbufline(bufnr, line)[1],
+        })
+      end
     end
   end
   return marks
 end
-
 -- For quickselect UI (optional in your setup)
 local function handle_mark_choice(choice)
   if not choice then
