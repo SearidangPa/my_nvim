@@ -1,3 +1,4 @@
+-- Gathers all global marks
 local function get_global_marks()
   local marks = {}
   for char = string.byte 'A', string.byte 'Z' do
@@ -22,6 +23,7 @@ local function get_global_marks()
   return marks
 end
 
+-- For quickselect UI (optional in your setup)
 local function handle_mark_choice(choice)
   if not choice then
     vim.notify('No mark selected', vim.log.levels.INFO)
@@ -33,6 +35,7 @@ local function handle_mark_choice(choice)
   vim.cmd 'normal! zz'
 end
 
+-- Optional: If you want a quick UI select for global marks
 local function select_mark()
   local marks = get_global_marks()
   if #marks == 0 then
@@ -54,7 +57,9 @@ end
 
 vim.keymap.set('n', '<leader>gm', select_mark, { desc = '[G]lobal [M]ark' })
 
--- Function to jump to a selected mark
+--------------------------------------------------------------------------------
+-- Jump to Mark: parse the line in the mark window to find the mark character. --
+--------------------------------------------------------------------------------
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf
   if not buf or not vim.api.nvim_buf_is_valid(buf) then
@@ -62,23 +67,38 @@ local function jump_to_mark()
     return
   end
 
-  local line_num = vim.fn.line '.' -- Get the current line number
-  local marks = get_global_marks()
-  local mark = marks[line_num]
-  if not mark then
-    vim.notify('Invalid mark selection', vim.log.levels.ERROR)
+  -- Get the text of the current line in the mark window
+  local line_num = vim.fn.line '.'
+  local line_text = vim.fn.getline(line_num)
+
+  -- Attempt to extract the mark character from something like:
+  --   ├─ 'A': (120, 1) -> some text
+  -- or
+  --   'A': (120, 1) -> some text
+  -- The pattern captures an uppercase letter within single quotes.
+  local mark_char = line_text:match "'([A-Z])':"
+  if not mark_char then
+    -- Possibly on a filename line or invalid line
+    vim.notify('No valid mark found on this line.', vim.log.levels.ERROR)
     return
   end
 
-  -- Switch back to the main window before jumping
+  -- Switch back to the main window (so the jump happens there)
   if vim.g.main_window and vim.api.nvim_win_is_valid(vim.g.main_window) then
     vim.api.nvim_set_current_win(vim.g.main_window)
   end
 
-  handle_mark_choice(mark)
+  -- Use backtick-jump to go precisely to the mark position
+  vim.cmd('normal! `' .. mark_char)
+  vim.cmd 'normal! zz'
 end
 
+--------------------------------------------------------------------------------
+-- Toggle a scratch window on the right that displays all global marks, grouped
+-- by filename, in a tree-like format.
+--------------------------------------------------------------------------------
 local function toggle_mark_window()
+  -- Track window/buffer state
   if not vim.g.mark_window_buf then
     vim.g.mark_window_buf = nil
   end
@@ -86,9 +106,10 @@ local function toggle_mark_window()
     vim.g.mark_window_win = nil
   end
 
-  -- Store the current window as the main window
+  -- Store the current window as 'main_window'
   vim.g.main_window = vim.api.nvim_get_current_win()
 
+  -- If the marks window is already open, close it
   if vim.g.mark_window_win and vim.api.nvim_win_is_valid(vim.g.mark_window_win) then
     vim.api.nvim_win_close(vim.g.mark_window_win, true)
     vim.g.mark_window_buf = nil
@@ -96,18 +117,22 @@ local function toggle_mark_window()
     return
   end
 
+  -- Create a new scratch buffer
   local buf = vim.api.nvim_create_buf(false, true)
   vim.g.mark_window_buf = buf
 
+  -- Calculate the width for a 1/5 vertical split
   local total_width = vim.o.columns
   local window_width = math.floor(total_width / 5)
 
+  -- Open the vertical split
   vim.cmd 'vsplit'
   local win = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_width(win, window_width)
   vim.api.nvim_win_set_buf(win, buf)
   vim.g.mark_window_win = win
 
+  -- Set buffer/window options
   vim.bo[buf].buftype = 'nofile'
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
@@ -116,26 +141,48 @@ local function toggle_mark_window()
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
 
-  local marks = get_global_marks()
-  if #marks == 0 then
+  -- Retrieve global marks
+  local all_marks = get_global_marks()
+  if #all_marks == 0 then
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
     return
   end
 
-  local lines = {}
-  for _, mark in ipairs(marks) do
-    table.insert(lines, string.format("'%s': %s (%d, %d) -> %s", mark.mark, mark.filename, mark.line, mark.col, mark.text))
+  ----------------------------------------------------------------------------
+  -- Group marks by filename and format them in a tree-like structure.
+  ----------------------------------------------------------------------------
+  local grouped_marks = {}
+  for _, m in ipairs(all_marks) do
+    local filename = m.filename
+    if not grouped_marks[filename] then
+      grouped_marks[filename] = {}
+    end
+    table.insert(grouped_marks[filename], m)
   end
+
+  local lines = {}
+  for filename, marks in pairs(grouped_marks) do
+    -- Show the filename
+    table.insert(lines, filename)
+    -- Under each filename, list marks with an indent and tree arrow
+    for _, mark in ipairs(marks) do
+      table.insert(lines, string.format("  ├─ '%s': (%d, %d) -> %s", mark.mark, mark.line, mark.col, mark.text or ''))
+    end
+  end
+
+  -- Render lines in the buffer
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
-  -- Attach a keymap to jump to the mark on pressing <Enter>
+  -- Use vim.keymap.set for a Lua function that calls jump_to_mark
   vim.keymap.set('n', '<CR>', function()
-    require('marklist').jump_to_mark()
+    require('config.marklist').jump_to_mark()
   end, { noremap = true, silent = true, buffer = buf })
 end
 
+-- Keymap to toggle the mark window
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]ark [W]indow' })
 
+-- Return the module’s functions
 return {
   toggle_mark_window = toggle_mark_window,
   jump_to_mark = jump_to_mark,
