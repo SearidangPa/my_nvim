@@ -140,7 +140,7 @@ local function get_global_marks()
         buffer = pos[1],
         line = pos[2],
         col = pos[3],
-        text = vim.fn.getline(pos[2]), -- Get the text at the line
+        text = vim.fn.getbufline(pos[1], pos[2], pos[2])[1],
       })
     end
   end
