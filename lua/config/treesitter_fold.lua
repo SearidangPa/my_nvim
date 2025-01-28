@@ -52,8 +52,16 @@ local function fold_node(node)
   end_row = end_row
 
   if start_row <= end_row then
-    vim.api.nvim_win_set_cursor(0, { start_row, 0 })
-    vim.cmd 'normal! za'
+    vim.cmd(string.format('%d,%dfold', start_row, end_row))
+  end
+end
+
+local function fold_node_recursively(node, bufnr)
+  -- Fold the current node
+  fold_node(node)
+
+  for child in node:iter_children() do
+    fold_node_recursively(child, bufnr)
   end
 end
 
@@ -64,16 +72,19 @@ local function fold_captured_nodes(bufnr, query)
   assert(root, 'Tree root is nil')
 
   local current_cursor = vim.api.nvim_win_get_cursor(0)
+  local folded_nodes = {}
+
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if node then
-      fold_node(node)
+      fold_node_recursively(node, bufnr)
+      table.insert(folded_nodes, node)
     end
   end
 
   vim.api.nvim_win_set_cursor(0, current_cursor)
 end
 
-vim.api.nvim_create_user_command('FoldSwitchCase', function()
+vim.api.nvim_create_user_command('FoldSwitch', function()
   local query = vim.treesitter.query.parse(
     'go',
     [[
@@ -82,16 +93,5 @@ vim.api.nvim_create_user_command('FoldSwitchCase', function()
     (default_case) @default_case
   ]]
   )
-  fold_captured_nodes(vim.api.nvim_get_current_buf(), query)
-end, {})
-
-vim.api.nvim_create_user_command('FoldSelectCase', function()
-  local query = vim.treesitter.query.parse(
-    'go',
-    [[
-    (communication_case) @comm_case
-  ]]
-  )
-  vim.api.nvim_set_option_value('foldmethod', 'manual', { scope = 'local' })
   fold_captured_nodes(vim.api.nvim_get_current_buf(), query)
 end, {})
