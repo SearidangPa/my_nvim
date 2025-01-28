@@ -33,7 +33,7 @@ local function fold_err_blocks(bufnr)
 
         if start_row <= end_row then
           vim.api.nvim_win_set_cursor(0, { start_row, 0 })
-          vim.cmd 'normal! za'
+          vim.cmd 'normal! zc'
         end
       end
     end
@@ -44,4 +44,43 @@ end
 
 vim.api.nvim_create_user_command('FoldErrBlocks', function()
   fold_err_blocks(vim.api.nvim_get_current_buf())
+end, {})
+
+local function fold_expression_case(bufnr)
+  local query = vim.treesitter.query.parse(
+    'go',
+    [[
+    (expression_case) @expr_case
+  ]]
+  )
+
+  local parser = vim.treesitter.get_parser(bufnr, 'go', {})
+  local tree = parser:parse()[1]
+  local root = tree:root()
+  assert(root, 'Tree root is nil')
+
+  local current_cursor = vim.api.nvim_win_get_cursor(0)
+
+  local function fold_node(node)
+    local start_row, _, end_row, _ = node:range()
+    start_row = start_row + 1
+    end_row = end_row
+
+    if start_row <= end_row then
+      vim.api.nvim_win_set_cursor(0, { start_row, 0 })
+      vim.cmd 'normal! zc'
+    end
+  end
+
+  for _, node in query:iter_captures(root, bufnr, 0, -1) do
+    if node then
+      fold_node(node)
+    end
+  end
+
+  vim.api.nvim_win_set_cursor(0, current_cursor)
+end
+
+vim.api.nvim_create_user_command('FoldExprCase', function()
+  fold_expression_case(vim.api.nvim_get_current_buf())
 end, {})
