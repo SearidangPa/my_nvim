@@ -1,4 +1,4 @@
-local function fold_node_recursively(node)
+function Fold_node_recursively(node)
   local start_row, _, end_row, _ = node:range()
   start_row = start_row + 1
   end_row = end_row + 1
@@ -8,11 +8,11 @@ local function fold_node_recursively(node)
   end
 
   for child in node:iter_children() do
-    fold_node_recursively(child)
+    Fold_node_recursively(child)
   end
 end
 
-local function fold_captured_nodes_recursively(query)
+function Fold_captured_nodes_recursively(query)
   local bufnr = vim.api.nvim_get_current_buf()
   local parser = vim.treesitter.get_parser(bufnr, 'go', {})
   local tree = parser:parse()[1]
@@ -21,12 +21,12 @@ local function fold_captured_nodes_recursively(query)
 
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if node then
-      fold_node_recursively(node)
+      Fold_node_recursively(node)
     end
   end
 end
 
-local function fold_switch()
+function Fold_switch()
   local query = vim.treesitter.query.parse(
     'go',
     [[
@@ -35,10 +35,10 @@ local function fold_switch()
     (default_case) @default_case
   ]]
   )
-  fold_captured_nodes_recursively(query)
+  Fold_captured_nodes_recursively(query)
 end
 
-local function fold_comm()
+function Fold_comm()
   local query = vim.treesitter.query.parse(
     'go',
     [[
@@ -46,76 +46,68 @@ local function fold_comm()
       (default_case) @default_case
     ]]
   )
-  fold_captured_nodes_recursively(query)
+  Fold_captured_nodes_recursively(query)
 end
 
-local function fold_if()
+function Fold_if()
   local query = vim.treesitter.query.parse(
     'go',
     [[
       (if_statement) @comm_case
     ]]
   )
-  fold_captured_nodes_recursively(query)
+  Fold_captured_nodes_recursively(query)
 end
 
-local function fold_short_var_decl()
+function Fold_short_var_decl()
   local query = vim.treesitter.query.parse(
     'go',
     [[
       (short_var_declaration ) @short_var_decl
     ]]
   )
-  fold_captured_nodes_recursively(query)
+  Fold_captured_nodes_recursively(query)
 end
 
-local function fold_return()
+function Fold_return()
   local query = vim.treesitter.query.parse(
     'go',
     [[
       (return_statement) @return_statement
     ]]
   )
-  fold_captured_nodes_recursively(query)
+  Fold_captured_nodes_recursively(query)
 end
 
 -- ============= User commands =============
 
 vim.api.nvim_create_user_command('FoldIf', function()
-  fold_if()
+  Fold_if()
 end, {})
 
 vim.api.nvim_create_user_command('FoldShortVarDecl', function()
-  fold_short_var_decl()
+  Fold_short_var_decl()
 end, {})
 
 vim.api.nvim_create_user_command('FoldReturn', function()
-  fold_return()
+  Fold_return()
 end, {})
 
-vim.api.nvim_create_user_command('FoldSwitch', fold_switch, {})
+vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
 
 -- =============== Combined ===============
 
 vim.api.nvim_create_user_command('FoldCase', function()
-  fold_switch()
-  fold_comm()
+  Fold_switch()
+  Fold_comm()
 end, {})
 
-local function fold_all()
-  fold_switch()
-  fold_comm()
-  fold_if()
-  fold_short_var_decl()
-  fold_return()
+function Fold_all()
+  Fold_switch()
+  Fold_comm()
+  Fold_if()
+  Fold_short_var_decl()
+  Fold_return()
 end
 
-vim.api.nvim_create_user_command('FoldAll', fold_all, {})
-
--- ============= Key mappings =============
-vim.keymap.set('n', '<leader>fs', fold_switch, { desc = '[F]old [S]witch' })
-vim.keymap.set('n', '<leader>fc', fold_comm, { desc = '[F]old [C]ommunication' })
-vim.keymap.set('n', '<leader>fi', fold_if, { desc = '[F]old [I]f' })
-vim.keymap.set('n', '<leader>fv', fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
-vim.keymap.set('n', '<leader>fr', fold_return, { desc = '[F]old [R]eturn' })
-vim.keymap.set('n', '<leader>fa', fold_all, { desc = '[F]old [A]ll' })
+vim.api.nvim_create_user_command('FoldAll', Fold_all, {})

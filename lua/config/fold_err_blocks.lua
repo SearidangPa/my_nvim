@@ -1,4 +1,4 @@
-local function fold_err_if_node(query, root, bufnr)
+function Fold_err_if_node(query, root, bufnr)
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if not node then
       return
@@ -49,9 +49,7 @@ local function fold_err()
   local root = tree:root()
   assert(root, 'Tree root is nil')
 
-  fold_err_if_node(query, root, bufnr)
+  Fold_err_if_node(query, root, bufnr)
 end
 
 vim.api.nvim_create_user_command('FoldErr', fold_err, {})
-
-vim.keymap.set('n', '<leader>fe', fold_err, { desc = '[F]old [E]rror block' })
