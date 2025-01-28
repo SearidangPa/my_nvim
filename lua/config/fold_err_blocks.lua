@@ -53,3 +53,5 @@ local function fold_err()
 end
 
 vim.api.nvim_create_user_command('FoldErr', fold_err, {})
+
+vim.keymap.set('n', '<leader>fe', fold_err, { desc = '[F]old [E]rror block' })

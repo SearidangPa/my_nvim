@@ -116,4 +116,35 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 
+-- ============= Key mappings =============
+vim.keymap.set('n', '<leader>fs', fold_switch, { desc = '[F]old [S]witch' })
+vim.keymap.set('n', '<leader>fc', fold_comm, { desc = '[F]old [C]ommunication' })
+vim.keymap.set('n', '<leader>fi', fold_if, { desc = '[F]old [I]f' })
+vim.keymap.set('n', '<leader>fv', fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
+vim.keymap.set('n', '<leader>fr', fold_return, { desc = '[F]old [R]eturn' })
+vim.keymap.set('n', '<leader>fa', fold_all, { desc = '[F]old [A]ll' })
+local function get_global_marks()
+  local marks = {}
+  for char = string.byte 'A', string.byte 'Z' do
+    local mark = string.char(char)
+    local pos = vim.fn.getpos("'" .. mark)
+    -- Check if the mark is valid (buffer number should not be 0)
+    if pos[1] ~= 0 then
+      table.insert(marks, {
+        mark = mark,
+        buffer = pos[1],
+        line = pos[2],
+        col = pos[3],
+        text = vim.fn.getline(pos[2]), -- Get the text at the line
+      })
+    end
+  end
+  return marks
+end
+
+local marks = get_global_marks()
+for _, mark in ipairs(marks) do
+  print(string.format("Mark '%s' -> Buffer: %d, Line: %d, Col: %d, Text: %s", mark.mark, mark.buffer, mark.line, mark.col, mark.text))
+end
+
 return {}
