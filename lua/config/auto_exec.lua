@@ -71,7 +71,6 @@ vim.keymap.set('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utp
 vim.keymap.set('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for command' })
 
 vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
-vim.keymap.set('n', '<leader>gmt', ':GoModTidy<CR>', { desc = '[G]o [M]od [T]idy' })
 vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 vim.keymap.set('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
 

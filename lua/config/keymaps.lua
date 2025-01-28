@@ -182,6 +182,6 @@ local function select_mark()
   end)
 end
 
-select_mark()
+vim.keymap.set('n', '<leader>gm', select_mark, { desc = '[G]lobal [M]ark' })
 
 return {}
