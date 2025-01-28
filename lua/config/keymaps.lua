@@ -1,7 +1,7 @@
 require 'config.fold_tree'
 require 'config.fold_err_blocks'
 
-local map = map
+local map = vim.keymap.set
 
 local function buf_clear_name_space()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
@@ -133,24 +133,54 @@ local function get_global_marks()
   for char = string.byte 'A', string.byte 'Z' do
     local mark = string.char(char)
     local pos = vim.fn.getpos("'" .. mark)
-    if pos[1] ~= 0 then
+    if pos[1] ~= 0 then -- Check if the mark is valid
       local bufnr = pos[1]
       local line = pos[2]
+      local col = pos[3]
+      local filepath = vim.fn.bufname(bufnr)
+      local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
       table.insert(marks, {
         mark = mark,
         bufnr = bufnr,
-        line = pos[2],
-        col = pos[3],
-        text = vim.fn.getbufline(pos[1], pos[2], pos[2])[1],
+        filename = filename ~= '' and filename or '[No Name]',
+        line = line,
+        col = col,
+        text = vim.fn.getbufline(bufnr, line)[1],
       })
     end
   end
   return marks
 end
 
-local marks = get_global_marks()
-for _, mark in ipairs(marks) do
-  print(string.format("Mark '%s' -> Buffer: %d, Line: %d, Col: %d, Text: %s", mark.mark, mark.bufnr, mark.line, mark.col, mark.text))
+local function handle_choice(choice)
+  if not choice then
+    vim.notify('No mark selected', vim.log.levels.INFO)
+    return
+  end
+  local line, col, bufnr = choice.line, choice.col, choice.bufnr
+  vim.api.nvim_set_current_buf(bufnr) -- Switch to the correct buffer
+  vim.api.nvim_win_set_cursor(0, { line, col })
+  vim.cmd 'normal! zz'
 end
 
+local function select_mark()
+  local marks = get_global_marks()
+  if #marks == 0 then
+    vim.notify('No global marks found', vim.log.levels.INFO)
+    return
+  end
+
+  local opts = {
+    prompt = 'Select mark:',
+    format_item = function(item)
+      return string.format("'%s': %s -> %s", item.mark, item.filename, item.text)
+    end,
+  }
+
+  vim.ui.select(marks, opts, function(choice)
+    handle_choice(choice)
+  end)
+end
+
+select_mark()
 return {}
