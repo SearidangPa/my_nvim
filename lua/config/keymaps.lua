@@ -133,11 +133,12 @@ local function get_global_marks()
   for char = string.byte 'A', string.byte 'Z' do
     local mark = string.char(char)
     local pos = vim.fn.getpos("'" .. mark)
-    -- Check if the mark is valid (buffer number should not be 0)
     if pos[1] ~= 0 then
+      local bufnr = pos[1]
+      local line = pos[2]
       table.insert(marks, {
         mark = mark,
-        buffer = pos[1],
+        bufnr = bufnr,
         line = pos[2],
         col = pos[3],
         text = vim.fn.getbufline(pos[1], pos[2], pos[2])[1],
@@ -149,7 +150,7 @@ end
 
 local marks = get_global_marks()
 for _, mark in ipairs(marks) do
-  print(string.format("Mark '%s' -> Buffer: %d, Line: %d, Col: %d, Text: %s", mark.mark, mark.buffer, mark.line, mark.col, mark.text))
+  print(string.format("Mark '%s' -> Buffer: %d, Line: %d, Col: %d, Text: %s", mark.mark, mark.bufnr, mark.line, mark.col, mark.text))
 end
 
 return {}
