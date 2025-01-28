@@ -1,7 +1,7 @@
 require 'config.fold_tree'
 require 'config.fold_err_blocks'
 
-local map = vim.keymap.set
+local map = map
 
 local function buf_clear_name_space()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
@@ -120,13 +120,13 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 
 -- ============= Fold =============
-vim.keymap.set('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
-vim.keymap.set('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
-vim.keymap.set('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
-vim.keymap.set('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
-vim.keymap.set('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
-vim.keymap.set('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
-vim.keymap.set('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
+map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
+map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
+map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
+map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
+map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
+map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
+map('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
 
 local function get_global_marks()
   local marks = {}
