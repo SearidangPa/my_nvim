@@ -64,36 +64,57 @@ end
 local function get_local_marks()
   local marks = {}
   local cwd = vim.fn.getcwd() -- Get the current working directory
-  for char = string.byte 'a', string.byte 'z' do
-    local mark = string.char(char)
-    local pos = vim.fn.getpos("'" .. mark)
-    if pos[1] ~= 0 then -- Check if the mark is valid
-      local bufnr = pos[1]
-      local line = pos[2]
-      local col = pos[3]
-      local filepath = vim.fn.bufname(bufnr)
-      local abs_filepath = vim.fn.fnamemodify(filepath, ':p') -- Convert to absolute path
-      -- Check if the file is under the current working directory
-      if abs_filepath:find(cwd, 1, true) then
-        local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
+  local mark_list = vim.fn.getmarklist(0) -- Get marks for the current buffer only
 
-        set_filetype_by_extension(filename, bufnr)
-        local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
-        table.insert(marks, {
-          mark = mark,
-          bufnr = bufnr,
-          filename = filename ~= '' and filename or '[No Name]',
-          filepath = abs_filepath,
-          line = line,
-          col = col,
-          nearest_func = nearest_func_at_line,
-          text = vim.fn.getbufline(bufnr, line)[1],
-        })
+  for _, mark_entry in ipairs(mark_list) do
+    local mark = mark_entry.mark:sub(2, 2) -- Extract the mark character (e.g., 'a', 'b', ...)
+    if mark:match '[a-z]' then -- Ensure it's a local mark
+      local bufnr = mark_entry.pos[1]
+      local line = mark_entry.pos[2]
+      local col = mark_entry.pos[3]
+
+      -- Ensure buffer is valid
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        local filepath = vim.fn.bufname(bufnr)
+        if filepath == '' then
+          filepath = '[No Name]'
+        end
+        local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
+
+        -- Ensure file is inside the current working directory
+        if abs_filepath:find(cwd, 1, true) then
+          local filename = vim.fn.fnamemodify(filepath, ':t')
+
+          -- Check if helper functions exist before calling them
+          if type(set_filetype_by_extension) == 'function' then
+            set_filetype_by_extension(filename, bufnr)
+          end
+
+          local nearest_func_at_line = nil
+          if type(Nearest_function_at_line) == 'function' then
+            nearest_func_at_line = Nearest_function_at_line(bufnr, line)
+          end
+
+          -- Get the text safely
+          local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
+
+          table.insert(marks, {
+            mark = mark,
+            bufnr = bufnr,
+            filename = filename ~= '' and filename or '[No Name]',
+            filepath = abs_filepath,
+            line = line,
+            col = col,
+            nearest_func = nearest_func_at_line,
+            text = text,
+          })
+        end
       end
     end
   end
   return marks
 end
+
 --------------------------------------------------------------------------------
 -- Jump to Mark: parse the line in the mark window to find the mark character. --
 --------------------------------------------------------------------------------
@@ -246,11 +267,11 @@ end
 
 -- Keymap to toggle the mark window
 vim.keymap.set('n', '<leader>tl', function()
-  toggle_mark_window { is_global = true }
+  toggle_mark_window { is_global = false }
 end, { desc = '[T]oggle [L]ocal marks' })
 
 vim.keymap.set('n', '<leader>tg', function()
-  toggle_mark_window()
+  toggle_mark_window { is_global = true }
 end, { desc = '[T]oggle [G]lobal marks' })
 
 -- Return the module’s functions
