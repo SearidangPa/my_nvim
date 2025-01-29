@@ -92,7 +92,7 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 map('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
--- =================== theme ==================
+-- =================== colorscheme ==================
 map('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
 map('n', '<leader>tcr', ':colorscheme rose-pine-moon<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
 map('n', '<leader>tcd', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [D]ark')
