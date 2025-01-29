@@ -77,7 +77,7 @@ local function show_fullscreen_popup_at_mark()
   local index = 1
   for line in f:lines() do
     if index == target_line then
-      table.insert(file_lines, '▶ ' .. line .. ' ◀◀◀')
+      table.insert(file_lines, '▶ ' .. line .. '◀-◀-◀')
     else
       table.insert(file_lines, '  ' .. line)
     end
@@ -242,7 +242,7 @@ local function toggle_mark_window()
         display_text = mark.nearest_func
       elseif mark.text then
         Set_buf_filetype_by_ext(filename, buf)
-        display_text = mark.text
+        display_text = vim.trim(mark.text)
       else
         display_text = ''
       end
