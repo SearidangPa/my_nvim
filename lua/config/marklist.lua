@@ -67,7 +67,7 @@ local function show_fullscreen_popup_at_mark()
   vim.g.current_mark = mark_char -- Update the current mark
 
   -- Find mark details
-  local all_marks = Get_global_marks()
+  local all_marks = Get_all_marks()
   local mark_info
   for _, m in ipairs(all_marks) do
     if m.mark == mark_char then
