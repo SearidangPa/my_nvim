@@ -23,11 +23,6 @@ return {
         desc = '[T]oggle [S]ymbols',
       },
       {
-        '<leader>tl',
-        '<cmd>Trouble lsp toggle focus=false win.position=right<cr>',
-        desc = '[T]oggle [L]SP Definitions / references / ... (Trouble)',
-      },
-      {
         '<leader>tq',
         '<cmd>Trouble qflist toggle<cr>',
         desc = '[T]oggle Trouble [Q]uickfix',
