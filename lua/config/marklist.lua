@@ -137,7 +137,7 @@ local function show_fullscreen_popup_at_mark()
   local main_ft = vim.bo[main_buf].filetype
 
   vim.bo[popup_buf].filetype = main_ft -- Apply the same filetype (syntax highlighting)
-  vim.api.nvim_win_set_option(popup_win, 'winhl', 'Normal:Normal') -- Match background
+  vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = popup_win }) -- Match background
 
   vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
   vim.cmd 'normal! zz' -- Center cursor
