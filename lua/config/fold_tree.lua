@@ -4,6 +4,22 @@ hl.bg = bg
 vim.api.nvim_set_hl(0, 'Folded', hl)
 vim.opt.foldtext = [[luaeval('HighlightedFoldtext')()]]
 
+function HighlightedFoldtext()
+  local pos = vim.v.foldstart
+  local end_pos = vim.v.foldend
+  local line_count = end_pos - pos + 1
+  local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
+  local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
+
+  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
+  if line_pos < #line then
+    table.insert(result, { line:sub(line_pos + 1), 'Folded' })
+  end
+  return result
+end
+
+-- ============= fold nodes functions =============
+
 function Fold_node_recursively(node)
   local start_row, _, end_row, _ = node:range()
   start_row = start_row + 1
@@ -33,7 +49,7 @@ function Fold_captured_nodes_recursively(query)
   end
 end
 
-function Fold_err_if_node(query, root, bufnr)
+function Fold_errIf_node(query, root, bufnr)
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if not node then
       return
@@ -64,7 +80,7 @@ function Fold_err_if_node(query, root, bufnr)
   end
 end
 
--- ============= Fold functions =============
+-- ============= Tree-sitter queries =============
 
 local function fold_err()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -86,7 +102,7 @@ local function fold_err()
   local root = tree:root()
   assert(root, 'Tree root is nil')
 
-  Fold_err_if_node(query, root, bufnr)
+  Fold_errIf_node(query, root, bufnr)
 end
 
 vim.api.nvim_create_user_command('FoldErr', fold_err, {})
@@ -110,6 +126,17 @@ function Fold_comm()
     [[
       (communication_case) @comm_case
       (default_case) @default_case
+    ]]
+  )
+  Fold_captured_nodes_recursively(query)
+end
+
+function Fold_Func()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  local query = vim.treesitter.query.parse(
+    lang,
+    [[
+      (function_declaration ) @func_decl
     ]]
   )
   Fold_captured_nodes_recursively(query)
@@ -181,20 +208,6 @@ end
 
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
-function HighlightedFoldtext()
-  local pos = vim.v.foldstart
-  local end_pos = vim.v.foldend
-  local line_count = end_pos - pos + 1
-  local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
-  local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
-
-  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
-  if line_pos < #line then
-    table.insert(result, { line:sub(line_pos + 1), 'Folded' })
-  end
-  return result
-end
-
 local map = vim.keymap.set
 -- ============= Fold =============
 map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
@@ -203,4 +216,5 @@ map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
 map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
 map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
 map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
-map('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
+map('n', '<leader>fe', Fold_errIf_node, { desc = '[F]old [E]rror block' })
+map('n', '<leader>ff', Fold_Func, { desc = '[F]old [F]unction' })
