@@ -24,7 +24,7 @@ end
 function Fold_node_recursively(node)
   local start_row, _, end_row, _ = node:range()
   start_row = start_row + 1
-  end_row = end_row + 1
+  end_row = end_row
 
   if start_row <= end_row then
     vim.cmd(string.format('%d,%dfold', start_row, end_row))
@@ -203,6 +203,7 @@ vim.api.nvim_create_user_command('FoldReturn', Fold_return, {})
 vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
 vim.api.nvim_create_user_command('FoldComm', Fold_comm, {})
 vim.api.nvim_create_user_command('FoldFunc', Fold_Func, {})
+vim.api.nvim_create_user_command('FoldTypeDecl', Fold_Type_Decl, {})
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
 vim.api.nvim_create_autocmd('FileType', {
