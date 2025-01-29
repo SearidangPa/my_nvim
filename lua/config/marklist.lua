@@ -76,9 +76,6 @@ local function get_local_marks()
       -- Ensure buffer is valid
       if vim.api.nvim_buf_is_valid(bufnr) then
         local filepath = vim.fn.bufname(bufnr)
-        if filepath == '' then
-          filepath = '[No Name]'
-        end
         local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
 
         local filename = vim.fn.fnamemodify(filepath, ':t')
