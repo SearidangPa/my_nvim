@@ -133,6 +133,117 @@ local function jump_to_mark()
   vim.cmd 'normal! zz'
 end
 
+local function show_fullscreen_popup_at_mark()
+  local marklist_buf = vim.g.mark_window_buf
+  if not marklist_buf or not vim.api.nvim_buf_is_valid(marklist_buf) then
+    return
+  end
+
+  -- Get current cursor position in the marklist
+  local line_num = vim.fn.line '.'
+  local line_text = vim.fn.getline(line_num)
+
+  -- Extract mark character
+  local mark_char = line_text:match '├─ ([A-Z]):'
+  if not mark_char then
+    -- Close the popup if cursor moves away from a valid mark
+    if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
+      vim.api.nvim_win_close(vim.g.popup_win, true)
+      vim.g.popup_win = nil
+      vim.g.popup_buf = nil
+
+      -- Restore original window
+      if vim.g.original_win and vim.api.nvim_win_is_valid(vim.g.original_win) then
+        vim.api.nvim_set_current_win(vim.g.original_win)
+      end
+    end
+    return
+  end
+
+  -- Find mark details
+  local all_marks = get_global_marks()
+  local mark_info
+  for _, m in ipairs(all_marks) do
+    if m.mark == mark_char then
+      mark_info = m
+      break
+    end
+  end
+
+  if not mark_info or not mark_info.filepath or mark_info.filepath == '' then
+    return
+  end
+
+  local filepath = mark_info.filepath
+  local target_line = mark_info.line
+
+  -- Save original window
+  vim.g.original_win = vim.api.nvim_get_current_win()
+
+  -- Create a new buffer for the popup window
+  local popup_buf = vim.api.nvim_create_buf(false, true)
+
+  -- Read the full file content
+  local file_lines = {}
+  local f = io.open(filepath, 'r')
+  if not f then
+    return
+  end
+
+  for line in f:lines() do
+    table.insert(file_lines, line)
+  end
+  f:close()
+
+  vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
+
+  -- Get main window dimensions
+  local main_win = vim.g.original_win
+  local win_config = vim.api.nvim_win_get_config(main_win)
+  local width = vim.api.nvim_win_get_width(main_win)
+  local height = vim.api.nvim_win_get_height(main_win)
+  local row = win_config.row[false] or 0
+  local col = win_config.col[false] or 0
+
+  -- Create a floating window with the same size as the main window
+  local popup_win = vim.api.nvim_open_win(popup_buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'none', -- No border to make it feel seamless
+  })
+
+  -- Set buffer options
+  vim.bo[popup_buf].buftype = 'nofile'
+  vim.bo[popup_buf].bufhidden = 'wipe'
+  vim.bo[popup_buf].swapfile = false
+  vim.wo[popup_win].wrap = false
+
+  -- Move cursor to the marked line and center it
+  vim.api.nvim_win_set_cursor(popup_win, { target_line, 0 })
+  vim.cmd 'normal! zz' -- Center cursor
+
+  -- Store the popup window ID
+  vim.g.popup_win = popup_win
+  vim.g.popup_buf = popup_buf
+end
+
+-- Close the popup and return to the original window when leaving the marklist
+local function close_popup_on_leave()
+  if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
+    vim.api.nvim_win_close(vim.g.popup_win, true)
+    vim.g.popup_win = nil
+    vim.g.popup_buf = nil
+
+    -- Restore original window
+    if vim.g.original_win and vim.api.nvim_win_is_valid(vim.g.original_win) then
+      vim.api.nvim_set_current_win(vim.g.original_win)
+    end
+  end
+end
 --------------------------------------------------------------------------------
 -- Toggle a scratch window on the right that displays all global marks, grouped
 -- by filename, in a tree-like format.
@@ -172,11 +283,19 @@ local function toggle_mark_window()
   vim.api.nvim_win_set_buf(win, buf)
   vim.g.mark_window_win = win
 
+  -- Trigger the popup when moving the cursor in the marklist
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = vim.g.mark_window_buf,
     callback = function()
-      jump_to_mark()
-      vim.api.nvim_set_current_win(vim.g.mark_window_win)
+      show_fullscreen_popup_at_mark()
+    end,
+  })
+
+  -- Close popup when leaving the marklist
+  vim.api.nvim_create_autocmd('BufLeave', {
+    buffer = vim.g.mark_window_buf,
+    callback = function()
+      close_popup_on_leave()
     end,
   })
 
