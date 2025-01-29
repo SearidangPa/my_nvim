@@ -223,11 +223,8 @@ local function toggle_mark_window()
 
   local func_highlight_positions = {}
 
-  local ns_id = vim.api.nvim_create_namespace 'MarkListVirtualText'
-
   for filename, marks in pairs(grouped_marks) do
     local filename_line_idx = #lines
-
     table.insert(lines, filename)
     table.sort(marks, function(a, b)
       return a.mark < b.mark
@@ -248,28 +245,20 @@ local function toggle_mark_window()
       local line_text = string.format(' ├─ %s: %s', mark.mark, display_text)
       table.insert(lines, line_text)
 
-      vim.api.nvim_buf_set_lines(buf, 0, 1, false, line_text)
-      vim.api.nvim_buf_set_extmark(buf, ns_id, filename_line_idx + 1, 0, {
-        virt_text = { { filename, 'Comment' } },
-        virt_text_pos = 'overlay',
-        hl_mode = 'combine',
-      })
-      break
+      -- If nearest_func exists, store the highlight position
+      if mark.nearest_func then
+        local line_idx = #lines -- Line index after insertion
+        local col_start = #string.format(' ├─ %s: ', mark.mark) -- Start after `mark.mark`
+        local col_end = col_start + #mark.nearest_func
 
-      -- -- If nearest_func exists, store the highlight position
-      -- if mark.nearest_func then
-      --   local line_idx = #lines -- Line index after insertion
-      --   local col_start = #string.format(' ├─ %s: ', mark.mark) -- Start after `mark.mark`
-      --   local col_end = col_start + #mark.nearest_func
-      --
-      --   -- Store the position for highlighting later
-      --   table.insert(func_highlight_positions, { line_idx, col_start, col_end })
-      -- end
+        -- Store the position for highlighting later
+        table.insert(func_highlight_positions, { line_idx, col_start, col_end })
+      end
     end
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  -- vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
 
