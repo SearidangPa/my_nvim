@@ -138,7 +138,7 @@ end
 -- Toggle a scratch window on the right that displays all global marks, grouped
 -- by filename, in a tree-like format.
 --------------------------------------------------------------------------------
-local function toggle_mark_window(opts)
+local function toggle_mark_window()
   -- Track window/buffer state
   if not vim.g.mark_window_buf then
     vim.g.mark_window_buf = nil
@@ -182,13 +182,10 @@ local function toggle_mark_window(opts)
   vim.wo[win].wrap = false
 
   -- Retrieve global marks
-  local all_marks
-  local is_global = opts.is_global or false
-  if is_global then
-    all_marks = get_global_marks()
-  else
-    all_marks = get_local_marks()
-  end
+  local global_marks = get_global_marks()
+  local local_marks = get_local_marks()
+  local all_marks = vim.list_extend(global_marks, local_marks)
+
   if #all_marks == 0 then
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
     return
@@ -248,14 +245,7 @@ local function toggle_mark_window(opts)
   end, { noremap = true, silent = true, buffer = buf })
 end
 
--- Keymap to toggle the mark window
-vim.keymap.set('n', '<leader>tl', function()
-  toggle_mark_window { is_global = false }
-end, { desc = '[T]oggle [L]ocal marks' })
-
-vim.keymap.set('n', '<leader>tg', function()
-  toggle_mark_window { is_global = true }
-end, { desc = '[T]oggle [G]lobal marks' })
+vim.keymap.set('n', '<leader>tg', toggle_mark_window, { desc = '[T]oggle [G]lobal marks' })
 
 -- Return the module’s functions
 return {
