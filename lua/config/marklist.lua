@@ -76,7 +76,7 @@ local function show_fullscreen_popup_at_mark()
   local index = 1
   for line in f:lines() do
     if index == target_line then
-      table.insert(file_lines, '▶ ' .. line)
+      table.insert(file_lines, '▶ ' .. line .. ' ◀◀◀')
     else
       table.insert(file_lines, '  ' .. line)
     end
@@ -203,6 +203,7 @@ local function toggle_mark_window()
 
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
+  vim.bo[buf].buftype = 'nofile'
   vim.wo[win].number = false
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
@@ -226,6 +227,8 @@ local function toggle_mark_window()
   local lines = {}
   local filename_line_indices = {}
 
+  local highlight_positions = {} -- Initialize highlight tracking table
+
   for filename, marks in pairs(grouped_marks) do
     local filename_line_idx = #lines
     table.insert(lines, filename)
@@ -233,15 +236,43 @@ local function toggle_mark_window()
       return a.mark < b.mark
     end)
     for _, mark in ipairs(marks) do
-      table.insert(lines, string.format(' ├─ %s: %s', mark.mark, mark.nearest_func or mark.text or ''))
+      local func_text = mark.nearest_func or mark.text or ''
+      local line_text = string.format(' ├─ %s: %s', mark.mark, func_text)
+      table.insert(lines, line_text)
+
+      -- If nearest_func exists, store the highlight position
+      if mark.nearest_func then
+        local line_idx = #lines -- Line index after insertion
+        local col_start = #string.format(' ├─ %s: ', mark.mark) -- Start after `mark.mark`
+        local col_end = col_start + #mark.nearest_func
+
+        -- Store the position for highlighting later
+        table.insert(highlight_positions, { line_idx, col_start, col_end })
+      end
     end
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-  vim.api.nvim_set_hl(0, 'MarkListFile', { fg = '#5097A4' })
+  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
+  vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
+
   for _, line_idx in ipairs(filename_line_indices) do
-    vim.api.nvim_buf_add_highlight(buf, -1, 'MarkListFile', line_idx, 0, -1)
+    vim.api.nvim_buf_add_highlight(buf, -1, 'FileHighlight', line_idx, 0, -1)
+  end
+  for _, pos in ipairs(highlight_positions) do
+    local line_idx, col_start, col_end = unpack(pos)
+    vim.api.nvim_buf_add_highlight(buf, 0, '@function', line_idx - 1, col_start, col_end)
+  end
+
+  for line_idx, line in ipairs(lines) do
+    local mark_match = line:match '├─%s([A-Za-z]):' -- Match both uppercase and lowercase marks
+    if mark_match then
+      local end_col = line:find(mark_match .. ':') -- Find exact position
+      if end_col then
+        vim.api.nvim_buf_add_highlight(buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
+      end
+    end
   end
 
   vim.keymap.set('n', '<CR>', function()
