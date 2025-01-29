@@ -94,8 +94,8 @@ map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua 
 
 -- =================== colorscheme ==================
 map('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
-map('n', '<leader>tcr', ':colorscheme rose-pine-moon<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
-map('n', '<leader>tcd', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [D]ark')
+map('n', '<leader>tcr', ':colorscheme rose-pine-moon<CR>', map_opt '[T]oggle [C]olorscheme [R]ose-pine')
+map('n', '<leader>tck', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [K]anagawa')
 
 -- =================== Navigation ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
