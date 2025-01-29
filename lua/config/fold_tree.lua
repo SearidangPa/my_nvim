@@ -189,9 +189,12 @@ vim.api.nvim_create_user_command('FoldIf', function()
   Fold_if()
 end, {})
 
-vim.api.nvim_create_user_command('FoldShortVarDecl', function()
-  Fold_short_var_decl()
-end, {})
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  callback = function()
+    vim.api.nvim_create_user_command('FoldShortVarDecl', Fold_short_var_decl, {})
+  end,
+})
 
 vim.api.nvim_create_user_command('FoldReturn', function()
   Fold_return()
