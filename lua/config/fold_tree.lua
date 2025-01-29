@@ -1,3 +1,4 @@
+local map = vim.keymap.set
 local bg = vim.api.nvim_get_hl(0, { name = 'StatusLine' }).bg
 local hl = vim.api.nvim_get_hl(0, { name = 'Folded' })
 hl.bg = bg
@@ -193,6 +194,7 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'go',
   callback = function()
     vim.api.nvim_create_user_command('FoldShortVarDecl', Fold_short_var_decl, {})
+    map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
   end,
 })
 
@@ -210,11 +212,9 @@ end, {})
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
 -- ============= keymaps =============
-local map = vim.keymap.set
 map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
 map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
 map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
-map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
 map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
 map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
 map('n', '<leader>fe', Fold_errIf_node, { desc = '[F]old [E]rror block' })
