@@ -101,8 +101,8 @@ local function show_fullscreen_popup_at_mark()
 
   local ft = vim.bo[popup_buf].filetype
   if ft and ft ~= '' then
-    vim.api.nvim_set_option_value('filetype', ft, { buffer = popup_buf })
-    vim.api.nvim_set_option_value('syntax', ft, { buffer = popup_buf })
+    vim.api.nvim_set_option_value('filetype', ft, { buf = popup_buf })
+    vim.api.nvim_set_option_value('syntax', ft, { buf = popup_buf })
     vim.cmd('doautocmd BufRead ' .. filepath)
     vim.cmd 'syntax enable'
   end
