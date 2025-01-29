@@ -1,4 +1,4 @@
-function Set_filetype_by_extension(filename, bufnr)
+function Set_buf_filetype_by_ext(filename, bufnr)
   -- Get the filename of the buffer
   -- Extract the file extension
   local ext = filename:match '^.+%.(.+)$'
@@ -40,7 +40,7 @@ function Get_global_marks()
       if abs_filepath:find(cwd, 1, true) then
         local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
 
-        Set_filetype_by_extension(filename, bufnr)
+        Set_buf_filetype_by_ext(filename, bufnr)
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
         table.insert(marks, {
           mark = mark,
@@ -58,7 +58,7 @@ function Get_global_marks()
   return marks
 end
 
-local function get_local_marks()
+function Get_local_marks()
   local marks = {}
   local cwd = vim.fn.getcwd() -- Get the current working directory
   local mark_list = vim.fn.getmarklist(0) -- Get marks for the current buffer only
@@ -97,7 +97,7 @@ end
 
 function Get_all_marks()
   local global_marks = Get_global_marks()
-  local local_marks = get_local_marks()
+  local local_marks = Get_local_marks()
   local all_marks = vim.list_extend(global_marks, local_marks)
   return all_marks
 end

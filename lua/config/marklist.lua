@@ -114,6 +114,7 @@ local function show_fullscreen_popup_at_mark()
   end
   f:close()
 
+  Set_buf_filetype_by_ext(filepath, popup_buf)
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
   -- Get editor dimensions to calculate the floating window position
@@ -237,7 +238,7 @@ local function toggle_mark_window()
 
   -- Retrieve global marks
   local global_marks = Get_global_marks()
-  local local_marks = get_local_marks()
+  local local_marks = Get_local_marks()
   local all_marks = vim.list_extend(global_marks, local_marks)
 
   if #all_marks == 0 then
