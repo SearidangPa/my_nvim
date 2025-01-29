@@ -1,5 +1,6 @@
 require 'config.util_find_func'
 require 'config.util_marklist'
+require 'config.util_highlight'
 
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf

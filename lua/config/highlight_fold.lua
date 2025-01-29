@@ -34,24 +34,3 @@ function Highlight_Line_With_Treesitter(line, pos)
 
   return result, line_pos
 end
-
-function HighlightedFoldtext()
-  local pos = vim.v.foldstart
-  local end_pos = vim.v.foldend
-  local line_count = end_pos - pos + 1
-  local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
-  local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
-
-  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
-  if line_pos < #line then
-    table.insert(result, { line:sub(line_pos + 1), 'Folded' })
-  end
-  return result
-end
-
-local bg = vim.api.nvim_get_hl(0, { name = 'StatusLine' }).bg
-local hl = vim.api.nvim_get_hl(0, { name = 'Folded' })
-hl.bg = bg
-vim.api.nvim_set_hl(0, 'Folded', hl)
-
-vim.opt.foldtext = [[luaeval('HighlightedFoldtext')()]]
