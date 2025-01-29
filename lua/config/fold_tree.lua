@@ -208,8 +208,8 @@ end
 
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
+-- ============= keymaps =============
 local map = vim.keymap.set
--- ============= Fold =============
 map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
 map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
 map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
