@@ -137,7 +137,8 @@ function Fold_Func()
   local query = vim.treesitter.query.parse(
     lang,
     [[
-      (function_declaration ) @func_decl
+      (function_declaration) @func_decl
+      (method_declaration) @method_decl
     ]]
   )
   Fold_captured_nodes_recursively(query)
