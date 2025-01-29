@@ -73,7 +73,7 @@ end
 
 
 
-local function get_nearest_function(bufnr, line)
+function Nearest_function_at_line(bufnr, line)
   local ts = vim.treesitter
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
@@ -121,7 +121,7 @@ vim.api.nvim_create_user_command('NearestFunc', function()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
-  local func_name = get_nearest_function(bufnr, line)
+  local func_name = Nearest_function_at_line(bufnr, line)
   if func_name then
     print("Nearest function:", func_name)
   else
