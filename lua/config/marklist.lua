@@ -42,8 +42,6 @@ local function get_global_marks()
       -- Check if the file is under the current working directory
       if abs_filepath:find(cwd, 1, true) then
         local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
-        vim.api.nvim_set_current_win(vim.g.main_window)
-        print(string.format('filename: %s, bufnr: %d', filename, bufnr))
 
         set_filetype_by_extension(filename, bufnr)
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
@@ -62,40 +60,6 @@ local function get_global_marks()
   end
   return marks
 end
-
--- For quickselect UI (optional in your setup)
-local function handle_mark_choice(choice)
-  if not choice then
-    vim.notify('No mark selected', vim.log.levels.INFO)
-    return
-  end
-  local line, col, bufnr = choice.line, choice.col, choice.bufnr
-  vim.api.nvim_set_current_buf(bufnr)
-  vim.api.nvim_win_set_cursor(0, { line, col })
-  vim.cmd 'normal! zz'
-end
-
--- Optional: If you want a quick UI select for global marks
-local function select_mark()
-  local marks = get_global_marks()
-  if #marks == 0 then
-    vim.notify('No global marks found', vim.log.levels.INFO)
-    return
-  end
-
-  local opts = {
-    prompt = 'Select mark:',
-    format_item = function(item)
-      return string.format("'%s': %s \\uf138 %s", item.mark, item.filename, item.text)
-    end,
-  }
-
-  vim.ui.select(marks, opts, function(choice)
-    handle_mark_choice(choice)
-  end)
-end
-
-vim.keymap.set('n', '<leader>gm', select_mark, { desc = '[G]lobal [M]ark' })
 
 --------------------------------------------------------------------------------
 -- Jump to Mark: parse the line in the mark window to find the mark character. --
@@ -116,7 +80,7 @@ local function jump_to_mark()
   -- or
   --   'A': (120, 1) -> some text
   -- The pattern captures an uppercase letter within single quotes.
-  local mark_char = line_text:match "'([A-Z])':"
+  local mark_char = line_text:match '([A-Z]):'
   if not mark_char then
     -- Possibly on a filename line or invalid line
     vim.notify('No valid mark found on this line.', vim.log.levels.ERROR)
@@ -210,7 +174,7 @@ local function toggle_mark_window()
       return a.mark < b.mark
     end)
     for _, mark in ipairs(marks) do
-      table.insert(lines, string.format(' ├─ %s -> %s', mark.mark, mark.nearest_func or ''))
+      table.insert(lines, string.format(' ├─ %s: %s', mark.mark, mark.nearest_func or ''))
     end
     -- `filename_line_idx` was the index before adding the filename line.
     -- So the real line for highlight is that index we just used.
