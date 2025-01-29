@@ -135,18 +135,15 @@ function Nearest_function_decl_at_cursor()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(bufnr, lang)
   if not parser then
-    print 'Treesitter parser not found for Go'
     return "" end
 
   local tree = parser:parse()[1]
   if not tree then
-    print 'Parse tree not found'
     return ""
   end
 
   local cursor_node = ts_utils.get_node_at_cursor()
   if not cursor_node then
-    print 'Cursor node not found'
     return ""
   end
 
@@ -157,18 +154,14 @@ function Nearest_function_decl_at_cursor()
       for child in function_node:iter_children() do
         if child:type() == 'identifier' then
           local function_name = get_node_text(child, bufnr)
-          print('nearest function:', function_name)
           return function_name
         end
       end
     end
     function_node = function_node:parent()
   end
-
-  print 'No function declaration found'
 end
 
-vim.api.nvim_create_user_command('NearestFuncDecl',Nearest_function_decl_at_cursor, {})
 
 local function move_to_next_valid_field_identifier()
   local bufnr = vim.api.nvim_get_current_buf()

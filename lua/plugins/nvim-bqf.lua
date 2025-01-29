@@ -16,7 +16,7 @@ return {
   config = function()
     require('bqf').setup {
       preview = {
-        win_vheight = 30,
+        win_vheight = 999,
       },
     }
   end,

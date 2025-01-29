@@ -72,6 +72,15 @@ return {
     local ll = require 'lualine'
     require 'config.util_find_func'
 
+    local function nearest_func_name_if_exists()
+      local func_name = Nearest_function_decl_at_cursor()
+      if func_name then
+        return '%#TabLineSelItalic#' .. func_name
+      end
+      return ''
+    end
+    vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
+
     ll.setup {
       options = {
         globalstatus = true,
@@ -87,7 +96,7 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 4 } },
-        lualine_x = {},
+        lualine_x = { nearest_func_name_if_exists },
         lualine_y = { get_harpoon_filenames_second_half },
         lualine_z = {
           {
@@ -101,7 +110,7 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { Nearest_function_decl_at_cursor },
+        lualine_x = {},
         lualine_y = { get_harpoon_filenames_first_three },
         lualine_z = {},
       },
