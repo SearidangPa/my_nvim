@@ -21,7 +21,6 @@ local function set_filetype_by_extension(filename, bufnr)
   local filetype = filetype_map[ext]
   if filetype then
     vim.bo[bufnr].filetype = filetype
-    print("Filetype set to '" .. filetype .. "' for buffer " .. bufnr)
   else
     print('No filetype mapping for extension: ' .. ext)
   end
@@ -116,11 +115,11 @@ local function jump_to_mark()
   --   ├─ 'A': (120, 1) -> some text
   -- or
   --   'A': (120, 1) -> some text
-  -- The pattern captures an uppercase letter within single quotes.
-  local mark_char = line_text:match '([A-Z]):'
+  -- The pattern captures an uppercase letter hin single quotes.
+  local mark_char = line_text:match '([A-Z]):' or line_text:match '([a-z]):'
   if not mark_char then
     -- Possibly on a filename line or invalid line
-    vim.notify('No valid mark found on this line.', vim.log.levels.ERROR)
+    print(string.format('No mark character found in line %d: %s', line_num, line_text))
     return
   end
 
@@ -172,6 +171,14 @@ local function toggle_mark_window()
   vim.api.nvim_win_set_width(win, window_width)
   vim.api.nvim_win_set_buf(win, buf)
   vim.g.mark_window_win = win
+
+  vim.api.nvim_create_autocmd('CursorMoved', {
+    buffer = vim.g.mark_window_buf,
+    callback = function()
+      jump_to_mark()
+      vim.api.nvim_set_current_win(vim.g.mark_window_win)
+    end,
+  })
 
   -- Set buffer/window options
   vim.bo[buf].buftype = 'nofile'
@@ -245,7 +252,7 @@ local function toggle_mark_window()
   end, { noremap = true, silent = true, buffer = buf })
 end
 
-vim.keymap.set('n', '<leader>tg', toggle_mark_window, { desc = '[T]oggle [G]lobal marks' })
+vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
 
 -- Return the module’s functions
 return {
