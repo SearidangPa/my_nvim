@@ -175,6 +175,14 @@ function Fold_return()
   Fold_captured_nodes_recursively(query)
 end
 
+function Fold_all()
+  Fold_switch()
+  Fold_comm()
+  Fold_if()
+  Fold_short_var_decl()
+  Fold_return()
+end
+
 -- ============= User commands =============
 
 vim.api.nvim_create_user_command('FoldIf', function()
@@ -191,20 +199,10 @@ end, {})
 
 vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
 
--- =============== Combined ===============
-
 vim.api.nvim_create_user_command('FoldCase', function()
   Fold_switch()
   Fold_comm()
 end, {})
-
-function Fold_all()
-  Fold_switch()
-  Fold_comm()
-  Fold_if()
-  Fold_short_var_decl()
-  Fold_return()
-end
 
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
