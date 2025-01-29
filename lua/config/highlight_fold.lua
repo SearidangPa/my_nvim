@@ -1,9 +1,4 @@
-function HighlightedFoldtext()
-  local pos = vim.v.foldstart
-  local end_pos = vim.v.foldend
-  local line_count = end_pos - pos + 1
-  local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
-
+function Highlight_Line_With_Treesitter(line, pos)
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(0, lang)
   local query = vim.treesitter.query.get(parser:lang(), 'highlights')
@@ -37,14 +32,20 @@ function HighlightedFoldtext()
     end
   end
 
-  -- Add remaining unhighlighted text
+  return result, line_pos
+end
+
+function HighlightedFoldtext()
+  local pos = vim.v.foldstart
+  local end_pos = vim.v.foldend
+  local line_count = end_pos - pos + 1
+  local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
+  local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
+
+  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
   if line_pos < #line then
     table.insert(result, { line:sub(line_pos + 1), 'Folded' })
   end
-
-  -- Add line count to the fold text
-  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
-
   return result
 end
 
