@@ -228,7 +228,7 @@ local function toggle_mark_window()
   local lines = {}
   local filename_line_indices = {}
 
-  local highlight_positions = {} -- Initialize highlight tracking table
+  local func_highlight_positions = {}
 
   for filename, marks in pairs(grouped_marks) do
     local filename_line_idx = #lines
@@ -236,9 +236,20 @@ local function toggle_mark_window()
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
+
     for _, mark in ipairs(marks) do
-      local func_text = mark.nearest_func or mark.text or ''
-      local line_text = string.format(' ├─ %s: %s', mark.mark, func_text)
+      local display_text
+      if mark.nearest_func then
+        display_text = mark.nearest_func
+      elseif mark.text then
+        Set_buf_filetype_by_ext(filename, buf)
+        display_text, _ = Highlight_Line_With_Treesitter(mark.text, mark.line)
+      else
+        display_text = ''
+      end
+
+      -- local display_text = mark.nearest_func or mark.text or ''
+      local line_text = string.format(' ├─ %s: %s', mark.mark, display_text)
       table.insert(lines, line_text)
 
       -- If nearest_func exists, store the highlight position
@@ -248,7 +259,7 @@ local function toggle_mark_window()
         local col_end = col_start + #mark.nearest_func
 
         -- Store the position for highlighting later
-        table.insert(highlight_positions, { line_idx, col_start, col_end })
+        table.insert(func_highlight_positions, { line_idx, col_start, col_end })
       end
     end
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
@@ -261,7 +272,7 @@ local function toggle_mark_window()
   for _, line_idx in ipairs(filename_line_indices) do
     vim.api.nvim_buf_add_highlight(buf, -1, 'FileHighlight', line_idx, 0, -1)
   end
-  for _, pos in ipairs(highlight_positions) do
+  for _, pos in ipairs(func_highlight_positions) do
     local line_idx, col_start, col_end = unpack(pos)
     vim.api.nvim_buf_add_highlight(buf, 0, '@function', line_idx - 1, col_start, col_end)
   end

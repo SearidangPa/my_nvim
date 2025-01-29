@@ -1,6 +1,4 @@
 function Set_buf_filetype_by_ext(filepath, bufnr)
-  -- Get the filename of the buffer
-  -- Extract the file extension
   local filename = vim.fn.fnamemodify(filepath, ':t')
   local ext = filename:match '^.+%.(.+)$'
   if not ext then
@@ -8,15 +6,12 @@ function Set_buf_filetype_by_ext(filepath, bufnr)
     return
   end
 
-  -- Map file extensions to filetypes
   local filetype_map = {
     go = 'go',
     lua = 'lua',
     py = 'python',
-    -- Add more extensions as needed
   }
 
-  -- Set the filetype if it's in the map
   local filetype = filetype_map[ext]
   if filetype then
     vim.bo[bufnr].filetype = filetype
@@ -27,19 +22,18 @@ end
 
 function Get_global_marks()
   local marks = {}
-  local cwd = vim.fn.getcwd() -- Get the current working directory
+  local cwd = vim.fn.getcwd()
   for char = string.byte 'A', string.byte 'Z' do
     local mark = string.char(char)
     local pos = vim.fn.getpos("'" .. mark)
-    if pos[1] ~= 0 then -- Check if the mark is valid
+    if pos[1] ~= 0 then
       local bufnr = pos[1]
       local line = pos[2]
       local col = pos[3]
       local filepath = vim.fn.bufname(bufnr)
-      local abs_filepath = vim.fn.fnamemodify(filepath, ':p') -- Convert to absolute path
-      -- Check if the file is under the current working directory
+      local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
       if abs_filepath:find(cwd, 1, true) then
-        local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
+        local filename = vim.fn.fnamemodify(filepath, ':t')
 
         Set_buf_filetype_by_ext(filename, bufnr)
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
@@ -61,12 +55,11 @@ end
 
 function Get_local_marks()
   local marks = {}
-  local cwd = vim.fn.getcwd() -- Get the current working directory
-  local mark_list = vim.fn.getmarklist(0) -- Get marks for the current buffer only
+  local mark_list = vim.fn.getmarklist(0)
 
   for _, mark_entry in ipairs(mark_list) do
-    local mark = mark_entry.mark:sub(2, 2) -- Extract the mark character (e.g., 'a', 'b', ...)
-    if mark:match '[a-z]' then -- Ensure it's a local mark
+    local mark = mark_entry.mark:sub(2, 2)
+    if mark:match '[a-z]' then
       local bufnr = mark_entry.pos[1]
       local line = mark_entry.pos[2]
       local col = mark_entry.pos[3]
@@ -77,7 +70,6 @@ function Get_local_marks()
 
         local filename = vim.fn.fnamemodify(filepath, ':t')
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
-        -- Get the text safely
         local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
         table.insert(marks, {
