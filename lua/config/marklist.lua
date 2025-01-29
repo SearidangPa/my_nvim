@@ -27,6 +27,7 @@ local function get_global_marks()
   end
   return marks
 end
+
 -- For quickselect UI (optional in your setup)
 local function handle_mark_choice(choice)
   if not choice then

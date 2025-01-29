@@ -46,7 +46,7 @@ local function_query = [[
 )
 ]]
 
-Find_all_tests = function(go_bufnr)
+function Find_all_tests (go_bufnr)
   local query = vim.treesitter.query.parse('go', function_query)
   local parser = vim.treesitter.get_parser(go_bufnr, 'go', {})
   local tree = parser:parse()[1]
@@ -72,11 +72,11 @@ Find_all_tests = function(go_bufnr)
 end
 
 function Nearest_function_decl()
-  local parser = vim.treesitter.get_parser(0, 'go')
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  local parser = vim.treesitter.get_parser(0, lang)
   if not parser then
     print 'Treesitter parser not found for Go'
-    return ""
-  end
+    return "" end
 
   local tree = parser:parse()[1]
   if not tree then
