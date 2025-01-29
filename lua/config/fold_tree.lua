@@ -144,6 +144,17 @@ function Fold_Func()
   Fold_captured_nodes_recursively(query)
 end
 
+function Fold_Type_Decl()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  local query = vim.treesitter.query.parse(
+    lang,
+    [[
+      (type_declaration) @type_decl
+    ]]
+  )
+  Fold_captured_nodes_recursively(query)
+end
+
 function Fold_if()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
@@ -183,14 +194,16 @@ function Fold_all()
   Fold_if()
   Fold_short_var_decl()
   Fold_return()
-  Fold_Func()
+  Fold_Type_Decl()
 end
 
 -- ============= User commands =============
-
-vim.api.nvim_create_user_command('FoldIf', function()
-  Fold_if()
-end, {})
+vim.api.nvim_create_user_command('FoldIf', Fold_if, {})
+vim.api.nvim_create_user_command('FoldReturn', Fold_return, {})
+vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
+vim.api.nvim_create_user_command('FoldComm', Fold_comm, {})
+vim.api.nvim_create_user_command('FoldFunc', Fold_Func, {})
+vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'go',
@@ -200,18 +213,10 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
-vim.api.nvim_create_user_command('FoldReturn', function()
-  Fold_return()
-end, {})
-
-vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
-
 vim.api.nvim_create_user_command('FoldCase', function()
   Fold_switch()
   Fold_comm()
 end, {})
-
-vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
 
 -- ============= keymaps =============
 map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
