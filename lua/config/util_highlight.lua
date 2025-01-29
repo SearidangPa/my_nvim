@@ -4,6 +4,7 @@ function Highlight_Line_With_Treesitter(line, pos)
   local query = vim.treesitter.query.get(parser:lang(), 'highlights')
 
   if query == nil then
+    print 'No highlights query found'
     return vim.fn.foldtext()
   end
 

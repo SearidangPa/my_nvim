@@ -1,6 +1,3 @@
-require 'config.fold_tree'
-require 'config.fold_err_blocks'
-
 local map = vim.keymap.set
 
 local function buf_clear_name_space()
@@ -118,14 +115,5 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
-
--- ============= Fold =============
-map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
-map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
-map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
-map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
-map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
-map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
-map('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
 
 return {}

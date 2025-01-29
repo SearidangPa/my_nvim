@@ -243,7 +243,7 @@ local function toggle_mark_window()
         display_text = mark.nearest_func
       elseif mark.text then
         Set_buf_filetype_by_ext(filename, buf)
-        display_text, _ = Highlight_Line_With_Treesitter(mark.text, mark.line)
+        display_text = mark.text
       else
         display_text = ''
       end
