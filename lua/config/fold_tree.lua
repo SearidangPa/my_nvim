@@ -183,6 +183,7 @@ function Fold_all()
   Fold_if()
   Fold_short_var_decl()
   Fold_return()
+  Fold_Func()
 end
 
 -- ============= User commands =============
