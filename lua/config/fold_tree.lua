@@ -14,7 +14,8 @@ end
 
 function Fold_captured_nodes_recursively(query)
   local bufnr = vim.api.nvim_get_current_buf()
-  local parser = vim.treesitter.get_parser(bufnr, 'go', {})
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  local parser = vim.treesitter.get_parser(bufnr, lang, {})
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(root, 'Tree root is nil')
@@ -27,8 +28,9 @@ function Fold_captured_nodes_recursively(query)
 end
 
 function Fold_switch()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
-    'go',
+    lang,
     [[
     (expression_case) @expr_case
     (type_case) @type_case
@@ -39,8 +41,9 @@ function Fold_switch()
 end
 
 function Fold_comm()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
-    'go',
+    lang,
     [[
       (communication_case) @comm_case
       (default_case) @default_case
@@ -50,8 +53,9 @@ function Fold_comm()
 end
 
 function Fold_if()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
-    'go',
+    lang,
     [[
       (if_statement) @comm_case
     ]]
@@ -60,8 +64,9 @@ function Fold_if()
 end
 
 function Fold_short_var_decl()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
-    'go',
+    lang,
     [[
       (short_var_declaration ) @short_var_decl
     ]]
@@ -70,8 +75,9 @@ function Fold_short_var_decl()
 end
 
 function Fold_return()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
-    'go',
+    lang,
     [[
       (return_statement) @return_statement
     ]]
