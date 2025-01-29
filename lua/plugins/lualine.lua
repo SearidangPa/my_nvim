@@ -70,6 +70,7 @@ return {
 
   config = function()
     local ll = require 'lualine'
+    require 'config.util_find_func'
 
     ll.setup {
       options = {
@@ -100,7 +101,7 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = {},
+        lualine_x = { Nearest_function_decl_at_cursor },
         lualine_y = { get_harpoon_filenames_first_three },
         lualine_z = {},
       },
