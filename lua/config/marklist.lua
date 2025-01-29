@@ -81,34 +81,21 @@ local function get_local_marks()
         end
         local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
 
-        -- Ensure file is inside the current working directory
-        if abs_filepath:find(cwd, 1, true) then
-          local filename = vim.fn.fnamemodify(filepath, ':t')
+        local filename = vim.fn.fnamemodify(filepath, ':t')
+        local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
+        -- Get the text safely
+        local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
-          -- Check if helper functions exist before calling them
-          if type(set_filetype_by_extension) == 'function' then
-            set_filetype_by_extension(filename, bufnr)
-          end
-
-          local nearest_func_at_line = nil
-          if type(Nearest_function_at_line) == 'function' then
-            nearest_func_at_line = Nearest_function_at_line(bufnr, line)
-          end
-
-          -- Get the text safely
-          local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
-
-          table.insert(marks, {
-            mark = mark,
-            bufnr = bufnr,
-            filename = filename ~= '' and filename or '[No Name]',
-            filepath = abs_filepath,
-            line = line,
-            col = col,
-            nearest_func = nearest_func_at_line,
-            text = text,
-          })
-        end
+        table.insert(marks, {
+          mark = mark,
+          bufnr = bufnr,
+          filename = filename ~= '' and filename or '[No Name]',
+          filepath = abs_filepath,
+          line = line,
+          col = col,
+          nearest_func = nearest_func_at_line,
+          text = text,
+        })
       end
     end
   end
