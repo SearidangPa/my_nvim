@@ -1,3 +1,36 @@
+require 'config.util_find_func'
+
+local function set_filetype_by_extension(filename, bufnr)
+  -- Get the filename of the buffer
+  -- Extract the file extension
+  local ext = filename:match '^.+%.(.+)$'
+  if not ext then
+    print('No file extension found for buffer ' .. filename)
+    return
+  end
+
+  -- Map file extensions to filetypes
+  local filetype_map = {
+    go = 'go',
+    lua = 'lua',
+    py = 'python',
+    js = 'javascript',
+    ts = 'typescript',
+    html = 'html',
+    css = 'css',
+    -- Add more extensions as needed
+  }
+
+  -- Set the filetype if it's in the map
+  local filetype = filetype_map[ext]
+  if filetype then
+    vim.bo[bufnr].filetype = filetype
+    print("Filetype set to '" .. filetype .. "' for buffer " .. bufnr)
+  else
+    print('No filetype mapping for extension: ' .. ext)
+  end
+end
+
 local function get_global_marks()
   local marks = {}
   local cwd = vim.fn.getcwd() -- Get the current working directory
@@ -13,6 +46,11 @@ local function get_global_marks()
       -- Check if the file is under the current working directory
       if abs_filepath:find(cwd, 1, true) then
         local filename = vim.fn.fnamemodify(filepath, ':t') -- Get only the file name
+        vim.api.nvim_set_current_win(vim.g.main_window)
+        print(string.format('filename: %s, bufnr: %d', filename, bufnr))
+
+        set_filetype_by_extension(filename, bufnr)
+        local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
         table.insert(marks, {
           mark = mark,
           bufnr = bufnr,
@@ -20,6 +58,7 @@ local function get_global_marks()
           filepath = abs_filepath,
           line = line,
           col = col,
+          nearest_func = nearest_func_at_line,
           text = vim.fn.getbufline(bufnr, line)[1],
         })
       end
@@ -51,7 +90,7 @@ local function select_mark()
   local opts = {
     prompt = 'Select mark:',
     format_item = function(item)
-      return string.format("'%s': %s -> %s", item.mark, item.filename, item.text)
+      return string.format("'%s': %s \\uf138 %s", item.mark, item.filename, item.text)
     end,
   }
 
@@ -141,7 +180,6 @@ local function toggle_mark_window()
   vim.bo[buf].buftype = 'nofile'
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
-  vim.bo[buf].filetype = 'marklist'
   vim.wo[win].number = false
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
@@ -176,7 +214,7 @@ local function toggle_mark_window()
       return a.mark < b.mark
     end)
     for _, mark in ipairs(marks) do
-      table.insert(lines, string.format(" ├─'%s': %s", mark.mark, mark.text or ''))
+      table.insert(lines, string.format(' ├─ %s -> %s', mark.mark, mark.nearest_func or ''))
     end
     -- `filename_line_idx` was the index before adding the filename line.
     -- So the real line for highlight is that index we just used.
