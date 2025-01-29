@@ -1,9 +1,6 @@
 require 'config.util_find_func'
 require 'config.util_marklist'
 
---------------------------------------------------------------------------------
--- Jump to Mark: parse the line in the mark window to find the mark character. --
---------------------------------------------------------------------------------
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf
   if not buf or not vim.api.nvim_buf_is_valid(buf) then
@@ -11,28 +8,19 @@ local function jump_to_mark()
     return
   end
 
-  -- Get the text of the current line in the mark window
   local line_num = vim.fn.line '.'
   local line_text = vim.fn.getline(line_num)
 
-  -- Attempt to extract the mark character from something like:
-  --   ├─ 'A': (120, 1) -> some text
-  -- or
-  --   'A': (120, 1) -> some text
-  -- The pattern captures an uppercase letter hin single quotes.
   local mark_char = line_text:match '([A-Z]):' or line_text:match '([a-z]):'
   if not mark_char then
-    -- Possibly on a filename line or invalid line
     print(string.format('No mark character found in line %d: %s', line_num, line_text))
     return
   end
 
-  -- Switch back to the main window (so the jump happens there)
   if vim.g.main_window and vim.api.nvim_win_is_valid(vim.g.main_window) then
     vim.api.nvim_set_current_win(vim.g.main_window)
   end
 
-  -- Use backtick-jump to go precisely to the mark position
   vim.cmd('normal! `' .. mark_char)
   vim.cmd 'normal! zz'
 end
@@ -43,14 +31,11 @@ local function show_fullscreen_popup_at_mark()
     return
   end
 
-  -- Get current cursor position in the marklist
   local line_num = vim.fn.line '.'
   local line_text = vim.fn.getline(line_num)
 
-  -- Extract mark character (Check if we're on a mark line)
   local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '([a-z]):'
 
-  -- If we moved off a mark line, close the popup
   if not mark_char then
     if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
       vim.api.nvim_win_close(vim.g.popup_win, true)
@@ -61,13 +46,11 @@ local function show_fullscreen_popup_at_mark()
     return
   end
 
-  -- If the mark hasn't changed, do nothing to avoid redraw lag
   if vim.g.current_mark == mark_char then
     return
   end
-  vim.g.current_mark = mark_char -- Update the current mark
+  vim.g.current_mark = mark_char
 
-  -- Find mark details
   local all_marks = Get_all_marks()
   local mark_info
   for _, m in ipairs(all_marks) do
@@ -84,7 +67,6 @@ local function show_fullscreen_popup_at_mark()
   local filepath = mark_info.filepath
   local target_line = mark_info.line
 
-  -- Read the full file content and add an arrow to the marked line
   local file_lines = {}
   local f = io.open(filepath, 'r')
   if not f then
@@ -94,7 +76,7 @@ local function show_fullscreen_popup_at_mark()
   local index = 1
   for line in f:lines() do
     if index == target_line then
-      table.insert(file_lines, '▶ ' .. line) -- Add arrow icon to the marked line
+      table.insert(file_lines, '▶ ' .. line)
     else
       table.insert(file_lines, '  ' .. line)
     end
@@ -102,7 +84,6 @@ local function show_fullscreen_popup_at_mark()
   end
   f:close()
 
-  -- If popup window exists, update its content instead of recreating it
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
     vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
     vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
@@ -113,7 +94,6 @@ local function show_fullscreen_popup_at_mark()
   -- Save original window
   vim.g.original_win = vim.api.nvim_get_current_win()
 
-  -- Create a new buffer for the popup window
   local popup_buf = vim.api.nvim_create_buf(false, true)
   Set_buf_filetype_by_ext(filepath, popup_buf)
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
@@ -129,7 +109,6 @@ local function show_fullscreen_popup_at_mark()
     vim.cmd 'syntax enable'
   end
 
-  -- Get editor dimensions to calculate the floating window position
   local editor_width = vim.o.columns
   local editor_height = vim.o.lines
   local width = math.floor(editor_width * 4 / 5) -- 4/5 of the editor's width
@@ -137,7 +116,6 @@ local function show_fullscreen_popup_at_mark()
   local row = 0
   local col = 0
 
-  -- Create a floating window with 4/5 width
   local popup_win = vim.api.nvim_open_win(popup_buf, true, {
     relative = 'editor',
     width = width,
@@ -148,7 +126,6 @@ local function show_fullscreen_popup_at_mark()
     border = 'none', -- No border for a seamless effect
   })
 
-  -- Set buffer options
   vim.bo[popup_buf].buftype = 'nofile'
   vim.bo[popup_buf].bufhidden = 'wipe'
   vim.bo[popup_buf].swapfile = false
@@ -156,7 +133,6 @@ local function show_fullscreen_popup_at_mark()
   vim.wo[popup_win].number = true
   vim.wo[popup_win].relativenumber = true
 
-  -- Ensure the floating window has the same background color and syntax as the main window
   local main_win = vim.g.original_win
   local main_buf = vim.api.nvim_win_get_buf(main_win)
   local main_ft = vim.bo[main_buf].filetype
@@ -164,16 +140,13 @@ local function show_fullscreen_popup_at_mark()
   vim.bo[popup_buf].filetype = main_ft -- Apply the same filetype (syntax highlighting)
   vim.api.nvim_win_set_option(popup_win, 'winhl', 'Normal:Normal') -- Match background
 
-  -- Move cursor to the marked line and center it
   vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
   vim.cmd 'normal! zz' -- Center cursor
 
-  -- Store the popup window ID
   vim.g.popup_win = popup_win
   vim.g.popup_buf = popup_buf
 end
 
--- Close the popup and return to the original window when leaving the marklist
 local function close_popup_on_leave()
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
     vim.api.nvim_win_close(vim.g.popup_win, true)
@@ -186,12 +159,8 @@ local function close_popup_on_leave()
     end
   end
 end
---------------------------------------------------------------------------------
--- Toggle a scratch window on the right that displays all global marks, grouped
--- by filename, in a tree-like format.
---------------------------------------------------------------------------------
+
 local function toggle_mark_window()
-  -- Track window/buffer state
   if not vim.g.mark_window_buf then
     vim.g.mark_window_buf = nil
   end
@@ -199,10 +168,8 @@ local function toggle_mark_window()
     vim.g.mark_window_win = nil
   end
 
-  -- Store the current window as 'main_window'
   vim.g.main_window = vim.api.nvim_get_current_win()
 
-  -- If the marks window is already open, close it
   if vim.g.mark_window_win and vim.api.nvim_win_is_valid(vim.g.mark_window_win) then
     vim.api.nvim_win_close(vim.g.mark_window_win, true)
     vim.g.mark_window_buf = nil
@@ -210,22 +177,18 @@ local function toggle_mark_window()
     return
   end
 
-  -- Create a new scratch buffer
   local buf = vim.api.nvim_create_buf(false, true)
   vim.g.mark_window_buf = buf
 
-  -- Calculate the width for a 1/5 vertical split
   local total_width = vim.o.columns
   local window_width = math.floor(total_width / 5)
 
-  -- Open the vertical split
   vim.cmd 'vsplit'
   local win = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_width(win, window_width)
   vim.api.nvim_win_set_buf(win, buf)
   vim.g.mark_window_win = win
 
-  -- Trigger the popup when moving the cursor in the marklist
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = vim.g.mark_window_buf,
     callback = function()
@@ -234,7 +197,6 @@ local function toggle_mark_window()
     end,
   })
 
-  -- Close popup when leaving the marklist
   vim.api.nvim_create_autocmd('BufLeave', {
     buffer = vim.g.mark_window_buf,
     callback = function()
@@ -242,24 +204,19 @@ local function toggle_mark_window()
     end,
   })
 
-  -- Set buffer/window options
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
   vim.wo[win].number = false
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
 
-  -- Retrieve global marks
-  local global_marks = Get_global_marks()
-  local local_marks = Get_local_marks()
-  local all_marks = vim.list_extend(global_marks, local_marks)
+  local all_marks = Get_all_marks()
 
   if #all_marks == 0 then
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
     return
   end
 
-  -- Group marks by filename
   local grouped_marks = {}
   for _, m in ipairs(all_marks) do
     local filename = m.filename
@@ -269,14 +226,11 @@ local function toggle_mark_window()
     table.insert(grouped_marks[filename], m)
   end
 
-  -- We'll store the lines in this array, and keep track of filename line indices
   local lines = {}
-  local filename_line_indices = {} -- holds line numbers that are filenames
+  local filename_line_indices = {}
 
-  -- Build a tree-like display:
   for filename, marks in pairs(grouped_marks) do
-    -- Record the line index of this filename
-    local filename_line_idx = #lines -- zero-based index AFTER insertion
+    local filename_line_idx = #lines
     table.insert(lines, filename)
     table.sort(marks, function(a, b)
       return a.mark < b.mark
