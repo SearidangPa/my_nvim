@@ -48,7 +48,7 @@ local function show_fullscreen_popup_at_mark()
   local line_text = vim.fn.getline(line_num)
 
   -- Extract mark character (Check if we're on a mark line)
-  local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '├─ ([a-z]):'
+  local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '([a-z]):'
 
   -- If we moved off a mark line, close the popup
   if not mark_char then
@@ -56,11 +56,12 @@ local function show_fullscreen_popup_at_mark()
       vim.api.nvim_win_close(vim.g.popup_win, true)
       vim.g.popup_win = nil
       vim.g.popup_buf = nil
+      vim.g.current_mark = nil
     end
     return
   end
 
-  -- Check if the mark has changed; if it's the same, do nothing (prevents flickering)
+  -- If the mark hasn't changed, do nothing to avoid redraw lag
   if vim.g.current_mark == mark_char then
     return
   end
@@ -83,19 +84,6 @@ local function show_fullscreen_popup_at_mark()
   local filepath = mark_info.filepath
   local target_line = mark_info.line
 
-  -- Close the old popup if it exists
-  if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
-    vim.api.nvim_win_close(vim.g.popup_win, true)
-    vim.g.popup_win = nil
-    vim.g.popup_buf = nil
-  end
-
-  -- Save original window
-  vim.g.original_win = vim.api.nvim_get_current_win()
-
-  -- Create a new buffer for the popup window
-  local popup_buf = vim.api.nvim_create_buf(false, true)
-
   -- Read the full file content and add an arrow to the marked line
   local file_lines = {}
   local f = io.open(filepath, 'r')
@@ -114,8 +102,32 @@ local function show_fullscreen_popup_at_mark()
   end
   f:close()
 
+  -- If popup window exists, update its content instead of recreating it
+  if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
+    vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
+    vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
+    vim.cmd 'normal! zz' -- Center cursor
+    return
+  end
+
+  -- Save original window
+  vim.g.original_win = vim.api.nvim_get_current_win()
+
+  -- Create a new buffer for the popup window
+  local popup_buf = vim.api.nvim_create_buf(false, true)
   Set_buf_filetype_by_ext(filepath, popup_buf)
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
+
+  -- Ensure the filetype is properly applied
+  local ft = vim.bo[popup_buf].filetype
+  if ft and ft ~= '' then
+    vim.api.nvim_buf_set_option(popup_buf, 'filetype', ft)
+    vim.api.nvim_buf_set_option(popup_buf, 'syntax', ft)
+
+    -- Explicitly reload syntax highlighting
+    vim.cmd('doautocmd BufRead ' .. filepath)
+    vim.cmd 'syntax enable'
+  end
 
   -- Get editor dimensions to calculate the floating window position
   local editor_width = vim.o.columns
@@ -123,7 +135,7 @@ local function show_fullscreen_popup_at_mark()
   local width = math.floor(editor_width * 4 / 5) -- 4/5 of the editor's width
   local height = editor_height - 2 -- Account for status and tab lines
   local row = 0
-  local col = math.floor((editor_width - width) / 2) -- Center the window horizontally
+  local col = 0
 
   -- Create a floating window with 4/5 width
   local popup_win = vim.api.nvim_open_win(popup_buf, true, {
@@ -141,6 +153,8 @@ local function show_fullscreen_popup_at_mark()
   vim.bo[popup_buf].bufhidden = 'wipe'
   vim.bo[popup_buf].swapfile = false
   vim.wo[popup_win].wrap = false
+  vim.wo[popup_win].number = true
+  vim.wo[popup_win].relativenumber = true
 
   -- Ensure the floating window has the same background color and syntax as the main window
   local main_win = vim.g.original_win
@@ -229,7 +243,6 @@ local function toggle_mark_window()
   })
 
   -- Set buffer/window options
-  vim.bo[buf].buftype = 'nofile'
   vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
   vim.wo[win].number = false

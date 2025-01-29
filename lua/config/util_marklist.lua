@@ -1,6 +1,7 @@
-function Set_buf_filetype_by_ext(filename, bufnr)
+function Set_buf_filetype_by_ext(filepath, bufnr)
   -- Get the filename of the buffer
   -- Extract the file extension
+  local filename = vim.fn.fnamemodify(filepath, ':t')
   local ext = filename:match '^.+%.(.+)$'
   if not ext then
     print('No file extension found for buffer ' .. filename)
