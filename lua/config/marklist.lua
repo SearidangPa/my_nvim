@@ -14,10 +14,6 @@ local function set_filetype_by_extension(filename, bufnr)
     go = 'go',
     lua = 'lua',
     py = 'python',
-    js = 'javascript',
-    ts = 'typescript',
-    html = 'html',
-    css = 'css',
     -- Add more extensions as needed
   }
 
