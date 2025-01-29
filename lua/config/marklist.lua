@@ -143,19 +143,15 @@ local function show_fullscreen_popup_at_mark()
   local line_num = vim.fn.line '.'
   local line_text = vim.fn.getline(line_num)
 
-  -- Extract mark character
-  local mark_char = line_text:match '├─ ([A-Z]):'
+  -- Extract mark character (Check if we're on a mark line)
+  local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '├─ ([a-z]):'
+
   if not mark_char then
-    -- Close the popup if cursor moves away from a valid mark
+    -- Cursor moved away from a mark → Close the popup
     if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
       vim.api.nvim_win_close(vim.g.popup_win, true)
       vim.g.popup_win = nil
       vim.g.popup_buf = nil
-
-      -- Restore original window
-      if vim.g.original_win and vim.api.nvim_win_is_valid(vim.g.original_win) then
-        vim.api.nvim_set_current_win(vim.g.original_win)
-      end
     end
     return
   end
@@ -183,29 +179,35 @@ local function show_fullscreen_popup_at_mark()
   -- Create a new buffer for the popup window
   local popup_buf = vim.api.nvim_create_buf(false, true)
 
-  -- Read the full file content
+  -- Read the full file content and add an arrow to the marked line
   local file_lines = {}
   local f = io.open(filepath, 'r')
   if not f then
     return
   end
 
+  local index = 1
   for line in f:lines() do
-    table.insert(file_lines, line)
+    if index == target_line then
+      table.insert(file_lines, '▶ ' .. line) -- Add arrow icon to the marked line
+    else
+      table.insert(file_lines, '  ' .. line)
+    end
+    index = index + 1
   end
   f:close()
 
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
-  -- Get main window dimensions
-  local main_win = vim.g.original_win
-  local win_config = vim.api.nvim_win_get_config(main_win)
-  local width = vim.api.nvim_win_get_width(main_win)
-  local height = vim.api.nvim_win_get_height(main_win)
-  local row = win_config.row[false] or 0
-  local col = win_config.col[false] or 0
+  -- Get editor dimensions to calculate the floating window position
+  local editor_width = vim.o.columns
+  local editor_height = vim.o.lines
+  local width = math.floor(editor_width * 4 / 5) -- 4/5 of the editor's width
+  local height = editor_height - 2 -- Account for status and tab lines
+  local row = 0
+  local col = math.floor((editor_width - width) / 2) -- Center the window horizontally
 
-  -- Create a floating window with the same size as the main window
+  -- Create a floating window with 4/5 width
   local popup_win = vim.api.nvim_open_win(popup_buf, true, {
     relative = 'editor',
     width = width,
@@ -213,7 +215,8 @@ local function show_fullscreen_popup_at_mark()
     row = row,
     col = col,
     style = 'minimal',
-    border = 'none', -- No border to make it feel seamless
+    border = 'none', -- No border for a seamless effect
+    focusable = true,
   })
 
   -- Set buffer options
@@ -222,8 +225,16 @@ local function show_fullscreen_popup_at_mark()
   vim.bo[popup_buf].swapfile = false
   vim.wo[popup_win].wrap = false
 
+  -- Ensure the floating window has the same background color and syntax as the main window
+  local main_win = vim.g.original_win
+  local main_buf = vim.api.nvim_win_get_buf(main_win)
+  local main_ft = vim.bo[main_buf].filetype
+
+  vim.bo[popup_buf].filetype = main_ft -- Apply the same filetype (syntax highlighting)
+  vim.api.nvim_win_set_option(popup_win, 'winhl', 'Normal:Normal') -- Match background
+
   -- Move cursor to the marked line and center it
-  vim.api.nvim_win_set_cursor(popup_win, { target_line, 0 })
+  vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
   vim.cmd 'normal! zz' -- Center cursor
 
   -- Store the popup window ID
@@ -288,6 +299,7 @@ local function toggle_mark_window()
     buffer = vim.g.mark_window_buf,
     callback = function()
       show_fullscreen_popup_at_mark()
+      vim.api.nvim_set_current_win(vim.g.mark_window_win)
     end,
   })
 
