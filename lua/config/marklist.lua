@@ -38,12 +38,6 @@ local function show_fullscreen_popup_at_mark()
   local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '([a-z]):'
 
   if not mark_char then
-    if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
-      vim.api.nvim_win_close(vim.g.popup_win, true)
-      vim.g.popup_win = nil
-      vim.g.popup_buf = nil
-      vim.g.current_mark = nil
-    end
     return
   end
 
