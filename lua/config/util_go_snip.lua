@@ -59,7 +59,7 @@ function ReplaceDashWithSpace(args)
 end
 
 function Go_ret_vals_nearest_func_decl()
-  local func_name = Nearest_function_decl()
+  local func_name = Nearest_function_decl_at_cursor()
   return Go_ret_vals { func_name }
 end
 
