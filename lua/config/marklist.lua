@@ -73,7 +73,6 @@ local function get_local_marks()
       local line = mark_entry.pos[2]
       local col = mark_entry.pos[3]
 
-      -- Ensure buffer is valid
       if vim.api.nvim_buf_is_valid(bufnr) then
         local filepath = vim.fn.bufname(bufnr)
         local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
@@ -218,7 +217,7 @@ local function toggle_mark_window(opts)
       return a.mark < b.mark
     end)
     for _, mark in ipairs(marks) do
-      table.insert(lines, string.format(' ├─ %s: %s', mark.mark, mark.nearest_func or ''))
+      table.insert(lines, string.format(' ├─ %s: %s', mark.mark, mark.nearest_func or mark.text or ''))
     end
     -- `filename_line_idx` was the index before adding the filename line.
     -- So the real line for highlight is that index we just used.
