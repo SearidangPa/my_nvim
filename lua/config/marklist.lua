@@ -1,6 +1,7 @@
 require 'config.util_find_func'
 require 'config.util_marklist'
 require 'config.util_highlight'
+local plf = require 'plenary.filetype'
 
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf
@@ -92,7 +93,8 @@ local function show_fullscreen_popup_at_mark()
   vim.g.original_win = vim.api.nvim_get_current_win()
 
   local popup_buf = vim.api.nvim_create_buf(false, true)
-  Set_buf_filetype_by_ext(filepath, popup_buf)
+  local filetype = plf.detect_from_extension(filepath)
+  vim.bo[popup_buf].filetype = filetype
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
   local ft = vim.bo[popup_buf].filetype
@@ -170,8 +172,8 @@ local function toggle_mark_window()
     return
   end
 
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.g.mark_window_buf = buf
+  local bufnr = vim.api.nvim_create_buf(false, true)
+  vim.g.mark_window_buf = bufnr
 
   local total_width = vim.o.columns
   local window_width = math.floor(total_width / 5)
@@ -179,7 +181,7 @@ local function toggle_mark_window()
   vim.cmd 'vsplit'
   local win = vim.api.nvim_get_current_win()
   vim.api.nvim_win_set_width(win, window_width)
-  vim.api.nvim_win_set_buf(win, buf)
+  vim.api.nvim_win_set_buf(win, bufnr)
   vim.g.mark_window_win = win
 
   vim.api.nvim_create_autocmd('CursorMoved', {
@@ -197,9 +199,9 @@ local function toggle_mark_window()
     end,
   })
 
-  vim.bo[buf].bufhidden = 'wipe'
-  vim.bo[buf].swapfile = false
-  vim.bo[buf].buftype = 'nofile'
+  vim.bo[bufnr].bufhidden = 'wipe'
+  vim.bo[bufnr].swapfile = false
+  vim.bo[bufnr].buftype = 'nofile'
   vim.wo[win].number = false
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
@@ -207,7 +209,7 @@ local function toggle_mark_window()
   local all_marks = Get_all_marks()
 
   if #all_marks == 0 then
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { 'No global marks found' })
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { 'No global marks found' })
     return
   end
 
@@ -237,7 +239,8 @@ local function toggle_mark_window()
       if mark.nearest_func then
         display_text = mark.nearest_func
       elseif mark.text then
-        Set_buf_filetype_by_ext(filename, buf)
+        local filetype = plf.detect_from_extension(filename)
+        vim.bo[bufnr].filetype = filetype
         display_text = vim.trim(mark.text)
       else
         display_text = ''
@@ -260,16 +263,16 @@ local function toggle_mark_window()
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
 
   for _, line_idx in ipairs(filename_line_indices) do
-    vim.api.nvim_buf_add_highlight(buf, -1, 'FileHighlight', line_idx, 0, -1)
+    vim.api.nvim_buf_add_highlight(bufnr, -1, 'FileHighlight', line_idx, 0, -1)
   end
   for _, pos in ipairs(func_highlight_positions) do
     local line_idx, col_start, col_end = unpack(pos)
-    vim.api.nvim_buf_add_highlight(buf, 0, '@function', line_idx - 1, col_start, col_end)
+    vim.api.nvim_buf_add_highlight(bufnr, 0, '@function', line_idx - 1, col_start, col_end)
   end
 
   for line_idx, line in ipairs(lines) do
@@ -277,14 +280,14 @@ local function toggle_mark_window()
     if mark_match then
       local end_col = line:find(mark_match .. ':') -- Find exact position
       if end_col then
-        vim.api.nvim_buf_add_highlight(buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
+        vim.api.nvim_buf_add_highlight(bufnr, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
       end
     end
   end
 
   vim.keymap.set('n', '<CR>', function()
     require('config.marklist').jump_to_mark()
-  end, { noremap = true, silent = true, buffer = buf })
+  end, { noremap = true, silent = true, buffer = bufnr })
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })

@@ -1,23 +1,26 @@
+local plf = require 'plenary.filetype'
+
 function Set_buf_filetype_by_ext(filepath, bufnr)
-  local filename = vim.fn.fnamemodify(filepath, ':t')
-  local ext = filename:match '^.+%.(.+)$'
-  if not ext then
-    print('No file extension found for buffer ' .. filename)
-    return
-  end
-
-  local filetype_map = {
-    go = 'go',
-    lua = 'lua',
-    py = 'python',
-  }
-
-  local filetype = filetype_map[ext]
-  if filetype then
-    vim.bo[bufnr].filetype = filetype
-  else
-    print('No filetype mapping for extension: ' .. ext)
-  end
+  -- local filename = vim.fn.fnamemodify(filepath, ':t')
+  -- local ext = filename:match '^.+%.(.+)$'
+  -- if not ext then
+  --   print('No file extension found for buffer ' .. filename)
+  --   return
+  -- end
+  --
+  -- local filetype_map = {
+  --   go = 'go',
+  --   lua = 'lua',
+  --   py = 'python',
+  -- }
+  --
+  -- local filetype = filetype_map[ext]
+  -- if filetype then
+  local filetype = plf.detect_from_extension(filepath)
+  vim.bo[bufnr].filetype = filetype
+  -- else
+  --   print('No filetype mapping for extension: ' .. ext)
+  -- end
 end
 
 function Get_global_marks()
@@ -34,8 +37,8 @@ function Get_global_marks()
       local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
       if abs_filepath:find(cwd, 1, true) then
         local filename = vim.fn.fnamemodify(filepath, ':t')
-
-        Set_buf_filetype_by_ext(filename, bufnr)
+        local filetype = plf.detect_from_extension(filepath)
+        vim.bo[bufnr].filetype = filetype
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
         table.insert(marks, {
           mark = mark,
