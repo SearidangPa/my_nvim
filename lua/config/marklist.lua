@@ -83,9 +83,6 @@ local function show_fullscreen_popup_at_mark()
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
     vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
     vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
-    vim.api.nvim_set_current_win(vim.g.popup_win)
-    vim.cmd 'normal! zz' -- Center cursor
-    vim.api.nvim_set_current_win(vim.g.mark_window_win)
     return
   end
 
@@ -93,16 +90,34 @@ local function show_fullscreen_popup_at_mark()
   vim.g.original_win = vim.api.nvim_get_current_win()
 
   local popup_buf = vim.api.nvim_create_buf(false, true)
-  local filetype = plenary_filetype.detect_from_extension(filepath)
-  vim.bo[popup_buf].filetype = filetype
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
-  local ft = vim.bo[popup_buf].filetype
-  if ft and ft ~= '' then
-    vim.api.nvim_set_option_value('filetype', ft, { buf = popup_buf })
-    vim.api.nvim_set_option_value('syntax', ft, { buf = popup_buf })
-    vim.cmd('doautocmd BufRead ' .. filepath)
+  local filetype = plenary_filetype.detect_from_extension(filepath)
+
+  if filetype then
+    vim.bo[popup_buf].filetype = filetype
+    local lang = vim.treesitter.language.get_lang(filetype)
+
+    vim.cmd('setlocal syntax=' .. filetype)
+
+    vim.treesitter.start(popup_buf, lang)
+    vim.defer_fn(function()
+      local parser = vim.treesitter.get_parser(popup_buf, lang)
+      if parser then
+        parser:parse()
+      else
+        print('No parser found for filetype: ' .. filetype)
+      end
+    end, 100)
+
     vim.cmd 'syntax enable'
+
+    local escaped_filepath = filepath:gsub('\\', '/') -- Convert Windows `\` to `/`
+    vim.cmd('doautocmd BufRead ' .. escaped_filepath) -- Trigger event properly
+    vim.cmd('doautocmd FileType ' .. filetype) -- Trigger event properly
+
+    vim.api.nvim_set_option_value('filetype', filetype, { buf = popup_buf })
+    vim.api.nvim_set_option_value('syntax', filetype, { buf = popup_buf })
   end
 
   local editor_width = vim.o.columns
@@ -122,8 +137,8 @@ local function show_fullscreen_popup_at_mark()
     border = 'none',
   })
 
-  vim.bo[popup_buf].buftype = 'nofile'
-  vim.bo[popup_buf].bufhidden = 'wipe'
+  vim.bo[popup_buf].buftype = ''
+  vim.bo[popup_buf].bufhidden = 'hide'
   vim.bo[popup_buf].swapfile = false
   vim.wo[popup_win].wrap = false
   vim.wo[popup_win].number = true
@@ -135,9 +150,6 @@ local function show_fullscreen_popup_at_mark()
 
   vim.bo[popup_buf].filetype = main_ft -- Apply the same filetype (syntax highlighting)
   vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = popup_win }) -- Match background
-
-  vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
-  vim.cmd 'normal! zz' -- Center cursor
 
   vim.g.popup_win = popup_win
   vim.g.popup_buf = popup_buf
