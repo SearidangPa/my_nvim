@@ -5,8 +5,6 @@ local c = ls.choice_node
 local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
-local extras = require 'luasnip.extras'
-local rep = extras.rep
 
 ls.add_snippets('go', {
   s(
