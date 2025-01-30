@@ -89,6 +89,6 @@ return {
     require('telescope').load_extension 'ui-select'
 
     bind_keymap_builtin()
-    require('config.multigrep').setup()
+    require('config.telescope_multigrep').setup()
   end,
 }
