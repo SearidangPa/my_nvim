@@ -95,29 +95,10 @@ local function show_fullscreen_popup_at_mark()
   local filetype = plenary_filetype.detect_from_extension(filepath)
 
   if filetype then
-    vim.bo[popup_buf].filetype = filetype
-    local lang = vim.treesitter.language.get_lang(filetype)
-
-    vim.cmd('setlocal syntax=' .. filetype)
-
-    vim.treesitter.start(popup_buf, lang)
-    vim.defer_fn(function()
-      local parser = vim.treesitter.get_parser(popup_buf, lang)
-      if parser then
-        parser:parse()
-      else
-        print('No parser found for filetype: ' .. filetype)
-      end
-    end, 100)
-
-    vim.cmd 'syntax enable'
-
-    local escaped_filepath = filepath:gsub('\\', '/') -- Convert Windows `\` to `/`
-    vim.cmd('doautocmd BufRead ' .. escaped_filepath) -- Trigger event properly
-    vim.cmd('doautocmd FileType ' .. filetype) -- Trigger event properly
-
     vim.api.nvim_set_option_value('filetype', filetype, { buf = popup_buf })
     vim.api.nvim_set_option_value('syntax', filetype, { buf = popup_buf })
+    vim.cmd('doautocmd BufRead ' .. filepath)
+    vim.cmd 'syntax enable'
   end
 
   local editor_width = vim.o.columns
