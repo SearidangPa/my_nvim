@@ -93,7 +93,7 @@ local function show_fullscreen_popup_at_mark()
   vim.g.original_win = vim.api.nvim_get_current_win()
 
   local popup_buf = vim.api.nvim_create_buf(false, true)
-  local filetype = plf.detect_from_extension(filepath)
+  local filetype = plenary_filetype.detect_from_extension(filepath)
   vim.bo[popup_buf].filetype = filetype
   vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
@@ -239,7 +239,7 @@ local function toggle_mark_window()
       if mark.nearest_func then
         display_text = mark.nearest_func
       elseif mark.text then
-        local filetype = plf.detect_from_extension(filename)
+        local filetype = plenary_filetype.detect_from_extension(filename)
         vim.bo[bufnr].filetype = filetype
         display_text = vim.trim(mark.text)
       else

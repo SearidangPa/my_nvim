@@ -1,4 +1,5 @@
 local plenary_filetype = require 'plenary.filetype'
+local a = require 'plenary.async'
 
 function Get_global_marks()
   local marks = {}
@@ -14,7 +15,7 @@ function Get_global_marks()
       local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
       if abs_filepath:find(cwd, 1, true) then
         local filename = vim.fn.fnamemodify(filepath, ':t')
-        local filetype = plf.detect_from_extension(filepath)
+        local filetype = plenary_filetype.detect_from_extension(filepath)
         vim.bo[bufnr].filetype = filetype
         local nearest_func_at_line = Nearest_function_at_line(bufnr, line)
         table.insert(marks, {
