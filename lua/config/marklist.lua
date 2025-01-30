@@ -94,11 +94,16 @@ local function show_fullscreen_popup_at_mark()
 
   local filetype = plenary_filetype.detect_from_extension(filepath)
 
-  if filetype then
-    vim.api.nvim_set_option_value('filetype', filetype, { buf = popup_buf })
-    vim.api.nvim_set_option_value('syntax', filetype, { buf = popup_buf })
-    vim.cmd('doautocmd BufRead ' .. filepath)
+  local lang = vim.treesitter.language.get_lang(filetype)
+  if not pcall(vim.treesitter.start, popup_buf, lang) then
+    vim.bo[popup_buf].syntax = filetype
   end
+
+  -- if filetype then
+  --   vim.api.nvim_set_option_value('filetype', filetype, { buf = popup_buf })
+  --   vim.api.nvim_set_option_value('syntax', filetype, { buf = popup_buf })
+  --   vim.cmd('doautocmd BufRead ' .. filepath)
+  -- end
 
   local editor_width = vim.o.columns
   local editor_height = vim.o.lines
