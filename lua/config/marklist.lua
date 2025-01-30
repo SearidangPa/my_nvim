@@ -1,7 +1,7 @@
 require 'config.util_find_func'
 require 'config.util_marklist'
 require 'config.util_highlight'
-local plf = require 'plenary.filetype'
+local plenary_filetype = require 'plenary.filetype'
 
 local function jump_to_mark()
   local buf = vim.g.mark_window_buf

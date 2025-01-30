@@ -1,4 +1,4 @@
-local plf = require 'plenary.filetype'
+local plenary_filetype = require 'plenary.filetype'
 
 function Get_global_marks()
   local marks = {}
