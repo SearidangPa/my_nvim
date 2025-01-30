@@ -98,7 +98,6 @@ local function show_fullscreen_popup_at_mark()
     vim.api.nvim_set_option_value('filetype', filetype, { buf = popup_buf })
     vim.api.nvim_set_option_value('syntax', filetype, { buf = popup_buf })
     vim.cmd('doautocmd BufRead ' .. filepath)
-    vim.cmd 'syntax enable'
   end
 
   local editor_width = vim.o.columns
