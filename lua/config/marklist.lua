@@ -82,7 +82,9 @@ local function show_fullscreen_popup_at_mark()
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
     vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
     vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
+    vim.api.nvim_set_current_win(vim.g.popup_win)
     vim.cmd 'normal! zz' -- Center cursor
+    vim.api.nvim_set_current_win(vim.g.mark_window_win)
     return
   end
 
