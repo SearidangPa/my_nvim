@@ -119,7 +119,7 @@ local function show_fullscreen_popup_at_mark()
   })
 
   vim.bo[popup_buf].buftype = 'nofile'
-  vim.bo[popup_buf].bufhidden = 'hide'
+  vim.bo[popup_buf].bufhidden = 'wipe'
   vim.bo[popup_buf].swapfile = false
   vim.wo[popup_win].wrap = false
   vim.wo[popup_win].number = true
