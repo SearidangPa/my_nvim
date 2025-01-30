@@ -3,13 +3,10 @@ require 'config.util_go_snip'
 local ls = require 'luasnip'
 local c = ls.choice_node
 local d = ls.dynamic_node
-local f = ls.function_node
 local i = ls.insert_node
 local s = ls.snippet
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
-local extras = require 'luasnip.extras'
-local rep = extras.rep
 
 ls.add_snippets('go', {
   s(
