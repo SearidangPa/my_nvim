@@ -71,11 +71,7 @@ local function show_fullscreen_popup_at_mark()
 
   local index = 1
   for line in f:lines() do
-    -- if index == target_line then
-    --   table.insert(file_lines, '▶ ' .. line)
-    -- else
     table.insert(file_lines, '  ' .. line)
-    -- end
     index = index + 1
   end
   f:close()
