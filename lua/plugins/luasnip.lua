@@ -70,7 +70,7 @@ return {
         sl.open { snip_info = snip_info }
       end, { silent = true, desc = '[L]ist [S]nippets' })
 
-      require 'config.go_snip'
+      require 'config.snip_go_if'
     end,
   },
 }

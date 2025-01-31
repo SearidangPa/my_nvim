@@ -1,7 +1,7 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-start_job = function(opts)
+Start_job = function(opts)
   local cmd = opts.cmd
   local invokeStr = table.concat(cmd, ' ')
   local output = {}

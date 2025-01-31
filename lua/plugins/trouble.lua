@@ -8,7 +8,7 @@ return {
     cmd = 'Trouble',
     keys = {
       {
-        '<localleader><localleader>',
+        '<leader><leader>',
         '<cmd>Trouble diagnostics toggle<cr>',
         desc = '[x] Diagnostics',
       },

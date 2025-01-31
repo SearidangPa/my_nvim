@@ -82,7 +82,7 @@ map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 map('i', '<C-l>', accept_line, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 map('i', '<M-f>', accept_word, { expr = true, remap = false, desc = 'Copilot Accept Word' })
-map('i', '<C-;>', accept_with_insert_line, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
+map('i', '<M-y>', accept_with_insert_line, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
