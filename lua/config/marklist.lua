@@ -71,17 +71,20 @@ local function show_fullscreen_popup_at_mark()
 
   local index = 1
   for line in f:lines() do
-    if index == target_line then
-      table.insert(file_lines, '▶ ' .. line)
-    else
-      table.insert(file_lines, '  ' .. line)
-    end
+    -- if index == target_line then
+    --   table.insert(file_lines, '▶ ' .. line)
+    -- else
+    table.insert(file_lines, '  ' .. line)
+    -- end
     index = index + 1
   end
   f:close()
 
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
     vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
+    if target_line >= index then
+      target_line = index - 1
+    end
     vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
     return
   end
@@ -146,6 +149,23 @@ local function close_popup_on_leave()
   end
 end
 
+local function create_autocmds(bufnr, win)
+  vim.api.nvim_create_autocmd('CursorMoved', {
+    buffer = bufnr,
+    callback = function()
+      show_fullscreen_popup_at_mark()
+      vim.api.nvim_set_current_win(win)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('BufLeave', {
+    buffer = bufnr,
+    callback = function()
+      close_popup_on_leave()
+    end,
+  })
+end
+
 local function toggle_mark_window()
   if not vim.g.mark_window_buf then
     vim.g.mark_window_buf = nil
@@ -175,20 +195,7 @@ local function toggle_mark_window()
   vim.api.nvim_win_set_buf(win, bufnr)
   vim.g.mark_window_win = win
 
-  vim.api.nvim_create_autocmd('CursorMoved', {
-    buffer = vim.g.mark_window_buf,
-    callback = function()
-      show_fullscreen_popup_at_mark()
-      vim.api.nvim_set_current_win(vim.g.mark_window_win)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd('BufLeave', {
-    buffer = vim.g.mark_window_buf,
-    callback = function()
-      close_popup_on_leave()
-    end,
-  })
+  create_autocmds(vim.g.mark_window_buf, vim.g.mark_window_win)
 
   vim.bo[bufnr].bufhidden = 'wipe'
   vim.bo[bufnr].swapfile = false
@@ -275,6 +282,8 @@ local function toggle_mark_window()
       end
     end
   end
+
+  vim.api.nvim_set_current_win(vim.g.main_window)
 
   vim.keymap.set('n', '<CR>', function()
     require('config.marklist').jump_to_mark()
