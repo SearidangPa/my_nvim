@@ -1,3 +1,4 @@
+local map = vim.keymap.map
 local output = {}
 local errors = {}
 
@@ -67,12 +68,11 @@ vim.api.nvim_create_user_command('ToggleErrors', function()
   toggle_float(errors)
 end, {})
 
-vim.keymap.set('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput for command' })
-vim.keymap.set('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for command' })
-
-vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
-vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
-vim.keymap.set('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
-vim.keymap.set('n', '<leader>gl', ':GitPull<CR>', { desc = '[G]it [L]og' })
+map('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput for command' })
+map('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for command' })
+map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
+map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
+map('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
+map('n', '<leader>gl', ':GitPull<CR>', { desc = '[G]it [L]og' })
 
 return {}
