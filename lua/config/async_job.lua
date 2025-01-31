@@ -1,4 +1,4 @@
-local map = vim.keymap.map
+local map = vim.keymap.set
 local output = {}
 local errors = {}
 
