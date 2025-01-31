@@ -6,7 +6,7 @@ return {
     require('diffview').setup {
       view = {
         default = {
-          layout = 'diff1_plain',
+          layout = 'diff2_horizontal',
         },
         merge_tool = {
           layout = 'diff1_plain',
