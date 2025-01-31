@@ -73,5 +73,6 @@ vim.keymap.set('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rro
 vim.keymap.set('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 vim.keymap.set('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 vim.keymap.set('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
+vim.keymap.set('n', '<leader>gl', ':GitPull<CR>', { desc = '[G]it [L]og' })
 
 return {}
