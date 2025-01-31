@@ -55,7 +55,7 @@ vim.keymap.set('n', '<localleader>ts', function()
   }
 end, { desc = '[T]oggle [S]mall terminal with command prompt' })
 
-vim.keymap.set('n', '<leader><leader>', function()
+vim.keymap.set('n', '<localleader><localleader>', function()
   toggle_small_terminal()
 end, { desc = 'Toggle small terminal' })
 return {}
