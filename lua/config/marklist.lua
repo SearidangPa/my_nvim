@@ -189,6 +189,21 @@ local function group_marks_by_file()
   return grouped_marks
 end
 
+local function get_display_info(mark, filename)
+  if mark.nearest_func then
+    return mark.nearest_func
+  end
+
+  if mark.text then
+    -- Set filetype for syntax highlighting
+    local filetype = plenary_filetype.detect_from_extension(filename)
+    vim.bo[blackboard_buf].filetype = filetype
+    return vim.trim(mark.text)
+  end
+
+  return ''
+end
+
 local function parse_grouped_marks_info(grouped_marks)
   local blackboard_lines = {}
   local func_highlight_positions = {}
@@ -196,23 +211,14 @@ local function parse_grouped_marks_info(grouped_marks)
   for filename, marks in pairs(grouped_marks) do
     local filename_line_idx = #blackboard_lines
     table.insert(blackboard_lines, filename)
+
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
 
     for _, mark in ipairs(marks) do
-      local display_text
-      if mark.nearest_func then
-        display_text = mark.nearest_func
-      elseif mark.text then
-        local filetype = plenary_filetype.detect_from_extension(filename)
-        vim.bo[blackboard_buf].filetype = filetype
-        display_text = vim.trim(mark.text)
-      else
-        display_text = ''
-      end
-
-      local line_text = string.format(' ├─ %s: %s', mark.mark, display_text)
+      local display_info = get_display_info(mark, filename)
+      local line_text = string.format(' ├─ %s: %s', mark.mark, display_info)
       table.insert(blackboard_lines, line_text)
 
       if mark.nearest_func then
@@ -222,6 +228,7 @@ local function parse_grouped_marks_info(grouped_marks)
         table.insert(func_highlight_positions, { line_idx, col_start, col_end })
       end
     end
+
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
