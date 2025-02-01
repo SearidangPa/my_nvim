@@ -3,51 +3,39 @@ require 'config.util_marklist'
 require 'config.util_highlight'
 local plenary_filetype = require 'plenary.filetype'
 
-local function jump_to_mark()
-  local buf = vim.g.mark_window_buf
-  if not buf or not vim.api.nvim_buf_is_valid(buf) then
-    vim.notify('Mark window buffer is invalid', vim.log.levels.ERROR)
+local original_win = -1
+local blackboard_win, blackboard_buf = -1, -1
+local popup_win, popup_buf = -1, -1
+local current_mark
+
+local function get_mark_char()
+  if not vim.api.nvim_buf_is_valid(blackboard_buf) then
+    vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
     return
   end
-
   local line_num = vim.fn.line '.'
   local line_text = vim.fn.getline(line_num)
 
   local mark_char = line_text:match '([A-Z]):' or line_text:match '([a-z]):'
-  if not mark_char then
-    print(string.format('No mark character found in line %d: %s', line_num, line_text))
+  assert(mark_char, 'No mark character found')
+  return mark_char
+end
+
+local function jump_to_mark()
+  local mark_char = get_mark_char()
+
+  if not vim.api.nvim_win_is_valid(original_win) then
+    print 'Invalid original window'
     return
   end
 
-  if vim.g.main_window and vim.api.nvim_win_is_valid(vim.g.main_window) then
-    vim.api.nvim_set_current_win(vim.g.main_window)
-  end
-
+  vim.api.nvim_set_current_win(original_win)
   vim.cmd('normal! `' .. mark_char)
   vim.cmd 'normal! zz'
 end
 
-local function show_fullscreen_popup_at_mark()
-  local marklist_buf = vim.g.mark_window_buf
-  if not marklist_buf or not vim.api.nvim_buf_is_valid(marklist_buf) then
-    return
-  end
-
-  local line_num = vim.fn.line '.'
-  local line_text = vim.fn.getline(line_num)
-
-  local mark_char = line_text:match '├─ ([A-Z]):' or line_text:match '([a-z]):'
-
-  if not mark_char then
-    return
-  end
-
-  if vim.g.current_mark == mark_char then
-    return
-  end
-  vim.g.current_mark = mark_char
-
-  local all_marks = Get_all_marks()
+local function retrieve_mark_info(mark_char)
+  local all_marks = Get_marks_info()
   local mark_info
   for _, m in ipairs(all_marks) do
     if m.mark == mark_char then
@@ -56,40 +44,63 @@ local function show_fullscreen_popup_at_mark()
     end
   end
 
-  if not mark_info or not mark_info.filepath or mark_info.filepath == '' then
+  assert(mark_info, 'No mark info found for mark: ' .. mark_char)
+  assert(mark_info.filepath and mark_info.filepath ~= '', 'No filepath found for mark: ' .. mark_char)
+  return mark_info
+end
+
+local function show_fullscreen_popup_at_mark()
+  local mark_char = get_mark_char()
+  if current_mark == mark_char then
     return
   end
+  current_mark = mark_char
+
+  local mark_info = retrieve_mark_info(mark_char)
 
   local filepath = mark_info.filepath
   local target_line = mark_info.line
 
-  local file_lines = {}
-  local f = io.open(filepath, 'r')
-  if not f then
+  -- local file_lines = {}
+  -- local f = io.open(filepath, 'r')
+  -- if not f then
+  --   return
+  -- end
+  --
+  -- local index = 1
+  -- for line in f:lines() do
+  --   table.insert(file_lines, '  ' .. line)
+  --   index = index + 1
+  -- end
+  -- f:close()
+  --
+  -- if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
+  --   vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
+  --   if target_line >= index then
+  --     target_line = index - 1
+  --   end
+  --   vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
+  --   return
+  -- end
+
+  local fp_bufnr = vim.fn.bufnr(filepath)
+  if not vim.api.nvim_buf_is_valid(fp_bufnr) then
+    print('Invalid buffer for file:', filepath)
     return
   end
-
-  local index = 1
-  for line in f:lines() do
-    table.insert(file_lines, '  ' .. line)
-    index = index + 1
-  end
-  f:close()
 
   if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
-    vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
-    if target_line >= index then
-      target_line = index - 1
+    local line_count = vim.api.nvim_buf_line_count(vim.g.popup_buf)
+    if target_line >= line_count then
+      target_line = line_count
     end
+    TransferBuf(fp_bufnr, vim.g.popup_buf)
     vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
-    return
   end
 
-  -- Save original window
-  vim.g.original_win = vim.api.nvim_get_current_win()
-
   local popup_buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
+  TransferBuf(fp_bufnr, popup_buf)
+  -- vim.api.nvim_buf_set_lines(popup_buf, 0, -1, false, file_lines)
 
   local filetype = plenary_filetype.detect_from_extension(filepath)
 
@@ -101,7 +112,7 @@ local function show_fullscreen_popup_at_mark()
   local editor_width = vim.o.columns
   local editor_height = vim.o.lines
   local width = math.floor(editor_width * 4 / 5)
-  local height = editor_height - 2
+  local height = editor_height - 3
   local row = 1
   local col = 0
 
@@ -131,6 +142,8 @@ local function show_fullscreen_popup_at_mark()
 
   vim.g.popup_win = popup_win
   vim.g.popup_buf = popup_buf
+
+  vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
 end
 
 local function close_popup_on_leave()
@@ -200,7 +213,7 @@ local function toggle_mark_window()
   vim.wo[win].relativenumber = false
   vim.wo[win].wrap = false
 
-  local all_marks = Get_all_marks()
+  local all_marks = Get_marks_info()
 
   if #all_marks == 0 then
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { 'No global marks found' })
