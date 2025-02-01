@@ -236,6 +236,9 @@ local function show_fullscreen_popup_at_mark()
 end
 
 local function close_popup_on_leave()
+  if vim.api.nvim_get_current_win() == blackboard_state.popup_win then
+    return
+  end
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     vim.api.nvim_win_close(blackboard_state.popup_win, true)
 
