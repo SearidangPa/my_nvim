@@ -194,6 +194,7 @@ local function toggle_mark_window()
 
   if vim.api.nvim_win_is_valid(blackboard_win) then
     vim.api.nvim_win_hide(blackboard_win)
+    blackboard_buf = -1
     return
   end
 
