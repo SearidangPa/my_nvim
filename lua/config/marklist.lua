@@ -8,6 +8,7 @@ local blackboard_state = {
   popup_win = -1,
   popup_buf = -1,
   current_mark = nil,
+  original_win = -1,
 }
 
 -- lifted from nvim-bqf
@@ -248,19 +249,26 @@ local function close_popup_on_leave()
   end
 end
 
-local function create_buf_autocmds(bufnr, win)
+local function create_buf_autocmds(blackboard_state)
   vim.api.nvim_create_autocmd('CursorMoved', {
-    buffer = bufnr,
+    buffer = blackboard_state.blackboard_buf,
     callback = function()
       show_fullscreen_popup_at_mark()
-      vim.api.nvim_set_current_win(win)
+      vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
     end,
   })
 
   vim.api.nvim_create_autocmd('BufLeave', {
-    buffer = bufnr,
+    buffer = blackboard_state.blackboard_buf,
     callback = function()
       close_popup_on_leave()
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('BufLeave', {
+    buffer = blackboard_state.original_win,
+    callback = function()
+      blackboard_state.original_win = vim.api.nvim_get_current_win()
     end,
   })
 
@@ -388,7 +396,7 @@ local function toggle_mark_window()
   end
 
   create_new_blackboard()
-  create_buf_autocmds(blackboard_state.blackboard_buf, blackboard_state.blackboard_win)
+  create_buf_autocmds(blackboard_state)
 
   local grouped_marks = group_marks_by_file()
   local parsed_marks = parse_grouped_marks_info(grouped_marks)
