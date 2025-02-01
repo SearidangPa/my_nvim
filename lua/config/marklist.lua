@@ -216,13 +216,10 @@ local function show_fullscreen_popup_at_mark()
     return
   end
   blackboard_state.current_mark = mark_char
-  print('Showing popup for mark:', blackboard_state.current_mark)
 
   local mark_info = retrieve_mark_info(mark_char)
-  local filepath = mark_info.filepath
   local target_line = mark_info.line
   local filepath_bufnr = mark_info.bufnr
-  assert(vim.api.nvim_buf_is_valid(filepath_bufnr), 'Invalid buffer for file: ' .. filepath)
 
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
