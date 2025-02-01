@@ -211,7 +211,7 @@ local function open_popup_win(mark_info)
 end
 
 local function show_fullscreen_popup_at_mark()
-  local mark_char = get_mark_char(blackboard_state.blackboard_buf)
+  local mark_char = get_mark_char()
   if not mark_char then
     return
   end
