@@ -26,20 +26,6 @@ local function jump_to_mark()
   vim.cmd 'normal! zz'
 end
 
-local function retrieve_mark_info(mark_char)
-  local all_marks = Get_accessible_marks_info()
-  local mark_info
-  for _, m in ipairs(all_marks) do
-    if m.mark == mark_char then
-      mark_info = m
-      break
-    end
-  end
-  assert(mark_info, 'No mark info found for mark: ' .. mark_char)
-  assert(mark_info.filepath and mark_info.filepath ~= '', 'No filepath found for mark: ' .. mark_char)
-  return mark_info
-end
-
 local function set_cursor_for_popup_win(target_line, mark_char)
   local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
@@ -95,7 +81,7 @@ local function show_fullscreen_popup_at_mark()
   end
   blackboard_state.current_mark = mark_char
 
-  local mark_info = retrieve_mark_info(mark_char)
+  local mark_info = Retrieve_mark_info(mark_char)
   local target_line = mark_info.line
   local filepath_bufnr = mark_info.bufnr
 

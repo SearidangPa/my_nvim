@@ -66,6 +66,20 @@ local function add_global_mark_info(marks_info, char, cwd)
   add_mark_info(marks_info, mark, bufnr, line, col)
 end
 
+function Retrieve_mark_info(mark_char)
+  local all_marks = Get_accessible_marks_info()
+  local mark_info
+  for _, m in ipairs(all_marks) do
+    if m.mark == mark_char then
+      mark_info = m
+      break
+    end
+  end
+  assert(mark_info, 'No mark info found for mark: ' .. mark_char)
+  assert(mark_info.filepath and mark_info.filepath ~= '', 'No filepath found for mark: ' .. mark_char)
+  return mark_info
+end
+
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
