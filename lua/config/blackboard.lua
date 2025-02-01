@@ -58,12 +58,6 @@ local function show_fullscreen_popup_at_mark()
   set_cursor_for_popup_win(target_line, mark_char)
 end
 
-local function close_popup_on_leave()
-  if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    vim.api.nvim_win_close(blackboard_state.popup_win, true)
-  end
-end
-
 local function create_buf_autocmds(blackboard_state)
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = blackboard_state.blackboard_buf,
@@ -76,7 +70,9 @@ local function create_buf_autocmds(blackboard_state)
   vim.api.nvim_create_autocmd('BufLeave', {
     buffer = blackboard_state.blackboard_buf,
     callback = function()
-      close_popup_on_leave()
+      if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
+        vim.api.nvim_win_close(blackboard_state.popup_win, true)
+      end
     end,
   })
 
