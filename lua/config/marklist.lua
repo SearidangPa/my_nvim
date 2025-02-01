@@ -8,7 +8,7 @@ local blackboard_win, blackboard_buf = -1, -1
 local popup_win, popup_buf = -1, -1
 local current_mark
 
-local function get_mark_char()
+local function get_mark_char(blackboard_buf)
   if not vim.api.nvim_buf_is_valid(blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
     return
@@ -20,8 +20,8 @@ local function get_mark_char()
   return mark_char
 end
 
-local function jump_to_mark()
-  local mark_char = get_mark_char()
+local function jump_to_mark(blackboard_buf)
+  local mark_char = get_mark_char(blackboard_buf)
 
   if not vim.api.nvim_win_is_valid(original_win) then
     print 'Invalid original window'
@@ -48,7 +48,7 @@ local function retrieve_mark_info(mark_char)
 end
 
 local function show_fullscreen_popup_at_mark()
-  local mark_char = get_mark_char()
+  local mark_char = get_mark_char(blackboard_buf)
   if not mark_char then
     return
   end
@@ -113,10 +113,7 @@ local function show_fullscreen_popup_at_mark()
   vim.wo[popup_win].number = true
   vim.wo[popup_win].relativenumber = true
 
-  local main_buf = vim.api.nvim_win_get_buf(original_win)
-  local main_ft = vim.bo[main_buf].filetype
-
-  vim.bo[popup_buf].filetype = main_ft -- Apply the same filetype (syntax highlighting)
+  vim.bo[popup_buf].filetype = mark_info.filetype
   vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = popup_win }) -- Match background
 
   vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
@@ -149,7 +146,7 @@ local function create_buf_autocmds(bufnr, win)
   })
 
   vim.keymap.set('n', '<CR>', function()
-    require('config.marklist').jump_to_mark()
+    require('config.marklist').jump_to_mark(blackboard_buf)
   end, { noremap = true, silent = true, buffer = blackboard_buf })
 end
 

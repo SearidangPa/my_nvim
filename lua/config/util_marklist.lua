@@ -18,9 +18,9 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
     mark = mark,
     filename = filename,
     filepath = filepath,
+    filetype = filetype,
     line = line,
     col = col,
-    filetype = filetype,
     nearest_func = nearest_func,
     text = text,
   })
