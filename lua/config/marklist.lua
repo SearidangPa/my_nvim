@@ -288,7 +288,6 @@ end
 
 local function group_marks_by_file()
   local all_accessible_marks = get_accessible_marks_info()
-  print(vim.inspect(all_accessible_marks))
   local grouped_marks = {}
   for _, m in ipairs(all_accessible_marks) do
     local filename = m.filename
