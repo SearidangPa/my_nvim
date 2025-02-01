@@ -268,6 +268,10 @@ local function create_buf_autocmds(blackboard_state)
   vim.api.nvim_create_autocmd('BufLeave', {
     buffer = blackboard_state.original_win,
     callback = function()
+      local current_win = vim.api.nvim_get_current_win()
+      if current_win == blackboard_state.blackboard_win then
+        return
+      end
       blackboard_state.original_win = vim.api.nvim_get_current_win()
     end,
   })
