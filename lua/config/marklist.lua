@@ -189,23 +189,10 @@ local function group_marks_by_file()
   return grouped_marks
 end
 
-local function toggle_mark_window()
-  original_win = vim.api.nvim_get_current_win()
-
-  if vim.api.nvim_win_is_valid(blackboard_win) then
-    vim.api.nvim_win_hide(blackboard_win)
-    blackboard_buf = -1
-    return
-  end
-
-  blackboard_buf, blackboard_win = create_new_blackboard(blackboard_buf)
-  create_buf_autocmds(blackboard_buf, blackboard_win)
-
-  local grouped_marks = group_marks_by_file()
+local function parse_grouped_marks_info(grouped_marks)
   local blackboard_lines = {}
-  local filename_line_indices = {}
   local func_highlight_positions = {}
-
+  local filename_line_indices = {}
   for filename, marks in pairs(grouped_marks) do
     local filename_line_idx = #blackboard_lines
     table.insert(blackboard_lines, filename)
@@ -238,27 +225,56 @@ local function toggle_mark_window()
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, blackboard_lines)
-  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
-  vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
+  return {
+    blackboard_lines = blackboard_lines,
+    func_highlight_positions = func_highlight_positions,
+    filename_line_indices = filename_line_indices,
+  }
+end
 
+local function add_highlights(parsed_marks)
+  local blackboard_lines = parsed_marks.blackboard_lines
+  local func_highlight_positions = parsed_marks.func_highlight_positions
+  local filename_line_indices = parsed_marks.filename_line_indices
+
+  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   for _, line_idx in ipairs(filename_line_indices) do
     vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'FileHighlight', line_idx, 0, -1)
   end
+
+  -- Highlight the function names
   for _, pos in ipairs(func_highlight_positions) do
     local line_idx, col_start, col_end = unpack(pos)
     vim.api.nvim_buf_add_highlight(blackboard_buf, 0, '@function', line_idx - 1, col_start, col_end)
   end
 
+  vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
   for line_idx, line in ipairs(blackboard_lines) do
-    local mark_match = line:match '├─%s([A-Za-z]):' -- Match both uppercase and lowercase marks
+    local mark_match = line:match '├─%s([A-Za-z]):'
     if mark_match then
-      local end_col = line:find(mark_match .. ':') -- Find exact position
+      local end_col = line:find(mark_match .. ':')
       if end_col then
         vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
       end
     end
   end
+end
+
+local function toggle_mark_window()
+  original_win = vim.api.nvim_get_current_win()
+
+  if vim.api.nvim_win_is_valid(blackboard_win) then
+    vim.api.nvim_win_hide(blackboard_win)
+    return
+  end
+
+  blackboard_buf, blackboard_win = create_new_blackboard(blackboard_buf)
+  create_buf_autocmds(blackboard_buf, blackboard_win)
+
+  local grouped_marks = group_marks_by_file()
+  local parsed_marks = parse_grouped_marks_info(grouped_marks)
+  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, parsed_marks.blackboard_lines)
+  add_highlights(parsed_marks)
 
   vim.api.nvim_set_current_win(original_win)
 end
