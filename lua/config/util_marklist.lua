@@ -1,8 +1,9 @@
 local plenary_filetype = require 'plenary.filetype'
 
+--- @param marks_info table
 --- @param char number
 --- @param cwd string
-local function extract_mark_info(char, cwd)
+local function add_mark_info(marks_info, char, cwd)
   local mark = string.char(char)
   local pos = vim.fn.getpos("'" .. mark)
   if pos[1] == 0 then
@@ -31,26 +32,26 @@ local function extract_mark_info(char, cwd)
     text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
   end
 
-  return {
+  table.insert(marks_info, {
     mark = mark,
-    bufnr = bufnr,
-    filename = filename ~= '' and filename or '[No Name]',
-    filepath = abs_filepath,
+    filename = filename,
+    abs_filepath = abs_filepath,
     line = line,
     col = col,
+    filetype = filetype,
     nearest_func = nearest_func,
     text = text,
-  }
+  })
 end
 
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
   for char = string.byte 'A', string.byte 'Z' do
-    marks_info[char] = extract_mark_info(char, cwd)
+    add_mark_info(marks_info, char, cwd)
   end
   for char = string.byte 'a', string.byte 'z' do
-    marks_info[char] = extract_mark_info(char, cwd)
+    add_mark_info(marks_info, char, cwd)
   end
 
   return marks_info
