@@ -150,7 +150,7 @@ local function parse_grouped_marks_info(groupedMarks)
   }
 end
 
-local function addHighlights(parsedMarks)
+local function add_highlights(parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
   local funcHighlightPositions = parsedMarks.funcHighlightPositions
 
@@ -171,7 +171,7 @@ local function addHighlights(parsedMarks)
   end
 end
 
-local function addFileVirtualLines(parsedMarks)
+local function add_file_virtual_lines(parsedMarks)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local ns = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
@@ -205,8 +205,8 @@ local function toggle_mark_window()
   local lines = parsedMarks.blackboardLines
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
 
-  addHighlights(parsedMarks)
-  addFileVirtualLines(parsedMarks)
+  add_highlights(parsedMarks)
+  add_file_virtual_lines(parsedMarks)
 
   vim.api.nvim_set_current_win(blackboard_state.original_win)
 end
