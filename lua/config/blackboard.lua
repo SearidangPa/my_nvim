@@ -111,14 +111,10 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
--- Create a namespace for our extmarks
-local ns = vim.api.nvim_create_namespace 'blackboard_extmarks'
-
-local function parseGroupedMarksInfo(groupedMarks)
+local function parse_grouped_marks_info(groupedMarks)
   local blackboardLines = {}
   local funcHighlightPositions = {}
-  -- Instead of storing filename line indices, we map the start line of each group to its filename.
-  local fileVirtualLines = {} -- key: buffer line number (1-indexed), value: filename
+  local fileVirtualLines = {}
 
   for filename, marks in pairs(groupedMarks) do
     table.sort(marks, function(a, b)
@@ -129,7 +125,6 @@ local function parseGroupedMarksInfo(groupedMarks)
       table.insert(blackboardLines, filename)
     end
 
-    -- Record the starting line (this will be the first mark in the group)
     local groupStartLine = #blackboardLines + 1
 
     for i, mark in ipairs(marks) do
@@ -145,8 +140,6 @@ local function parseGroupedMarksInfo(groupedMarks)
       end
     end
 
-    -- Instead of inserting the filename as an actual line,
-    -- record its virtual placement: above the first mark of the group.
     fileVirtualLines[groupStartLine] = filename
   end
 
@@ -180,6 +173,7 @@ end
 
 local function addFileVirtualLines(parsedMarks)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
+  local ns = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
 
   for lineNum, filename in pairs(parsedMarks.fileVirtualLines) do
@@ -206,7 +200,7 @@ local function toggle_mark_window()
   create_buf_autocmds(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
-  local parsedMarks = parseGroupedMarksInfo(groupedMarks)
+  local parsedMarks = parse_grouped_marks_info(groupedMarks)
 
   local lines = parsedMarks.blackboardLines
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
