@@ -59,16 +59,8 @@ local function show_fullscreen_popup_at_mark()
 end
 
 local function close_popup_on_leave()
-  if vim.api.nvim_get_current_win() == blackboard_state.popup_win then
-    return
-  end
-
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     vim.api.nvim_win_close(blackboard_state.popup_win, true)
-
-    if vim.api.nvim_win_is_valid(blackboard_state.original_win) then
-      vim.api.nvim_set_current_win(blackboard_state.original_win)
-    end
   end
 end
 
@@ -101,6 +93,7 @@ local function create_new_blackboard()
     blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
     vim.bo[blackboard_state.blackboard_buf].bufhidden = 'wipe'
     vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
+    vim.bo[blackboard_state.blackboard_buf].buflisted = false
     vim.bo[blackboard_state.blackboard_buf].swapfile = false
   end
 
@@ -208,6 +201,7 @@ local function toggle_mark_window()
   add_highlights(parsedMarks)
   add_file_virtual_lines(parsedMarks)
 
+  vim.bo[blackboard_state.blackboard_buf].readonly = true
   vim.api.nvim_set_current_win(blackboard_state.original_win)
 end
 
