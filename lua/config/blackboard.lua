@@ -150,19 +150,6 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
-local function group_marks_by_file()
-  local all_accessible_marks = Get_accessible_marks_info()
-  local grouped_marks = {}
-  for _, m in ipairs(all_accessible_marks) do
-    local filename = m.filename
-    if not grouped_marks[filename] then
-      grouped_marks[filename] = {}
-    end
-    table.insert(grouped_marks[filename], m)
-  end
-  return grouped_marks
-end
-
 local function get_display_info(mark, filename)
   if mark.nearest_func then
     return mark.nearest_func
@@ -252,7 +239,7 @@ local function toggle_mark_window()
   create_new_blackboard()
   create_buf_autocmds(blackboard_state)
 
-  local grouped_marks = group_marks_by_file()
+  local grouped_marks = Group_marks_info_by_file()
   local parsed_marks = parse_grouped_marks_info(grouped_marks)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsed_marks.blackboard_lines)
   add_highlights(parsed_marks)

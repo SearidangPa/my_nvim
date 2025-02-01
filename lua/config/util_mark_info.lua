@@ -80,6 +80,19 @@ function Retrieve_mark_info(mark_char)
   return mark_info
 end
 
+function Group_marks_info_by_file()
+  local all_accessible_marks = Get_accessible_marks_info()
+  local grouped_marks = {}
+  for _, m in ipairs(all_accessible_marks) do
+    local filename = m.filename
+    if not grouped_marks[filename] then
+      grouped_marks[filename] = {}
+    end
+    table.insert(grouped_marks[filename], m)
+  end
+  return grouped_marks
+end
+
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
