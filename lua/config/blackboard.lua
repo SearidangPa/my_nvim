@@ -145,21 +145,6 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
-local function get_display_info(mark, filename)
-  if mark.nearest_func then
-    return mark.nearest_func
-  end
-
-  if mark.text then
-    -- Set filetype for syntax highlighting
-    local filetype = plenary_filetype.detect_from_extension(filename)
-    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
-    return vim.trim(mark.text)
-  end
-
-  return ''
-end
-
 local function parse_grouped_marks_info(grouped_marks)
   local blackboard_lines = {}
   local func_highlight_positions = {}
@@ -173,7 +158,7 @@ local function parse_grouped_marks_info(grouped_marks)
     end)
 
     for _, mark in ipairs(marks) do
-      local display_info = get_display_info(mark, filename)
+      local display_info = Get_display_info(mark, filename)
       local line_text = string.format(' ├─ %s: %s', mark.mark, display_info)
       table.insert(blackboard_lines, line_text)
 

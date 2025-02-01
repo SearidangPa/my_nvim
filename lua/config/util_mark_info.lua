@@ -80,6 +80,24 @@ function Retrieve_mark_info(mark_char)
   return mark_info
 end
 
+--- @param blackboard_state table
+--- @param mark table
+--- @param filename string
+--- @return string
+function Get_display_info(blackboard_state, mark, filename)
+  if mark.nearest_func then
+    return mark.nearest_func
+  end
+
+  if mark.text then
+    local filetype = plenary_filetype.detect_from_extension(filename)
+    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
+    return vim.trim(mark.text)
+  end
+
+  return ''
+end
+
 function Group_marks_info_by_file()
   local all_accessible_marks = Get_accessible_marks_info()
   local grouped_marks = {}
@@ -93,6 +111,7 @@ function Group_marks_info_by_file()
   return grouped_marks
 end
 
+--- @return table
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
@@ -105,10 +124,11 @@ function Get_accessible_marks_info()
 end
 
 --- @param blackboard_state table
+--- @return string
 function Get_mark_char(blackboard_state)
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
-    return
+    return ''
   end
   local line_num = vim.fn.line '.'
   local line_text = vim.fn.getline(line_num)
