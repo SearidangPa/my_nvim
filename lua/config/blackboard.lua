@@ -32,40 +32,6 @@ local function set_cursor_for_popup_win(target_line, mark_char)
   vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
 end
 
-local function open_popup_win(mark_info)
-  local filetype = mark_info.filetype
-  local lang = vim.treesitter.language.get_lang(filetype)
-  if not pcall(vim.treesitter.start, blackboard_state.popup_buf, lang) then
-    vim.bo[blackboard_state.popup_buf].syntax = filetype
-  end
-
-  local editor_width = vim.o.columns
-  local editor_height = vim.o.lines
-  local width = math.floor(editor_width * 4 / 5)
-  local height = editor_height - 3
-  local row = 1
-  local col = 0
-
-  blackboard_state.popup_win = vim.api.nvim_open_win(blackboard_state.popup_buf, true, {
-    relative = 'editor',
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = 'minimal',
-    border = 'none',
-  })
-
-  vim.bo[blackboard_state.popup_buf].buftype = 'nofile'
-  vim.bo[blackboard_state.popup_buf].bufhidden = 'wipe'
-  vim.bo[blackboard_state.popup_buf].swapfile = false
-  vim.bo[blackboard_state.popup_buf].filetype = mark_info.filetype
-  vim.wo[blackboard_state.popup_win].wrap = false
-  vim.wo[blackboard_state.popup_win].number = true
-  vim.wo[blackboard_state.popup_win].relativenumber = true
-  vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = blackboard_state.popup_win }) -- Match background
-end
-
 local function show_fullscreen_popup_at_mark()
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
@@ -88,7 +54,7 @@ local function show_fullscreen_popup_at_mark()
 
   blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
   TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
-  open_popup_win(mark_info)
+  Open_popup_win(mark_info)
   set_cursor_for_popup_win(target_line, mark_char)
 end
 
@@ -145,6 +111,8 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
+---@param grouped_marks table<string, table>
+---@return table
 local function parse_grouped_marks_info(grouped_marks)
   local blackboard_lines = {}
   local func_highlight_positions = {}
