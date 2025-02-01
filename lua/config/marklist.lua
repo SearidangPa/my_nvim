@@ -126,8 +126,8 @@ local function get_accessible_marks_info()
   return marks_info
 end
 
-local function get_mark_char(blackboard_buf)
-  if not vim.api.nvim_buf_is_valid(blackboard_buf) then
+local function get_mark_char()
+  if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
     return
   end
@@ -139,7 +139,7 @@ local function get_mark_char(blackboard_buf)
 end
 
 local function jump_to_mark()
-  local mark_char = get_mark_char(blackboard_state.blackboard_buf)
+  local mark_char = get_mark_char()
 
   if not vim.api.nvim_win_is_valid(blackboard_state.original_win) then
     print 'Invalid original window'
@@ -165,12 +165,15 @@ local function retrieve_mark_info(mark_char)
   return mark_info
 end
 
-local function set_cursor_for_popup_win(target_line)
+local function set_cursor_for_popup_win(target_line, mark_char)
   local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
     target_line = line_count
   end
   vim.api.nvim_win_set_cursor(blackboard_state.popup_win, { target_line, 2 }) -- Move cursor after the arrow
+
+  vim.fn.sign_define('MySign', { text = mark_char, texthl = 'DiagnosticInfo' })
+  vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
 end
 
 local function open_popup_win(mark_info)
@@ -223,14 +226,14 @@ local function show_fullscreen_popup_at_mark()
 
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
-    set_cursor_for_popup_win(target_line)
+    set_cursor_for_popup_win(target_line, mark_char)
     return
   end
 
   blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
   TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
   open_popup_win(mark_info)
-  set_cursor_for_popup_win(target_line)
+  set_cursor_for_popup_win(target_line, mark_char)
 end
 
 local function close_popup_on_leave()
@@ -379,7 +382,6 @@ end
 
 local function toggle_mark_window()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
-  print('Original window:', blackboard_state.original_win)
 
   if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
