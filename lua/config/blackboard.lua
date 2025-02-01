@@ -158,7 +158,7 @@ local function parse_grouped_marks_info(grouped_marks)
     end)
 
     for _, mark in ipairs(marks) do
-      local display_info = Get_display_info(mark, filename)
+      local display_info = Get_display_info(blackboard_state, mark, filename)
       local line_text = string.format(' ├─ %s: %s', mark.mark, display_info)
       table.insert(blackboard_lines, line_text)
 
