@@ -138,15 +138,15 @@ local function get_mark_char(blackboard_buf)
   return mark_char
 end
 
-local function jump_to_mark(blackboard_buf)
-  local mark_char = get_mark_char(blackboard_buf)
+local function jump_to_mark()
+  local mark_char = get_mark_char(blackboard_state.blackboard_buf)
 
-  if not vim.api.nvim_win_is_valid(original_win) then
+  if not vim.api.nvim_win_is_valid(blackboard_state.original_win) then
     print 'Invalid original window'
     return
   end
 
-  vim.api.nvim_set_current_win(original_win)
+  vim.api.nvim_set_current_win(blackboard_state.original_win)
   vim.cmd('normal! `' .. mark_char)
   vim.cmd 'normal! zz'
 end
@@ -176,8 +176,8 @@ end
 local function open_popup_win(mark_info)
   local filetype = mark_info.filetype
   local lang = vim.treesitter.language.get_lang(filetype)
-  if not pcall(vim.treesitter.start, popup_buf, lang) then
-    vim.bo[popup_buf].syntax = filetype
+  if not pcall(vim.treesitter.start, blackboard_state.popup_buf, lang) then
+    vim.bo[blackboard_state.popup_buf].syntax = filetype
   end
 
   local editor_width = vim.o.columns
@@ -187,7 +187,7 @@ local function open_popup_win(mark_info)
   local row = 1
   local col = 0
 
-  local popup_win = vim.api.nvim_open_win(popup_buf, true, {
+  blackboard_state.popup_win = vim.api.nvim_open_win(blackboard_state.popup_buf, true, {
     relative = 'editor',
     width = width,
     height = height,
@@ -197,18 +197,18 @@ local function open_popup_win(mark_info)
     border = 'none',
   })
 
-  vim.bo[popup_buf].buftype = 'nofile'
-  vim.bo[popup_buf].bufhidden = 'wipe'
-  vim.bo[popup_buf].swapfile = false
-  vim.bo[popup_buf].filetype = mark_info.filetype
-  vim.wo[popup_win].wrap = false
-  vim.wo[popup_win].number = true
-  vim.wo[popup_win].relativenumber = true
-  vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = popup_win }) -- Match background
+  vim.bo[blackboard_state.opup_buf].buftype = 'nofile'
+  vim.bo[blackboard_state.opup_buf].bufhidden = 'wipe'
+  vim.bo[blackboard_state.opup_buf].swapfile = false
+  vim.bo[blackboard_state.opup_buf].filetype = mark_info.filetype
+  vim.wo[blackboard_state.popup_win].wrap = false
+  vim.wo[blackboard_state.popup_win].number = true
+  vim.wo[blackboard_state.popup_win].relativenumber = true
+  vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = blackboard_state.popup_win }) -- Match background
 end
 
 local function show_fullscreen_popup_at_mark()
-  local mark_char = get_mark_char(blackboard_buf)
+  local mark_char = get_mark_char(blackboard_state.blackboard_buf)
   if not mark_char then
     return
   end
@@ -225,23 +225,23 @@ local function show_fullscreen_popup_at_mark()
   assert(vim.api.nvim_buf_is_valid(filepath_bufnr), 'Invalid buffer for file: ' .. filepath)
 
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    TransferBuf(filepath_bufnr, popup_buf)
+    TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
     set_cursor_for_popup_win(target_line)
     return
   end
 
-  popup_buf = vim.api.nvim_create_buf(false, true)
-  TransferBuf(filepath_bufnr, popup_buf)
+  blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
+  TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
   open_popup_win(mark_info)
-  set_cursor_for_popup_win(popup_win, popup_buf, target_line)
+  set_cursor_for_popup_win(target_line)
 end
 
 local function close_popup_on_leave()
-  if vim.api.nvim_win_is_valid(popup_win) then
+  if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     vim.api.nvim_win_close(vim.g.popup_win, true)
 
-    if vim.api.nvim_win_is_valid(original_win) then
-      vim.api.nvim_set_current_win(original_win)
+    if vim.api.nvim_win_is_valid(blackboard_state.original_win) then
+      vim.api.nvim_set_current_win(blackboard_state.original_win)
     end
   end
 end
