@@ -1,54 +1,59 @@
 local plenary_filetype = require 'plenary.filetype'
 
---- @param mark_list table
-local function get_marks_info_from_list(mark_list)
-  local marks_info = {}
-  local cwd = vim.fn.getcwd()
-  for _, mark_entry in ipairs(mark_list) do
-    local mark = mark_entry.mark:sub(2, 2)
-    if mark:match '[A-Z]' then
-      local bufnr = mark_entry.pos[1]
-      local line = mark_entry.pos[2]
-      local col = mark_entry.pos[3]
-
-      local filepath = vim.fn.bufname(bufnr)
-      local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
-      if abs_filepath:find(cwd, 1, true) then
-        local filename = vim.fn.fnamemodify(filepath, ':t')
-
-        -- for tree-sitter
-        local filetype = plenary_filetype.detect_from_extension(filepath)
-        vim.bo[bufnr].filetype = filetype
-
-        local nearest_func = Nearest_function_at_line(bufnr, line)
-        local text
-        if nearest_func then
-          text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
-        end
-
-        table.insert(marks_info, {
-          mark = mark,
-          bufnr = bufnr,
-          filename = filename ~= '' and filename or '[No Name]',
-          filepath = abs_filepath,
-          line = line,
-          col = col,
-          nearest_func = nearest_func,
-          text = text,
-        })
-      end
-    end
+--- @param char number
+--- @param cwd string
+local function extract_mark_info(char, cwd)
+  local mark = string.char(char)
+  local pos = vim.fn.getpos("'" .. mark)
+  if pos[1] == 0 then
+    return
   end
-  return marks_info
+  local bufnr = pos[1]
+  local line = pos[2]
+  local col = pos[3]
+
+  local filepath = vim.fn.bufname(bufnr)
+  local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
+
+  if not abs_filepath:find(cwd, 1, true) then
+    return
+  end
+
+  local filename = vim.fn.fnamemodify(filepath, ':t')
+
+  -- for tree-sitter
+  local filetype = plenary_filetype.detect_from_extension(filepath)
+  vim.bo[bufnr].filetype = filetype
+
+  local nearest_func = Nearest_function_at_line(bufnr, line)
+  local text
+  if not nearest_func then
+    text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
+  end
+
+  return {
+    mark = mark,
+    bufnr = bufnr,
+    filename = filename ~= '' and filename or '[No Name]',
+    filepath = abs_filepath,
+    line = line,
+    col = col,
+    nearest_func = nearest_func,
+    text = text,
+  }
 end
 
-function Get_marks_info()
-  local local_mark_list = vim.fn.getmarklist(0)
-  local local_marks = get_marks_info_from_list(local_mark_list)
+function Get_accessible_marks_info()
+  local marks_info = {}
+  local cwd = vim.fn.getcwd()
+  for char = string.byte 'A', string.byte 'Z' do
+    marks_info[char] = extract_mark_info(char, cwd)
+  end
+  for char = string.byte 'a', string.byte 'z' do
+    marks_info[char] = extract_mark_info(char, cwd)
+  end
 
-  local global_mark_list = vim.fn.getmarklist()
-  local global_marks = get_marks_info_from_list(global_mark_list)
-  return vim.list_extend(global_marks, local_marks)
+  return marks_info
 end
 
 -- lifted from nvim-bqf

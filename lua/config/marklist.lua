@@ -35,7 +35,7 @@ local function jump_to_mark()
 end
 
 local function retrieve_mark_info(mark_char)
-  local all_marks = Get_marks_info()
+  local all_marks = Get_accessible_marks_info()
   local mark_info
   for _, m in ipairs(all_marks) do
     if m.mark == mark_char then
@@ -175,6 +175,20 @@ local function create_new_blackboard(blackboard_buf)
   return blackboard_buf, blackboard_win
 end
 
+local function group_marks_by_file()
+  local all_accessible_marks = Get_accessible_marks_info()
+  print(vim.inspect(all_accessible_marks))
+  local grouped_marks = {}
+  for _, m in ipairs(all_accessible_marks) do
+    local filename = m.filename
+    if not grouped_marks[filename] then
+      grouped_marks[filename] = {}
+    end
+    table.insert(grouped_marks[filename], m)
+  end
+  return grouped_marks
+end
+
 local function toggle_mark_window()
   original_win = vim.api.nvim_get_current_win()
 
@@ -186,28 +200,14 @@ local function toggle_mark_window()
   blackboard_buf, blackboard_win = create_new_blackboard(blackboard_buf)
   create_buf_autocmds(blackboard_buf, blackboard_win)
 
-  local all_marks = Get_marks_info()
-  if #all_marks == 0 then
-    return
-  end
-
-  local grouped_marks = {}
-  for _, m in ipairs(all_marks) do
-    local filename = m.filename
-    if not grouped_marks[filename] then
-      grouped_marks[filename] = {}
-    end
-    table.insert(grouped_marks[filename], m)
-  end
-
-  local lines = {}
+  local grouped_marks = group_marks_by_file()
+  local blackboard_lines = {}
   local filename_line_indices = {}
-
   local func_highlight_positions = {}
 
   for filename, marks in pairs(grouped_marks) do
-    local filename_line_idx = #lines
-    table.insert(lines, filename)
+    local filename_line_idx = #blackboard_lines
+    table.insert(blackboard_lines, filename)
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
@@ -224,24 +224,20 @@ local function toggle_mark_window()
         display_text = ''
       end
 
-      -- local display_text = mark.nearest_func or mark.text or ''
       local line_text = string.format(' ├─ %s: %s', mark.mark, display_text)
-      table.insert(lines, line_text)
+      table.insert(blackboard_lines, line_text)
 
-      -- If nearest_func exists, store the highlight position
       if mark.nearest_func then
-        local line_idx = #lines -- Line index after insertion
-        local col_start = #string.format(' ├─ %s: ', mark.mark) -- Start after `mark.mark`
+        local line_idx = #blackboard_lines
+        local col_start = #string.format(' ├─ %s: ', mark.mark)
         local col_end = col_start + #mark.nearest_func
-
-        -- Store the position for highlighting later
         table.insert(func_highlight_positions, { line_idx, col_start, col_end })
       end
     end
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, blackboard_lines)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
 
@@ -253,7 +249,7 @@ local function toggle_mark_window()
     vim.api.nvim_buf_add_highlight(blackboard_buf, 0, '@function', line_idx - 1, col_start, col_end)
   end
 
-  for line_idx, line in ipairs(lines) do
+  for line_idx, line in ipairs(blackboard_lines) do
     local mark_match = line:match '├─%s([A-Za-z]):' -- Match both uppercase and lowercase marks
     if mark_match then
       local end_col = line:find(mark_match .. ':') -- Find exact position
