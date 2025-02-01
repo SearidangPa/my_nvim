@@ -15,12 +15,7 @@ local blackboard_state = {
 
 local function jump_to_mark()
   local mark_char = Get_mark_char(blackboard_state)
-
-  if not vim.api.nvim_win_is_valid(blackboard_state.original_win) then
-    print 'Invalid original window'
-    return
-  end
-
+  assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   vim.cmd('normal! `' .. mark_char)
   vim.cmd 'normal! zz'
