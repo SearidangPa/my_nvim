@@ -169,7 +169,7 @@ local function set_cursor_for_popup_win(target_line)
   if target_line >= line_count then
     target_line = line_count
   end
-  vim.api.nvim_win_set_cursor(blackboard_state.blackboard_win, { target_line, 2 }) -- Move cursor after the arrow
+  vim.api.nvim_win_set_cursor(blackboard_state.popup_win, { target_line, 2 }) -- Move cursor after the arrow
 end
 
 local function open_popup_win(mark_info)
