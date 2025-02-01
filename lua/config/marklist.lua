@@ -2,11 +2,18 @@ require 'config.util_find_func'
 require 'config.util_highlight'
 local plenary_filetype = require 'plenary.filetype'
 
+local blackboard_state = {
+  blackboard_win = -1,
+  blackboard_buf = -1,
+  popup_win = -1,
+  popup_buf = -1,
+  current_mark = nil,
+}
+
 -- lifted from nvim-bqf
 local api = vim.api
 local fn = vim.fn
 local cmd = vim.cmd
-
 function TransferBuf(from, to)
   local function transferFile(rb, wb)
     local ePath = fn.fnameescape(api.nvim_buf_get_name(rb))
@@ -118,14 +125,6 @@ local function get_accessible_marks_info()
   return marks_info
 end
 
-local blackboard_state = {
-  blackboard_win = -1,
-  blackboard_buf = -1,
-  popup_win = -1,
-  popup_buf = -1,
-  current_mark = nil,
-}
-
 local function get_mark_char(blackboard_buf)
   if not vim.api.nvim_buf_is_valid(blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
@@ -197,10 +196,10 @@ local function open_popup_win(mark_info)
     border = 'none',
   })
 
-  vim.bo[blackboard_state.opup_buf].buftype = 'nofile'
-  vim.bo[blackboard_state.opup_buf].bufhidden = 'wipe'
-  vim.bo[blackboard_state.opup_buf].swapfile = false
-  vim.bo[blackboard_state.opup_buf].filetype = mark_info.filetype
+  vim.bo[blackboard_state.popup_buf].buftype = 'nofile'
+  vim.bo[blackboard_state.popup_buf].bufhidden = 'wipe'
+  vim.bo[blackboard_state.popup_buf].swapfile = false
+  vim.bo[blackboard_state.popup_buf].filetype = mark_info.filetype
   vim.wo[blackboard_state.popup_win].wrap = false
   vim.wo[blackboard_state.popup_win].number = true
   vim.wo[blackboard_state.popup_win].relativenumber = true
