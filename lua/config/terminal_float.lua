@@ -6,18 +6,18 @@ local floating_term_state = {
   chan = 0,
 }
 
-function Create_floating_window(buf_intput)
-  buf_intput = buf_intput or -1
+function Create_floating_window(buf_input)
+  buf_input = buf_input or -1
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
   local row = math.floor((vim.o.columns - width))
   local col = math.floor((vim.o.lines - height))
 
   local buf = nil
-  if buf_intput == -1 then
+  if buf_input == -1 then
     buf = vim.api.nvim_create_buf(false, true)
   else
-    buf = buf_intput
+    buf = buf_input
   end
 
   local win = vim.api.nvim_open_win(buf, true, {

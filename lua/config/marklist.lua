@@ -61,28 +61,6 @@ local function show_fullscreen_popup_at_mark()
   local filepath = mark_info.filepath
   local target_line = mark_info.line
 
-  -- local file_lines = {}
-  -- local f = io.open(filepath, 'r')
-  -- if not f then
-  --   return
-  -- end
-  --
-  -- local index = 1
-  -- for line in f:lines() do
-  --   table.insert(file_lines, '  ' .. line)
-  --   index = index + 1
-  -- end
-  -- f:close()
-  --
-  -- if vim.g.popup_win and vim.api.nvim_win_is_valid(vim.g.popup_win) then
-  --   vim.api.nvim_buf_set_lines(vim.g.popup_buf, 0, -1, false, file_lines)
-  --   if target_line >= index then
-  --     target_line = index - 1
-  --   end
-  --   vim.api.nvim_win_set_cursor(vim.g.popup_win, { target_line, 2 }) -- Move cursor after the arrow
-  --   return
-  -- end
-
   local fp_bufnr = vim.fn.bufnr(filepath)
   if not vim.api.nvim_buf_is_valid(fp_bufnr) then
     print('Invalid buffer for file:', filepath)
@@ -158,7 +136,7 @@ local function close_popup_on_leave()
   end
 end
 
-local function create_autocmds(bufnr, win)
+local function create_buf_autocmds(bufnr, win)
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = bufnr,
     callback = function()
@@ -173,50 +151,43 @@ local function create_autocmds(bufnr, win)
       close_popup_on_leave()
     end,
   })
+
+  vim.keymap.set('n', '<CR>', function()
+    require('config.marklist').jump_to_mark()
+  end, { noremap = true, silent = true, buffer = blackboard_buf })
+end
+
+local function create_new_blackboard(blackboard_buf)
+  vim.cmd 'vsplit'
+  blackboard_win = vim.api.nvim_get_current_win()
+  if not vim.api.nvim_buf_is_valid(blackboard_buf) then
+    blackboard_buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[blackboard_buf].bufhidden = 'wipe'
+    vim.bo[blackboard_buf].buftype = 'nofile'
+    vim.bo[blackboard_buf].swapfile = false
+  end
+
+  vim.api.nvim_win_set_width(blackboard_win, math.floor(vim.o.columns / 5))
+  vim.api.nvim_win_set_buf(blackboard_win, blackboard_buf)
+  vim.wo[blackboard_win].number = false
+  vim.wo[blackboard_win].relativenumber = false
+  vim.wo[blackboard_win].wrap = false
+  return blackboard_buf, blackboard_win
 end
 
 local function toggle_mark_window()
-  if not vim.g.mark_window_buf then
-    vim.g.mark_window_buf = nil
-  end
-  if not vim.g.mark_window_win then
-    vim.g.mark_window_win = nil
-  end
+  original_win = vim.api.nvim_get_current_win()
 
-  vim.g.main_window = vim.api.nvim_get_current_win()
-
-  if vim.g.mark_window_win and vim.api.nvim_win_is_valid(vim.g.mark_window_win) then
-    vim.api.nvim_win_close(vim.g.mark_window_win, true)
-    vim.g.mark_window_buf = nil
-    vim.g.mark_window_win = nil
+  if vim.api.nvim_win_is_valid(blackboard_win) then
+    vim.api.nvim_win_hide(blackboard_win)
     return
   end
 
-  local bufnr = vim.api.nvim_create_buf(false, true)
-  vim.g.mark_window_buf = bufnr
-
-  local total_width = vim.o.columns
-  local window_width = math.floor(total_width / 5)
-
-  vim.cmd 'vsplit'
-  local win = vim.api.nvim_get_current_win()
-  vim.api.nvim_win_set_width(win, window_width)
-  vim.api.nvim_win_set_buf(win, bufnr)
-  vim.g.mark_window_win = win
-
-  create_autocmds(vim.g.mark_window_buf, vim.g.mark_window_win)
-
-  vim.bo[bufnr].bufhidden = 'wipe'
-  vim.bo[bufnr].swapfile = false
-  vim.bo[bufnr].buftype = 'nofile'
-  vim.wo[win].number = false
-  vim.wo[win].relativenumber = false
-  vim.wo[win].wrap = false
+  blackboard_buf, blackboard_win = create_new_blackboard(blackboard_buf)
+  create_buf_autocmds(blackboard_buf, blackboard_win)
 
   local all_marks = Get_marks_info()
-
   if #all_marks == 0 then
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { 'No global marks found' })
     return
   end
 
@@ -247,7 +218,7 @@ local function toggle_mark_window()
         display_text = mark.nearest_func
       elseif mark.text then
         local filetype = plenary_filetype.detect_from_extension(filename)
-        vim.bo[bufnr].filetype = filetype
+        vim.bo[blackboard_buf].filetype = filetype
         display_text = vim.trim(mark.text)
       else
         display_text = ''
@@ -270,16 +241,16 @@ local function toggle_mark_window()
     filename_line_indices[#filename_line_indices + 1] = filename_line_idx
   end
 
-  vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, lines)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
 
   for _, line_idx in ipairs(filename_line_indices) do
-    vim.api.nvim_buf_add_highlight(bufnr, -1, 'FileHighlight', line_idx, 0, -1)
+    vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'FileHighlight', line_idx, 0, -1)
   end
   for _, pos in ipairs(func_highlight_positions) do
     local line_idx, col_start, col_end = unpack(pos)
-    vim.api.nvim_buf_add_highlight(bufnr, 0, '@function', line_idx - 1, col_start, col_end)
+    vim.api.nvim_buf_add_highlight(blackboard_buf, 0, '@function', line_idx - 1, col_start, col_end)
   end
 
   for line_idx, line in ipairs(lines) do
@@ -287,16 +258,12 @@ local function toggle_mark_window()
     if mark_match then
       local end_col = line:find(mark_match .. ':') -- Find exact position
       if end_col then
-        vim.api.nvim_buf_add_highlight(bufnr, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
+        vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
       end
     end
   end
 
-  vim.api.nvim_set_current_win(vim.g.main_window)
-
-  vim.keymap.set('n', '<CR>', function()
-    require('config.marklist').jump_to_mark()
-  end, { noremap = true, silent = true, buffer = bufnr })
+  vim.api.nvim_set_current_win(original_win)
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
