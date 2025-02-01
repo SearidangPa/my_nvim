@@ -1,12 +1,130 @@
 require 'config.util_find_func'
-require 'config.util_marklist'
 require 'config.util_highlight'
 local plenary_filetype = require 'plenary.filetype'
 
-local original_win = -1
-local blackboard_win, blackboard_buf = -1, -1
-local popup_win, popup_buf = -1, -1
-local current_mark
+-- lifted from nvim-bqf
+local api = vim.api
+local fn = vim.fn
+local cmd = vim.cmd
+
+function TransferBuf(from, to)
+  local function transferFile(rb, wb)
+    local ePath = fn.fnameescape(api.nvim_buf_get_name(rb))
+    local ok, msg = pcall(api.nvim_buf_call, wb, function()
+      cmd(([[ noa call deletebufline(%d, 1, '$') ]]):format(wb))
+      cmd(([[ noa sil 0read %s ]]):format(ePath))
+      cmd(([[ noa call deletebufline(%d, '$') ]]):format(wb))
+    end)
+    return ok, msg
+  end
+
+  local fromLoaded = api.nvim_buf_is_loaded(from)
+  if fromLoaded then
+    if vim.bo[from].modified then
+      local lines = api.nvim_buf_get_lines(from, 0, -1, false)
+      api.nvim_buf_set_lines(to, 0, -1, false, lines)
+    else
+      if not transferFile(from, to) then
+        local lines = api.nvim_buf_get_lines(from, 0, -1, false)
+        api.nvim_buf_set_lines(to, 0, -1, false, lines)
+      end
+    end
+  else
+    local ok, msg = transferFile(from, to)
+    if not ok and msg:match [[:E484: Can't open file]] then
+      cmd(('noa call bufload(%d)'):format(from))
+      local lines = api.nvim_buf_get_lines(from, 0, -1, false)
+      cmd(('noa bun %d'):format(from))
+      api.nvim_buf_set_lines(to, 0, -1, false, lines)
+    end
+  end
+  vim.bo[to].modified = false
+end
+
+local function add_mark_info(marks_info, mark, bufnr, line, col)
+  local filepath = vim.api.nvim_buf_get_name(bufnr)
+
+  -- for tree-sitter
+  local filetype = plenary_filetype.detect_from_extension(filepath)
+  vim.bo[bufnr].filetype = filetype
+
+  local nearest_func = Nearest_function_at_line(bufnr, line)
+  local text
+  if not nearest_func then
+    text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
+  end
+
+  local filename = vim.fn.fnamemodify(filepath, ':t')
+  table.insert(marks_info, {
+    mark = mark,
+    bufnr = bufnr,
+    filename = filename,
+    filepath = filepath,
+    filetype = filetype,
+    line = line,
+    col = col,
+    nearest_func = nearest_func,
+    text = text,
+  })
+end
+
+local function add_local_marks(marks_info)
+  local mark_list = vim.fn.getmarklist(0)
+
+  for _, mark_entry in ipairs(mark_list) do
+    local mark = mark_entry.mark:sub(2, 2)
+    if mark:match '[a-z]' then
+      local bufnr = mark_entry.pos[1]
+      local line = mark_entry.pos[2]
+      local col = mark_entry.pos[3]
+
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        add_mark_info(marks_info, mark, bufnr, line, col)
+      end
+    end
+  end
+end
+
+--- @param marks_info table
+--- @param char number
+--- @param cwd string
+local function add_global_mark_info(marks_info, char, cwd)
+  local mark = string.char(char)
+  local pos = vim.fn.getpos("'" .. mark)
+  if pos[1] == 0 then
+    return
+  end
+  local bufnr = pos[1]
+  local line = pos[2]
+  local col = pos[3]
+
+  local filepath = vim.fn.bufname(bufnr)
+  local abs_filepath = vim.fn.fnamemodify(filepath, ':p')
+
+  if not abs_filepath:find(cwd, 1, true) then
+    return
+  end
+  add_mark_info(marks_info, mark, bufnr, line, col)
+end
+
+local function get_accessible_marks_info()
+  local marks_info = {}
+  local cwd = vim.fn.getcwd()
+  for char = string.byte 'A', string.byte 'Z' do
+    add_global_mark_info(marks_info, char, cwd)
+  end
+  add_local_marks(marks_info)
+
+  return marks_info
+end
+
+local blackboard_state = {
+  blackboard_win = -1,
+  blackboard_buf = -1,
+  popup_win = -1,
+  popup_buf = -1,
+  current_mark = nil,
+}
 
 local function get_mark_char(blackboard_buf)
   if not vim.api.nvim_buf_is_valid(blackboard_buf) then
@@ -34,7 +152,7 @@ local function jump_to_mark(blackboard_buf)
 end
 
 local function retrieve_mark_info(mark_char)
-  local all_marks = Get_accessible_marks_info()
+  local all_marks = get_accessible_marks_info()
   local mark_info
   for _, m in ipairs(all_marks) do
     if m.mark == mark_char then
@@ -47,12 +165,12 @@ local function retrieve_mark_info(mark_char)
   return mark_info
 end
 
-local function set_cursor_for_popup_win(popup_win, popup_buf, target_line)
-  local line_count = vim.api.nvim_buf_line_count(popup_buf)
+local function set_cursor_for_popup_win(target_line)
+  local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
     target_line = line_count
   end
-  vim.api.nvim_win_set_cursor(popup_win, { target_line, 2 }) -- Move cursor after the arrow
+  vim.api.nvim_win_set_cursor(blackboard_state.blackboard_win, { target_line, 2 }) -- Move cursor after the arrow
 end
 
 local function open_popup_win(mark_info)
@@ -94,11 +212,11 @@ local function show_fullscreen_popup_at_mark()
   if not mark_char then
     return
   end
-  if current_mark == mark_char then
+  if blackboard_state.current_mark == mark_char then
     return
   end
-  current_mark = mark_char
-  print('Showing popup for mark:', current_mark)
+  blackboard_state.current_mark = mark_char
+  print('Showing popup for mark:', blackboard_state.current_mark)
 
   local mark_info = retrieve_mark_info(mark_char)
   local filepath = mark_info.filepath
@@ -106,13 +224,13 @@ local function show_fullscreen_popup_at_mark()
   local filepath_bufnr = mark_info.bufnr
   assert(vim.api.nvim_buf_is_valid(filepath_bufnr), 'Invalid buffer for file: ' .. filepath)
 
-  if vim.api.nvim_win_is_valid(popup_win) then
+  if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     TransferBuf(filepath_bufnr, popup_buf)
-    set_cursor_for_popup_win(popup_win, popup_buf, target_line)
+    set_cursor_for_popup_win(target_line)
     return
   end
 
-  local popup_buf = vim.api.nvim_create_buf(false, true)
+  popup_buf = vim.api.nvim_create_buf(false, true)
   TransferBuf(filepath_bufnr, popup_buf)
   open_popup_win(mark_info)
   set_cursor_for_popup_win(popup_win, popup_buf, target_line)
@@ -145,30 +263,30 @@ local function create_buf_autocmds(bufnr, win)
   })
 
   vim.keymap.set('n', '<CR>', function()
-    require('config.marklist').jump_to_mark(blackboard_buf)
-  end, { noremap = true, silent = true, buffer = blackboard_buf })
+    require('config.marklist').jump_to_mark(blackboard_state.blackboard_buf)
+  end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
 end
 
-local function create_new_blackboard(blackboard_buf)
+local function create_new_blackboard()
   vim.cmd 'vsplit'
-  blackboard_win = vim.api.nvim_get_current_win()
-  if not vim.api.nvim_buf_is_valid(blackboard_buf) then
-    blackboard_buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[blackboard_buf].bufhidden = 'wipe'
-    vim.bo[blackboard_buf].buftype = 'nofile'
-    vim.bo[blackboard_buf].swapfile = false
+  blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
+
+  if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
+    blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[blackboard_state.blackboard_buf].bufhidden = 'wipe'
+    vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
+    vim.bo[blackboard_state.blackboard_buf].swapfile = false
   end
 
-  vim.api.nvim_win_set_width(blackboard_win, math.floor(vim.o.columns / 5))
-  vim.api.nvim_win_set_buf(blackboard_win, blackboard_buf)
-  vim.wo[blackboard_win].number = false
-  vim.wo[blackboard_win].relativenumber = false
-  vim.wo[blackboard_win].wrap = false
-  return blackboard_buf, blackboard_win
+  vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 5))
+  vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
+  vim.wo[blackboard_state.blackboard_win].number = false
+  vim.wo[blackboard_state.blackboard_win].relativenumber = false
+  vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
 local function group_marks_by_file()
-  local all_accessible_marks = Get_accessible_marks_info()
+  local all_accessible_marks = get_accessible_marks_info()
   print(vim.inspect(all_accessible_marks))
   local grouped_marks = {}
   for _, m in ipairs(all_accessible_marks) do
@@ -189,7 +307,7 @@ local function get_display_info(mark, filename)
   if mark.text then
     -- Set filetype for syntax highlighting
     local filetype = plenary_filetype.detect_from_extension(filename)
-    vim.bo[blackboard_buf].filetype = filetype
+    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
     return vim.trim(mark.text)
   end
 
@@ -238,13 +356,13 @@ local function add_highlights(parsed_marks)
 
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   for _, line_idx in ipairs(filename_line_indices) do
-    vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'FileHighlight', line_idx, 0, -1)
+    vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', line_idx, 0, -1)
   end
 
   -- Highlight the function names
   for _, pos in ipairs(func_highlight_positions) do
     local line_idx, col_start, col_end = unpack(pos)
-    vim.api.nvim_buf_add_highlight(blackboard_buf, 0, '@function', line_idx - 1, col_start, col_end)
+    vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, 0, '@function', line_idx - 1, col_start, col_end)
   end
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
@@ -253,29 +371,29 @@ local function add_highlights(parsed_marks)
     if mark_match then
       local end_col = line:find(mark_match .. ':')
       if end_col then
-        vim.api.nvim_buf_add_highlight(blackboard_buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
+        vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'MarkHighlight', line_idx - 1, end_col - 1, end_col)
       end
     end
   end
 end
 
 local function toggle_mark_window()
-  original_win = vim.api.nvim_get_current_win()
+  blackboard_state.original_win = vim.api.nvim_get_current_win()
 
-  if vim.api.nvim_win_is_valid(blackboard_win) then
-    vim.api.nvim_win_hide(blackboard_win)
+  if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
+    vim.api.nvim_win_hide(blackboard_state.blackboard_win)
     return
   end
 
-  blackboard_buf, blackboard_win = create_new_blackboard(blackboard_buf)
-  create_buf_autocmds(blackboard_buf, blackboard_win)
+  create_new_blackboard()
+  create_buf_autocmds(blackboard_state.blackboard_buf, blackboard_state.blackboard_win)
 
   local grouped_marks = group_marks_by_file()
   local parsed_marks = parse_grouped_marks_info(grouped_marks)
-  vim.api.nvim_buf_set_lines(blackboard_buf, 0, -1, false, parsed_marks.blackboard_lines)
+  vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsed_marks.blackboard_lines)
   add_highlights(parsed_marks)
 
-  vim.api.nvim_set_current_win(original_win)
+  vim.api.nvim_set_current_win(blackboard_state.original_win)
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
