@@ -16,6 +16,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filename = vim.fn.fnamemodify(filepath, ':t')
   table.insert(marks_info, {
     mark = mark,
+    bufnr = bufnr,
     filename = filename,
     filepath = filepath,
     filetype = filetype,
