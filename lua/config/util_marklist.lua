@@ -17,6 +17,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   table.insert(marks_info, {
     mark = mark,
     filename = filename,
+    filepath = filepath,
     line = line,
     col = col,
     filetype = filetype,
