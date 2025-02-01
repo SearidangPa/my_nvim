@@ -237,7 +237,7 @@ end
 
 local function close_popup_on_leave()
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    vim.api.nvim_win_close(vim.g.popup_win, true)
+    vim.api.nvim_win_close(blackboard_state.popup_win, true)
 
     if vim.api.nvim_win_is_valid(blackboard_state.original_win) then
       vim.api.nvim_set_current_win(blackboard_state.original_win)
