@@ -240,6 +240,7 @@ local function close_popup_on_leave()
   if vim.api.nvim_get_current_win() == blackboard_state.popup_win then
     return
   end
+
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     vim.api.nvim_win_close(blackboard_state.popup_win, true)
 
@@ -262,17 +263,6 @@ local function create_buf_autocmds(blackboard_state)
     buffer = blackboard_state.blackboard_buf,
     callback = function()
       close_popup_on_leave()
-    end,
-  })
-
-  vim.api.nvim_create_autocmd('BufLeave', {
-    buffer = blackboard_state.original_win,
-    callback = function()
-      local current_win = vim.api.nvim_get_current_win()
-      if current_win == blackboard_state.blackboard_win then
-        return
-      end
-      blackboard_state.original_win = vim.api.nvim_get_current_win()
     end,
   })
 
@@ -393,6 +383,7 @@ end
 
 local function toggle_mark_window()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
+  print('Original window:', blackboard_state.original_win)
 
   if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
