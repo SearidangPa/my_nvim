@@ -50,12 +50,14 @@ local function parseGroupedMarksInfo(groupedMarks)
   local blackboardLines = {}
   local virtualLines = {}
 
-  table.insert(blackboardLines, '====================')
-
   for filename, marks in pairs(groupedMarks) do
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
+
+    if #blackboardLines == 0 then
+      table.insert(blackboardLines, filename)
+    end
 
     local groupStartLine = #blackboardLines + 1
 
@@ -65,8 +67,11 @@ local function parseGroupedMarksInfo(groupedMarks)
         filename = filename,
         func_name = mark.nearest_func,
       }
-      local lineText = string.format('%s: %s', mark.mark, mark.text)
-      table.insert(blackboardLines, lineText)
+      if mark.nearest_func then
+        table.insert(blackboardLines, string.format('╰─%s: %s', mark.mark, mark.text))
+      else
+        table.insert(blackboardLines, string.format('🔥%s: %s', mark.mark, mark.text))
+      end
     end
   end
 
@@ -90,6 +95,15 @@ local function addHighlights(parsedMarks)
       end
     end
   end
+  vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
+end
+
+---@param data table
+local function make_func_line(data)
+  if not data.func_name then
+    return ''
+  end
+  return '❯ ' .. data.func_name
 end
 
 ---@param parsedMarks table
@@ -97,41 +111,57 @@ local function addVirtualLines(parsedMarks)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local last_seen_filename = ''
+  local last_seen_func = ''
 
   for lineNum, data in pairs(parsedMarks.virtualLines) do
     local filename = data.filename or ''
-    local funcLine
-    if data.func_name then
-      funcLine = '❯ ' .. data.func_name
-    else
-      funcLine = ''
-    end
+    local funcLine = make_func_line(data)
 
     local extmarkLine = lineNum - 1
-    if extmarkLine > 0 then
+
+    if extmarkLine == 1 then
+      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, 0, 0, {
+        virt_lines = { { { filename, 'FileHighlight' } } },
+        virt_lines_above = true,
+        hl_mode = 'combine',
+        priority = 10,
+      })
+    elseif extmarkLine > 1 then
       local virt_lines
       if funcLine == '' then
         if filename == last_seen_filename then
-          virt_lines = { { { '', '' } } }
+          virt_lines = nil
         else
           virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } }
         end
       else
         if filename == last_seen_filename then
-          virt_lines = { { { '', '' } }, { { funcLine, '@function' } } }
+          if funcLine == last_seen_func then
+            virt_lines = nil
+          else
+            virt_lines = { { { funcLine, '@function' } } }
+          end
         else
-          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+          if funcLine == last_seen_func then
+            virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } }
+          else
+            virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+          end
         end
       end
-      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
-        virt_lines = virt_lines,
-        virt_lines_above = true,
-        hl_mode = 'combine',
-        priority = 10,
-      })
+
+      if virt_lines then
+        vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
+          virt_lines = virt_lines,
+          virt_lines_above = true,
+          hl_mode = 'combine',
+          priority = 10,
+        })
+      end
     end
 
     last_seen_filename = filename
+    last_seen_func = funcLine
   end
 end
 
