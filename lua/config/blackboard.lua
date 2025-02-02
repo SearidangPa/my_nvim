@@ -35,7 +35,7 @@ local function create_new_blackboard()
     vim.bo[blackboard_state.blackboard_buf].swapfile = false
   end
 
-  vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 5))
+  vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 4))
   vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
   vim.wo[blackboard_state.blackboard_win].number = false
   vim.wo[blackboard_state.blackboard_win].relativenumber = false
@@ -66,11 +66,11 @@ local function parseGroupedMarksInfo(groupedMarks)
         -- Record a virtual line for the function name.
         local currentLine = #blackboardLines + 1
         -- Prepend a marker (like "├─ ") to show it as a header.
-        funcVirtualLines[currentLine] = '├─ ' .. mark.nearest_func
+        funcVirtualLines[currentLine] = ' ' .. mark.nearest_func
         lastFunc = mark.nearest_func
       end
       -- Add the mark’s actual text to the buffer.
-      local lineText = string.format(' ├─ %s: %s', mark.mark, mark.text)
+      local lineText = string.format('  ├─ %s: %s', mark.mark, mark.text)
       table.insert(blackboardLines, lineText)
     end
   end
@@ -106,24 +106,26 @@ local function addVirtualLines(parsedMarks)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   for lineNum, filename in pairs(parsedMarks.fileVirtualLines) do
     local extmarkLine = lineNum - 1
-    local virtLinesAbove = extmarkLine > 0 -- for line 0, virt_lines_above may not render
-    vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
-      virt_lines = { { { filename, 'FileHighlight' } } },
-      virt_lines_above = virtLinesAbove,
-      hl_mode = 'combine',
-    })
+    if extmarkLine > 0 then
+      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
+        virt_lines = { { { filename, 'FileHighlight' } } },
+        virt_lines_above = true,
+        hl_mode = 'combine',
+      })
+    end
   end
 
   -- Add the function name virtual lines.
   vim.api.nvim_set_hl(0, 'FuncHighlight', { fg = '#c678dd' }) -- adjust color as desired
   for lineNum, funcLine in pairs(parsedMarks.funcVirtualLines) do
     local extmarkLine = lineNum - 1
-    local virtLinesAbove = extmarkLine > 0
-    vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
-      virt_lines = { { { funcLine, 'FuncHighlight' } } },
-      virt_lines_above = virtLinesAbove,
-      hl_mode = 'combine',
-    })
+    if extmarkLine > 0 then
+      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
+        virt_lines = { { { funcLine, 'FuncHighlight' } } },
+        virt_lines_above = true,
+        hl_mode = 'combine',
+      })
+    end
   end
 end
 
