@@ -106,6 +106,34 @@ local function make_func_line(data)
   return '❯ ' .. data.func_name
 end
 
+---@param filename string
+---@param funcLine string
+---@param last_seen_filename string
+---@param last_seen_func string
+---@return table | nil
+local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
+  local virt_lines
+  if funcLine == '' then
+    if filename == last_seen_filename then
+      return nil
+    end
+    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
+  end
+
+  if filename == last_seen_filename then
+    if funcLine == last_seen_func then
+      return nil
+    end
+
+    return { { { funcLine, '@function' } } }
+  end
+
+  if funcLine == last_seen_func then
+    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
+  end
+  return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+end
+
 ---@param parsedMarks table
 local function addVirtualLines(parsedMarks)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
@@ -116,7 +144,6 @@ local function addVirtualLines(parsedMarks)
   for lineNum, data in pairs(parsedMarks.virtualLines) do
     local filename = data.filename or ''
     local funcLine = make_func_line(data)
-
     local extmarkLine = lineNum - 1
 
     if extmarkLine == 1 then
@@ -127,29 +154,7 @@ local function addVirtualLines(parsedMarks)
         priority = 10,
       })
     elseif extmarkLine > 1 then
-      local virt_lines
-      if funcLine == '' then
-        if filename == last_seen_filename then
-          virt_lines = nil
-        else
-          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } }
-        end
-      else
-        if filename == last_seen_filename then
-          if funcLine == last_seen_func then
-            virt_lines = nil
-          else
-            virt_lines = { { { funcLine, '@function' } } }
-          end
-        else
-          if funcLine == last_seen_func then
-            virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } }
-          else
-            virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
-          end
-        end
-      end
-
+      local virt_lines = get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
       if virt_lines then
         vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
           virt_lines = virt_lines,
