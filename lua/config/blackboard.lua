@@ -199,7 +199,7 @@ local function toggle_mark_window(opts)
   create_new_blackboard(opts)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   load_all_file_contents()
-  Create_autocmd(blackboard_state, filepath_to_content_lines)
+  Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })

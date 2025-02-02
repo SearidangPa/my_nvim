@@ -84,7 +84,7 @@ local function show_fullscreen_popup_at_mark(blackboard_state, filepath_to_conte
 end
 
 ---@param blackboard_state table
-function Create_autocmd(blackboard_state, filepath_to_content_lines)
+function Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 
   vim.api.nvim_create_autocmd('CursorMoved', {
