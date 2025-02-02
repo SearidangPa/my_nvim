@@ -14,15 +14,6 @@ local blackboard_state = {
   original_buf = -1,
 }
 
----@param blackboard_state table
-local function jump_to_mark(blackboard_state)
-  local mark_char = Get_mark_char(blackboard_state)
-  assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
-  vim.api.nvim_set_current_win(blackboard_state.original_win)
-  vim.cmd('normal! `' .. mark_char)
-  vim.cmd 'normal! zz'
-end
-
 local function create_new_blackboard()
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -46,7 +37,7 @@ end
 
 ---@param groupedMarks table<string, table>
 ---@return table
-local function parse_grouped_marks_info(groupedMarks)
+local function parse_grouped_marks_info(opts, groupedMarks)
   local blackboardLines = {}
   local virtualLines = {}
 
@@ -55,11 +46,9 @@ local function parse_grouped_marks_info(groupedMarks)
       return a.mark < b.mark
     end)
 
-    if #blackboardLines == 0 then
+    if #blackboardLines == 0 and opts.show_context then
       table.insert(blackboardLines, filename)
     end
-
-    local groupStartLine = #blackboardLines + 1
 
     for _, mark in ipairs(marks) do
       local currentLine = #blackboardLines + 1
@@ -68,9 +57,9 @@ local function parse_grouped_marks_info(groupedMarks)
         func_name = mark.nearest_func,
       }
       if mark.nearest_func then
-        table.insert(blackboardLines, string.format('╰─%s: %s', mark.mark, mark.text))
+        table.insert(blackboardLines, string.format('╰─ %s: %s', mark.mark, mark.text))
       else
-        table.insert(blackboardLines, string.format('🔥%s: %s', mark.mark, mark.text))
+        table.insert(blackboardLines, string.format('🔥 %s: %s', mark.mark, mark.text))
       end
     end
   end
@@ -81,8 +70,9 @@ local function parse_grouped_marks_info(groupedMarks)
   }
 end
 
+---@param opts table
 ---@param parsedMarks table
-local function add_highlights(parsedMarks)
+local function add_highlights(opts, parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
@@ -95,7 +85,9 @@ local function add_highlights(parsedMarks)
       end
     end
   end
-  vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
+  if opts.show_context then
+    vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
+  end
 end
 
 ---@param data table
@@ -112,7 +104,6 @@ end
 ---@param last_seen_func string
 ---@return table | nil
 local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
-  local virt_lines
   if funcLine == '' then
     if filename == last_seen_filename then
       return nil
@@ -170,8 +161,11 @@ local function add_virtual_lines(parsedMarks)
   end
 end
 
-local function toggle_mark_window()
-  Load_mark_bufs()
+---@param opts table: Table with optional keys
+---     - show_context (bool, default=false): show context around the mark
+local function toggle_mark_window(opts)
+  opts = opts or {}
+  opts.show_context = opts.show_context or false
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
@@ -186,13 +180,16 @@ local function toggle_mark_window()
   Create_autocmd(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
-  local parsedMarks = parse_grouped_marks_info(groupedMarks)
+  local parsedMarks = parse_grouped_marks_info(opts, groupedMarks)
   local lines = parsedMarks.blackboardLines
 
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
 
-  add_highlights(parsedMarks)
-  add_virtual_lines(parsedMarks)
+  add_highlights(opts, parsedMarks)
+
+  if opts.show_context then
+    add_virtual_lines(parsedMarks)
+  end
 
   vim.bo[blackboard_state.blackboard_buf].readonly = true
   vim.api.nvim_set_current_win(blackboard_state.original_win)
@@ -201,5 +198,5 @@ vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arkl
 
 return {
   toggle_mark_window = toggle_mark_window,
-  jump_to_mark = jump_to_mark,
+  Jump_to_mark = Jump_to_mark,
 }
