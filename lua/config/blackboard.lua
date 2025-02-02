@@ -174,7 +174,7 @@ local function add_virtual_lines(parsedMarks)
 end
 
 ---@param opts table: Table with optional keys
----     - show_context (bool, default=false): show context around the mark
+--- show_context (bool, default=false): show context around the mark
 local function toggle_mark_window(opts)
   opts = opts or {}
   opts.show_context = opts.show_context or false
