@@ -14,15 +14,6 @@ local blackboard_state = {
   original_buf = -1,
 }
 
----@param blackboard_state table
-local function jump_to_mark(blackboard_state)
-  local mark_char = Get_mark_char(blackboard_state)
-  assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
-  vim.api.nvim_set_current_win(blackboard_state.original_win)
-  vim.cmd('normal! `' .. mark_char)
-  vim.cmd 'normal! zz'
-end
-
 local function create_new_blackboard()
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -59,8 +50,6 @@ local function parse_grouped_marks_info(groupedMarks)
       table.insert(blackboardLines, filename)
     end
 
-    local groupStartLine = #blackboardLines + 1
-
     for _, mark in ipairs(marks) do
       local currentLine = #blackboardLines + 1
       virtualLines[currentLine] = {
@@ -68,9 +57,9 @@ local function parse_grouped_marks_info(groupedMarks)
         func_name = mark.nearest_func,
       }
       if mark.nearest_func then
-        table.insert(blackboardLines, string.format('╰─%s: %s', mark.mark, mark.text))
+        table.insert(blackboardLines, string.format('╰─ %s: %s', mark.mark, mark.text))
       else
-        table.insert(blackboardLines, string.format('🔥%s: %s', mark.mark, mark.text))
+        table.insert(blackboardLines, string.format('🔥 %s: %s', mark.mark, mark.text))
       end
     end
   end
@@ -112,7 +101,6 @@ end
 ---@param last_seen_func string
 ---@return table | nil
 local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
-  local virt_lines
   if funcLine == '' then
     if filename == last_seen_filename then
       return nil
@@ -201,5 +189,5 @@ vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arkl
 
 return {
   toggle_mark_window = toggle_mark_window,
-  jump_to_mark = jump_to_mark,
+  Jump_to_mark = Jump_to_mark,
 }
