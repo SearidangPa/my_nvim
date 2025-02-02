@@ -70,7 +70,8 @@ local function parseGroupedMarksInfo(groupedMarks)
         lastFunc = mark.nearest_func
       end
       -- Add the mark’s actual text to the buffer.
-      table.insert(blackboardLines, mark.text)
+      local lineText = string.format(' ├─ %s: %s', mark.mark, mark.text)
+      table.insert(blackboardLines, lineText)
     end
   end
 

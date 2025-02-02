@@ -2,7 +2,10 @@
 local api = vim.api
 local fn = vim.fn
 local cmd = vim.cmd
-function TransferBuf(from, to)
+
+---@param bufnrFrom number
+---@param bufnrTo number
+function TransferBuf(bufnrFrom, bufnrTo)
   local function transferFile(rb, wb)
     local ePath = fn.fnameescape(api.nvim_buf_get_name(rb))
     local ok, msg = pcall(api.nvim_buf_call, wb, function()
@@ -13,27 +16,27 @@ function TransferBuf(from, to)
     return ok, msg
   end
 
-  local fromLoaded = api.nvim_buf_is_loaded(from)
+  local fromLoaded = api.nvim_buf_is_loaded(bufnrFrom)
   if fromLoaded then
-    if vim.bo[from].modified then
-      local lines = api.nvim_buf_get_lines(from, 0, -1, false)
-      api.nvim_buf_set_lines(to, 0, -1, false, lines)
+    if vim.bo[bufnrFrom].modified then
+      local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
+      api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
     else
-      if not transferFile(from, to) then
-        local lines = api.nvim_buf_get_lines(from, 0, -1, false)
-        api.nvim_buf_set_lines(to, 0, -1, false, lines)
+      if not transferFile(bufnrFrom, bufnrTo) then
+        local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
+        api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
       end
     end
   else
-    local ok, msg = transferFile(from, to)
+    local ok, msg = transferFile(bufnrFrom, bufnrTo)
     if not ok and msg:match [[:E484: Can't open file]] then
-      cmd(('noa call bufload(%d)'):format(from))
-      local lines = api.nvim_buf_get_lines(from, 0, -1, false)
-      cmd(('noa bun %d'):format(from))
-      api.nvim_buf_set_lines(to, 0, -1, false, lines)
+      cmd(('noa call bufload(%d)'):format(bufnrFrom))
+      local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
+      cmd(('noa bun %d'):format(bufnrFrom))
+      api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
     end
   end
-  vim.bo[to].modified = false
+  vim.bo[bufnrTo].modified = false
 end
 
 ---@param blackboard_state table
@@ -72,6 +75,9 @@ function Open_popup_win(blackboard_state, mark_info)
   vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = blackboard_state.popup_win }) -- Match background
 end
 
+---@param mark_char string
+---@param blackboard_state table
+---@param target_line number
 local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
   local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
@@ -83,6 +89,7 @@ local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char
   vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
 end
 
+---@param blackboard_state table
 local function show_fullscreen_popup_at_mark(blackboard_state)
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
@@ -106,7 +113,7 @@ local function show_fullscreen_popup_at_mark(blackboard_state)
   blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
   TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
   Open_popup_win(blackboard_state, mark_info)
-  set_cursor_for_popup_win(target_line, mark_char)
+  set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
 end
 
 ---@param blackboard_state table
@@ -117,7 +124,7 @@ function Create_autocmd(blackboard_state)
     buffer = blackboard_state.blackboard_buf,
     group = augroup,
     callback = function()
-      show_fullscreen_popup_at_mark()
+      show_fullscreen_popup_at_mark(blackboard_state)
       vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
     end,
   })
