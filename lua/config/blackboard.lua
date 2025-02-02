@@ -37,7 +37,7 @@ end
 
 ---@param groupedMarks table<string, table>
 ---@return table
-local function parse_grouped_marks_info(groupedMarks)
+local function parse_grouped_marks_info(opts, groupedMarks)
   local blackboardLines = {}
   local virtualLines = {}
 
@@ -46,7 +46,7 @@ local function parse_grouped_marks_info(groupedMarks)
       return a.mark < b.mark
     end)
 
-    if #blackboardLines == 0 then
+    if #blackboardLines == 0 and opts.show_context then
       table.insert(blackboardLines, filename)
     end
 
@@ -70,8 +70,9 @@ local function parse_grouped_marks_info(groupedMarks)
   }
 end
 
+---@param opts table
 ---@param parsedMarks table
-local function add_highlights(parsedMarks)
+local function add_highlights(opts, parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
@@ -84,7 +85,9 @@ local function add_highlights(parsedMarks)
       end
     end
   end
-  vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
+  if opts.show_context then
+    vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
+  end
 end
 
 ---@param data table
@@ -158,7 +161,11 @@ local function add_virtual_lines(parsedMarks)
   end
 end
 
-local function toggle_mark_window()
+---@param opts table: Table with optional keys
+---     - show_context (bool, default=false): show context around the mark
+local function toggle_mark_window(opts)
+  opts = opts or {}
+  opts.show_context = opts.show_context or false
   Load_mark_bufs()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
@@ -174,13 +181,16 @@ local function toggle_mark_window()
   Create_autocmd(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
-  local parsedMarks = parse_grouped_marks_info(groupedMarks)
+  local parsedMarks = parse_grouped_marks_info(opts, groupedMarks)
   local lines = parsedMarks.blackboardLines
 
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
 
-  add_highlights(parsedMarks)
-  add_virtual_lines(parsedMarks)
+  add_highlights(opts, parsedMarks)
+
+  if opts.show_context then
+    add_virtual_lines(parsedMarks)
+  end
 
   vim.bo[blackboard_state.blackboard_buf].readonly = true
   vim.api.nvim_set_current_win(blackboard_state.original_win)
