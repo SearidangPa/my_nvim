@@ -21,7 +21,8 @@ local function load_all_file_contents()
   local pp = require 'plenary.path'
   for filepath, _ in pairs(grouped_marks_by_filepath) do
     local data = pp:new(filepath):read()
-    filepath_to_content_lines[filepath] = vim.split(data, '\n', true)
+    local content_lines = vim.split(data, '\n', { plain = true })
+    filepath_to_content_lines[filepath] = content_lines
   end
 end
 
@@ -184,7 +185,7 @@ end
 --- show_context (bool, default=false): show context around the mark
 local function toggle_mark_window(opts)
   opts = opts or {}
-  opts.show_context = opts.show_context or false
+  opts.show_context = opts.show_context or true
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
