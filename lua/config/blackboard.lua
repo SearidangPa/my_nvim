@@ -116,12 +116,11 @@ local function addVirtualLines(parsedMarks)
   end
 
   -- Add the function name virtual lines.
-  vim.api.nvim_set_hl(0, 'FuncHighlight', { fg = '#c678dd' }) -- adjust color as desired
   for lineNum, funcLine in pairs(parsedMarks.funcVirtualLines) do
     local extmarkLine = lineNum - 1
     if extmarkLine > 0 then
       vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
-        virt_lines = { { { funcLine, 'FuncHighlight' } } },
+        virt_lines = { { { funcLine, '@function' } } },
         virt_lines_above = true,
         hl_mode = 'combine',
       })
