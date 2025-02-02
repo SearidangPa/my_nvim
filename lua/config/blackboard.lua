@@ -51,29 +51,23 @@ local function parseGroupedMarksInfo(groupedMarks)
   local fileVirtualLines = {}
   local funcVirtualLines = {}
 
+  table.insert(blackboardLines, '====================')
+
   for filename, marks in pairs(groupedMarks) do
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
 
-    if #blackboardLines == 0 then
-      table.insert(blackboardLines, '====================')
-    end
-
     local groupStartLine = #blackboardLines + 1
     fileVirtualLines[groupStartLine] = filename
 
-    -- Track the last function name so that we only add a new virtual line when it changes.
     local lastFunc = nil
     for _, mark in ipairs(marks) do
       if mark.nearest_func and mark.nearest_func ~= lastFunc then
-        -- Record a virtual line for the function name.
         local currentLine = #blackboardLines + 1
-        -- Prepend a marker (like "├─ ") to show it as a header.
         funcVirtualLines[currentLine] = '╰─ ƒ: ' .. mark.nearest_func
         lastFunc = mark.nearest_func
       end
-      -- Add the mark’s actual text to the buffer.
       local lineText = string.format('%s: %s', mark.mark, mark.text)
       table.insert(blackboardLines, lineText)
     end
@@ -111,7 +105,7 @@ local function addVirtualLines(parsedMarks)
     local extmarkLine = lineNum - 1
     if extmarkLine > 0 then
       vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
-        virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } },
+        virt_lines = { { { filename, 'FileHighlight' } } },
         virt_lines_above = true,
         hl_mode = 'combine',
         priority = 10,
@@ -126,7 +120,7 @@ local function addVirtualLines(parsedMarks)
         virt_lines = { { { funcLine, '@function' } } },
         virt_lines_above = true,
         hl_mode = 'combine',
-        priority = 10000,
+        priority = 100,
       })
     end
   end
