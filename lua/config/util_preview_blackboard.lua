@@ -39,8 +39,8 @@ function TransferBuf(bufnrFrom, bufnrTo)
   vim.bo[bufnrTo].modified = false
 end
 
----@param marks_info table
-function Preload_mark_bufs(marks_info)
+function Load_mark_bufs()
+  local marks_info = Get_accessible_marks_info()
   for _, mark_info in ipairs(marks_info) do
     local bufnr = mark_info.bufnr
     local is_loaded = api.nvim_buf_is_loaded(bufnr)

@@ -166,6 +166,7 @@ local function addVirtualLines(parsedMarks)
 end
 
 local function toggle_mark_window()
+  Load_mark_bufs()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
