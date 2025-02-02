@@ -121,7 +121,11 @@ function Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lin
       end
     end,
   })
+  local bb = require 'config.blackboard'
   vim.keymap.set('n', '<CR>', function()
-    require('config.blackboard').Jump_to_mark(blackboard_state)
+    bb.Jump_to_mark(blackboard_state)
   end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
+
+  vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]arklist', buffer = blackboard_state.blackboard_buf })
+  vim.keymap.set('n', '<leader>tc', bb.toggle_mark_with_context, { desc = '[T]oggle [C]ontext', buffer = blackboard_state.blackboard_buf })
 end

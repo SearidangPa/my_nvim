@@ -113,7 +113,9 @@ end
 --- show_context (bool, default=false): show context around the mark
 local function toggle_mark_window(opts)
   opts = opts or {}
-  opts.show_context = opts.show_context or true
+  opts.show_context = opts.show_context or false
+  opts.reload_file_contents = opts.reload_file_contents or false
+
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
@@ -127,13 +129,37 @@ local function toggle_mark_window(opts)
 
   create_new_blackboard(opts)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
+
+  if not opts.reload_file_contents then
+    load_all_file_contents()
+    Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
+  end
+end
+
+local function toggle_mark_with_context()
+  if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
+    vim.api.nvim_win_hide(blackboard_state.blackboard_win)
+    vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
+    vim.api.nvim_del_augroup_by_name 'blackboard_group'
+    return
+  end
+
+  create_new_blackboard { show_context = true, reload_file_contents = true }
+  vim.api.nvim_set_current_win(blackboard_state.original_win)
   load_all_file_contents()
   Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
 end
 
-vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
+vim.api.nvim_create_user_command('ToggleBlackboard', toggle_mark_window, {
+  desc = 'Toggle Blackboard',
+})
+
+vim.api.nvim_create_user_command('ToggleMarkContext', toggle_mark_with_context, {
+  desc = 'Toggle Mark Context',
+})
 
 return {
-  toggle_mark_window = toggle_mark_window,
   Jump_to_mark = Jump_to_mark,
+  toggle_mark_window = toggle_mark_window,
+  toggle_mark_with_context = toggle_mark_with_context,
 }
