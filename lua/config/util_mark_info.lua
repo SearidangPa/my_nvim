@@ -8,10 +8,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   vim.bo[bufnr].filetype = filetype
 
   local nearest_func = Nearest_function_at_line(bufnr, line)
-  local text
-  if not nearest_func then
-    text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
-  end
+  local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
   local filename = vim.fn.fnamemodify(filepath, ':t')
   table.insert(marks_info, {
@@ -23,7 +20,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
     line = line,
     col = col,
     nearest_func = nearest_func,
-    text = text,
+    text = vim.trim(text),
   })
 end
 
@@ -78,24 +75,6 @@ function Retrieve_mark_info(mark_char)
   assert(mark_info, 'No mark info found for mark: ' .. mark_char)
   assert(mark_info.filepath and mark_info.filepath ~= '', 'No filepath found for mark: ' .. mark_char)
   return mark_info
-end
-
---- @param blackboard_state table
---- @param mark table
---- @param filename string
---- @return string
-function Get_display_info(blackboard_state, mark, filename)
-  if mark.nearest_func then
-    return mark.nearest_func
-  end
-
-  if mark.text then
-    local filetype = plenary_filetype.detect_from_extension(filename)
-    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
-    return vim.trim(mark.text)
-  end
-
-  return ''
 end
 
 function Group_marks_info_by_file()

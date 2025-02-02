@@ -14,49 +14,13 @@ local blackboard_state = {
   original_buf = -1,
 }
 
-local function jump_to_mark()
+---@param blackboard_state table
+local function jump_to_mark(blackboard_state)
   local mark_char = Get_mark_char(blackboard_state)
   assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   vim.cmd('normal! `' .. mark_char)
   vim.cmd 'normal! zz'
-end
-
-local function set_cursor_for_popup_win(target_line, mark_char)
-  local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
-  if target_line >= line_count then
-    target_line = line_count
-  end
-  vim.api.nvim_win_set_cursor(blackboard_state.popup_win, { target_line, 2 }) -- Move cursor after the arrow
-
-  vim.fn.sign_define('MySign', { text = mark_char, texthl = 'DiagnosticInfo' })
-  vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
-end
-
-local function show_fullscreen_popup_at_mark()
-  local mark_char = Get_mark_char(blackboard_state)
-  if not mark_char then
-    return
-  end
-  if blackboard_state.current_mark == mark_char and vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    return
-  end
-  blackboard_state.current_mark = mark_char
-
-  local mark_info = Retrieve_mark_info(mark_char)
-  local target_line = mark_info.line
-  local filepath_bufnr = mark_info.bufnr
-
-  if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
-    set_cursor_for_popup_win(target_line, mark_char)
-    return
-  end
-
-  blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
-  TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
-  Open_popup_win(blackboard_state, mark_info)
-  set_cursor_for_popup_win(target_line, mark_char)
 end
 
 local function create_new_blackboard()
@@ -104,9 +68,8 @@ local function parse_grouped_marks_info(groupedMarks)
     local groupStartLine = #blackboardLines + 1
 
     for i, mark in ipairs(marks) do
-      local displayInfo = Get_display_info(blackboard_state, mark, filename)
-      local lineText = string.format(' ├─ %s: %s', mark.mark, displayInfo)
-      table.insert(blackboardLines, lineText)
+      table.insert(blackboardLines, mark.text)
+      local lineText = string.format(' ├─ %s: %s', mark.mark, mark.text)
 
       load_buf_preemptively(mark.bufnr)
 
@@ -168,47 +131,6 @@ local function add_file_virtual_lines(parsedMarks)
   end
 end
 
----@param blackboard_state table
-local function create_autocmd(blackboard_state)
-  local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
-
-  vim.api.nvim_create_autocmd('CursorMoved', {
-    buffer = blackboard_state.blackboard_buf,
-    group = augroup,
-    callback = function()
-      show_fullscreen_popup_at_mark()
-      vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave' }, {
-    buffer = blackboard_state.blackboard_buf,
-    group = augroup,
-    callback = function()
-      if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-        vim.api.nvim_win_close(blackboard_state.popup_win, true)
-      end
-    end,
-  })
-
-  vim.api.nvim_create_autocmd('BufWinLeave', {
-    buffer = blackboard_state.blackboard_buf,
-    group = augroup,
-    callback = function()
-      if vim.api.nvim_get_current_win() == blackboard_state.blackboard_win then
-        vim.api.nvim_win_set_buf(blackboard_state.original_win, blackboard_state.original_buf)
-        vim.defer_fn(function()
-          vim.api.nvim_set_current_win(blackboard_state.original_win)
-          vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
-        end, 0)
-      end
-    end,
-  })
-  vim.keymap.set('n', '<CR>', function()
-    require('config.blackboard').jump_to_mark(blackboard_state.blackboard_buf)
-  end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
-end
-
 local function toggle_mark_window()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
@@ -220,7 +142,7 @@ local function toggle_mark_window()
   end
 
   create_new_blackboard()
-  create_autocmd(blackboard_state)
+  Create_autocmd(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
   local parsedMarks = parse_grouped_marks_info(groupedMarks)
