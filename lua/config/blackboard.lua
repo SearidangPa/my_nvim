@@ -16,33 +16,13 @@ local blackboard_state = {
 
 local filepath_to_content_lines = {}
 
-local function create_new_blackboard()
-  vim.cmd 'vsplit'
-  blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
-  local filetype = plenary_filetype.detect(vim.api.nvim_buf_get_name(0))
-
-  if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
-    blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[blackboard_state.blackboard_buf].bufhidden = 'hide'
-    vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
-    vim.bo[blackboard_state.blackboard_buf].buflisted = false
-    vim.bo[blackboard_state.blackboard_buf].swapfile = false
-    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
-  end
-
-  vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 4))
-  vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
-  vim.wo[blackboard_state.blackboard_win].number = false
-  vim.wo[blackboard_state.blackboard_win].relativenumber = false
-  vim.wo[blackboard_state.blackboard_win].wrap = false
-end
-
 local function load_all_file_contents()
   local grouped_marks_by_filepath = Group_marks_info_by_filepath()
   local pp = require 'plenary.path'
   for filepath, _ in pairs(grouped_marks_by_filepath) do
     local data = pp:new(filepath):read()
-    filepath_to_content_lines[filepath] = vim.split(data, '\n', true)
+    local content_lines = vim.split(data, '\n', { plain = true })
+    filepath_to_content_lines[filepath] = content_lines
   end
 end
 
@@ -173,11 +153,39 @@ local function add_virtual_lines(parsedMarks)
   end
 end
 
+local function create_new_blackboard(opts)
+  vim.cmd 'vsplit'
+  blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
+  local filetype = plenary_filetype.detect(vim.api.nvim_buf_get_name(0))
+
+  if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
+    blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[blackboard_state.blackboard_buf].bufhidden = 'hide'
+    vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
+    vim.bo[blackboard_state.blackboard_buf].buflisted = false
+    vim.bo[blackboard_state.blackboard_buf].swapfile = false
+    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
+  end
+
+  local parsedMarks = parse_grouped_marks_info(opts)
+  vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
+  if opts.show_context then
+    add_virtual_lines(parsedMarks)
+  end
+  add_highlights(opts, parsedMarks)
+  vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
+
+  vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 4))
+  vim.wo[blackboard_state.blackboard_win].number = false
+  vim.wo[blackboard_state.blackboard_win].relativenumber = false
+  vim.wo[blackboard_state.blackboard_win].wrap = false
+end
+
 ---@param opts table: Table with optional keys
 --- show_context (bool, default=false): show context around the mark
 local function toggle_mark_window(opts)
   opts = opts or {}
-  opts.show_context = opts.show_context or false
+  opts.show_context = opts.show_context or true
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
@@ -189,17 +197,10 @@ local function toggle_mark_window(opts)
     return
   end
 
-  create_new_blackboard()
-  local parsedMarks = parse_grouped_marks_info(opts)
-  add_highlights(opts, parsedMarks)
-  if opts.show_context then
-    add_virtual_lines(parsedMarks)
-  end
-  vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
+  create_new_blackboard(opts)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
-
   load_all_file_contents()
-  Create_autocmd(blackboard_state, filepath_to_content_lines)
+  Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
 end
 
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
