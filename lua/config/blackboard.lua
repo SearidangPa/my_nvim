@@ -185,6 +185,7 @@ local function toggle_mark_window(opts)
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
     vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
+    filepath_to_content_lines = {}
     return
   end
 
