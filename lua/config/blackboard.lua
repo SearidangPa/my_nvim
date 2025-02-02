@@ -46,7 +46,7 @@ end
 
 ---@param groupedMarks table<string, table>
 ---@return table
-local function parseGroupedMarksInfo(groupedMarks)
+local function parse_grouped_marks_info(groupedMarks)
   local blackboardLines = {}
   local virtualLines = {}
 
@@ -82,7 +82,7 @@ local function parseGroupedMarksInfo(groupedMarks)
 end
 
 ---@param parsedMarks table
-local function addHighlights(parsedMarks)
+local function add_highlights(parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
@@ -135,7 +135,7 @@ local function get_virtual_lines(filename, funcLine, last_seen_filename, last_se
 end
 
 ---@param parsedMarks table
-local function addVirtualLines(parsedMarks)
+local function add_virtual_lines(parsedMarks)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local last_seen_filename = ''
@@ -186,13 +186,13 @@ local function toggle_mark_window()
   Create_autocmd(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
-  local parsedMarks = parseGroupedMarksInfo(groupedMarks)
+  local parsedMarks = parse_grouped_marks_info(groupedMarks)
   local lines = parsedMarks.blackboardLines
 
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
 
-  addHighlights(parsedMarks)
-  addVirtualLines(parsedMarks)
+  add_highlights(parsedMarks)
+  add_virtual_lines(parsedMarks)
 
   vim.bo[blackboard_state.blackboard_buf].readonly = true
   vim.api.nvim_set_current_win(blackboard_state.original_win)
