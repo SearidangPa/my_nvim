@@ -11,6 +11,7 @@ local blackboard_state = {
   popup_buf = -1,
   current_mark = nil,
   original_win = -1,
+  original_buf = -1,
 }
 
 local function jump_to_mark()
@@ -58,36 +59,13 @@ local function show_fullscreen_popup_at_mark()
   set_cursor_for_popup_win(target_line, mark_char)
 end
 
-local function create_buf_autocmds(blackboard_state)
-  vim.api.nvim_create_autocmd('CursorMoved', {
-    buffer = blackboard_state.blackboard_buf,
-    callback = function()
-      show_fullscreen_popup_at_mark()
-      vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
-    end,
-  })
-
-  vim.api.nvim_create_autocmd('BufLeave', {
-    buffer = blackboard_state.blackboard_buf,
-    callback = function()
-      if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-        vim.api.nvim_win_close(blackboard_state.popup_win, true)
-      end
-    end,
-  })
-
-  vim.keymap.set('n', '<CR>', function()
-    require('config.blackboard').jump_to_mark(blackboard_state.blackboard_buf)
-  end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
-end
-
 local function create_new_blackboard()
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
 
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[blackboard_state.blackboard_buf].bufhidden = 'wipe'
+    vim.bo[blackboard_state.blackboard_buf].bufhidden = 'hide'
     vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
     vim.bo[blackboard_state.blackboard_buf].buflisted = false
     vim.bo[blackboard_state.blackboard_buf].swapfile = false
@@ -177,16 +155,58 @@ local function add_file_virtual_lines(parsedMarks)
   end
 end
 
+local function create_autocmd(blackboard_state)
+  local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
+
+  vim.api.nvim_create_autocmd('CursorMoved', {
+    buffer = blackboard_state.blackboard_buf,
+    group = augroup,
+    callback = function()
+      show_fullscreen_popup_at_mark()
+      vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ 'BufLeave', 'WinLeave' }, {
+    buffer = blackboard_state.blackboard_buf,
+    group = augroup,
+    callback = function()
+      if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
+        vim.api.nvim_win_close(blackboard_state.popup_win, true)
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd('BufWinLeave', {
+    buffer = blackboard_state.blackboard_buf,
+    group = augroup,
+    callback = function()
+      if vim.api.nvim_get_current_win() == blackboard_state.blackboard_win then
+        vim.api.nvim_win_set_buf(blackboard_state.original_win, blackboard_state.original_buf)
+        vim.defer_fn(function()
+          vim.api.nvim_set_current_win(blackboard_state.original_win)
+          vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
+        end, 0)
+      end
+    end,
+  })
+  vim.keymap.set('n', '<CR>', function()
+    require('config.blackboard').jump_to_mark(blackboard_state.blackboard_buf)
+  end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
+end
+
 local function toggle_mark_window()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
+  blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
   if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
+    vim.api.nvim_del_augroup_by_name 'blackboard_group'
     return
   end
 
   create_new_blackboard()
-  create_buf_autocmds(blackboard_state)
+  create_autocmd(blackboard_state)
 
   local groupedMarks = Group_marks_info_by_file()
   local parsedMarks = parse_grouped_marks_info(groupedMarks)
