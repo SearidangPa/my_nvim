@@ -1,7 +1,6 @@
-require 'config.util_find_func'
-require 'config.util_highlight'
 require 'config.util_blackboard_preview'
 require 'config.util_blackboard_mark_info'
+require 'config.util_blackboard_context'
 local plenary_filetype = require 'plenary.filetype'
 
 local blackboard_state = {
@@ -82,77 +81,6 @@ local function add_highlights(opts, parsedMarks)
   end
 end
 
----@param data table
-local function make_func_line(data)
-  if not data.func_name then
-    return ''
-  end
-  return '❯ ' .. data.func_name
-end
-
----@param filename string
----@param funcLine string
----@param last_seen_filename string
----@param last_seen_func string
----@return table | nil
-local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
-  if funcLine == '' then
-    if filename == last_seen_filename then
-      return nil
-    end
-    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
-  end
-
-  if filename == last_seen_filename then
-    if funcLine == last_seen_func then
-      return nil
-    end
-
-    return { { { funcLine, '@function' } } }
-  end
-
-  if funcLine == last_seen_func then
-    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
-  end
-  return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
-end
-
----@param parsedMarks table
-local function add_virtual_lines(parsedMarks)
-  local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
-  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
-  local last_seen_filename = ''
-  local last_seen_func = ''
-
-  for lineNum, data in pairs(parsedMarks.virtualLines) do
-    local filename = data.filename or ''
-    local funcLine = make_func_line(data)
-    local extmarkLine = lineNum - 1
-
-    if extmarkLine == 1 then
-      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, 0, 0, {
-        virt_lines = { { { filename, 'FileHighlight' } } },
-        virt_lines_above = true,
-        hl_mode = 'combine',
-        priority = 10,
-      })
-    elseif extmarkLine > 1 then
-      local virt_lines = get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
-      if virt_lines then
-        vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
-          virt_lines = virt_lines,
-          virt_lines_above = true,
-          hl_mode = 'combine',
-          priority = 10,
-        })
-      end
-    end
-
-    last_seen_filename = filename
-    last_seen_func = funcLine
-  end
-end
-
 local function create_new_blackboard(opts)
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -170,7 +98,7 @@ local function create_new_blackboard(opts)
   local parsedMarks = parse_grouped_marks_info(opts)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
   if opts.show_context then
-    add_virtual_lines(parsedMarks)
+    Add_virtual_lines(parsedMarks, blackboard_state)
   end
   add_highlights(opts, parsedMarks)
   vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
