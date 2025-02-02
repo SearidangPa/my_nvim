@@ -11,6 +11,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
   local filename = vim.fn.fnamemodify(filepath, ':t')
+
   table.insert(marks_info, {
     mark = mark,
     bufnr = bufnr,
@@ -86,6 +87,19 @@ function Group_marks_info_by_file()
       grouped_marks[filename] = {}
     end
     table.insert(grouped_marks[filename], m)
+  end
+  return grouped_marks
+end
+
+function Group_marks_info_by_filepath()
+  local all_accessible_marks = Get_accessible_marks_info()
+  local grouped_marks = {}
+  for _, m in ipairs(all_accessible_marks) do
+    local filepath = m.filepath
+    if not grouped_marks[filepath] then
+      grouped_marks[filepath] = {}
+    end
+    table.insert(grouped_marks[filepath], m)
   end
   return grouped_marks
 end

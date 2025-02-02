@@ -1,56 +1,3 @@
--- -- lifted from nvim-bqf
--- local api = vim.api
--- local fn = vim.fn
--- local cmd = vim.cmd
---
--- ---@param bufnrFrom number
--- ---@param bufnrTo number
--- function TransferBuf(bufnrFrom, bufnrTo)
---   local function transferFile(rb, wb)
---     local ePath = fn.fnameescape(api.nvim_buf_get_name(rb))
---     local ok, msg = pcall(api.nvim_buf_call, wb, function()
---       cmd(([[ noa call deletebufline(%d, 1, '$') ]]):format(wb))
---       cmd(([[ noa sil 0read %s ]]):format(ePath))
---       cmd(([[ noa call deletebufline(%d, '$') ]]):format(wb))
---     end)
---     return ok, msg
---   end
---
---   local fromLoaded = api.nvim_buf_is_loaded(bufnrFrom)
---   if fromLoaded then
---     if vim.bo[bufnrFrom].modified then
---       local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
---       api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
---     else
---       if not transferFile(bufnrFrom, bufnrTo) then
---         local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
---         api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
---       end
---     end
---   else
---     local ok, msg = transferFile(bufnrFrom, bufnrTo)
---     if not ok and msg:match [[:E484: Can't open file]] then
---       cmd(('noa call bufload(%d)'):format(bufnrFrom))
---       local lines = api.nvim_buf_get_lines(bufnrFrom, 0, -1, false)
---       cmd(('noa bun %d'):format(bufnrFrom))
---       api.nvim_buf_set_lines(bufnrTo, 0, -1, false, lines)
---     end
---   end
---   vim.bo[bufnrTo].modified = false
--- end
-
--- function Load_mark_bufs()
---   local marks_info = Get_accessible_marks_info()
---   for _, mark_info in ipairs(marks_info) do
---     local bufnr = mark_info.bufnr
---     local is_loaded = vim.api.nvim_buf_is_loaded(bufnr)
---     if not is_loaded then
---       print(string.format('preloading %s', mark_info.filepath))
---       cmd(('noa call bufload(%d)'):format(bufnr))
---     end
---   end
--- end
-
 ---@param blackboard_state table
 function Jump_to_mark(blackboard_state)
   local mark_char = Get_mark_char(blackboard_state)
@@ -111,12 +58,12 @@ local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char
 end
 
 ---@param blackboard_state table
-local function show_fullscreen_popup_at_mark(blackboard_state)
+---@param filepath_to_content_lines table
+local function show_fullscreen_popup_at_mark(blackboard_state, filepath_to_content_lines)
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
     return
-  end
-  if blackboard_state.current_mark == mark_char and vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
+  elseif blackboard_state.current_mark == mark_char and vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     return
   end
   blackboard_state.current_mark = mark_char
@@ -124,27 +71,27 @@ local function show_fullscreen_popup_at_mark(blackboard_state)
   local mark_info = Retrieve_mark_info(mark_char)
   local target_line = mark_info.line
 
-  if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
-    vim.api.nvim_buf_set_lines(blackboard_state.popup_buf, 0, -1, false, mark_info.file_content_lines)
-    set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
-    return
-  end
+  local file_content_lines = filepath_to_content_lines[mark_info.filepath]
+  assert(file_content_lines, string.format('File content not found for %s', mark_info.filepath))
 
-  blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(blackboard_state.popup_buf, 0, -1, false, mark_info.file_content_lines)
-  Open_popup_win(blackboard_state, mark_info)
+  if not vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
+    blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
+    Open_popup_win(blackboard_state, mark_info)
+  end
+  file_content_lines = filepath_to_content_lines[mark_info.filepath]
+  vim.api.nvim_buf_set_lines(blackboard_state.popup_buf, 0, -1, false, file_content_lines)
   set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
 end
 
 ---@param blackboard_state table
-function Create_autocmd(blackboard_state)
+function Create_autocmd(blackboard_state, filepath_to_content_lines)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = blackboard_state.blackboard_buf,
     group = augroup,
     callback = function()
-      show_fullscreen_popup_at_mark(blackboard_state)
+      show_fullscreen_popup_at_mark(blackboard_state, filepath_to_content_lines)
       vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
     end,
   })

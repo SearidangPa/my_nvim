@@ -14,6 +14,8 @@ local blackboard_state = {
   original_buf = -1,
 }
 
+local filepath_to_content_lines = {}
+
 local function create_new_blackboard()
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -35,14 +37,24 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
----@param groupedMarks table<string, table>
+local function load_all_file_contents()
+  local grouped_marks_by_filepath = Group_marks_info_by_filepath()
+  local pp = require 'plenary.path'
+  for filepath, _ in pairs(grouped_marks_by_filepath) do
+    local data = pp:new(filepath):read()
+    filepath_to_content_lines[filepath] = vim.split(data, '\n', true)
+  end
+end
+
+---@param opts table
 ---@return table
-local function parse_grouped_marks_info(opts, groupedMarks)
+local function parse_grouped_marks_info(opts)
+  local grouped_marks_by_filename = Group_marks_info_by_file()
   local blackboardLines = {}
   local virtualLines = {}
 
-  for filename, marks in pairs(groupedMarks) do
-    table.sort(marks, function(a, b)
+  for filename, marks_info in pairs(grouped_marks_by_filename) do
+    table.sort(marks_info, function(a, b)
       return a.mark < b.mark
     end)
 
@@ -50,16 +62,16 @@ local function parse_grouped_marks_info(opts, groupedMarks)
       table.insert(blackboardLines, filename)
     end
 
-    for _, mark in ipairs(marks) do
+    for _, mark_info in ipairs(marks_info) do
       local currentLine = #blackboardLines + 1
       virtualLines[currentLine] = {
         filename = filename,
-        func_name = mark.nearest_func,
+        func_name = mark_info.nearest_func,
       }
-      if mark.nearest_func then
-        table.insert(blackboardLines, string.format('╰─ %s: %s', mark.mark, mark.text))
+      if mark_info.nearest_func then
+        table.insert(blackboardLines, string.format('╰─ %s: %s', mark_info.mark, mark_info.text))
       else
-        table.insert(blackboardLines, string.format('🔥 %s: %s', mark.mark, mark.text))
+        table.insert(blackboardLines, string.format('🔥 %s: %s', mark_info.mark, mark_info.text))
       end
     end
   end
@@ -177,23 +189,18 @@ local function toggle_mark_window(opts)
   end
 
   create_new_blackboard()
-  Create_autocmd(blackboard_state)
-
-  local groupedMarks = Group_marks_info_by_file()
-  local parsedMarks = parse_grouped_marks_info(opts, groupedMarks)
-  local lines = parsedMarks.blackboardLines
-
-  vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, lines)
-
+  local parsedMarks = parse_grouped_marks_info(opts)
   add_highlights(opts, parsedMarks)
-
   if opts.show_context then
     add_virtual_lines(parsedMarks)
   end
-
-  vim.bo[blackboard_state.blackboard_buf].readonly = true
+  vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
+
+  load_all_file_contents()
+  Create_autocmd(blackboard_state, filepath_to_content_lines)
 end
+
 vim.keymap.set('n', '<leader>tm', toggle_mark_window, { desc = '[T]oggle [M]arklist' })
 
 return {
