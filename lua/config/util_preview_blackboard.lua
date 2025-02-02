@@ -39,6 +39,18 @@ function TransferBuf(bufnrFrom, bufnrTo)
   vim.bo[bufnrTo].modified = false
 end
 
+---@param marks_info table
+function Preload_mark_bufs(marks_info)
+  for _, mark_info in ipairs(marks_info) do
+    local bufnr = mark_info.bufnr
+    local is_loaded = api.nvim_buf_is_loaded(bufnr)
+    if not is_loaded then
+      print(string.format('preloading %s', mark_info.filepath))
+      cmd(('noa call bufload(%d)'):format(bufnr))
+    end
+  end
+end
+
 ---@param blackboard_state table
 ---@param mark_info table
 function Open_popup_win(blackboard_state, mark_info)
