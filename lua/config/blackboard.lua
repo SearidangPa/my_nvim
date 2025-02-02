@@ -166,7 +166,6 @@ end
 local function toggle_mark_window(opts)
   opts = opts or {}
   opts.show_context = opts.show_context or false
-  Load_mark_bufs()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
