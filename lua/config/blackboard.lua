@@ -1,7 +1,7 @@
 require 'config.util_find_func'
 require 'config.util_highlight'
-require 'config.util_preview_blackboard'
-require 'config.util_mark_info'
+require 'config.util_blackboard_preview'
+require 'config.util_blackboard_mark_info'
 local plenary_filetype = require 'plenary.filetype'
 
 local blackboard_state = {
