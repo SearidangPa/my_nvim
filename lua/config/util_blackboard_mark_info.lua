@@ -26,7 +26,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
 end
 
 local function add_local_marks(marks_info)
-  local mark_list = vim.fn.getmarklist(0)
+  local mark_list = vim.fn.getmarklist(vim.api.nvim_get_current_buf())
 
   for _, mark_entry in ipairs(mark_list) do
     local mark = mark_entry.mark:sub(2, 2)
