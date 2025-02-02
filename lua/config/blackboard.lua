@@ -66,11 +66,11 @@ local function parseGroupedMarksInfo(groupedMarks)
         -- Record a virtual line for the function name.
         local currentLine = #blackboardLines + 1
         -- Prepend a marker (like "├─ ") to show it as a header.
-        funcVirtualLines[currentLine] = ' ' .. mark.nearest_func
+        funcVirtualLines[currentLine] = '   ' .. mark.nearest_func
         lastFunc = mark.nearest_func
       end
       -- Add the mark’s actual text to the buffer.
-      local lineText = string.format('  ├─ %s: %s', mark.mark, mark.text)
+      local lineText = string.format('%s: %s', mark.mark, mark.text)
       table.insert(blackboardLines, lineText)
     end
   end
@@ -88,7 +88,7 @@ local function addHighlights(parsedMarks)
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
   for lineIdx, line in ipairs(blackboardLines) do
-    local markMatch = line:match '├─%s([A-Za-z]):'
+    local markMatch = line:match '%s([A-Za-z]):'
     if markMatch then
       local endCol = line:find(markMatch .. ':')
       if endCol then

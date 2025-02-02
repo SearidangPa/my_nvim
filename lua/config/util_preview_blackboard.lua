@@ -106,7 +106,7 @@ local function show_fullscreen_popup_at_mark(blackboard_state)
 
   if vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     TransferBuf(filepath_bufnr, blackboard_state.popup_buf)
-    set_cursor_for_popup_win(target_line, mark_char)
+    set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
     return
   end
 
