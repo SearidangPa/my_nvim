@@ -26,6 +26,7 @@ end
 local function create_new_blackboard()
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
+  local filetype = plenary_filetype.detect(vim.api.nvim_buf_get_name(0))
 
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     blackboard_state.blackboard_buf = vim.api.nvim_create_buf(false, true)
@@ -33,6 +34,7 @@ local function create_new_blackboard()
     vim.bo[blackboard_state.blackboard_buf].buftype = 'nofile'
     vim.bo[blackboard_state.blackboard_buf].buflisted = false
     vim.bo[blackboard_state.blackboard_buf].swapfile = false
+    vim.bo[blackboard_state.blackboard_buf].filetype = filetype
   end
 
   vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 4))
@@ -46,16 +48,18 @@ end
 ---@return table
 local function parseGroupedMarksInfo(groupedMarks)
   local blackboardLines = {}
-  local fileVirtualLines = {} -- filename virtual lines (one per group)
-  local funcVirtualLines = {} -- function virtual lines (one per function block)
+  local fileVirtualLines = {}
+  local funcVirtualLines = {}
 
-  -- Process each file group.
   for filename, marks in pairs(groupedMarks) do
     table.sort(marks, function(a, b)
       return a.mark < b.mark
     end)
 
-    -- Instead of inserting the filename in the buffer, record a virtual line.
+    if #blackboardLines == 0 then
+      table.insert(blackboardLines, '====================')
+    end
+
     local groupStartLine = #blackboardLines + 1
     fileVirtualLines[groupStartLine] = filename
 
@@ -66,7 +70,7 @@ local function parseGroupedMarksInfo(groupedMarks)
         -- Record a virtual line for the function name.
         local currentLine = #blackboardLines + 1
         -- Prepend a marker (like "├─ ") to show it as a header.
-        funcVirtualLines[currentLine] = '   ' .. mark.nearest_func
+        funcVirtualLines[currentLine] = '╰─ ƒ: ' .. mark.nearest_func
         lastFunc = mark.nearest_func
       end
       -- Add the mark’s actual text to the buffer.
@@ -88,7 +92,7 @@ local function addHighlights(parsedMarks)
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
   for lineIdx, line in ipairs(blackboardLines) do
-    local markMatch = line:match '%s([A-Za-z]):'
+    local markMatch = line:match '([A-Za-z]):'
     if markMatch then
       local endCol = line:find(markMatch .. ':')
       if endCol then
@@ -102,20 +106,19 @@ end
 local function addVirtualLines(parsedMarks)
   local ns = vim.api.nvim_create_namespace 'blackboard_extmarks'
 
-  -- Add the filename virtual lines.
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   for lineNum, filename in pairs(parsedMarks.fileVirtualLines) do
     local extmarkLine = lineNum - 1
     if extmarkLine > 0 then
       vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns, extmarkLine, 0, {
-        virt_lines = { { { filename, 'FileHighlight' } } },
+        virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } },
         virt_lines_above = true,
         hl_mode = 'combine',
+        priority = 10,
       })
     end
   end
 
-  -- Add the function name virtual lines.
   for lineNum, funcLine in pairs(parsedMarks.funcVirtualLines) do
     local extmarkLine = lineNum - 1
     if extmarkLine > 0 then
@@ -123,6 +126,7 @@ local function addVirtualLines(parsedMarks)
         virt_lines = { { { funcLine, '@function' } } },
         virt_lines_above = true,
         hl_mode = 'combine',
+        priority = 10000,
       })
     end
   end

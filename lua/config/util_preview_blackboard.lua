@@ -50,7 +50,7 @@ function Open_popup_win(blackboard_state, mark_info)
 
   local editor_width = vim.o.columns
   local editor_height = vim.o.lines
-  local width = math.floor(editor_width * 4 / 5)
+  local width = math.floor(editor_width * 3 / 4)
   local height = editor_height - 3
   local row = 1
   local col = 0
@@ -153,6 +153,6 @@ function Create_autocmd(blackboard_state)
     end,
   })
   vim.keymap.set('n', '<CR>', function()
-    require('config.blackboard').jump_to_mark(blackboard_state.blackboard_buf)
+    require('config.blackboard').jump_to_mark(blackboard_state)
   end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
 end
