@@ -68,8 +68,8 @@ local function parse_grouped_marks_info(groupedMarks)
     local groupStartLine = #blackboardLines + 1
 
     for i, mark in ipairs(marks) do
-      table.insert(blackboardLines, mark.text)
       local lineText = string.format(' ├─ %s: %s', mark.mark, mark.text)
+      table.insert(blackboardLines, lineText)
 
       load_buf_preemptively(mark.bufnr)
 
