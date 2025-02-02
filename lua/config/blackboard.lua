@@ -38,7 +38,7 @@ local function show_fullscreen_popup_at_mark()
   if not mark_char then
     return
   end
-  if blackboard_state.current_mark == mark_char then
+  if blackboard_state.current_mark == mark_char and vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     return
   end
   blackboard_state.current_mark = mark_char
