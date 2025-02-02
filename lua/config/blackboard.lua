@@ -78,6 +78,15 @@ local function create_new_blackboard()
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
+local function load_buf_preemptively(from)
+  if vim.api.nvim_buf_is_loaded(from) then
+    return
+  end
+  vim.cmd(('noa call bufload(%d)'):format(from))
+end
+
+---@param groupedMarks table<string, table>
+---@return table
 local function parse_grouped_marks_info(groupedMarks)
   local blackboardLines = {}
   local funcHighlightPositions = {}
@@ -99,6 +108,8 @@ local function parse_grouped_marks_info(groupedMarks)
       local lineText = string.format(' ├─ %s: %s', mark.mark, displayInfo)
       table.insert(blackboardLines, lineText)
 
+      load_buf_preemptively(mark.bufnr)
+
       if mark.nearest_func then
         local lineIndex = #blackboardLines
         local colStart = #string.format(' ├─ %s: ', mark.mark)
@@ -117,6 +128,7 @@ local function parse_grouped_marks_info(groupedMarks)
   }
 end
 
+---@param parsedMarks table
 local function add_highlights(parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
   local funcHighlightPositions = parsedMarks.funcHighlightPositions
@@ -138,6 +150,7 @@ local function add_highlights(parsedMarks)
   end
 end
 
+---@param parsedMarks table
 local function add_file_virtual_lines(parsedMarks)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local ns = vim.api.nvim_create_namespace 'blackboard_extmarks'
@@ -155,6 +168,7 @@ local function add_file_virtual_lines(parsedMarks)
   end
 end
 
+---@param blackboard_state table
 local function create_autocmd(blackboard_state)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 
