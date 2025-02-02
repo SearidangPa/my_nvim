@@ -146,8 +146,10 @@ function Create_autocmd(blackboard_state)
       if vim.api.nvim_get_current_win() == blackboard_state.blackboard_win then
         vim.api.nvim_win_set_buf(blackboard_state.original_win, blackboard_state.original_buf)
         vim.defer_fn(function()
-          vim.api.nvim_set_current_win(blackboard_state.original_win)
-          vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
+          if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
+            vim.api.nvim_set_current_win(blackboard_state.original_win)
+            vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
+          end
         end, 0)
       end
     end,

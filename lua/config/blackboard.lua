@@ -96,30 +96,42 @@ end
 local function addVirtualLines(parsedMarks)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
+  local last_seen_filename = ''
 
   for lineNum, data in pairs(parsedMarks.virtualLines) do
     local filename = data.filename or ''
-    print('filename', filename)
-    local funcLine = data.func_name or ''
-    print('funcLine', funcLine)
+    local funcLine
+    if data.func_name then
+      funcLine = '❯ ' .. data.func_name
+    else
+      funcLine = ''
+    end
+
     local extmarkLine = lineNum - 1
     if extmarkLine > 0 then
+      local virt_lines
       if funcLine == '' then
-        vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
-          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } },
-          virt_lines_above = true,
-          hl_mode = 'combine',
-          priority = 10,
-        })
+        if filename == last_seen_filename then
+          virt_lines = { { { '', '' } } }
+        else
+          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } } }
+        end
       else
-        vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
-          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } },
-          virt_lines_above = true,
-          hl_mode = 'combine',
-          priority = 100,
-        })
+        if filename == last_seen_filename then
+          virt_lines = { { { '', '' } }, { { funcLine, '@function' } } }
+        else
+          virt_lines = { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+        end
       end
+      vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
+        virt_lines = virt_lines,
+        virt_lines_above = true,
+        hl_mode = 'combine',
+        priority = 10,
+      })
     end
+
+    last_seen_filename = filename
   end
 end
 
