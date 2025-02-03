@@ -58,8 +58,9 @@ local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char
 end
 
 ---@param blackboard_state table
+---@param mark_info table
 ---@param filepath_to_content_lines table
-local function show_fullscreen_popup_at_mark(blackboard_state, filepath_to_content_lines)
+local function show_fullscreen_popup_at_mark(blackboard_state, mark_info, filepath_to_content_lines)
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
     return
@@ -68,7 +69,7 @@ local function show_fullscreen_popup_at_mark(blackboard_state, filepath_to_conte
   end
   blackboard_state.current_mark = mark_char
 
-  local mark_info = Retrieve_mark_info(mark_char)
+  local mark_info = Retrieve_mark_info(mark_info, mark_char)
   local target_line = mark_info.line
 
   local file_content_lines = filepath_to_content_lines[mark_info.filepath]
@@ -84,14 +85,16 @@ local function show_fullscreen_popup_at_mark(blackboard_state, filepath_to_conte
 end
 
 ---@param blackboard_state table
-function Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
+---@param marks_info table
+---@param filepath_to_content_lines table
+function Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = blackboard_state.blackboard_buf,
     group = augroup,
     callback = function()
-      show_fullscreen_popup_at_mark(blackboard_state, filepath_to_content_lines)
+      show_fullscreen_popup_at_mark(blackboard_state, marks_info, filepath_to_content_lines)
       vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
     end,
   })
@@ -125,7 +128,4 @@ function Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lin
   vim.keymap.set('n', '<CR>', function()
     bb.Jump_to_mark(blackboard_state)
   end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
-
-  vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]arklist', buffer = blackboard_state.blackboard_buf })
-  vim.keymap.set('n', '<leader>tc', bb.toggle_mark_with_context, { desc = '[T]oggle [C]ontext', buffer = blackboard_state.blackboard_buf })
 end

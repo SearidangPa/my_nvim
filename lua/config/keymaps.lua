@@ -117,4 +117,9 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 
+-- blackboard
+local bb = require 'config.blackboard'
+vim.keymap.set('n', '<localleader>mw', bb.toggle_mark_window, { desc = '[T]oggle [M]arklist' })
+vim.keymap.set('n', '<localleader>mc', bb.toggle_mark_with_context, { desc = '[T]oggle [C]ontext' })
+
 return {}

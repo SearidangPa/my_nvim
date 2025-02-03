@@ -11,6 +11,7 @@ local blackboard_state = {
   current_mark = nil,
   original_win = -1,
   original_buf = -1,
+  show_context = false,
 }
 
 local filepath_to_content_lines = {}
@@ -25,10 +26,11 @@ local function load_all_file_contents()
   end
 end
 
+---@param marks_info table
 ---@param opts table
 ---@return table
-local function parse_grouped_marks_info(opts)
-  local grouped_marks_by_filename = Group_marks_info_by_file()
+local function parse_grouped_marks_info(marks_info, opts)
+  local grouped_marks_by_filename = Group_marks_info_by_file(marks_info)
   local blackboardLines = {}
   local virtualLines = {}
 
@@ -81,6 +83,7 @@ local function add_highlights(opts, parsedMarks)
   end
 end
 
+---@param opts table
 local function create_new_blackboard(opts)
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -95,7 +98,8 @@ local function create_new_blackboard(opts)
     vim.bo[blackboard_state.blackboard_buf].filetype = filetype
   end
 
-  local parsedMarks = parse_grouped_marks_info(opts)
+  local marks_info = opts.marks_info or Get_accessible_marks_info()
+  local parsedMarks = parse_grouped_marks_info(marks_info, opts)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
   if opts.show_context then
     Add_virtual_lines(parsedMarks, blackboard_state)
@@ -109,13 +113,7 @@ local function create_new_blackboard(opts)
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
----@param opts table: Table with optional keys
---- show_context (bool, default=false): show context around the mark
-local function toggle_mark_window(opts)
-  opts = opts or {}
-  opts.show_context = opts.show_context or false
-  opts.reload_file_contents = opts.reload_file_contents or false
-
+local function toggle_mark_window()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
@@ -127,39 +125,38 @@ local function toggle_mark_window(opts)
     return
   end
 
-  create_new_blackboard(opts)
+  local marks_info = Get_accessible_marks_info()
+  create_new_blackboard { marks_info = marks_info, show_context = false }
   vim.api.nvim_set_current_win(blackboard_state.original_win)
-
-  if not opts.reload_file_contents then
-    load_all_file_contents()
-    Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
-  end
+  load_all_file_contents()
+  Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end
 
-local function toggle_mark_with_context()
-  if vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
+local function toggle_mark_context()
+  if not vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
+    return
+  else
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
     vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
-    return
   end
-
-  create_new_blackboard { show_context = true, reload_file_contents = true }
+  local marks_info = Get_accessible_marks_info()
+  blackboard_state.show_context = not blackboard_state.show_context
+  create_new_blackboard { marks_info = Get_accessible_marks_info(), show_context = blackboard_state.show_context }
   vim.api.nvim_set_current_win(blackboard_state.original_win)
-  load_all_file_contents()
-  Attach_autocmd_blackboard_buf(blackboard_state, filepath_to_content_lines)
+  Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end
 
 vim.api.nvim_create_user_command('ToggleBlackboard', toggle_mark_window, {
   desc = 'Toggle Blackboard',
 })
 
-vim.api.nvim_create_user_command('ToggleMarkContext', toggle_mark_with_context, {
+vim.api.nvim_create_user_command('ToggleMarkContext', toggle_mark_context, {
   desc = 'Toggle Mark Context',
 })
 
 return {
   Jump_to_mark = Jump_to_mark,
   toggle_mark_window = toggle_mark_window,
-  toggle_mark_with_context = toggle_mark_with_context,
+  toggle_mark_with_context = toggle_mark_context,
 }

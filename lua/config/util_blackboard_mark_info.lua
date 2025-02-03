@@ -64,10 +64,13 @@ local function add_global_mark_info(marks_info, char, cwd)
   add_mark_info(marks_info, mark, bufnr, line, col)
 end
 
-function Retrieve_mark_info(mark_char)
-  local all_marks = Get_accessible_marks_info()
+--- @param marks_info table
+--- @param mark_char string
+function Retrieve_mark_info(marks_info, mark_char)
+  assert(marks_info, 'No marks info provided')
+  assert(mark_char, 'No mark char provided')
   local mark_info
-  for _, m in ipairs(all_marks) do
+  for _, m in ipairs(marks_info) do
     if m.mark == mark_char then
       mark_info = m
       break
@@ -78,8 +81,9 @@ function Retrieve_mark_info(mark_char)
   return mark_info
 end
 
-function Group_marks_info_by_file()
-  local all_accessible_marks = Get_accessible_marks_info()
+--- @param all_accessible_marks table
+--- @return table
+function Group_marks_info_by_file(all_accessible_marks)
   local grouped_marks = {}
   for _, m in ipairs(all_accessible_marks) do
     local filename = m.filename
