@@ -120,6 +120,6 @@ map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 -- blackboard
 local bb = require 'config.blackboard'
 vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]ark list window' })
-vim.keymap.set('n', '<leader>tb', bb.toggle_mark_context, { desc = '[T]oggle [B]lackboard' })
+vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
 
 return {}
