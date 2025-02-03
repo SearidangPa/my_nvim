@@ -35,13 +35,7 @@ local function parse_grouped_marks_info(marks_info, opts)
   local virtualLines = {}
 
   local show_context = opts.show_context
-  local symbol
-
-  if show_context then
-    symbol = '╰─'
-  else
-    symbol = '🔥'
-  end
+  local symbol = opts.show_context and '╰─' or '🔥'
 
   for filename, marks_info in pairs(grouped_marks_by_filename) do
     table.sort(marks_info, function(a, b)
