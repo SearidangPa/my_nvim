@@ -34,6 +34,15 @@ local function parse_grouped_marks_info(marks_info, opts)
   local blackboardLines = {}
   local virtualLines = {}
 
+  local show_context = opts.show_context
+  local symbol
+
+  if show_context then
+    symbol = '╰─'
+  else
+    symbol = '🔥'
+  end
+
   for filename, marks_info in pairs(grouped_marks_by_filename) do
     table.sort(marks_info, function(a, b)
       return a.mark < b.mark
@@ -50,7 +59,7 @@ local function parse_grouped_marks_info(marks_info, opts)
         func_name = mark_info.nearest_func,
       }
       if mark_info.nearest_func then
-        table.insert(blackboardLines, string.format('╰─ %s: %s', mark_info.mark, mark_info.text))
+        table.insert(blackboardLines, string.format('%s %s: %s', symbol, mark_info.mark, mark_info.text))
       else
         table.insert(blackboardLines, string.format('🔥 %s: %s', mark_info.mark, mark_info.text))
       end
