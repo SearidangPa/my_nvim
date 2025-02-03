@@ -2,7 +2,9 @@ local plenary_filetype = require 'plenary.filetype'
 
 local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filepath = vim.api.nvim_buf_get_name(bufnr)
-
+  if not vim.loop.fs_stat(filepath) then
+    return
+  end
   -- for tree-sitter
   local filetype = plenary_filetype.detect_from_extension(filepath)
   vim.bo[bufnr].filetype = filetype
@@ -61,7 +63,9 @@ local function add_global_mark_info(marks_info, char, cwd)
   if not abs_filepath:find(cwd, 1, true) then
     return
   end
-  add_mark_info(marks_info, mark, bufnr, line, col)
+  if vim.api.nvim_buf_is_valid(bufnr) then
+    add_mark_info(marks_info, mark, bufnr, line, col)
+  end
 end
 
 --- @param marks_info table
