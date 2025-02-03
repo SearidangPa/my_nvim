@@ -158,5 +158,5 @@ vim.api.nvim_create_user_command('ToggleMarkContext', toggle_mark_context, {
 return {
   Jump_to_mark = Jump_to_mark,
   toggle_mark_window = toggle_mark_window,
-  toggle_mark_with_context = toggle_mark_context,
+  toggle_mark_context = toggle_mark_context,
 }
