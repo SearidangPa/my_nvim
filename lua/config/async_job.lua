@@ -73,6 +73,6 @@ map('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for comm
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 map('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
-map('n', '<leader>gl', ':GitPull<CR>', { desc = '[G]it [L]og' })
+map('n', '<leader>gl', ':GitPull<CR>', { desc = '[G]it Pull' })
 
 return {}
