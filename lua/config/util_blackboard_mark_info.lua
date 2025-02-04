@@ -1,5 +1,6 @@
 local plenary_filetype = require 'plenary.filetype'
 
+---@return string|nil
 local function nearest_function_at_line(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
@@ -57,19 +58,12 @@ local function add_mark_info(marks_info, mark, bufnr, line, col, options)
   if not vim.uv.fs_stat(filepath) then
     return
   end
-  -- for tree-sitter
   local filetype = plenary_filetype.detect_from_extension(filepath)
   vim.bo[bufnr].filetype = filetype
 
-  local nearest_func
-  if options.show_nearest_func then
-    nearest_func = nearest_function_at_line(bufnr, line)
-  end
-
+  local nearest_func = options.show_nearest_func and nearest_function_at_line(bufnr, line) or nil
   local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
-
   local filename = vim.fn.fnamemodify(filepath, ':t')
-
   table.insert(marks_info, {
     mark = mark,
     bufnr = bufnr,

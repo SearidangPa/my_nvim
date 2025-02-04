@@ -157,8 +157,8 @@ M.toggle_mark_context = function()
     vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
   end
-  local marks_info = Get_accessible_marks_info(options)
   options.show_nearest_func = not options.show_nearest_func
+  local marks_info = Get_accessible_marks_info(options)
   create_new_blackboard(marks_info, options)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info)

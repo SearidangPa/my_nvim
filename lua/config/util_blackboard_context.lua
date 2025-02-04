@@ -1,5 +1,5 @@
 local function make_func_line(data)
-  if not data.func_name then
+  if not data.func_name or data.func_name == '' then
     return ''
   end
   return '❯ ' .. data.func_name
