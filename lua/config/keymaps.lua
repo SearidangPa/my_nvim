@@ -129,6 +129,6 @@ map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 -- blackboard
 vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]ark list window' })
 vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
-vim.keymap.set('n', '<localleader>p', wait_for_key_and_preview, { noremap = true, silent = true })
+vim.keymap.set('n', '<localleader>m', wait_for_key_and_preview, { desc = 'Preview [M]ark' })
 
 return {}
