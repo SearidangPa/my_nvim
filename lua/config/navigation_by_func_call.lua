@@ -152,5 +152,5 @@ local function move_to_previous_valid_identifier()
   end
 end
 
-vim.keymap.set('n', ']f', move_to_next_valid_identifier, { desc = 'Move to [N]ext valid identifier' })
-vim.keymap.set('n', '[f', move_to_previous_valid_identifier, { desc = 'Move to [P]revious valid identifier' })
+vim.keymap.set('n', ']f', move_to_next_valid_identifier, { desc = 'Next function call' })
+vim.keymap.set('n', '[f', move_to_previous_valid_identifier, { desc = 'Previous function call' })
