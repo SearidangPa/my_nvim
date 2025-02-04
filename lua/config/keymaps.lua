@@ -123,7 +123,10 @@ vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]a
 vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
 local function wait_for_key_and_preview()
   local key = vim.fn.getcharstr() -- Waits for user input
-  vim.cmd('BlackboardPreviewMark ' .. key) -- Calls the command with the key
+  if not key or key == '' then
+    return
+  end
+  bb.preview_mark(key)
 end
 
 vim.keymap.set('n', '<leader>p', wait_for_key_and_preview, { noremap = true, silent = true })
