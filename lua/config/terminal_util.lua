@@ -6,6 +6,7 @@ local event = require('nui.utils.autocmd').event
 
 local choice_options_unix = {
   'rds',
+  'MODE=dev ./bin/client dial',
   'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
   'gfl',
 }
