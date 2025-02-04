@@ -1,5 +1,5 @@
 ---@param blackboard_state blackboard.State
----@param mark_info blackboard.Mark_Info
+---@param mark_info blackboard.MarkInfo
 function Open_popup_win(blackboard_state, mark_info)
   local filetype = mark_info.filetype
   local lang = vim.treesitter.language.get_lang(filetype)
@@ -72,7 +72,7 @@ local function show_fullscreen_popup_at_mark(blackboard_state, mark_info)
 end
 
 ---@param blackboard_state blackboard.State
----@param marks_info blackboard.Mark_Info[]
+---@param marks_info blackboard.MarkInfo[]
 function Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 

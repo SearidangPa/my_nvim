@@ -36,8 +36,9 @@ M.setup = function(opts)
   options = vim.tbl_deep_extend('force', options, opts or {})
 end
 
-local function load_all_file_contents()
-  local all_accessible_marks = Get_accessible_marks_info()
+---@param options blackboard.Options
+local function load_all_file_contents(options)
+  local all_accessible_marks = Get_accessible_marks_info(options)
   local grouped_marks_by_filepath = Group_marks_info_by_filepath(all_accessible_marks)
   local pp = require 'plenary.path'
   for filepath, _ in pairs(grouped_marks_by_filepath) do
@@ -100,7 +101,8 @@ local function add_highlights(parsedMarks)
   end
 end
 
-local function create_new_blackboard(marks_info)
+---@param marks_info blackboard.MarkInfo[]
+local function create_new_blackboard(marks_info, options)
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
   local plenary_filetype = require 'plenary.filetype'
@@ -115,7 +117,7 @@ local function create_new_blackboard(marks_info)
     vim.bo[blackboard_state.blackboard_buf].filetype = filetype
   end
 
-  local marks_info = marks_info or Get_accessible_marks_info()
+  local marks_info = marks_info or Get_accessible_marks_info(options)
   local parsedMarks = parse_grouped_marks_info(marks_info)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
   add_highlights(parsedMarks)
@@ -140,10 +142,10 @@ M.toggle_mark_window = function()
     return
   end
 
-  local marks_info = Get_accessible_marks_info()
-  create_new_blackboard(marks_info)
+  local marks_info = Get_accessible_marks_info(options)
+  create_new_blackboard(marks_info, options)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
-  load_all_file_contents()
+  load_all_file_contents(options)
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
 end
 
@@ -155,9 +157,9 @@ M.toggle_mark_context = function()
     vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
   end
-  local marks_info = Get_accessible_marks_info()
+  local marks_info = Get_accessible_marks_info(options)
   options.show_nearest_func = not options.show_nearest_func
-  create_new_blackboard(marks_info)
+  create_new_blackboard(marks_info, options)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
 end

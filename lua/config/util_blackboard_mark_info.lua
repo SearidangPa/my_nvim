@@ -39,7 +39,7 @@ local function nearest_function_at_line(bufnr, line)
   return traverse(root)
 end
 
----@class blackboard.Mark_Info
+---@class blackboard.MarkInfo
 ---@field mark string
 ---@field bufnr number
 ---@field filename string
@@ -50,8 +50,9 @@ end
 ---@field nearest_func string
 ---@field text string
 
----@param marks_info blackboard.Mark_Info[]
-local function add_mark_info(marks_info, mark, bufnr, line, col)
+---@param marks_info blackboard.MarkInfo[]
+---@param options blackboard.Options
+local function add_mark_info(marks_info, mark, bufnr, line, col, options)
   local filepath = vim.api.nvim_buf_get_name(bufnr)
   if not vim.uv.fs_stat(filepath) then
     return
@@ -60,7 +61,11 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filetype = plenary_filetype.detect_from_extension(filepath)
   vim.bo[bufnr].filetype = filetype
 
-  local nearest_func = nearest_function_at_line(bufnr, line)
+  local nearest_func
+  if options.show_nearest_func then
+    nearest_func = nearest_function_at_line(bufnr, line)
+  end
+
   local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
   local filename = vim.fn.fnamemodify(filepath, ':t')
@@ -78,8 +83,8 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   })
 end
 
----@param marks_info blackboard.Mark_Info[]
-local function add_local_marks(marks_info)
+---@param marks_info blackboard.MarkInfo[]
+local function add_local_marks(marks_info, options)
   local mark_list = vim.fn.getmarklist(vim.api.nvim_get_current_buf())
 
   for _, mark_entry in ipairs(mark_list) do
@@ -90,14 +95,14 @@ local function add_local_marks(marks_info)
       local col = mark_entry.pos[3]
 
       if vim.api.nvim_buf_is_valid(bufnr) then
-        add_mark_info(marks_info, mark, bufnr, line, col)
+        add_mark_info(marks_info, mark, bufnr, line, col, options)
       end
     end
   end
 end
 
----@param marks_info blackboard.Mark_Info[]
-local function add_global_mark_info(marks_info, char, cwd)
+---@param marks_info blackboard.MarkInfo[]
+local function add_global_mark_info(marks_info, char, cwd, options)
   local mark = string.char(char)
   local pos = vim.fn.getpos("'" .. mark)
   if pos[1] == 0 then
@@ -114,11 +119,11 @@ local function add_global_mark_info(marks_info, char, cwd)
     return
   end
   if vim.api.nvim_buf_is_valid(bufnr) then
-    add_mark_info(marks_info, mark, bufnr, line, col)
+    add_mark_info(marks_info, mark, bufnr, line, col, options)
   end
 end
 
----@param marks_info blackboard.Mark_Info[]
+---@param marks_info blackboard.MarkInfo[]
 function Retrieve_mark_info(marks_info, mark_char)
   assert(marks_info, 'No marks info provided')
   assert(mark_char, 'No mark char provided')
@@ -134,7 +139,7 @@ function Retrieve_mark_info(marks_info, mark_char)
   return mark_info
 end
 
----@param all_accessible_marks blackboard.Mark_Info[]
+---@param all_accessible_marks blackboard.MarkInfo[]
 function Group_marks_info_by_filepath(all_accessible_marks)
   local grouped_marks = {}
   for _, m in ipairs(all_accessible_marks) do
@@ -148,14 +153,15 @@ function Group_marks_info_by_filepath(all_accessible_marks)
   return grouped_marks
 end
 
----@return blackboard.Mark_Info[]
-function Get_accessible_marks_info()
+---@param options blackboard.Options
+---@return blackboard.MarkInfo[]
+function Get_accessible_marks_info(options)
   local marks_info = {}
   local cwd = vim.fn.getcwd()
   for char = string.byte 'A', string.byte 'Z' do
-    add_global_mark_info(marks_info, char, cwd)
+    add_global_mark_info(marks_info, char, cwd, options)
   end
-  add_local_marks(marks_info)
+  add_local_marks(marks_info, options)
 
   return marks_info
 end
