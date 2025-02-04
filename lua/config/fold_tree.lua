@@ -87,7 +87,7 @@ function Fold_captured_nodes_recursively(query)
   end
 end
 
-function Fold_errIf_node(query, root, bufnr)
+function Fold_err_if_node(query, root, bufnr)
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if not node then
       return
@@ -140,7 +140,7 @@ local function fold_err()
   local root = tree:root()
   assert(root, 'Tree root is nil')
 
-  Fold_errIf_node(query, root, bufnr)
+  Fold_err_if_node(query, root, bufnr)
 end
 
 vim.api.nvim_create_user_command('FoldErr', fold_err, {})
@@ -262,5 +262,5 @@ map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
 map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
 map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
 map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
-map('n', '<leader>fe', Fold_errIf_node, { desc = '[F]old [E]rror block' })
+map('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
 map('n', '<leader>ff', Fold_Func, { desc = '[F]old [F]unction' })

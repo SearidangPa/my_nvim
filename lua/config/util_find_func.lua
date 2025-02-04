@@ -77,14 +77,11 @@ function Nearest_function_at_line(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
   assert(parser, 'parser is nil')
-
   local tree = parser:parse()[1]
   assert(tree, 'tree is nil')
-
   local root = tree:root()
   assert(root, 'root is nil')
 
-  ---@param node TSNode
   local function traverse(node)
     local nearest_function = nil
     for child in node:iter_children() do
@@ -99,7 +96,6 @@ function Nearest_function_at_line(bufnr, line)
           end
         end
       end
-
       if not nearest_function then
         nearest_function = traverse(child)
       end
@@ -112,21 +108,6 @@ function Nearest_function_at_line(bufnr, line)
 
   return traverse(root)
 end
-
-
-
-vim.api.nvim_create_user_command('NearestFunc', function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local line = cursor_pos[1] - 1
-  local func_name = Nearest_function_at_line(bufnr, line)
-  if func_name then
-    print("Nearest function:", func_name)
-  else
-    print("No function found")
-  end
-end, {})
-
 
 function Nearest_function_decl_at_cursor()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -160,93 +141,14 @@ function Nearest_function_decl_at_cursor()
   end
 end
 
-
-local function move_to_next_valid_field_identifier()
+vim.api.nvim_create_user_command('NearestFunc', function()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-
-  local ts = vim.treesitter
-  local parser = ts.get_parser(bufnr, "go")
-  local tree = parser:parse()[1]
-  local root = tree:root()
-
-  local function is_valid_field_identifier(node)
-    local parent = node:parent()
-    return parent and parent:type() == "selector_expression" and parent:parent() and parent:parent():type() == "call_expression"
-  end
-
-  local function find_next(node, row, col)
-    for child in node:iter_children() do
-      if child:type() == "field_identifier" and is_valid_field_identifier(child) then
-        local start_row, start_col = child:range()
-        if start_row > row or (start_row == row and start_col > col) then
-          return child
-        end
-      end
-
-      local descendant = find_next(child, row, col)
-      if descendant then
-        return descendant
-      end
-    end
-    return nil
-  end
-
-  local next_node = find_next(root, current_row, current_col)
-
-  if next_node then
-    local start_row, start_col = next_node:range()
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+  local line = cursor_pos[1] - 1
+  local func_name = Nearest_function_at_line(bufnr, line)
+  if func_name then
+    print("Nearest function:", func_name)
   else
-    print("No further valid field_identifier found")
+    print("No function found")
   end
-end
-
-vim.keymap.set("n", "]f", move_to_next_valid_field_identifier, { desc = "Move to next valid field_identifier" })
-
-local function move_to_previous_valid_field_identifier()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-
-  local ts = vim.treesitter
-  local parser = ts.get_parser(bufnr, "go")
-  local tree = parser:parse()[1]
-  local root = tree:root()
-
-  local function is_valid_field_identifier(node)
-    local parent = node:parent()
-    return parent and parent:type() == "selector_expression" and parent:parent() and parent:parent():type() == "call_expression"
-  end
-
-  local function find_previous(node, row, col)
-    local previous_node = nil
-
-    local function search(node, row, col)
-      for child in node:iter_children() do
-        if child:type() == "field_identifier" and is_valid_field_identifier(child) then
-          local start_row, start_col = child:range()
-          if start_row < row or (start_row == row and start_col < col) then
-            previous_node = child
-          end
-        end
-        search(child, row, col)
-      end
-    end
-
-    search(node, row, col)
-    return previous_node
-  end
-
-  local previous_node = find_previous(root, current_row, current_col)
-
-  if previous_node then
-    local start_row, start_col = previous_node:range()
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-  else
-    print("No previous valid field_identifier found")
-  end
-end
-
-vim.keymap.set("n", "[f", move_to_previous_valid_field_identifier, { desc = "Move to previous valid field_identifier" })
+end, {})
