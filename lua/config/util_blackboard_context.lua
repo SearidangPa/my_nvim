@@ -5,31 +5,28 @@ local function make_func_line(data)
   return '❯ ' .. data.func_name
 end
 
+local function get_virtual_lines_no_func_lines(filename, last_seen_filename)
+  if filename == last_seen_filename then
+    return nil
+  end
+  return { { { '', '' } }, { { filename, 'FileHighlight' } } }
+end
+
 ---@param options blackboard.Options
 local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func, options)
-  if filename == last_seen_filename then
-    if funcLine == last_seen_func then
-      return nil
-    end
+  if not options.show_nearest_func or funcLine == '' then
+    return get_virtual_lines_no_func_lines(filename, last_seen_filename)
+  end
 
-    if options.show_nearest_func then
-      return { { { '', '' } }, { { funcLine, '@function' } } }
-    end
-
+  if filename == last_seen_filename and funcLine == last_seen_func then
     return nil
   end
 
-  if funcLine == '' then
-    if filename == last_seen_filename then
-      return nil
-    end
-    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
-  end
-  if funcLine == last_seen_func then
-    return { { { '', '' } }, { { filename, 'FileHighlight' } } }
+  if filename == last_seen_filename and funcLine ~= last_seen_func then
+    return { { { '', '' } }, { { funcLine, '@function' } } }
   end
 
-  if options.show_nearest_func then
+  if filename ~= last_seen_filename then
     return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
   end
 end
