@@ -4,7 +4,7 @@ require 'config.util_blackboard_preview'
 require 'config.util_blackboard_mark_info'
 require 'config.util_blackboard_context'
 
----@class BlackboardState
+---@class blackboard.State
 ---@field blackboard_win number
 ---@field blackboard_buf number
 ---@field popup_win number
@@ -59,7 +59,7 @@ local function parse_grouped_marks_info(marks_info)
       return a.line < b.line
     end)
 
-    if #blackboardLines == 0 and options.show_nearest_func then
+    if #blackboardLines == 0 then
       table.insert(blackboardLines, filename)
     end
 
@@ -85,6 +85,8 @@ end
 
 local function add_highlights(parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
+  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
+  vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
 
   vim.api.nvim_set_hl(0, 'MarkHighlight', { fg = '#f1c232' })
   for lineIdx, line in ipairs(blackboardLines) do
@@ -95,9 +97,6 @@ local function add_highlights(parsedMarks)
         vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'MarkHighlight', lineIdx - 1, endCol - 1, endCol)
       end
     end
-  end
-  if options.show_nearest_func then
-    vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
   end
 end
 
@@ -119,10 +118,8 @@ local function create_new_blackboard(marks_info)
   local marks_info = marks_info or Get_accessible_marks_info()
   local parsedMarks = parse_grouped_marks_info(marks_info)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
-  if options.show_nearest_func then
-    Add_virtual_lines(parsedMarks, blackboard_state)
-  end
   add_highlights(parsedMarks)
+  Add_virtual_lines(parsedMarks, blackboard_state, options)
   vim.api.nvim_win_set_buf(blackboard_state.blackboard_win, blackboard_state.blackboard_buf)
 
   vim.api.nvim_win_set_width(blackboard_state.blackboard_win, math.floor(vim.o.columns / 4))

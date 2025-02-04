@@ -5,32 +5,39 @@ local function make_func_line(data)
   return '❯ ' .. data.func_name
 end
 
-local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
+---@param options blackboard.Options
+local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func, options)
+  if filename == last_seen_filename then
+    if funcLine == last_seen_func then
+      return nil
+    end
+
+    if options.show_nearest_func then
+      return { { { '', '' } }, { { funcLine, '@function' } } }
+    end
+
+    return nil
+  end
+
   if funcLine == '' then
     if filename == last_seen_filename then
       return nil
     end
     return { { { '', '' } }, { { filename, 'FileHighlight' } } }
   end
-
-  if filename == last_seen_filename then
-    if funcLine == last_seen_func then
-      return nil
-    end
-
-    return { { { funcLine, '@function' } } }
-  end
-
   if funcLine == last_seen_func then
     return { { { '', '' } }, { { filename, 'FileHighlight' } } }
   end
-  return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+
+  if options.show_nearest_func then
+    return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
+  end
 end
 
----@param blackboard_state BlackboardState
-function Add_virtual_lines(parsedMarks, blackboard_state)
+---@param blackboard_state blackboard.State
+---@param options blackboard.Options
+function Add_virtual_lines(parsedMarks, blackboard_state, options)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
-  vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local last_seen_filename = ''
   local last_seen_func = ''
 
@@ -47,7 +54,7 @@ function Add_virtual_lines(parsedMarks, blackboard_state)
         priority = 10,
       })
     elseif extmarkLine > 1 then
-      local virt_lines = get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
+      local virt_lines = get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func, options)
       if virt_lines then
         vim.api.nvim_buf_set_extmark(blackboard_state.blackboard_buf, ns_blackboard, extmarkLine, 0, {
           virt_lines = virt_lines,

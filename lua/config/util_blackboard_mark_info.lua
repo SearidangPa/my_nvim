@@ -160,7 +160,7 @@ function Get_accessible_marks_info()
   return marks_info
 end
 
----@param blackboard_state BlackboardState
+---@param blackboard_state blackboard.State
 function Get_mark_char(blackboard_state)
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
