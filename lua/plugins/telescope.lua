@@ -26,9 +26,9 @@ return {
       map('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
 
       -- have not achieved muscle memory for these yet
+      map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       map('n', '<leader>st', builtin.git_status, { desc = 'Git [St]atus' })
       map('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
-      map('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
 
       -- useless?
