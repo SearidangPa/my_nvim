@@ -1,5 +1,3 @@
----@param blackboard_state table
----@param mark_info table
 function Open_popup_win(blackboard_state, mark_info)
   local filetype = mark_info.filetype
   local lang = vim.treesitter.language.get_lang(filetype)
@@ -34,9 +32,6 @@ function Open_popup_win(blackboard_state, mark_info)
   vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = blackboard_state.popup_win }) -- Match background
 end
 
----@param mark_char string
----@param blackboard_state table
----@param target_line number
 local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
   local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
@@ -48,9 +43,6 @@ local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char
   vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
 end
 
----@param blackboard_state table
----@param mark_info table
----@param filepath_to_content_lines table
 local function show_fullscreen_popup_at_mark(blackboard_state, mark_info, filepath_to_content_lines)
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
@@ -75,9 +67,6 @@ local function show_fullscreen_popup_at_mark(blackboard_state, mark_info, filepa
   set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
 end
 
----@param blackboard_state table
----@param marks_info table
----@param filepath_to_content_lines table
 function Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 

@@ -1,4 +1,3 @@
----@param data table
 local function make_func_line(data)
   if not data.func_name then
     return ''
@@ -6,11 +5,6 @@ local function make_func_line(data)
   return '❯ ' .. data.func_name
 end
 
----@param filename string
----@param funcLine string
----@param last_seen_filename string
----@param last_seen_func string
----@return table | nil
 local function get_virtual_lines(filename, funcLine, last_seen_filename, last_seen_func)
   if funcLine == '' then
     if filename == last_seen_filename then
@@ -33,14 +27,12 @@ local function get_virtual_lines(filename, funcLine, last_seen_filename, last_se
   return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
 end
 
----@param parsedMarks table
----@param blackboard_state table
+---@param blackboard_state BlackboardState
 function Add_virtual_lines(parsedMarks, blackboard_state)
   local ns_blackboard = vim.api.nvim_create_namespace 'blackboard_extmarks'
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local last_seen_filename = ''
   local last_seen_func = ''
-  blackboard_state.show_nearest_func = true
 
   for lineNum, data in pairs(parsedMarks.virtualLines) do
     local filename = data.filename or ''

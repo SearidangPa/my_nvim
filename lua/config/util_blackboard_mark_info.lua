@@ -41,7 +41,7 @@ end
 
 local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filepath = vim.api.nvim_buf_get_name(bufnr)
-  if not vim.loop.fs_stat(filepath) then
+  if not vim.uv.fs_stat(filepath) then
     return
   end
   -- for tree-sitter
