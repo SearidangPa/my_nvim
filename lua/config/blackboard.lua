@@ -12,6 +12,7 @@ require 'config.util_blackboard_context'
 ---@field current_mark string
 ---@field original_win number
 ---@field original_buf number
+---@field filepath_to_content_lines table<string, string[]>
 local blackboard_state = {
   blackboard_win = -1,
   blackboard_buf = -1,
@@ -20,6 +21,7 @@ local blackboard_state = {
   current_mark = '',
   original_win = -1,
   original_buf = -1,
+  filepath_to_content_lines = {},
 }
 
 ---@class blackboard.Options
@@ -34,8 +36,6 @@ M.setup = function(opts)
   options = vim.tbl_deep_extend('force', options, opts or {})
 end
 
-local filepath_to_content_lines = {}
-
 local function load_all_file_contents()
   local all_accessible_marks = Get_accessible_marks_info()
   local grouped_marks_by_filepath = Group_marks_info_by_filepath(all_accessible_marks)
@@ -43,7 +43,7 @@ local function load_all_file_contents()
   for filepath, _ in pairs(grouped_marks_by_filepath) do
     local data = pp:new(filepath):read()
     local content_lines = vim.split(data, '\n', { plain = true })
-    filepath_to_content_lines[filepath] = content_lines
+    blackboard_state.filepath_to_content_lines[filepath] = content_lines
   end
 end
 
@@ -139,7 +139,7 @@ M.toggle_mark_window = function()
     vim.api.nvim_win_hide(blackboard_state.blackboard_win)
     vim.api.nvim_buf_delete(blackboard_state.blackboard_buf, { force = true })
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
-    filepath_to_content_lines = {}
+    blackboard_state.filepath_to_content_lines = {}
     return
   end
 
@@ -147,7 +147,7 @@ M.toggle_mark_window = function()
   create_new_blackboard(marks_info)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   load_all_file_contents()
-  Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
+  Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
 end
 
 M.toggle_mark_context = function()
@@ -162,7 +162,7 @@ M.toggle_mark_context = function()
   options.show_nearest_func = not options.show_nearest_func
   create_new_blackboard(marks_info)
   vim.api.nvim_set_current_win(blackboard_state.original_win)
-  Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
+  Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
 end
 
 vim.api.nvim_create_user_command('ToggleBlackboard', M.toggle_mark_window, {

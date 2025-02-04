@@ -118,6 +118,7 @@ local function add_global_mark_info(marks_info, char, cwd)
   end
 end
 
+---@param marks_info blackboard.Mark_Info[]
 function Retrieve_mark_info(marks_info, mark_char)
   assert(marks_info, 'No marks info provided')
   assert(mark_char, 'No mark char provided')

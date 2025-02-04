@@ -1,3 +1,5 @@
+---@param blackboard_state BlackboardState
+---@param mark_info blackboard.Mark_Info
 function Open_popup_win(blackboard_state, mark_info)
   local filetype = mark_info.filetype
   local lang = vim.treesitter.language.get_lang(filetype)
@@ -32,6 +34,7 @@ function Open_popup_win(blackboard_state, mark_info)
   vim.api.nvim_set_option_value('winhl', 'Normal:Normal', { win = blackboard_state.popup_win }) -- Match background
 end
 
+---@param blackboard_state BlackboardState
 local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
   local line_count = vim.api.nvim_buf_line_count(blackboard_state.popup_buf)
   if target_line >= line_count then
@@ -43,7 +46,8 @@ local function set_cursor_for_popup_win(blackboard_state, target_line, mark_char
   vim.fn.sign_place(0, 'MySignGroup', 'MySign', blackboard_state.popup_buf, { lnum = target_line, priority = 100 })
 end
 
-local function show_fullscreen_popup_at_mark(blackboard_state, mark_info, filepath_to_content_lines)
+---@param blackboard_state BlackboardState
+local function show_fullscreen_popup_at_mark(blackboard_state, mark_info)
   local mark_char = Get_mark_char(blackboard_state)
   if not mark_char then
     return
@@ -55,26 +59,28 @@ local function show_fullscreen_popup_at_mark(blackboard_state, mark_info, filepa
   local mark_info = Retrieve_mark_info(mark_info, mark_char)
   local target_line = mark_info.line
 
-  local file_content_lines = filepath_to_content_lines[mark_info.filepath]
+  local file_content_lines = blackboard_state.filepath_to_content_lines[mark_info.filepath]
   assert(file_content_lines, string.format('File content not found for %s', mark_info.filepath))
 
   if not vim.api.nvim_win_is_valid(blackboard_state.popup_win) then
     blackboard_state.popup_buf = vim.api.nvim_create_buf(false, true)
     Open_popup_win(blackboard_state, mark_info)
   end
-  file_content_lines = filepath_to_content_lines[mark_info.filepath]
+  file_content_lines = blackboard_state.filepath_to_content_lines[mark_info.filepath]
   vim.api.nvim_buf_set_lines(blackboard_state.popup_buf, 0, -1, false, file_content_lines)
   set_cursor_for_popup_win(blackboard_state, target_line, mark_char)
 end
 
-function Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
+---@param blackboard_state BlackboardState
+---@param marks_info blackboard.Mark_Info[]
+function Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
   local augroup = vim.api.nvim_create_augroup('blackboard_group', { clear = true })
 
   vim.api.nvim_create_autocmd('CursorMoved', {
     buffer = blackboard_state.blackboard_buf,
     group = augroup,
     callback = function()
-      show_fullscreen_popup_at_mark(blackboard_state, marks_info, filepath_to_content_lines)
+      show_fullscreen_popup_at_mark(blackboard_state, marks_info)
       vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
     end,
   })
