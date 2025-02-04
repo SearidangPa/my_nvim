@@ -1,7 +1,8 @@
+local M = {}
+
 require 'config.util_blackboard_preview'
 require 'config.util_blackboard_mark_info'
 require 'config.util_blackboard_context'
-local plenary_filetype = require 'plenary.filetype'
 
 local blackboard_state = {
   blackboard_win = -1,
@@ -90,6 +91,7 @@ end
 local function create_new_blackboard(opts)
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
+  local plenary_filetype = require 'plenary.filetype'
   local filetype = plenary_filetype.detect(vim.api.nvim_buf_get_name(0))
 
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
@@ -116,7 +118,7 @@ local function create_new_blackboard(opts)
   vim.wo[blackboard_state.blackboard_win].wrap = false
 end
 
-local function toggle_mark_window()
+M.toggle_mark_window = function()
   blackboard_state.original_win = vim.api.nvim_get_current_win()
   blackboard_state.original_buf = vim.api.nvim_get_current_buf()
 
@@ -135,7 +137,7 @@ local function toggle_mark_window()
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end
 
-local function toggle_mark_context()
+M.toggle_mark_context = function()
   if not vim.api.nvim_win_is_valid(blackboard_state.blackboard_win) then
     return
   else
@@ -150,16 +152,20 @@ local function toggle_mark_context()
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end
 
-vim.api.nvim_create_user_command('ToggleBlackboard', toggle_mark_window, {
+vim.api.nvim_create_user_command('ToggleBlackboard', M.toggle_mark_window, {
   desc = 'Toggle Blackboard',
 })
 
-vim.api.nvim_create_user_command('ToggleMarkContext', toggle_mark_context, {
+vim.api.nvim_create_user_command('ToggleMarkContext', M.toggle_mark_context, {
   desc = 'Toggle Mark Context',
 })
 
-return {
-  Jump_to_mark = Jump_to_mark,
-  toggle_mark_window = toggle_mark_window,
-  toggle_mark_context = toggle_mark_context,
-}
+M.jump_to_mark = function(blackboard_state)
+  local mark_char = Get_mark_char(blackboard_state)
+  assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
+  vim.api.nvim_set_current_win(blackboard_state.original_win)
+  vim.cmd('normal! `' .. mark_char)
+  vim.cmd 'normal! zz'
+end
+
+return M

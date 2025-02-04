@@ -1,13 +1,4 @@
 ---@param blackboard_state table
-function Jump_to_mark(blackboard_state)
-  local mark_char = Get_mark_char(blackboard_state)
-  assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
-  vim.api.nvim_set_current_win(blackboard_state.original_win)
-  vim.cmd('normal! `' .. mark_char)
-  vim.cmd 'normal! zz'
-end
-
----@param blackboard_state table
 ---@param mark_info table
 function Open_popup_win(blackboard_state, mark_info)
   local filetype = mark_info.filetype
@@ -126,6 +117,6 @@ function Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to
   })
   local bb = require 'config.blackboard'
   vim.keymap.set('n', '<CR>', function()
-    bb.Jump_to_mark(blackboard_state)
+    bb.jump_to_mark(blackboard_state)
   end, { noremap = true, silent = true, buffer = blackboard_state.blackboard_buf })
 end
