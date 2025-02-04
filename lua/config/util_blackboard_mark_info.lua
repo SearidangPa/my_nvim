@@ -11,7 +11,6 @@ local function nearest_function_at_line(bufnr, line)
   local root = tree:root()
   assert(root, 'root is nil')
 
-  ---@param node TSNode
   local function traverse(node)
     local nearest_function = nil
     for child in node:iter_children() do
