@@ -17,18 +17,13 @@ local function get_virtual_lines(filename, funcLine, last_seen_filename, last_se
   if not options.show_nearest_func or funcLine == '' then
     return get_virtual_lines_no_func_lines(filename, last_seen_filename)
   end
-
-  if filename == last_seen_filename and funcLine == last_seen_func then
-    return nil
-  end
-
-  if filename == last_seen_filename and funcLine ~= last_seen_func then
-    return { { { '', '' } }, { { funcLine, '@function' } } }
-  end
-
   if filename ~= last_seen_filename then
     return { { { '', '' } }, { { filename, 'FileHighlight' } }, { { funcLine, '@function' } } }
   end
+  if funcLine ~= last_seen_func then
+    return { { { '', '' } }, { { funcLine, '@function' } } }
+  end
+  return nil
 end
 
 ---@param blackboard_state blackboard.State
