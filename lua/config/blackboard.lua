@@ -4,15 +4,24 @@ require 'config.util_blackboard_preview'
 require 'config.util_blackboard_mark_info'
 require 'config.util_blackboard_context'
 
+---@class BlackboardState
+---@field blackboard_win number
+---@field blackboard_buf number
+---@field popup_win number
+---@field popup_buf number
+---@field current_mark string
+---@field original_win number
+---@field original_buf number
+---@field show_nearest_func boolean
 local blackboard_state = {
   blackboard_win = -1,
   blackboard_buf = -1,
   popup_win = -1,
   popup_buf = -1,
-  current_mark = nil,
+  current_mark = '',
   original_win = -1,
   original_buf = -1,
-  show_context = false,
+  show_nearest_func = false,
 }
 
 local filepath_to_content_lines = {}
@@ -27,9 +36,6 @@ local function load_all_file_contents()
   end
 end
 
----@param marks_info table
----@param opts table
----@return table
 local function parse_grouped_marks_info(marks_info, opts)
   local grouped_marks_by_filename = Group_marks_info_by_file(marks_info)
   local blackboardLines = {}
@@ -67,8 +73,6 @@ local function parse_grouped_marks_info(marks_info, opts)
   }
 end
 
----@param opts table
----@param parsedMarks table
 local function add_highlights(opts, parsedMarks)
   local blackboardLines = parsedMarks.blackboardLines
 
@@ -87,7 +91,6 @@ local function add_highlights(opts, parsedMarks)
   end
 end
 
----@param opts table
 local function create_new_blackboard(opts)
   vim.cmd 'vsplit'
   blackboard_state.blackboard_win = vim.api.nvim_get_current_win()
@@ -146,8 +149,8 @@ M.toggle_mark_context = function()
     vim.api.nvim_del_augroup_by_name 'blackboard_group'
   end
   local marks_info = Get_accessible_marks_info()
-  blackboard_state.show_context = not blackboard_state.show_context
-  create_new_blackboard { marks_info = Get_accessible_marks_info(), show_context = blackboard_state.show_context }
+  blackboard_state.show_nearest_func = not blackboard_state.show_nearest_func
+  create_new_blackboard { marks_info = Get_accessible_marks_info(), show_context = blackboard_state.show_nearest_func }
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end
