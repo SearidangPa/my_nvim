@@ -37,7 +37,8 @@ end
 local filepath_to_content_lines = {}
 
 local function load_all_file_contents()
-  local grouped_marks_by_filepath = Group_marks_info_by_filepath()
+  local all_accessible_marks = Get_accessible_marks_info()
+  local grouped_marks_by_filepath = Group_marks_info_by_filepath(all_accessible_marks)
   local pp = require 'plenary.path'
   for filepath, _ in pairs(grouped_marks_by_filepath) do
     local data = pp:new(filepath):read()
@@ -47,14 +48,15 @@ local function load_all_file_contents()
 end
 
 local function parse_grouped_marks_info(marks_info)
-  local grouped_marks_by_filename = Group_marks_info_by_file(marks_info)
+  local grouped_marks_by_filename = Group_marks_info_by_filepath(marks_info)
   local blackboardLines = {}
   local virtualLines = {}
   local symbol = options.show_nearest_func and '╰─' or '🔥'
 
-  for filename, marks_info in pairs(grouped_marks_by_filename) do
+  for filepath, marks_info in pairs(grouped_marks_by_filename) do
+    local filename = vim.fn.fnamemodify(filepath, ':t')
     table.sort(marks_info, function(a, b)
-      return a.mark < b.mark
+      return a.line < b.line
     end)
 
     if #blackboardLines == 0 and options.show_nearest_func then
