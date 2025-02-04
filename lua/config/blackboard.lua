@@ -41,15 +41,15 @@ local function parse_grouped_marks_info(marks_info, opts)
   local blackboardLines = {}
   local virtualLines = {}
 
-  local show_context = opts.show_context
-  local symbol = opts.show_context and '╰─' or '🔥'
+  local show_nearest_func = opts.show_context
+  local symbol = opts.show_nearest_func and '╰─' or '🔥'
 
   for filename, marks_info in pairs(grouped_marks_by_filename) do
     table.sort(marks_info, function(a, b)
       return a.mark < b.mark
     end)
 
-    if #blackboardLines == 0 and opts.show_context then
+    if #blackboardLines == 0 and opts.show_nearest_func then
       table.insert(blackboardLines, filename)
     end
 
@@ -86,7 +86,7 @@ local function add_highlights(opts, parsedMarks)
       end
     end
   end
-  if opts.show_context then
+  if opts.show_nearest_func then
     vim.api.nvim_buf_add_highlight(blackboard_state.blackboard_buf, -1, 'FileHighlight', 0, 0, -1)
   end
 end
@@ -109,7 +109,7 @@ local function create_new_blackboard(opts)
   local marks_info = opts.marks_info or Get_accessible_marks_info()
   local parsedMarks = parse_grouped_marks_info(marks_info, opts)
   vim.api.nvim_buf_set_lines(blackboard_state.blackboard_buf, 0, -1, false, parsedMarks.blackboardLines)
-  if opts.show_context then
+  if opts.show_nearest_func then
     Add_virtual_lines(parsedMarks, blackboard_state)
   end
   add_highlights(opts, parsedMarks)
@@ -134,7 +134,7 @@ M.toggle_mark_window = function()
   end
 
   local marks_info = Get_accessible_marks_info()
-  create_new_blackboard { marks_info = marks_info, show_context = false }
+  create_new_blackboard { marks_info = marks_info, show_nearest_func = false }
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   load_all_file_contents()
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
@@ -150,7 +150,7 @@ M.toggle_mark_context = function()
   end
   local marks_info = Get_accessible_marks_info()
   blackboard_state.show_nearest_func = not blackboard_state.show_nearest_func
-  create_new_blackboard { marks_info = Get_accessible_marks_info(), show_context = blackboard_state.show_nearest_func }
+  create_new_blackboard { marks_info = Get_accessible_marks_info(), show_nearest_func = blackboard_state.show_nearest_func }
   vim.api.nvim_set_current_win(blackboard_state.original_win)
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info, filepath_to_content_lines)
 end

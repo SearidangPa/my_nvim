@@ -40,7 +40,7 @@ function Add_virtual_lines(parsedMarks, blackboard_state)
   vim.api.nvim_set_hl(0, 'FileHighlight', { fg = '#5097A4' })
   local last_seen_filename = ''
   local last_seen_func = ''
-  blackboard_state.show_context = true
+  blackboard_state.show_nearest_func = true
 
   for lineNum, data in pairs(parsedMarks.virtualLines) do
     local filename = data.filename or ''
