@@ -120,10 +120,10 @@ local function push_add_all()
   end)
 end
 
-vim.keymap.set('n', '<leader>pa', push_add_all, {
+vim.keymap.set('n', '<leader>gp', push_add_all, {
   noremap = true,
   silent = true,
-  desc = '[P]ush [A]dd all',
+  desc = '[G]it [P]ush all',
 })
 
 return {}

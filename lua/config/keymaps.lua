@@ -121,5 +121,11 @@ map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 local bb = require 'config.blackboard'
 vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]ark list window' })
 vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
+local function wait_for_key_and_preview()
+  local key = vim.fn.getcharstr() -- Waits for user input
+  vim.cmd('BlackboardPreviewMark ' .. key) -- Calls the command with the key
+end
+
+vim.keymap.set('n', '<leader>p', wait_for_key_and_preview, { noremap = true, silent = true })
 
 return {}

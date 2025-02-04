@@ -90,6 +90,8 @@ local function parse_grouped_marks_info(marks_info)
       else
         table.insert(blackboardLines, string.format('%s %s: %s', options.not_under_func_symbol, mark_info.mark, mark_info.text))
       end
+      print('mark: ' .. mark_info.mark)
+      print('currentLine: ' .. currentLine)
       blackboard_state.mark_to_line[mark_info.mark] = currentLine
     end
   end
@@ -259,9 +261,19 @@ vim.api.nvim_create_user_command('BlackboardToggleContext', M.toggle_mark_contex
   desc = 'Toggle Mark Context',
 })
 
+local function preview_mark(mark)
+  local line = blackboard_state.mark_to_line[mark]
+  if not line then
+    print('Mark not found on blackboard: ' .. mark)
+    return
+  end
+  vim.api.nvim_set_current_win(blackboard_state.blackboard_win)
+  vim.api.nvim_win_set_cursor(blackboard_state.blackboard_win, { line, 0 })
+end
+
 vim.api.nvim_create_user_command('BlackboardPreviewMark', function(opts)
   local mark = opts.fargs[1]
-  print('Arguments: ' .. mark)
+  preview_mark(mark)
 end, { nargs = '*' })
 
 return M
