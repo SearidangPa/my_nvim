@@ -74,28 +74,25 @@ end
 
 
 function Nearest_function_at_line(bufnr, line)
-  local ts = vim.treesitter
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
-  if not parser then return nil end
+  assert(parser, 'parser is nil')
 
   local tree = parser:parse()[1]
-  if not tree then return nil end
+  assert(tree, 'tree is nil')
 
   local root = tree:root()
-  if not root then return nil end
+  assert(root, 'root is nil')
 
+  ---@param node TSNode
   local function traverse(node)
     local nearest_function = nil
     for child in node:iter_children() do
-      -- Check if the child is a function declaration
-      if child:type() == "function_declaration" or child:type() == "method_declaration" then
+      if child:type() == 'function_declaration' or child:type() == 'method_declaration' then
         local start_row, _, end_row, _ = child:range()
-        -- Check if the line is within this function's range
         if start_row <= line and end_row >= line then
-          -- Find the first `identifier` child, which is usually the function name
           for subchild in child:iter_children() do
-            if subchild:type() == "identifier" or subchild:type() == "name" then
+            if subchild:type() == 'identifier' or subchild:type() == 'name' then
               nearest_function = vim.treesitter.get_node_text(subchild, bufnr)
               break
             end
@@ -103,11 +100,12 @@ function Nearest_function_at_line(bufnr, line)
         end
       end
 
-      -- Recursively search deeper
       if not nearest_function then
         nearest_function = traverse(child)
       end
-      if nearest_function then break end
+      if nearest_function then
+        break
+      end
     end
     return nearest_function
   end

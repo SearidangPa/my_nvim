@@ -1,5 +1,45 @@
 local plenary_filetype = require 'plenary.filetype'
 
+local function nearest_function_at_line(bufnr, line)
+  local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
+  local parser = vim.treesitter.get_parser(bufnr, lang)
+  assert(parser, 'parser is nil')
+
+  local tree = parser:parse()[1]
+  assert(tree, 'tree is nil')
+
+  local root = tree:root()
+  assert(root, 'root is nil')
+
+  ---@param node TSNode
+  local function traverse(node)
+    local nearest_function = nil
+    for child in node:iter_children() do
+      if child:type() == 'function_declaration' or child:type() == 'method_declaration' then
+        local start_row, _, end_row, _ = child:range()
+        if start_row <= line and end_row >= line then
+          for subchild in child:iter_children() do
+            if subchild:type() == 'identifier' or subchild:type() == 'name' then
+              nearest_function = vim.treesitter.get_node_text(subchild, bufnr)
+              break
+            end
+          end
+        end
+      end
+
+      if not nearest_function then
+        nearest_function = traverse(child)
+      end
+      if nearest_function then
+        break
+      end
+    end
+    return nearest_function
+  end
+
+  return traverse(root)
+end
+
 local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filepath = vim.api.nvim_buf_get_name(bufnr)
   if not vim.loop.fs_stat(filepath) then
@@ -9,7 +49,7 @@ local function add_mark_info(marks_info, mark, bufnr, line, col)
   local filetype = plenary_filetype.detect_from_extension(filepath)
   vim.bo[bufnr].filetype = filetype
 
-  local nearest_func = Nearest_function_at_line(bufnr, line)
+  local nearest_func = nearest_function_at_line(bufnr, line)
   local text = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1] or ''
 
   local filename = vim.fn.fnamemodify(filepath, ':t')
