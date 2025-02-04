@@ -148,6 +148,7 @@ function Group_marks_info_by_filepath(all_accessible_marks)
   return grouped_marks
 end
 
+---@return blackboard.Mark_Info[]
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
