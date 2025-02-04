@@ -90,8 +90,6 @@ local function parse_grouped_marks_info(marks_info)
       else
         table.insert(blackboardLines, string.format('%s %s: %s', options.not_under_func_symbol, mark_info.mark, mark_info.text))
       end
-      print('mark: ' .. mark_info.mark)
-      print('currentLine: ' .. currentLine)
       blackboard_state.mark_to_line[mark_info.mark] = currentLine
     end
   end
