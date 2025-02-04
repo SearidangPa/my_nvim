@@ -48,4 +48,4 @@ local function lsp_references_filtered()
   end)
 end
 
-vim.keymap.set('n', 'gx', lsp_references_filtered, { desc = 'Go to references (excluding test files)' })
+vim.keymap.set('n', '<leader>gx', lsp_references_filtered, { desc = 'Go to references (excluding test files)' })
