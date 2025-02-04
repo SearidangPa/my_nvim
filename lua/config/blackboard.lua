@@ -8,6 +8,8 @@ require 'config.util_blackboard_context'
 ---@field show_nearest_func boolean
 local options = {
   show_nearest_func = false,
+  not_under_func_symbol = '🔥',
+  under_func_symbol = '╰─',
 }
 
 --- Setup the plugin
@@ -52,7 +54,6 @@ local function parse_grouped_marks_info(marks_info)
   local grouped_marks_by_filename = Group_marks_info_by_filepath(marks_info)
   local blackboardLines = {}
   local virtualLines = {}
-  local symbol = options.show_nearest_func and '╰─' or '🔥'
 
   for filepath, marks_info in pairs(grouped_marks_by_filename) do
     local filename = vim.fn.fnamemodify(filepath, ':t')
@@ -71,9 +72,9 @@ local function parse_grouped_marks_info(marks_info)
         func_name = mark_info.nearest_func,
       }
       if mark_info.nearest_func then
-        table.insert(blackboardLines, string.format('%s %s: %s', symbol, mark_info.mark, mark_info.text))
+        table.insert(blackboardLines, string.format('%s %s: %s', options.under_func_symbol, mark_info.mark, mark_info.text))
       else
-        table.insert(blackboardLines, string.format('🔥 %s: %s', mark_info.mark, mark_info.text))
+        table.insert(blackboardLines, string.format('%s %s: %s', options.not_under_func_symbol, mark_info.mark, mark_info.text))
       end
     end
   end
