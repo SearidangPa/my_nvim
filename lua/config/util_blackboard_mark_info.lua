@@ -83,9 +83,6 @@ local function add_local_marks(marks_info)
   end
 end
 
---- @param marks_info table
---- @param char number
---- @param cwd string
 local function add_global_mark_info(marks_info, char, cwd)
   local mark = string.char(char)
   local pos = vim.fn.getpos("'" .. mark)
@@ -107,8 +104,6 @@ local function add_global_mark_info(marks_info, char, cwd)
   end
 end
 
---- @param marks_info table
---- @param mark_char string
 function Retrieve_mark_info(marks_info, mark_char)
   assert(marks_info, 'No marks info provided')
   assert(mark_char, 'No mark char provided')
@@ -124,8 +119,6 @@ function Retrieve_mark_info(marks_info, mark_char)
   return mark_info
 end
 
---- @param all_accessible_marks table
---- @return table
 function Group_marks_info_by_file(all_accessible_marks)
   local grouped_marks = {}
   for _, m in ipairs(all_accessible_marks) do
@@ -151,7 +144,6 @@ function Group_marks_info_by_filepath()
   return grouped_marks
 end
 
---- @return table
 function Get_accessible_marks_info()
   local marks_info = {}
   local cwd = vim.fn.getcwd()
@@ -163,8 +155,6 @@ function Get_accessible_marks_info()
   return marks_info
 end
 
---- @param blackboard_state table
---- @return string
 function Get_mark_char(blackboard_state)
   if not vim.api.nvim_buf_is_valid(blackboard_state.blackboard_buf) then
     vim.notify('blackboard buffer is invalid', vim.log.levels.ERROR)
