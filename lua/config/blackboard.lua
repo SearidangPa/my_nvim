@@ -4,6 +4,18 @@ require 'config.util_blackboard_preview'
 require 'config.util_blackboard_mark_info'
 require 'config.util_blackboard_context'
 
+---@class blackboard.Options
+---@field show_nearest_func boolean
+local options = {
+  show_nearest_func = false,
+}
+
+--- Setup the plugin
+---@param opts blackboard.Options
+M.setup = function(opts)
+  options = vim.tbl_deep_extend('force', options, opts or {})
+end
+
 ---@class blackboard.State
 ---@field blackboard_win number
 ---@field blackboard_buf number
@@ -23,18 +35,6 @@ local blackboard_state = {
   original_buf = -1,
   filepath_to_content_lines = {},
 }
-
----@class blackboard.Options
----@field show_nearest_func boolean
-local options = {
-  show_nearest_func = false,
-}
-
---- Setup the plugin
----@param opts blackboard.Options
-M.setup = function(opts)
-  options = vim.tbl_deep_extend('force', options, opts or {})
-end
 
 ---@param options blackboard.Options
 local function load_all_file_contents(options)
@@ -164,14 +164,6 @@ M.toggle_mark_context = function()
   Attach_autocmd_blackboard_buf(blackboard_state, marks_info)
 end
 
-vim.api.nvim_create_user_command('ToggleBlackboard', M.toggle_mark_window, {
-  desc = 'Toggle Blackboard',
-})
-
-vim.api.nvim_create_user_command('ToggleMarkContext', M.toggle_mark_context, {
-  desc = 'Toggle Mark Context',
-})
-
 M.jump_to_mark = function(blackboard_state)
   local mark_char = Get_mark_char(blackboard_state)
   assert(vim.api.nvim_win_is_valid(blackboard_state.original_win), 'Invalid original window')
@@ -180,4 +172,11 @@ M.jump_to_mark = function(blackboard_state)
   vim.cmd 'normal! zz'
 end
 
+vim.api.nvim_create_user_command('ToggleBlackboard', M.toggle_mark_window, {
+  desc = 'Toggle Blackboard',
+})
+
+vim.api.nvim_create_user_command('ToggleMarkContext', M.toggle_mark_context, {
+  desc = 'Toggle Mark Context',
+})
 return M
