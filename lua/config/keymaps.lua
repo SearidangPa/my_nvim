@@ -1,13 +1,4 @@
 local map = vim.keymap.set
-local bb = require 'config.blackboard'
-
-local function wait_for_key_and_preview()
-  local key = vim.fn.getcharstr() -- Waits for user input
-  if not key or key == '' then
-    return
-  end
-  bb.preview_mark(key)
-end
 
 local function buf_clear_name_space()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
@@ -125,10 +116,5 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
-
--- blackboard
-vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]ark list window' })
-vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
-vim.keymap.set('n', '<localleader>m', wait_for_key_and_preview, { desc = 'Preview [M]ark' })
 
 return {}
