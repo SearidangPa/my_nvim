@@ -10,7 +10,7 @@ local extras = require 'luasnip.extras'
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
-local get_node_text = vim.treesitter.get_node_text
+require 'config.navigation_by_func_call'
 
 FirstLetter = function(args)
   local input = args[1][1] or ''
@@ -59,8 +59,8 @@ function ReplaceDashWithSpace(args)
 end
 
 function Go_ret_vals_nearest_func_decl()
-  local func_name = Nearest_function_decl_at_cursor()
-  return Go_ret_vals { { func_name } }
+  local previous_func_call = Get_previous_func_call()
+  return Go_ret_vals { { previous_func_call } }
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
@@ -118,7 +118,7 @@ local handlers = {
     local result = {}
     local count = node:named_child_count()
     for idx = 0, count - 1 do
-      table.insert(result, transform(get_node_text(node:named_child(idx), 0), info))
+      table.insert(result, transform(vim.treesitter.get_node_text(node:named_child(idx), 0), info))
       if idx ~= count - 1 then
         table.insert(result, t { ', ' })
       end
@@ -127,7 +127,7 @@ local handlers = {
   end,
 
   ['type_identifier'] = function(node, info)
-    local text = get_node_text(node, 0)
+    local text = vim.treesitter.get_node_text(node, 0)
     return { transform(text, info) }
   end,
 }
