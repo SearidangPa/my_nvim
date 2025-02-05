@@ -11,4 +11,9 @@ return {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
   },
+  {
+    'dgox16/oldworld.nvim',
+    lazy = false,
+    priority = 1000,
+  },
 }
