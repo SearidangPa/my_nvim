@@ -35,6 +35,7 @@ return {
       map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
       map('n', '<leader>sc', builtin.git_bcommits, { desc = '[S]earch [C]ommits' })
       map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+      map('n', '<leader>sl', builtin.reloader, { desc = '[S]earch [L]oader' })
 
       -- useless?
       map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })

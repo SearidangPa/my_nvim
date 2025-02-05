@@ -60,7 +60,7 @@ end
 
 function Go_ret_vals_nearest_func_decl()
   local func_name = Nearest_function_decl_at_cursor()
-  return Go_ret_vals { func_name }
+  return Go_ret_vals { { func_name } }
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
