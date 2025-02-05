@@ -80,7 +80,7 @@ local function move_to_next_valid_identifier()
   end
 end
 
-function Find_previous(node, row, col)
+local function find_previous(node, row, col)
   local previous_node = nil
 
   local function search(n)
@@ -109,12 +109,19 @@ function Find_previous(node, row, col)
   return previous_node
 end
 
+function Get_previous_func_call()
+  local root = get_root_node()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+  local previous_node = find_previous(root, current_row, current_col)
+  return vim.treesitter.get_node_text(previous_node, 0)
+end
+
 local function move_to_previous_valid_identifier()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = Find_previous(root, current_row, current_col)
-  print(previous_node)
+  local previous_node = find_previous(root, current_row, current_col)
 
   if previous_node then
     local start_row, start_col, _, _ = previous_node:range()
