@@ -31,6 +31,11 @@ return {
       map('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
       map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
 
+      -- trying out
+      map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
+      map('n', '<leader>sc', builtin.git_bcommits, { desc = '[S]earch [C]ommits' })
+      map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+
       -- useless?
       map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
       map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
@@ -83,6 +88,8 @@ return {
           theme = 'ivy',
           hidden = true,
         },
+        git_bcommits = { theme = 'ivy' },
+        treesitter = { theme = 'ivy' },
         live_grep = { theme = 'ivy' },
         help_tags = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
