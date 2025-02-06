@@ -13,7 +13,7 @@ local ret_arg = vim.fn.has 'win32' == 1 and { { 1 } } or { 1 }
 
 ls.add_snippets('go', {
   s(
-    'rfi', -- error func if
+    'rif', -- error func if
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
