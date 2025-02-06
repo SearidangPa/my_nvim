@@ -9,33 +9,59 @@ local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
 
-local ret_arg = vim.fn.has 'win32' == 1 and { { 1 } } or { 1 }
-
-ls.add_snippets('go', {
-  s(
-    'rif', -- error func if
-    fmta(
-      [[
+if vim.fn.has 'win' == 1 then
+  ls.add_snippets('go', {
+    s(
+      'rif', -- error func if
+      fmta(
+        [[
         <choiceNode> <funcName>(<args>)
         if err != nil {
             return <dynamicRet>
         }
         <finish>
       ]],
-      {
-        choiceNode = c(3, {
-          fmta([[<res>, err := ]], { res = i(1, 'res') }),
-          t 'err = ',
-          t 'err := ',
-        }),
-        funcName = i(1, 'funcName'),
-        args = i(2, ''),
-        dynamicRet = d(4, Go_ret_vals, ret_arg),
-        finish = i(0),
-      }
-    )
-  ),
-})
+        {
+          choiceNode = c(3, {
+            fmta([[<res>, err := ]], { res = i(1, 'res') }),
+            t 'err = ',
+            t 'err := ',
+          }),
+          funcName = i(1, 'funcName'),
+          args = i(2, ''),
+          dynamicRet = d(4, Go_ret_vals, { { 1 } }),
+          finish = i(0),
+        }
+      )
+    ),
+  })
+else
+  ls.add_snippets('go', {
+    s(
+      'rif', -- error func if
+      fmta(
+        [[
+        <choiceNode> <funcName>(<args>)
+        if err != nil {
+            return <dynamicRet>
+        }
+        <finish>
+      ]],
+        {
+          choiceNode = c(3, {
+            fmta([[<res>, err := ]], { res = i(1, 'res') }),
+            t 'err = ',
+            t 'err := ',
+          }),
+          funcName = i(1, 'funcName'),
+          args = i(2, ''),
+          dynamicRet = d(4, Go_ret_vals, { 1 }),
+          finish = i(0),
+        }
+      )
+    ),
+  })
+end
 
 ls.add_snippets('go', {
   s(
