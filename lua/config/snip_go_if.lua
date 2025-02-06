@@ -30,7 +30,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, ''),
-        dynamicRet = d(4, Go_ret_vals, { 1 }),
+        dynamicRet = d(4, Go_ret_vals, { { 1 } }),
         finish = i(0),
       }
     )
@@ -90,7 +90,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, 'args'),
-        processedFuncName = f(GetLastFuncName , { 1 }),
+        processedFuncName = f(GetLastFuncName, { 1 }),
         finish = i(0),
       }
     )

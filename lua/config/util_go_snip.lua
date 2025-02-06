@@ -10,7 +10,7 @@ local extras = require 'luasnip.extras'
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
-require 'config.navigation_by_func_call'
+require 'config.navigate_func_call'
 
 FirstLetter = function(args)
   local input = args[1][1] or ''
