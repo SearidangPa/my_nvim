@@ -75,7 +75,7 @@ return {
         treesitter = { theme = 'ivy' },
         git_bcommits = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
-        lsp_references = { theme = 'ivy' },
+        lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
       },
