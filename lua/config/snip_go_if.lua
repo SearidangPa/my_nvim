@@ -43,12 +43,12 @@ ls.add_snippets('go', {
     fmta(
       [[
         if err != nil {
-            return <dynamicRet>
+            return <funcName>
         }
         <finish>
       ]],
       {
-        dynamicRet = d(1, Go_ret_vals_nearest_func_decl, {}),
+        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
         finish = i(0),
       }
     )
@@ -88,9 +88,9 @@ ls.add_snippets('go', {
           t 'err = ',
           t 'err := ',
         }),
-        funcName = i(1, 'funcName'),
+        funcName = i(1, 'func'),
         args = i(2, 'args'),
-        processedFuncName = f(GetLastFuncName, { 1 }),
+        processedFuncName = f(GetLastFuncName, { rep(1) }),
         finish = i(0),
       }
     )
