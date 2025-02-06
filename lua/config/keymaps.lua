@@ -117,4 +117,6 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 
+map('n', '<leader>lr', ":LspRestart<CR>", map_opt '[L]SP [R]estart')
+
 return {}
