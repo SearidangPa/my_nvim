@@ -10,6 +10,22 @@ local function is_top_level_field_identifier(node)
     return false
   end
 
+  local operand = nil
+  for child in selector:iter_children() do
+    if child:type() == 'identifier' then
+      operand = child
+      break
+    end
+  end
+
+  if operand then
+    local buf = vim.api.nvim_get_current_buf()
+    local text = vim.treesitter.get_node_text(operand, buf)
+    if text == 'eris' or text == 'log' then
+      return false
+    end
+  end
+
   -- The selector should be the function part of a call_expression.
   local call_expr = selector:parent()
   if not call_expr or call_expr:type() ~= 'call_expression' then
