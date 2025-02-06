@@ -95,6 +95,7 @@ return {
         help_tags = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
         git_status = { theme = 'ivy' },
+        lsp_references = { theme = 'ivy' },
       },
     }
     require('telescope').setup(opts)

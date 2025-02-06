@@ -1,10 +1,9 @@
-local telescope = require 'telescope'
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local conf = require('telescope.config').values
 
 local function lsp_references_filtered()
-  vim.lsp.buf_request(0, 'textDocument/references', vim.lsp.util.make_position_params(), function(err, result, ctx, _)
+  vim.lsp.buf_request(0, 'textDocument/references', vim.lsp.util.make_position_params(), function(err, result, _, _)
     if err or not result then
       return
     end
