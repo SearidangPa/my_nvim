@@ -5,6 +5,7 @@ local c = ls.choice_node
 local d = ls.dynamic_node
 local i = ls.insert_node
 local s = ls.snippet
+local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
 
@@ -87,7 +88,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, 'args'),
-        processedFuncName = GetLastFuncName { i(1, 'funcName') },
+        processedFuncName = f(GetLastFuncName, { 1 }),
         finish = i(0),
       }
     )
