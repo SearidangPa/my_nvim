@@ -13,12 +13,6 @@ local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
 require 'config.navigate_func_call'
 
-FirstLetter = function(args)
-  local input = args[1][1] or ''
-  local lower = input:sub(1, 1):lower()
-  return lower
-end
-
 GetLastFuncName = function(args)
   local input = args[1][1] or ''
   ---@diagnostic disable-next-line: param-type-mismatch
@@ -47,11 +41,6 @@ function ReplaceDashWithSpace(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
   return table.concat(parts, ' ')
-end
-
-function Go_ret_vals_nearest_func_decl()
-  local func_name = Get_previous_func_call()
-  return Go_ret_vals { { func_name } }
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
@@ -165,4 +154,9 @@ function Go_ret_vals(args)
   }
   local result = go_result_type(info)
   return sn(nil, result)
+end
+
+function Go_ret_vals_nearest_func_decl()
+  local func_name = Get_previous_func_call()
+  return Go_ret_vals { { func_name } }
 end
