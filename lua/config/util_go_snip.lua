@@ -10,19 +10,21 @@ local extras = require 'luasnip.extras'
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
+local get_node_text = vim.treesitter.get_node_text
 require 'config.navigate_func_call'
+
+FirstLetter = function(args)
+  local input = args[1][1] or ''
+  local lower = input:sub(1, 1):lower()
+  return lower
+end
 
 GetLastFuncName = function(args)
   local input = args[1][1] or ''
-  print('input' .. input)
   ---@diagnostic disable-next-line: param-type-mismatch
   local parts = vim.split(input, '.', true)
   local res = parts[#parts] or ''
-  if res == '' then
-    return ''
-  end
-
-  return { { res } }
+  return res
 end
 
 function KebabToCamelCase(args)
@@ -45,6 +47,11 @@ function ReplaceDashWithSpace(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
   return table.concat(parts, ' ')
+end
+
+function Go_ret_vals_nearest_func_decl()
+  local func_name = Get_previous_func_call()
+  return Go_ret_vals { { func_name } }
 end
 
 -- Adapted from https://github.com/tjdevries/config_manager/blob/1a93f03dfe254b5332b176ae8ec926e69a5d9805/xdg_config/nvim/lua/tj/snips/ft/go.lua
@@ -102,7 +109,7 @@ local handlers = {
     local result = {}
     local count = node:named_child_count()
     for idx = 0, count - 1 do
-      table.insert(result, transform(vim.treesitter.get_node_text(node:named_child(idx), 0), info))
+      table.insert(result, transform(get_node_text(node:named_child(idx), 0), info))
       if idx ~= count - 1 then
         table.insert(result, t { ', ' })
       end
@@ -111,7 +118,7 @@ local handlers = {
   end,
 
   ['type_identifier'] = function(node, info)
-    local text = vim.treesitter.get_node_text(node, 0)
+    local text = get_node_text(node, 0)
     return { transform(text, info) }
   end,
 }
@@ -156,12 +163,6 @@ function Go_ret_vals(args)
     index = 0,
     func_name = args[1][1] or 'unknown',
   }
-  print('info.func_name' .. info.func_name)
   local result = go_result_type(info)
   return sn(nil, result)
-end
-
-function Go_ret_vals_nearest_func_decl()
-  local previous_func_call = Get_previous_func_call()
-  return Go_ret_vals { { previous_func_call } }
 end

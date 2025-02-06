@@ -183,7 +183,6 @@ function Get_previous_func_call()
   local previous_node = find_previous(root, current_row, current_col)
   if previous_node then
     local res = vim.treesitter.get_node_text(previous_node, 0)
-    print(res)
     return res
   end
 end
