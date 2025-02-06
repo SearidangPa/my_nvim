@@ -9,9 +9,11 @@ local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
 
+local ret_arg = vim.fn.has 'win32' == 1 and { { 1 } } or { 1 }
+
 ls.add_snippets('go', {
   s(
-    'efi', -- error func if
+    'rfi', -- error func if
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
@@ -28,7 +30,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2, ''),
-        dynamicRet = d(4, Go_ret_vals, { 1 }),
+        dynamicRet = d(4, Go_ret_vals, ret_arg),
         finish = i(0),
       }
     )
@@ -71,7 +73,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('go', {
   s(
-    'efa', -- error fatal
+    'rfa', -- error fatal
     fmta(
       [[
         <choiceNode> <funcName>(<args>)
