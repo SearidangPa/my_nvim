@@ -67,13 +67,14 @@ return {
     map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
     local opts = {
       pickers = {
-        find_files = { theme = 'ivy', hidden = true },
-        git_bcommits = { theme = 'ivy' },
-        treesitter = { theme = 'ivy' },
-        live_grep = { theme = 'ivy' },
         help_tags = { theme = 'ivy' },
-        diagnostics = { theme = 'ivy' },
+        find_files = { theme = 'ivy', hidden = true },
+        live_grep = { theme = 'ivy' },
         git_status = { theme = 'ivy' },
+        jumplist = { theme = 'ivy' },
+        treesitter = { theme = 'ivy' },
+        git_bcommits = { theme = 'ivy' },
+        diagnostics = { theme = 'ivy' },
         lsp_references = { theme = 'ivy' },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
