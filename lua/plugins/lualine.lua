@@ -26,13 +26,13 @@ local function get_harpoon_filenames(opts)
     local display_sep = ' | '
     local val_at_index = harpoonList:get(i)
     local path = val_at_index.value
-    local tokens = vim.split(path, os_sep)
+    local filename = vim.fn.fnamemodify(path, ':t')
     local fullpath = root_dir .. os_sep .. path
 
     if fullpath == current_file_path then
-      list_names = list_names .. display_sep .. '%#TabLineSel#' .. tokens[#tokens] .. '%#TabLine#'
+      list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
     else
-      list_names = list_names .. display_sep .. tokens[#tokens]
+      list_names = list_names .. display_sep .. filename
     end
   end
 
