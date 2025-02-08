@@ -28,10 +28,9 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
-local function accept_with_insert_line()
+local function accept()
   local accept = vim.fn['copilot#Accept']
   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-  res = res .. '\n'
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
@@ -82,7 +81,7 @@ map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 map('i', '<C-l>', accept_line, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
 map('i', '<M-f>', accept_word, { expr = true, remap = false, desc = 'Copilot Accept Word' })
-map('i', '<M-y>', accept_with_insert_line, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
+map('i', '<M-y>', accept, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
@@ -117,6 +116,6 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 -- clear all extmarks
 map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
 
-map('n', '<leader>lr', ":LspRestart<CR>", map_opt '[L]SP [R]estart')
+map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 
 return {}

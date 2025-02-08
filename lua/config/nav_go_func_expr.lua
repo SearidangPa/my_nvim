@@ -31,6 +31,13 @@ local function select_call_expr_statement(node)
   return call_expr_statement(field_identifier_parent)
 end
 
+local function not_ignore(node)
+  local text = vim.treesitter.get_node_text(node, 0)
+  if text == 'NoError' or text == 'Error' then
+    return false
+  end
+end
+
 local function find_previous_expr_statement(node, row, col)
   local previous_node = nil
 
