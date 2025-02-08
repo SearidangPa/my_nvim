@@ -1,3 +1,7 @@
+local ignore_list = {
+  Join = true,
+}
+
 local function get_root_node()
   local buf_nr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
@@ -46,12 +50,13 @@ local function find_prev_func_call_with_equal(node, row, col)
     for child in n:iter_children() do
       search(child)
 
-      local child_type = child:type()
       local candidate = false
 
-      if child_type == 'field_identifier' and select_call_expr_equal(child) then
-        candidate = true
-      elseif child_type == 'identifier' and call_expr_equal(child) then
+      if child:type() == 'field_identifier' and select_call_expr_equal(child) then
+        if not ignore_list[vim.treesitter.get_node_text(child, 0)] then
+          candidate = true
+        end
+      elseif child:type() == 'identifier' and call_expr_equal(child) then
         candidate = true
       end
 
@@ -78,11 +83,11 @@ end
 local function find_next_func_call_with_equal(node, row, col)
   for child in node:iter_children() do
     local candidate = nil
-    local child_type = child:type()
-
-    if child_type == 'field_identifier' and select_call_expr_equal(child) then
-      candidate = child
-    elseif child_type == 'identifier' and call_expr_equal(child) then
+    if child:type() == 'field_identifier' and select_call_expr_equal(child) then
+      if not ignore_list[vim.treesitter.get_node_text(child, 0)] then
+        candidate = child
+      end
+    elseif child:type() == 'identifier' and call_expr_equal(child) then
       candidate = child
     end
 
