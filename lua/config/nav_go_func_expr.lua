@@ -1,3 +1,19 @@
+local ignore_list = {
+  NoError = true,
+  Error = true,
+  Errorf = true,
+  Info = true,
+  Infof = true,
+  Warn = true,
+  Debug = true,
+  Fatal = true,
+  Fatalf = true,
+  Wrap = true,
+  Wrapf = true,
+  WithField = true,
+  WithFields = true,
+}
+
 local function get_root_node()
   local buf_nr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
@@ -31,12 +47,18 @@ local function select_call_expr_statement(node)
   return call_expr_statement(field_identifier_parent)
 end
 
-local ignore_list = { 'NoError', 'Error', 'Info', 'Warn', 'Debug', 'Fatal', 'Fatalf', 'Wrap', 'Wrapf', 'WithField', 'WithFields' }
-local function not_ignore(node)
+local function ignore(node)
   local text = vim.treesitter.get_node_text(node, 0)
-  if text and ignore_list[text] then
+  if not text then
+    print 'Failed to get node text'
     return false
   end
+
+  print('Checking if ' .. text .. ' is in ignore list')
+  if ignore_list[text] then
+    return true
+  end
+  return false
 end
 
 local function find_previous_expr_statement(node, row, col)
@@ -47,8 +69,8 @@ local function find_previous_expr_statement(node, row, col)
       search(child)
 
       local candidate = false
-      if child:type() == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
-        candidate = true
+      if child:type() == 'field_identifier' and select_call_expr_statement(child) then
+        candidate = not ignore(child)
       elseif child:type() == 'identifier' and call_expr_statement(child) then
         candidate = true
       end
@@ -77,8 +99,10 @@ local function find_next_expr_statement(node, row, col)
   for child in node:iter_children() do
     local candidate = nil
 
-    if child:type() == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
-      candidate = child
+    if child:type() == 'field_identifier' and select_call_expr_statement(child) then
+      if not ignore(child) then
+        candidate = child
+      end
     elseif child:type() == 'identifier' and call_expr_statement(child) then
       candidate = child
     end
