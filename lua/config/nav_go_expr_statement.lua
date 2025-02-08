@@ -95,7 +95,6 @@ local function move_to_next_expr_statement()
 
   if next_node then
     local start_row, start_col, _, _ = next_node:range()
-    -- Adjusting for Neovim's 1-indexed rows:
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
   end
 end
