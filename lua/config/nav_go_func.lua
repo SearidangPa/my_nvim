@@ -1,37 +1,34 @@
-local function is_top_level_field_identifier(node)
-  if node:type() ~= 'field_identifier' then
+local function get_root_node()
+  local buf_nr = vim.api.nvim_get_current_buf()
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  local parser = vim.treesitter.get_parser(buf_nr, lang)
+  local tree = parser:parse()[1]
+  local root = tree:root()
+  return root
+end
+
+local function call_expr_equal(node)
+  local parent = node:parent()
+  if not parent or parent:type() ~= 'call_expression' then
     return false
   end
 
-  local selector = node:parent()
-  if not selector or selector:type() ~= 'selector_expression' then
+  local call_expr_parent = parent:parent()
+  if not call_expr_parent or call_expr_parent:type() ~= 'expression_list' then
     return false
   end
 
-  if not selector or selector:type() ~= 'selector_expression' then
+  local expr_list_parent = call_expr_parent:parent()
+  if not expr_list_parent then
     return false
   end
-
-  local call_expr = selector:parent()
-  if not call_expr or call_expr:type() ~= 'call_expression' then
-    return false
-  end
-
-  local expr_list = call_expr:parent()
-  if not expr_list or expr_list:type() ~= 'expression_list' then
-    return false
-  end
-
-  local expr_list_parent = expr_list:parent()
-  if expr_list_parent then
-    if expr_list_parent:type() == 'short_var_declaration' or expr_list_parent:type() == 'assignment_statement' then
-      return true
-    end
+  if expr_list_parent:type() == 'short_var_declaration' or expr_list_parent:type() == 'assignment_statement' then
+    return true
   end
   return false
 end
 
-local function is_valid_field_identifier(node)
+local function select_call_expr_equal(node)
   local parent = node:parent()
   if not parent then
     return false
@@ -39,41 +36,10 @@ local function is_valid_field_identifier(node)
   if parent:type() ~= 'selector_expression' then
     return false
   end
-
-  local gparent = parent:parent()
-  if gparent and gparent:type() == 'call_expression' then
-    return true
-  end
-  return false
+  return call_expr_equal(parent)
 end
 
-local function is_valid_function_call_identifier(node)
-  if node:type() ~= 'identifier' then
-    return false
-  end
-
-  local parent = node:parent()
-  if not parent then
-    return false
-  end
-
-  if parent:type() ~= 'call_expression' then
-    return false
-  end
-
-  local first_child = nil
-  for child in parent:iter_children() do
-    first_child = child
-    break
-  end
-
-  if first_child == node then
-    return true
-  end
-end
-
--- Revised DFS search that only considers top-level field identifiers.
-local function find_previous(node, row, col)
+local function find_prev_func_call_with_equal(node, row, col)
   local previous_node = nil
 
   local function search(n)
@@ -83,13 +49,9 @@ local function find_previous(node, row, col)
       local child_type = child:type()
       local consider = false
 
-      if child_type == 'field_identifier' and is_valid_field_identifier(child) then
-        -- Only consider this field if it is top-level.
-        if is_top_level_field_identifier(child) then
-          consider = true
-        end
-      elseif child_type == 'identifier' and is_valid_function_call_identifier(child) then
-        -- Optionally include identifiers, if that’s part of your logic.
+      if child_type == 'field_identifier' and select_call_expr_equal(child) then
+        consider = true
+      elseif child_type == 'identifier' and call_expr_equal(child) then
         consider = true
       end
 
@@ -113,25 +75,14 @@ local function find_previous(node, row, col)
   return previous_node
 end
 
-local function get_root_node()
-  local buf_nr = vim.api.nvim_get_current_buf()
-  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
-  local parser = vim.treesitter.get_parser(buf_nr, lang)
-  local tree = parser:parse()[1]
-  local root = tree:root()
-  return root
-end
-
-local function find_next(node, row, col)
+local function find_next_func_call_with_equal(node, row, col)
   for child in node:iter_children() do
     local candidate = nil
     local child_type = child:type()
 
-    if child_type == 'field_identifier' and is_valid_field_identifier(child) then
-      if is_top_level_field_identifier(child) then
-        candidate = child
-      end
-    elseif child_type == 'identifier' and is_valid_function_call_identifier(child) then
+    if child_type == 'field_identifier' and select_call_expr_equal(child) then
+      candidate = child
+    elseif child_type == 'identifier' and call_expr_equal(child) then
       candidate = child
     end
 
@@ -142,7 +93,7 @@ local function find_next(node, row, col)
       end
     end
 
-    local descendant = find_next(child, row, col)
+    local descendant = find_next_func_call_with_equal(child, row, col)
     if descendant then
       return descendant
     end
@@ -151,22 +102,11 @@ local function find_next(node, row, col)
   return nil
 end
 
-function Get_previous_func_call()
-  local root = get_root_node()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = find_previous(root, current_row, current_col)
-  if previous_node then
-    local res = vim.treesitter.get_node_text(previous_node, 0)
-    return res
-  end
-end
-
 local function get_next_func_call()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = find_next(root, current_row, current_col)
+  local previous_node = find_next_func_call_with_equal(root, current_row, current_col)
   if previous_node then
     local res = vim.treesitter.get_node_text(previous_node, 0)
     print(res)
@@ -178,7 +118,7 @@ local function move_to_next_func_call()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local next_node = find_next(root, current_row, current_col)
+  local next_node = find_next_func_call_with_equal(root, current_row, current_col)
 
   if next_node then
     local start_row, start_col, _, _ = next_node:range()
@@ -190,7 +130,7 @@ local function move_to_previous_func_call()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = find_previous(root, current_row, current_col)
+  local previous_node = find_prev_func_call_with_equal(root, current_row, current_col)
 
   if previous_node then
     local start_row, start_col, _, _ = previous_node:range()
@@ -198,7 +138,18 @@ local function move_to_previous_func_call()
   end
 end
 
+function Get_prev_func_call_with_equal()
+  local root = get_root_node()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+  local previous_node = find_prev_func_call_with_equal(root, current_row, current_col)
+  if previous_node then
+    local res = vim.treesitter.get_node_text(previous_node, 0)
+    return res
+  end
+end
+
 vim.api.nvim_create_user_command('NextFuncCall', get_next_func_call, {})
-vim.api.nvim_create_user_command('PrevFuncCall', Get_previous_func_call, {})
+vim.api.nvim_create_user_command('PrevFuncCall', Get_prev_func_call_with_equal, {})
 vim.keymap.set('n', ']f', move_to_next_func_call, { desc = 'Next function call' })
 vim.keymap.set('n', '[f', move_to_previous_func_call, { desc = 'Previous function call' })
