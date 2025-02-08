@@ -31,7 +31,7 @@ local function select_call_expr_statement(node)
   return call_expr_statement(field_identifier_parent)
 end
 
-local ignore_list = { 'NoError', 'Error', 'Info', 'Warn', 'Debug', 'Fatal', 'Fatalf', 'Wrap', 'Wrapf' }
+local ignore_list = { 'NoError', 'Error', 'Info', 'Warn', 'Debug', 'Fatal', 'Fatalf', 'Wrap', 'Wrapf', 'WithField', 'WithFields' }
 local function not_ignore(node)
   local text = vim.treesitter.get_node_text(node, 0)
   if text and ignore_list[text] then
@@ -46,12 +46,10 @@ local function find_previous_expr_statement(node, row, col)
     for child in n:iter_children() do
       search(child)
 
-      local child_type = child:type()
       local candidate = false
-
-      if child_type == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
+      if child:type() == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
         candidate = true
-      elseif child_type == 'identifier' and call_expr_statement(child) then
+      elseif child:type() == 'identifier' and call_expr_statement(child) then
         candidate = true
       end
 
@@ -78,11 +76,10 @@ end
 local function find_next_expr_statement(node, row, col)
   for child in node:iter_children() do
     local candidate = nil
-    local child_type = child:type()
 
-    if child_type == 'field_identifier' and select_call_expr_statement(child) then
+    if child:type() == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
       candidate = child
-    elseif child_type == 'identifier' and call_expr_statement(child) then
+    elseif child:type() == 'identifier' and call_expr_statement(child) then
       candidate = child
     end
 
