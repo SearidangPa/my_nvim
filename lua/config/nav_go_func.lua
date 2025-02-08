@@ -174,7 +174,7 @@ local function get_next_func_call()
   end
 end
 
-local function move_to_next_valid_identifier()
+local function move_to_next_func_call()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -187,7 +187,7 @@ local function move_to_next_valid_identifier()
   end
 end
 
-local function move_to_previous_valid_identifier()
+local function move_to_previous_func_call()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -201,5 +201,5 @@ end
 
 vim.api.nvim_create_user_command('NextFuncCall', get_next_func_call, {})
 vim.api.nvim_create_user_command('PrevFuncCall', Get_previous_func_call, {})
-vim.keymap.set('n', ']f', move_to_next_valid_identifier, { desc = 'Next function call' })
-vim.keymap.set('n', '[f', move_to_previous_valid_identifier, { desc = 'Previous function call' })
+vim.keymap.set('n', ']f', move_to_next_func_call, { desc = 'Next function call' })
+vim.keymap.set('n', '[f', move_to_previous_func_call, { desc = 'Previous function call' })
