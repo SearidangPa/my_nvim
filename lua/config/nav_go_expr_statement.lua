@@ -7,7 +7,7 @@ local function get_root_node()
   return root
 end
 
-local function is_valid_field_identifier(node)
+local function is_expr_statement(node)
   local field_identifier_parent = node:parent()
   if not field_identifier_parent then
     return false
@@ -38,7 +38,7 @@ local function find_previous_expr_statement(node, row, col)
       local child_type = child:type()
       local consider = false
 
-      if child_type == 'field_identifier' and is_valid_field_identifier(child) then
+      if child_type == 'field_identifier' and is_expr_statement(child) then
         consider = true
       end
 
@@ -67,7 +67,7 @@ local function find_next_expr_statement(node, row, col)
     local candidate = nil
     local child_type = child:type()
 
-    if child_type == 'field_identifier' and is_valid_field_identifier(child) then
+    if child_type == 'field_identifier' and is_expr_statement(child) then
       candidate = child
     end
 
