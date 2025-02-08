@@ -98,5 +98,5 @@ local function move_to_prev_func_decl()
   end
 end
 
-vim.keymap.set('n', ']e', move_to_next_func_decl, { desc = 'Next Expression' })
-vim.keymap.set('n', '[e', move_to_prev_func_decl, { desc = 'Previous Expression' })
+vim.keymap.set('n', ']m', move_to_next_func_decl, { desc = 'Next Expression' })
+vim.keymap.set('n', '[m', move_to_prev_func_decl, { desc = 'Previous Expression' })
