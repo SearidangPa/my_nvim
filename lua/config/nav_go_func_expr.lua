@@ -48,7 +48,7 @@ local function find_previous_expr_statement(node, row, col)
       local child_type = child:type()
       local candidate = false
 
-      if child_type == 'field_identifier' and select_call_expr_statement(child) then
+      if child_type == 'field_identifier' and select_call_expr_statement(child) and not_ignore(child) then
         candidate = true
       elseif child_type == 'identifier' and call_expr_statement(child) then
         candidate = true
