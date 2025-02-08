@@ -50,11 +50,9 @@ end
 local function ignore(node)
   local text = vim.treesitter.get_node_text(node, 0)
   if not text then
-    print 'Failed to get node text'
     return false
   end
 
-  print('Checking if ' .. text .. ' is in ignore list')
   if ignore_list[text] then
     return true
   end
