@@ -21,7 +21,7 @@ local function is_top_level_field_identifier(node)
   if operand then
     local buf = vim.api.nvim_get_current_buf()
     local text = vim.treesitter.get_node_text(operand, buf)
-    if text == 'eris' or text == 'log' then
+    if text == 'eris' or text == 'log' or 'logEntry' then
       return false
     end
   end
