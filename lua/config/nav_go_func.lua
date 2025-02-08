@@ -149,7 +149,5 @@ function Get_prev_func_call_with_equal()
   end
 end
 
-vim.api.nvim_create_user_command('NextFuncCall', get_next_func_call, {})
-vim.api.nvim_create_user_command('PrevFuncCall', Get_prev_func_call_with_equal, {})
 vim.keymap.set('n', ']f', move_to_next_func_call, { desc = 'Next function call' })
 vim.keymap.set('n', '[f', move_to_previous_func_call, { desc = 'Previous function call' })
