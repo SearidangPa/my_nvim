@@ -47,15 +47,15 @@ local function find_prev_func_call_with_equal(node, row, col)
       search(child)
 
       local child_type = child:type()
-      local consider = false
+      local candidate = false
 
       if child_type == 'field_identifier' and select_call_expr_equal(child) then
-        consider = true
+        candidate = true
       elseif child_type == 'identifier' and call_expr_equal(child) then
-        consider = true
+        candidate = true
       end
 
-      if consider then
+      if candidate then
         local s_row, s_col, _, _ = child:range()
         if s_row < row or (s_row == row and s_col < col) then
           if not previous_node then
@@ -100,18 +100,6 @@ local function find_next_func_call_with_equal(node, row, col)
   end
 
   return nil
-end
-
-local function get_next_func_call()
-  local root = get_root_node()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = find_next_func_call_with_equal(root, current_row, current_col)
-  if previous_node then
-    local res = vim.treesitter.get_node_text(previous_node, 0)
-    print(res)
-    return res
-  end
 end
 
 local function move_to_next_func_call()

@@ -7,15 +7,7 @@ local function get_root_node()
   return root
 end
 
-local function is_expr_statement(node)
-  local field_identifier_parent = node:parent()
-  if not field_identifier_parent then
-    return false
-  end
-  if field_identifier_parent:type() ~= 'selector_expression' then
-    return false
-  end
-
+local function call_expr_statement(field_identifier_parent)
   local selector_expression_parent = field_identifier_parent:parent()
   if selector_expression_parent and selector_expression_parent:type() ~= 'call_expression' then
     return false
@@ -28,6 +20,17 @@ local function is_expr_statement(node)
   return false
 end
 
+local function select_call_expr_statement(node)
+  local field_identifier_parent = node:parent()
+  if not field_identifier_parent then
+    return false
+  end
+  if field_identifier_parent:type() ~= 'selector_expression' then
+    return false
+  end
+  return call_expr_statement(field_identifier_parent)
+end
+
 local function find_previous_expr_statement(node, row, col)
   local previous_node = nil
 
@@ -36,13 +39,15 @@ local function find_previous_expr_statement(node, row, col)
       search(child)
 
       local child_type = child:type()
-      local consider = false
+      local candidate = false
 
-      if child_type == 'field_identifier' and is_expr_statement(child) then
-        consider = true
+      if child_type == 'field_identifier' and select_call_expr_statement(child) then
+        candidate = true
+      elseif child_type == 'identifier' and call_expr_statement(child) then
+        candidate = true
       end
 
-      if consider then
+      if candidate then
         local s_row, s_col, _, _ = child:range()
         if s_row < row or (s_row == row and s_col < col) then
           if not previous_node then
@@ -67,7 +72,9 @@ local function find_next_expr_statement(node, row, col)
     local candidate = nil
     local child_type = child:type()
 
-    if child_type == 'field_identifier' and is_expr_statement(child) then
+    if child_type == 'field_identifier' and select_call_expr_statement(child) then
+      candidate = child
+    elseif child_type == 'identifier' and call_expr_statement(child) then
       candidate = child
     end
 

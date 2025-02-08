@@ -11,7 +11,7 @@ local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
-require 'config.nav_go_func'
+require 'config.nav_go_func_equal'
 
 GetLastFuncName = function(args)
   local input = args[1][1] or ''
