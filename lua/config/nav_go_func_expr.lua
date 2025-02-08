@@ -31,9 +31,10 @@ local function select_call_expr_statement(node)
   return call_expr_statement(field_identifier_parent)
 end
 
+local ignore_list = { 'NoError', 'Error', 'Info', 'Warn', 'Debug', 'Fatal', 'Fatalf', 'Wrap', 'Wrapf' }
 local function not_ignore(node)
   local text = vim.treesitter.get_node_text(node, 0)
-  if text == 'NoError' or text == 'Error' then
+  if text and ignore_list[text] then
     return false
   end
 end
