@@ -1,8 +1,3 @@
-local expr_list_parent_match = {
-  'short_var_declaration',
-  'assignment_statement',
-}
-
 local function is_top_level_field_identifier(node)
   if node:type() ~= 'field_identifier' then
     return false
@@ -90,13 +85,11 @@ local function find_previous(node, row, col)
 
       if child_type == 'field_identifier' and is_valid_field_identifier(child) then
         -- Only consider this field if it is top-level.
-        print(string.format('================= field_identifier at %d, %d', child:range()))
         if is_top_level_field_identifier(child) then
           consider = true
         end
       elseif child_type == 'identifier' and is_valid_function_call_identifier(child) then
         -- Optionally include identifiers, if that’s part of your logic.
-        print(string.format('================= identifier at %d, %d', child:range()))
         consider = true
       end
 
