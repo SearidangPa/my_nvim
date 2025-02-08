@@ -1,54 +1,32 @@
--- Returns true if the given field_identifier belongs to a top-level call expression.
 local function is_top_level_field_identifier(node)
   if node:type() ~= 'field_identifier' then
     return false
   end
 
-  -- Its parent should be a selector_expression.
   local selector = node:parent()
   if not selector or selector:type() ~= 'selector_expression' then
     return false
   end
 
-  local operand = nil
-  for child in selector:iter_children() do
-    if child:type() == 'identifier' then
-      operand = child
-      break
-    end
+  if not selector or selector:type() ~= 'selector_expression' then
+    return false
   end
 
-  if operand then
-    local buf = vim.api.nvim_get_current_buf()
-    local text = vim.treesitter.get_node_text(operand, buf)
-    if text == 'eris' or text == 'log' or 'logEntry' then
-      return false
-    end
-  end
-
-  -- The selector should be the function part of a call_expression.
   local call_expr = selector:parent()
   if not call_expr or call_expr:type() ~= 'call_expression' then
     return false
   end
 
-  -- Check if this call expression is nested inside an argument_list.
-  local call_parent = call_expr:parent()
-  if call_parent and call_parent:type() == 'argument_list' then
-    -- If so, then this field_identifier comes from an inner (nested) call.
+  local expr_list = call_expr:parent()
+  if not expr_list or expr_list:type() ~= 'expression_list' then
     return false
   end
 
-  return true
-end
-
--- (Optionally, if you have a similar check for plain identifiers used as function calls.)
-local function is_top_level_identifier(node)
-  if node:type() ~= 'identifier' then
+  local short_var_decl = expr_list:parent()
+  if not short_var_decl or short_var_decl:type() ~= 'short_var_declaration' then
     return false
   end
 
-  -- You can add your own conditions here if needed.
   return true
 end
 
@@ -111,9 +89,7 @@ local function find_previous(node, row, col)
         end
       elseif child_type == 'identifier' and is_valid_function_call_identifier(child) then
         -- Optionally include identifiers, if that’s part of your logic.
-        if is_top_level_identifier(child) then
-          consider = true
-        end
+        consider = true
       end
 
       if consider then
@@ -155,9 +131,7 @@ local function find_next(node, row, col)
         candidate = child
       end
     elseif child_type == 'identifier' and is_valid_function_call_identifier(child) then
-      if is_top_level_identifier(child) then
-        candidate = child
-      end
+      candidate = child
     end
 
     if candidate then
