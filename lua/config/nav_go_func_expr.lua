@@ -100,26 +100,38 @@ local function find_next_expr_statement(node, row, col)
 end
 
 local function move_to_next_expr_statement()
+  local count = vim.v.count
+  if count == 0 then
+    count = 1
+  end
   local root = get_root_node()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local next_node = find_next_expr_statement(root, current_row, current_col)
+  for _ = 1, count do
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+    local next_node = find_next_expr_statement(root, current_row, current_col)
 
-  if next_node then
-    local start_row, start_col, _, _ = next_node:range()
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    if next_node then
+      local start_row, start_col, _, _ = next_node:range()
+      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    end
   end
 end
 
 local function move_to_previous_expr_statement()
+  local count = vim.v.count
+  if count == 0 then
+    count = 1
+  end
   local root = get_root_node()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-  local previous_node = find_previous_expr_statement(root, current_row, current_col)
+  for _ = 1, count do
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+    local previous_node = find_previous_expr_statement(root, current_row, current_col)
 
-  if previous_node then
-    local start_row, start_col, _, _ = previous_node:range()
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    if previous_node then
+      local start_row, start_col, _, _ = previous_node:range()
+      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    end
   end
 end
 
