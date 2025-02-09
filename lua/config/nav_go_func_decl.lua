@@ -122,6 +122,18 @@ local function prev_func_decl_end(root, query, cursor_row)
   return previous_node
 end
 
+local function get_identifier_name(node)
+  local identifier = nil
+  for _, child in node:iter_children() do
+    if child:type() == 'identifier' then
+      identifier = child
+      break
+    end
+  end
+  assert(identifier, 'Identifier not found')
+  return identifier
+end
+
 local function move_to_prev_func_decl_start()
   local count = vim.v.count
   if count == 0 then
@@ -133,7 +145,8 @@ local function move_to_prev_func_decl_start()
     local current_row = cursor_pos[1] - 1
     local previous_node = prev_func_decl_start(root, query, current_row)
     if previous_node then
-      local start_row, start_col, _, _ = previous_node:range()
+      local identifer = get_identifier_name(previous_node)
+      local start_row, start_col, _, _ = identifer:range()
       vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
       current_row = start_row
     end
@@ -151,7 +164,8 @@ local function move_to_prev_func_decl_end()
     local current_row = cursor_pos[1] - 1
     local previous_node = prev_func_decl_end(root, query, current_row)
     if previous_node then
-      local _, _, end_row, end_col = previous_node:range()
+      local identifer = get_identifier_name(previous_node)
+      local _, _, end_row, end_col = identifer:range()
       vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
       current_row = end_row
     end

@@ -1,8 +1,6 @@
 return {
   'folke/flash.nvim',
   event = 'VeryLazy',
-  ---@type Flash.Config
-  opts = {},
   -- stylua: ignore
   keys = {
     { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
@@ -10,4 +8,19 @@ return {
     { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
     { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
   },
+
+  config = function()
+    local opts = {
+      highlight = {
+        backdrop = false,
+      },
+      modes = {
+        char = {
+          keys = { 'f', 'F', 't', 'T', [';'] = 'l', [','] = 'h' },
+          highlight = { backdrop = false },
+        },
+      },
+    }
+    require('flash').setup(opts)
+  end,
 }
