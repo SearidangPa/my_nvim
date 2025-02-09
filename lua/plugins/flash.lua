@@ -16,7 +16,8 @@ return {
       },
       modes = {
         char = {
-          keys = { 'f', 'F', 't', 'T', [';'] = 'l', [','] = 'h' },
+          autohide = true,
+          keys = { 'f', 'F', 't', 'T', [';'] = 'L', [','] = 'H' },
           highlight = {
             backdrop = false,
           },
