@@ -134,7 +134,3 @@ end, { desc = 'Prev Func Declaraion start' })
 vim.keymap.set('n', ']M', function()
   move_to_next_func_decl { is_end = true }
 end, { desc = 'Next Func Declaraion End' })
-
-vim.keymap.set('n', '[M', function()
-  move_to_prev_func_decl { is_end = true }
-end, { desc = 'Prev Func Declaraion End' })
