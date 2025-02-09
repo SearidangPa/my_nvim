@@ -22,5 +22,6 @@ return {
       },
     }
     require('flash').setup(opts)
+    vim.api.nvim_set_hl(0, 'FlashMatch', { fg = '#5097A4' })
   end,
 }
