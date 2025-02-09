@@ -16,62 +16,64 @@ local function get_root_node()
   return root, query
 end
 
----@param opts move_opts
-local function is_candidate_next_func_decl(node, row, col, opts)
-  local is_end = opts.is_end
-  local s_row, s_col, e_row, e_col = node:range()
-  if is_end then
-    return e_row > row
-  end
-  return s_row > row or (s_row == row and s_col > col)
-end
-
-local function find_next_func_decl(node, row, col, opts)
-  local is_end = opts.is_end
-  for child in node:iter_children() do
-    local candidate = nil
-    if child:type() == 'function_declaration' then
-      candidate = child
-    end
-
-    if candidate then
-      if is_candidate_next_func_decl(candidate, row, col, opts) then
-        return candidate
+local function find_next_func_decl_end(root, query, cursor_row)
+  for _, node in query:iter_captures(root, 0, 0, -1) do
+    if node then
+      local _, _, e_row, _ = node:range()
+      if e_row > cursor_row then
+        return node
       end
     end
-
-    local descendant = find_next_func_decl(child, row, col, opts)
-    if descendant then
-      return descendant
-    end
   end
-
   return nil
 end
 
----@class move_opts
----@field is_end boolean
+local function find_next_func_decl_start(root, query, cursor_row)
+  for _, node in query:iter_captures(root, 0, 0, -1) do
+    if node then
+      local s_row, _, _ = node:start()
+      if s_row > cursor_row then
+        return node
+      end
+    end
+  end
+  return nil
+end
 
----@param opts move_opts
-local function move_to_next_func_decl(opts)
-  local is_end = opts.is_end
+local function move_to_next_func_decl_start(opts)
   local count = vim.v.count
   if count == 0 then
     count = 1
   end
-  local root = get_root_node()
+  local root, query = get_root_node()
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-    local next_node = find_next_func_decl(root, current_row, current_col, opts)
+    local next_node = find_next_func_decl_start(root, query, current_row)
 
     if next_node then
       local start_row, start_col, end_row, end_col = next_node:range()
-      if not is_end then
-        vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-      else
-        vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
-      end
+      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+      current_row = start_row
+    end
+  end
+end
+
+local function move_to_next_func_decl_end(opts)
+  local count = vim.v.count
+  if count == 0 then
+    count = 1
+  end
+  local root, query = get_root_node()
+  for _ = 1, count do
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
+    local next_node = find_next_func_decl_end(root, query, current_row)
+
+    if next_node then
+      local start_row, start_col, end_row, end_col = next_node:range()
+      vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
+      current_row = end_row
     end
   end
 end
@@ -156,13 +158,8 @@ local function move_to_prev_func_decl_end()
   end
 end
 
-vim.keymap.set('n', ']m', function()
-  move_to_next_func_decl { is_end = false }
-end, { desc = 'Next Func Declaraion start' })
+vim.keymap.set('n', ']m', move_to_next_func_decl_start, { desc = 'Next Func Declaraion start' })
 vim.keymap.set('n', '[m', move_to_prev_func_decl_start, { desc = 'Prev Func Declaraion start' })
 
-vim.keymap.set('n', ']M', function()
-  move_to_next_func_decl { is_end = true }
-end, { desc = 'Next Func Declaraion End' })
-
+vim.keymap.set('n', ']M', move_to_next_func_decl_end, { desc = 'Next Func Declaraion End' })
 vim.keymap.set('n', '[M', move_to_prev_func_decl_end, { desc = 'Prev Func Declaraion End' })
