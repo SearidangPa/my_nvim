@@ -12,13 +12,16 @@ local function get_root_node()
     [[
       (function_declaration
         name: (identifier) @func_decl
-      ) 
+      )
+      (method_declaration
+      name: (field_identifier) @func_decl
+      )
     ]]
   )
   return root, query
 end
 
-local function find_next_func_decl_end(root, query, cursor_row)
+local function find_next_func_decl_end(root, query, cursor_row, cursor_col)
   for _, node in query:iter_captures(root, 0, 0, -1) do
     if node then
       local _, _, e_row, _ = node:range()
@@ -30,11 +33,11 @@ local function find_next_func_decl_end(root, query, cursor_row)
   return nil
 end
 
-local function find_next_func_decl_start(root, query, cursor_row)
+local function find_next_func_decl_start(root, query, cursor_row, cursor_col)
   for _, node in query:iter_captures(root, 0, 0, -1) do
     if node then
-      local s_row, _, _ = node:start()
-      if s_row > cursor_row then
+      local s_row, s_col, _ = node:start()
+      if s_row > cursor_row or (s_row == cursor_row and s_col > cursor_col) then
         return node
       end
     end
@@ -51,7 +54,7 @@ local function move_to_next_func_decl_start(opts)
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-    local next_node = find_next_func_decl_start(root, query, current_row)
+    local next_node = find_next_func_decl_start(root, query, current_row, current_col)
 
     if next_node then
       local start_row, start_col, end_row, end_col = next_node:range()
@@ -70,7 +73,7 @@ local function move_to_next_func_decl_end(opts)
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
-    local next_node = find_next_func_decl_end(root, query, current_row)
+    local next_node = find_next_func_decl_end(root, query, current_row, current_col)
 
     if next_node then
       local start_row, start_col, end_row, end_col = next_node:range()
@@ -80,7 +83,7 @@ local function move_to_next_func_decl_end(opts)
   end
 end
 
-local function prev_func_decl_start(root, query, cursor_row)
+local function prev_func_decl_start(root, query, cursor_row, cursor_col)
   local previous_node = nil
   for _, node in query:iter_captures(root, 0, 0, -1) do
     if node then
@@ -88,8 +91,8 @@ local function prev_func_decl_start(root, query, cursor_row)
         previous_node = node
       end
 
-      local s_row, _, _ = node:start()
-      if s_row >= cursor_row then
+      local s_row, s_col, _ = node:start()
+      if s_row > cursor_row or (s_row == cursor_row and s_col >= cursor_col) then
         break
       end
 
@@ -102,7 +105,7 @@ local function prev_func_decl_start(root, query, cursor_row)
   return previous_node
 end
 
-local function prev_func_decl_end(root, query, cursor_row)
+local function prev_func_decl_end(root, query, cursor_row, cursor_col)
   local previous_node = nil
   for _, node in query:iter_captures(root, 0, 0, -1) do
     if node then
@@ -133,7 +136,8 @@ local function move_to_prev_func_decl_start()
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row = cursor_pos[1] - 1
-    local previous_node = prev_func_decl_start(root, query, current_row)
+    local current_col = cursor_pos[2]
+    local previous_node = prev_func_decl_start(root, query, current_row, current_col)
     if previous_node then
       print('Previous Node:', previous_node)
       local start_row, start_col, _, _ = previous_node:range()
@@ -152,7 +156,8 @@ local function move_to_prev_func_decl_end()
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row = cursor_pos[1] - 1
-    local previous_node = prev_func_decl_end(root, query, current_row)
+    local current_col = cursor_pos[2]
+    local previous_node = prev_func_decl_end(root, query, current_row, current_col)
     if previous_node then
       local _, _, end_row, end_col = previous_node:range()
       vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
