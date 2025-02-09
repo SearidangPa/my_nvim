@@ -17,11 +17,12 @@ return {
       modes = {
         char = {
           keys = { 'f', 'F', 't', 'T', [';'] = 'l', [','] = 'h' },
-          highlight = { backdrop = false },
+          highlight = {
+            backdrop = false,
+          },
         },
       },
     }
     require('flash').setup(opts)
-    vim.api.nvim_set_hl(0, 'FlashMatch', { fg = '#5097A4' })
   end,
 }
