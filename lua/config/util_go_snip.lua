@@ -83,6 +83,8 @@ local function transform(text, info)
     return t '""'
   elseif text == 'uintptr' then
     return t 'cldapi.Failed'
+  elseif text == 'any' then
+    return t 'nil'
   elseif string.find(text, '*', 1, true) then
     return t 'nil'
   else
