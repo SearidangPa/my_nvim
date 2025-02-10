@@ -13,6 +13,14 @@ local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
 require 'config.nav_go_func_equal'
 
+GetInstName = function(args)
+  local input = args[1][1] or ''
+  local parts = vim.split(input, '.', true)
+  local res = parts[#parts] or ''
+  local lower = res:sub(1, 1):lower()
+  return lower .. res:sub(2)
+end
+
 GetLastFuncName = function(args)
   local input = args[1][1] or ''
   ---@diagnostic disable-next-line: param-type-mismatch

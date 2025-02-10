@@ -5,6 +5,7 @@ local c = ls.choice_node
 local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
+require 'config.util_go_snip'
 
 ls.add_snippets('go', {
   s(
@@ -40,7 +41,7 @@ ls.add_snippets('go', {
       ]],
       {
         Type = i(1, 'Type'),
-        inst = f(LowerFirst, { 1 }),
+        inst = f(GetInstName, { 1 }),
         finish = i(0),
       }
     )
