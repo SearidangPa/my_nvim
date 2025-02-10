@@ -139,7 +139,6 @@ local function move_to_prev_func_decl_start()
     local current_col = cursor_pos[2]
     local previous_node = prev_func_decl_start(root, query, current_row, current_col)
     if previous_node then
-      print('Previous Node:', previous_node)
       local start_row, start_col, _, _ = previous_node:range()
       vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
       current_row = start_row

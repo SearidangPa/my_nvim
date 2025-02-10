@@ -29,7 +29,6 @@ end
 
 function KebabToCamelCase(args)
   local input = args[1][1]
-  print('input' .. input)
   local parts = vim.split(input, '-', { plain = true })
   for index = 2, #parts do
     parts[index] = parts[index]:sub(1, 1):upper() .. parts[index]:sub(2)
