@@ -63,7 +63,6 @@ local construct_args_glob_no_test_files = function(prompt)
   end
   table.insert(args, '--glob')
   table.insert(args, '!*test*')
-  print(vim.inspect(args))
   return args
 end
 vim.keymap.set('n', '<leader>gx', function()
