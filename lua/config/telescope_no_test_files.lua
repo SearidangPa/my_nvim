@@ -59,11 +59,11 @@ local construct_args_glob_no_test_files = function(prompt)
   local args = { 'rg' }
 
   if pieces[1] then
-    table.insert(args, '-e')
     table.insert(args, pieces[1])
   end
-  table.insert(args, '-g')
-  table.insert(args, '!*_test.go')
+  table.insert(args, '--glob')
+  table.insert(args, '!*test*')
+  print(vim.inspect(args))
   return args
 end
 vim.keymap.set('n', '<leader>gx', function()
