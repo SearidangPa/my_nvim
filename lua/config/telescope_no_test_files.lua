@@ -1,6 +1,8 @@
 local finders = require 'telescope.finders'
 local pickers = require 'telescope.pickers'
 local conf = require('telescope.config').values
+local builtin = require 'telescope.builtin'
+require 'config.telescope_multigrep'
 
 local function lsp_references_filtered()
   vim.lsp.buf_request(0, 'textDocument/references', vim.lsp.util.make_position_params(), function(err, result, _, _)
@@ -47,4 +49,26 @@ local function lsp_references_filtered()
   end)
 end
 
-vim.keymap.set('n', '<leader>gx', lsp_references_filtered, { desc = 'Go to references (excluding test files)' })
+vim.keymap.set('n', '<leader>gr', lsp_references_filtered, { desc = 'Go to references (excluding test files)' })
+
+local construct_args_glob_no_test_files = function(prompt)
+  if not prompt or prompt == '' then
+    return nil
+  end
+  local pieces = vim.split(prompt, '  ')
+  local args = { 'rg' }
+
+  if pieces[1] then
+    table.insert(args, '-e')
+    table.insert(args, pieces[1])
+  end
+  table.insert(args, '-g')
+  table.insert(args, '!*_test.go')
+  return args
+end
+vim.keymap.set('n', '<leader>gx', function()
+  Live_search {
+    args_constructor = construct_args_glob_no_test_files,
+    prompt_title = 'grep (excluding test files)',
+  }
+end, { desc = 'Search [G]rep [X](excluding test files)' })
