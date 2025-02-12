@@ -38,6 +38,9 @@ local win_state = {
 ---@field Action string
 ---@field Output string
 
+local group_name = 'live_go_test_group'
+local ns_name = 'live_go_test_ns'
+
 ---@param entry entry
 local make_key = function(entry)
   assert(entry.Package, 'Must have package name' .. vim.inspect(entry))
@@ -222,18 +225,18 @@ local clear_group_ns = function()
   if attach_instace.group == nil or attach_instace.ns == nil then
     return
   end
-  local ok, _ = pcall(vim.api.nvim_get_autocmds, { group = 'live_go_test_group' })
+  local ok, _ = pcall(vim.api.nvim_get_autocmds, { group = group_name })
   if not ok then
     return
   end
-  vim.api.nvim_del_augroup_by_name 'live_go_test_group'
+  vim.api.nvim_del_augroup_by_name(group_name)
   vim.api.nvim_buf_clear_namespace(vim.api.nvim_get_current_buf(), attach_instace.ns, 0, -1)
   vim.diagnostic.reset()
 end
 
 local new_attach_instance = function()
-  attach_instace.group = vim.api.nvim_create_augroup('live_go_test_group', { clear = true })
-  attach_instace.ns = vim.api.nvim_create_namespace 'live_go_test_ns'
+  attach_instace.group = vim.api.nvim_create_augroup(group_name, { clear = true })
+  attach_instace.ns = vim.api.nvim_create_namespace(ns_name)
 end
 
 local attach_all_go_test_in_buf = function()
