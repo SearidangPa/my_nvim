@@ -82,5 +82,5 @@ Go_test_one_output = function(test_state, win_state)
   end
 
   -- -- set buffer type for log highlighting
-  -- vim.bo[win_state.floating.buf].filetype = 'log'
+  vim.bo[win_state.floating.buf].filetype = 'log'
 end
