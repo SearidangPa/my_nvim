@@ -51,6 +51,7 @@ require('lazy').setup {
     },
     'tpope/vim-fugitive', -- Git commands in Neovim
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+    'tpop/vim-rhubarb', -- Fugitive-companion to interact with github
     { 'github/copilot.vim' },
     'mbbill/undotree', -- Visualize the undo tree
     'MTDL9/vim-log-highlighting',

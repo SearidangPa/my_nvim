@@ -90,6 +90,7 @@ local on_exit_fn = function(test_state, bufnr)
 end
 
 local attach_to_buffer = function(bufnr, command)
+  print('Attaching to buffer', bufnr)
   local test_state = {
     bufnr = bufnr,
     tests = {},
