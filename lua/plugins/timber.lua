@@ -6,7 +6,7 @@ return {
     local opts = {
       log_templates = {
         default = {
-          go = [[log.Printf("=====================> %log_target: %v\n%", %log_target)]],
+          go = [[log.Printf("=====================> %log_target: %v\n", %log_target)]],
         },
       },
     }
