@@ -129,11 +129,16 @@ function Nearest_function_decl_at_cursor()
   local function_node = cursor_node
 
   while function_node do
-    if function_node:type() == 'function_declaration' or function_node:type() == 'method_declaration' then
+    if function_node:type() == 'function_declaration' then
       for child in function_node:iter_children() do
         if child:type() == 'identifier' then
-          local function_name = get_node_text(child, bufnr)
-          return function_name
+          return get_node_text(child, bufnr)
+        end
+      end
+    elseif function_node:type() == 'method_declaration' then
+      for child in function_node:iter_children() do
+        if child:type() == 'field_identifier' then
+          return get_node_text(child, bufnr)
         end
       end
     end
