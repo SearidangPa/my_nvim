@@ -85,4 +85,12 @@ vim.schedule(function()
       vim.highlight.on_yank()
     end,
   })
+
+  vim.api.nvim_create_user_command('Split4060', function()
+    local total = vim.o.columns
+    local left = math.floor(total * 0.4)
+    vim.cmd 'leftabove vsplit'
+    vim.cmd 'wincmd h'
+    vim.cmd('vertical resize ' .. left)
+  end, {})
 end)
