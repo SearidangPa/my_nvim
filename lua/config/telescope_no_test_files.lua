@@ -9,7 +9,6 @@ local function lsp_references_filtered()
       return
     end
 
-    -- Filter out test files
     local filtered_results = {}
     for _, ref in ipairs(result) do
       local uri = ref.uri or ref.targetUri
@@ -19,7 +18,6 @@ local function lsp_references_filtered()
       end
     end
 
-    -- Use the Ivy theme options
     local opts = themes.get_ivy {
       prompt_title = 'LSP References (excluding test files)',
       finder = finders.new_table {
