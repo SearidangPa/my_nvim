@@ -1,4 +1,6 @@
-local function get_root_node()
+local function get_root_node(opts)
+  local is_func_start = opts and opts.is_func_start or false
+
   local bufnr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(bufnr, lang, {})
@@ -7,17 +9,32 @@ local function get_root_node()
   assert(root, 'Tree root is nil')
 
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
-  local query = vim.treesitter.query.parse(
-    lang,
-    [[
+  local query
+  if is_func_start then
+    query = vim.treesitter.query.parse(
+      lang,
+      [[
       (function_declaration
-        name: (identifier) @func_decl
-      )
+        name: (identifier) @func_decl_start
+      ) 
       (method_declaration
-      name: (field_identifier) @func_decl
-      )
+      name: (field_identifier) @func_decl_start
+      ) 
     ]]
-  )
+    )
+  else
+    query = vim.treesitter.query.parse(
+      lang,
+      [[
+      (function_declaration
+        name: (identifier) @func_decl_start
+      ) @func_decl_node
+      (method_declaration
+      name: (field_identifier) @func_decl_start
+      ) @func_decl_node
+    ]]
+    )
+  end
   return root, query
 end
 
@@ -45,12 +62,12 @@ local function find_next_func_decl_start(root, query, cursor_row, cursor_col)
   return nil
 end
 
-local function move_to_next_func_decl_start(opts)
+local function move_to_next_func_decl_start()
   local count = vim.v.count
   if count == 0 then
     count = 1
   end
-  local root, query = get_root_node()
+  local root, query = get_root_node { is_func_start = true }
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -85,7 +102,7 @@ end
 
 local function prev_func_decl_start(root, query, cursor_row, cursor_col)
   local previous_node = nil
-  for _, node in query:iter_captures(root, 0, 0, -1) do
+  for id, node, metadata, match in query:iter_captures(root, 0, 0, -1) do
     if node then
       if not previous_node then
         previous_node = node
@@ -132,7 +149,7 @@ local function move_to_prev_func_decl_start()
   if count == 0 then
     count = 1
   end
-  local root, query = get_root_node()
+  local root, query = get_root_node { is_func_start = true }
   for _ = 1, count do
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
     local current_row = cursor_pos[1] - 1
