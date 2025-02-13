@@ -69,3 +69,14 @@ vim.keymap.set('n', '<leader>gx', function()
     prompt_title = 'grep (excluding test files)',
   }
 end, { desc = 'Search [G]rep [X](excluding test files)' })
+
+local builtin = require 'telescope.builtin'
+
+vim.keymap.set('n', '<leader>cx', function()
+  builtin.grep_string {
+    additional_args = function(opts)
+      return { '--glob', '!*test*' }
+    end,
+    prompt_title = 'find word (excluding test files)',
+  }
+end, { desc = '[S]earch [C]urrent word (excluding tests)' })
