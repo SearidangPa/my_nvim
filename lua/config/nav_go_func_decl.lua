@@ -64,7 +64,7 @@ local function move_to_next_func_decl_start(opts)
   end
 end
 
-local function move_to_next_func_decl_end(opts)
+local function move_to_next_func_decl_end()
   local count = vim.v.count
   if count == 0 then
     count = 1
@@ -183,5 +183,6 @@ end
 vim.keymap.set('n', 'yf', yank_prev_func_decl, { desc = 'Yank Prev Func Declaraion' })
 vim.keymap.set('n', ']m', move_to_next_func_decl_start, { desc = 'Next Func Declaraion start' })
 vim.keymap.set('n', '[m', move_to_prev_func_decl_start, { desc = 'Prev Func Declaraion start' })
+
 vim.keymap.set('n', ']M', move_to_next_func_decl_end, { desc = 'Next Func Declaraion End' })
 vim.keymap.set('n', '[M', move_to_prev_func_decl_end, { desc = 'Prev Func Declaraion End' })
