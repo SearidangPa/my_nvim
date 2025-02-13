@@ -58,13 +58,14 @@ return {
 
     -- trying out
     map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
-    map('n', '<leader>sc', builtin.git_bcommits, { desc = '[S]earch [C]ommits' })
+    map('n', '<leader>sc', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     map('n', '<leader>sl', builtin.reloader, { desc = '[S]earch [L]oader' })
 
     -- useless?
     map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
     map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+
     local opts = {
       pickers = {
         help_tags = { theme = 'ivy' },
@@ -73,7 +74,7 @@ return {
         git_status = { theme = 'ivy' },
         jumplist = { theme = 'ivy' },
         treesitter = { theme = 'ivy' },
-        git_bcommits = { theme = 'ivy' },
+        grep_string = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },

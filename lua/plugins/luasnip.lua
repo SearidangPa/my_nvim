@@ -62,14 +62,6 @@ return {
         end
       end, { silent = true })
 
-      local sl = require 'luasnip.extras.snippet_list'
-      local function snip_info(snippet)
-        return { name = snippet.name }
-      end
-      vim.keymap.set('n', '<leader>ls', function()
-        sl.open { snip_info = snip_info }
-      end, { silent = true, desc = '[L]ist [S]nippets' })
-
       require 'config.snip_go_if'
     end,
   },

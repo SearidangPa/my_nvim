@@ -61,6 +61,7 @@ local construct_args_glob_no_test_files = function(prompt)
   table.insert(args, '!*test*')
   return args
 end
+
 vim.keymap.set('n', '<leader>gx', function()
   require 'config.telescope_multigrep'
   Live_search {
