@@ -62,11 +62,30 @@ local function accept_line()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
+local function accept_until_char()
+  local char = vim.fn.getchar()
+  -- Convert numeric char code to string
+  char = type(char) == 'number' and vim.fn.nr2char(char) or char
+
+  local accept = vim.fn['copilot#Accept']
+  if accept == nil then
+    return
+  end
+
+  -- Match everything until (but not including) the target character
+  local pattern = '[^' .. vim.fn.escape(char, '^$()%.[]*+-?') .. ']*'
+  print('Pattern:', pattern)
+
+  local res = vim.fn['copilot#Accept']('', pattern)
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+map('i', '<C-x>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
+
 map('i', '<C-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 map('i', '<M-Right>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<M-Enter>', accept_with_newline, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
-
 -- ================== Augment =================
 map('n', '<leader>ce', ':Augment enable<CR>', map_opt '[A]ugment [E]nable')
 map('n', '<leader>cd', ':Augment disable<CR>', map_opt '[A]ugment [D]isable')
