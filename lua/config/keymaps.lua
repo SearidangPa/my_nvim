@@ -62,6 +62,7 @@ local function accept_line()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
+-- ================== experiment =================
 local function accept_until_char()
   local char = vim.fn.getchar()
   -- Convert numeric char code to string
@@ -82,10 +83,12 @@ end
 
 map('i', '<C-x>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
 
+-- ================== Copilot =================
 map('i', '<C-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 map('i', '<M-Right>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<M-Enter>', accept_with_newline, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+
 -- ================== Augment =================
 map('n', '<leader>ce', ':Augment enable<CR>', map_opt '[A]ugment [E]nable')
 map('n', '<leader>cd', ':Augment disable<CR>', map_opt '[A]ugment [D]isable')
