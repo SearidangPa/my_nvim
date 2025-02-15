@@ -28,23 +28,28 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
-local function accept()
-  local accept = vim.fn['copilot#Accept']
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
-local function accept_word()
-  local accept = vim.fn['copilot#AcceptWord']
-  local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
-local function accept_line()
-  local accept = vim.fn['copilot#AcceptLine']
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
+-- ================== Copilot ===================
+-- local function accept()
+--   local accept = vim.fn['copilot#Accept']
+--   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+--   vim.api.nvim_feedkeys(res, 'n', false)
+-- end
+--
+-- local function accept_word()
+--   local accept = vim.fn['copilot#AcceptWord']
+--   local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
+--   vim.api.nvim_feedkeys(res, 'n', false)
+-- end
+--
+-- local function accept_line()
+--   local accept = vim.fn['copilot#AcceptLine']
+--   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+--   vim.api.nvim_feedkeys(res, 'n', false)
+-- end
+--
+-- map('i', '<C-l>', accept_line, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
+-- map('i', '<M-f>', accept_word, { expr = true, remap = false, desc = 'Copilot Accept Word' })
+-- map('i', '<M-y>', accept, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
@@ -76,12 +81,6 @@ map('n', '<leader>qr', vim.diagnostic.reset, { desc = 'diagnostics [r]eset' })
 -- =================== LSP diagnostic ===================
 map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
 map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
-
--- ================== Copilot ===================
-
-map('i', '<C-l>', accept_line, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
-map('i', '<M-f>', accept_word, { expr = true, remap = false, desc = 'Copilot Accept Word' })
-map('i', '<M-y>', accept, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
 
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
