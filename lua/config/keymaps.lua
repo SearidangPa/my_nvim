@@ -1,9 +1,5 @@
 local map = vim.keymap.set
 
-local function buf_clear_name_space()
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-end
-
 local function toggle_quickfix()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
     vim.cmd 'cclose'
@@ -28,28 +24,42 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
--- ================== Copilot ===================
--- local function accept()
---   local accept = vim.fn['copilot#Accept']
---   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
---   vim.api.nvim_feedkeys(res, 'n', false)
--- end
---
--- local function accept_word()
---   local accept = vim.fn['copilot#AcceptWord']
---   local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
---   vim.api.nvim_feedkeys(res, 'n', false)
--- end
---
--- local function accept_line()
---   local accept = vim.fn['copilot#AcceptLine']
---   local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
---   vim.api.nvim_feedkeys(res, 'n', false)
--- end
---
--- map('i', '<C-l>', accept_line, { expr = true, remap = false, desc = 'Copilot Accept [l]ine' })
--- map('i', '<M-f>', accept_word, { expr = true, remap = false, desc = 'Copilot Accept Word' })
--- map('i', '<M-y>', accept, { expr = true, remap = false, desc = 'Copilot Accept and go down' })
+-- ================== Copilot =================
+local function accept()
+  local accept = vim.fn['copilot#Accept']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+local function accept_with_newline()
+  local accept = vim.fn['copilot#Accept']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  res = res .. '\r'
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+local function accept_word()
+  local accept = vim.fn['copilot#AcceptWord']
+  local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+local function accept_line()
+  local accept = vim.fn['copilot#AcceptLine']
+  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+map('i', '<C-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+map('i', '<M-Right>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+map('i', '<M-Enter>', accept_with_newline, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+
+-- ================== Augment =================
+map('n', '<leader>ce', ':Augment enable<CR>', map_opt '[A]ugment [E]nable')
+map('n', '<leader>cd', ':Augment disable<CR>', map_opt '[A]ugment [D]isable')
+map({ 'n', 'v' }, '<leader>cc', ':Augment chat<CR>', map_opt '[C]hat [C]ontinue')
+map('n', '<leader>ct', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
 
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
@@ -113,7 +123,10 @@ map('n', '<M-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
 -- clear all extmarks
-map('n', '<leader>ce', buf_clear_name_space, map_opt '[C]lear [E]xtmarks')
+local function buf_clear_name_space()
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end
+vim.api.nvim_create_user_command('ClearExtmarks', buf_clear_name_space, { nargs = 0 })
 
 map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 

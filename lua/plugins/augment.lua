@@ -7,5 +7,6 @@ return {
       '~/Documents/drive-terminal',
       '~/.config/nvim',
     }
+    vim.cmd [[:Augment disable]]
   end,
 }
