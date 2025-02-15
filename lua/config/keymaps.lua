@@ -30,7 +30,7 @@ local function accept()
   if accept == nil then
     return
   end
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  local res = accept()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
@@ -39,26 +39,26 @@ local function accept_with_newline()
   if accept == nil then
     return
   end
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  local res = accept()
   res = res .. '\r'
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 local function accept_word()
-  local accept = vim.fn['copilot#AcceptWord']
-  if accept == nil then
+  local accept_word = vim.fn['copilot#AcceptWord']
+  if accept_word == nil then
     return
   end
-  local res = accept(vim.api.nvim_replace_termcodes('<M-Right>', true, true, false))
+  local res = accept_word()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 local function accept_line()
-  local accept = vim.fn['copilot#AcceptLine']
-  if accept == nil then
+  local accept_line = vim.fn['copilot#AcceptLine']
+  if accept_line == nil then
     return
   end
-  local res = accept(vim.api.nvim_replace_termcodes('<Tab>', true, true, false))
+  local res = accept_line()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
