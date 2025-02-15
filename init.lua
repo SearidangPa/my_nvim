@@ -21,6 +21,9 @@ vim.opt.inccommand = 'split' -- Preview substitutions live, as you type!
 vim.opt.cursorline = true
 vim.opt.scrolloff = 10
 
+-- copilot plugin config
+vim.g.copilot_no_tab_map = true
+
 -- undo tree plugin config
 vim.g.undotree_WindowLayout = 2
 
