@@ -91,12 +91,9 @@ map('n', '<M-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
 map('n', '<M-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
--- clear all extmarks
-local function buf_clear_name_space()
+vim.api.nvim_create_user_command('ClearExtmarks', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-end
-vim.api.nvim_create_user_command('ClearExtmarks', buf_clear_name_space, { nargs = 0 })
-
+end, { nargs = 0 })
 map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 
 return {}
