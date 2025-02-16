@@ -25,8 +25,18 @@ function RenameAndLowercase()
 end
 
 -- ================== Augment =================
-map('n', '<leader>cd', ':Augment disable<CR>', map_opt '[A]ugment [D]isable')
 map('n', '<leader>ct', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
+
+map('n', '<leader>ae', function()
+  vim.cmd [[Augment enable]]
+  vim.cmd [[Copilot disable]]
+end, map_opt '[A]ugment [E]nable')
+
+map('n', '<leader>ad', function()
+  vim.cmd [[Augment disable]]
+  vim.cmd [[Copilot enable]]
+end, map_opt '[A]ugment [D]isable')
+
 map({ 'n', 'v' }, '<leader>cc', function()
   vim.cmd [[Augment enable]]
   vim.cmd [[Augment chat]]

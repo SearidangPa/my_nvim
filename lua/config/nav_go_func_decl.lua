@@ -182,22 +182,6 @@ local function move_to_prev_func_decl_end()
   end
 end
 
-local function yank_prev_func_decl()
-  local root, query = get_root_node()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local current_row = cursor_pos[1] - 1
-  local previous_node = prev_func_decl_start(root, query, current_row)
-
-  if previous_node then
-    local node_text = vim.treesitter.get_node_text(previous_node, 0)
-    if node_text then
-      vim.fn.setreg('*', node_text)
-      print('Yanked:', node_text)
-    end
-  end
-end
-
-vim.keymap.set('n', 'yf', yank_prev_func_decl, { desc = 'Yank Prev Func Declaraion' })
 vim.keymap.set('n', ']m', move_to_next_func_decl_start, { desc = 'Next Func Declaraion start' })
 vim.keymap.set('n', '[m', move_to_prev_func_decl_start, { desc = 'Prev Func Declaraion start' })
 

@@ -121,3 +121,19 @@ vim.api.nvim_create_user_command('NearestFunc', function()
   local func_name = Nearest_func_name()
   print("Nearest function:", func_name)
 end, {})
+
+local function yank_function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local line = cursor_pos[1] - 1
+  local func_node = nearest_function_at_line(bufnr, line)
+  if func_node then
+    local func_text = vim.treesitter.get_node_text(func_node, bufnr)
+    vim.fn.setreg('*', func_text)
+  end
+end
+
+vim.api.nvim_create_user_command('YankFunction', yank_function, {})
+vim.keymap.set('n', 'yf', yank_function, { desc = 'Yank nearest function' })
+
+
