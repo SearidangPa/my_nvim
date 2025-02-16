@@ -118,10 +118,10 @@ return {
     map('i', '<M-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
     map('i', '<M-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
 
-    -- ================== Copilot =================
-    map('i', '<C-;>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+    -- ================== Custom mappings ==================
     map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+    map('i', '<M-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-Enter>', accept_with_newline, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
   end,
 }
