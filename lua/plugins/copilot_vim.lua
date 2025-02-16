@@ -47,8 +47,10 @@ end
 local function highlight_jump_accept()
   local char = vim.fn.nr2char(vim.fn.getchar())
   local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
+  local clear_copilot = vim.fn['copilot#Clear']
   assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
   assert(suggestion.text, 'copilot#GetDisplayedSuggestion.text not found')
+  assert(clear_copilot, 'copilot#Clear not found')
 
   local text = suggestion.text
   local matches = {}
@@ -63,12 +65,10 @@ local function highlight_jump_accept()
   end
   assert(#matches > 0, 'No matches found')
 
-  -- Show matches with virtual text
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
   local line = vim.fn.line '.' - 1
   local current_col = vim.fn.col '.' - 1
 
-  -- Create labels and virtual text
   local labels = {}
   local virt_text = {}
   local prev_pos = 1
@@ -76,12 +76,10 @@ local function highlight_jump_accept()
   vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
 
   for i, pos in ipairs(matches) do
-    -- Add text segment before the label
     if pos > prev_pos then
       table.insert(virt_text, { string.sub(text, prev_pos, pos - 1), 'CopilotSuggestion' })
     end
 
-    -- Add the label
     local label = string.char(string.byte 'a' + i - 1)
     labels[label] = pos
     table.insert(virt_text, { label, 'LabelHighlight' })
@@ -89,7 +87,6 @@ local function highlight_jump_accept()
     prev_pos = pos + 1
   end
 
-  -- Add remaining text after last label
   if prev_pos <= #text then
     table.insert(virt_text, { string.sub(text, prev_pos), 'CopilotSuggestion' })
   end
@@ -98,30 +95,17 @@ local function highlight_jump_accept()
     virt_text = virt_text,
     virt_text_pos = 'overlay',
   })
-  print('Virtual text displayed at line:', line + 1, 'col:', current_col + 1)
 
-  -- Get user's choice
-  vim.cmd 'redraw' -- Force screen update to show the virtual text
+  vim.cmd 'redraw'
   print('Choose label (a-' .. string.char(string.byte 'a' + #matches - 1) .. '):')
   local choice = vim.fn.nr2char(vim.fn.getchar())
-  print('User chose label:', choice)
 
-  -- Clear virtual text
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-  print 'Cleared virtual text'
-
-  -- Get the position for the chosen label
   local pos = labels[choice]
   if pos then
-    print('Accepting text up to position:', pos)
     local partial = string.sub(text, 1, pos)
     vim.api.nvim_feedkeys(partial, 'n', false)
-    local clear_copilot = vim.fn['copilot#Clear']
-    assert(clear_copilot, 'copilot#Clear not found')
     clear_copilot()
-    print 'Cleared Copilot suggestion'
-  else
-    print('Invalid choice:', choice)
   end
 end
 
