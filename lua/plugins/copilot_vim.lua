@@ -60,8 +60,9 @@ local function highlight_jump_accept()
   assert(suggestion.text, 'copilot#GetDisplayedSuggestion.text not found')
   assert(clear_copilot, 'copilot#Clear not found')
 
-  local text = suggestion.text
   print('suggestion:', vim.inspect(suggestion))
+
+  local text = suggestion.text
   local matches = {}
   local start = 1
   local lower_char = string.lower(char)
@@ -109,14 +110,12 @@ local function highlight_jump_accept()
   if prev_pos <= #text then
     table.insert(virt_text, { string.sub(text, prev_pos), 'CopilotSuggestion' })
   end
-  print('Virtual text prepared:', vim.inspect(virt_text))
   vim.api.nvim_buf_set_extmark(0, ns, line, current_col, {
     virt_text = virt_text,
     virt_text_pos = 'overlay',
   })
 
   vim.cmd 'redraw'
-  print('Choose label (a-' .. string.char(string.byte 'a' + #matches - 1) .. '):')
   local choice = vim.fn.nr2char(vim.fn.getchar())
 
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
@@ -140,8 +139,9 @@ return {
     map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
     -- ================== Custom mappings ==================
     map('i', '<M-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+
     map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
     map('i', '<C-Enter>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-    map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
   end,
 }
