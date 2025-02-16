@@ -25,10 +25,12 @@ function RenameAndLowercase()
 end
 
 -- ================== Augment =================
-map('n', '<leader>ce', ':Augment enable<CR>', map_opt '[A]ugment [E]nable')
 map('n', '<leader>cd', ':Augment disable<CR>', map_opt '[A]ugment [D]isable')
-map({ 'n', 'v' }, '<leader>cc', ':Augment chat<CR>', map_opt '[C]hat [C]ontinue')
 map('n', '<leader>ct', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
+map({ 'n', 'v' }, '<leader>cc', function()
+  vim.cmd [[Augment enable]]
+  vim.cmd [[Augment chat]]
+end, map_opt '[C]hat [C]ontinue')
 
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
