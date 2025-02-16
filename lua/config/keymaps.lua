@@ -97,6 +97,8 @@ map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 vim.api.nvim_create_user_command('ClearExtmarks', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { nargs = 0 })
+
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 
 return {}
