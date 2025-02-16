@@ -44,13 +44,13 @@ local function accept_until_char()
   end
 end
 
-local function accept_highlight_and_jump()
+local function highlight_jump_accept()
   local char = vim.fn.nr2char(vim.fn.getchar())
-
   local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
   local clear_copilot = vim.fn['copilot#Clear']
   assert(clear_copilot, 'copilot#Clear not found')
   assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
+  assert(suggestion.text, 'copilot#GetDisplayedSuggestion.text not found')
 
   local text = suggestion.text
   local matches = {}
@@ -63,43 +63,43 @@ local function accept_highlight_and_jump()
     table.insert(matches, index)
     start = index + 1
   end
-
-  if #matches == 0 then
-    return
-  end
+  assert(#matches > 0, 'No matches found')
 
   -- Show matches with virtual text
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
   local line = vim.fn.line '.' - 1
-  local col = vim.fn.col '.' - 1
+  local current_line = vim.api.nvim_get_current_line()
+  local current_col = #current_line
 
-  -- Clear existing virtual text
-  vim.api.nvim_buf_clear_namespace(0, ns, line, line + 1)
+  -- First, display the suggestion text
+  clear_copilot()
+  vim.api.nvim_buf_set_extmark(0, ns, line, current_col, {
+    virt_text = { { text, 'Comment' } },
+    virt_text_pos = 'overlay',
+  })
 
   -- Create labels for each match
   local labels = {}
   for i, pos in ipairs(matches) do
     local label = string.char(string.byte 'a' + i - 1)
     labels[label] = pos
-    vim.api.nvim_buf_set_extmark(0, ns, line, col + pos - 1, {
+    vim.api.nvim_buf_set_extmark(0, ns, line, current_col + pos - 1, {
       virt_text = { { label, 'Search' } },
-      virt_text_pos = 'overlay',
+      virt_text_pos = 'right_align',
     })
   end
 
-  -- Get user input for jump
-  vim.cmd 'redraw'
-  local jump_char = vim.fn.nr2char(vim.fn.getchar())
+  -- Get user's choice and handle it immediately
+  local ok, choice = pcall(function()
+    return string.char(vim.fn.getchar())
+  end)
 
-  -- Clear virtual text
-  vim.api.nvim_buf_clear_namespace(0, ns, line, line + 1)
+  -- Clean up virtual text
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 
-  -- Jump to selected position
-  local jump_pos = labels[jump_char]
-  if jump_pos then
-    local partial = string.sub(text, 1, jump_pos)
+  if ok and labels[choice] then
+    local partial = string.sub(text, 1, labels[choice])
     vim.api.nvim_feedkeys(partial, 'n', false)
-    clear_copilot()
   end
 end
 
@@ -110,7 +110,7 @@ return {
     vim.g.copilot_no_tab_map = true
 
     map('i', '<M-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
-    map('i', '<M-s>', accept_highlight_and_jump, { silent = true, desc = 'Accept Copilot and jump' })
+    map('i', '<M-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
 
     -- ================== Copilot =================
     map('i', '<C-;>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })

@@ -30,6 +30,7 @@ map('n', '<leader>ct', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
 map({ 'n', 'v' }, '<leader>cc', function()
   vim.cmd [[Augment enable]]
   vim.cmd [[Augment chat]]
+  vim.cmd [[RenderMarkdown buf_enable]]
 end, map_opt '[C]hat [C]ontinue')
 
 -- =================== Window Navigation ===================
