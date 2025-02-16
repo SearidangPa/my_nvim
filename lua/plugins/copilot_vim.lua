@@ -52,17 +52,7 @@ local function accept_until_char()
   end
 end
 
-local function highlight_jump_accept()
-  local char = vim.fn.nr2char(vim.fn.getchar())
-  local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
-  local clear_copilot = vim.fn['copilot#Clear']
-  assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
-  assert(suggestion.text, 'copilot#GetDisplayedSuggestion.text not found')
-  assert(clear_copilot, 'copilot#Clear not found')
-
-  print('suggestion:', vim.inspect(suggestion))
-
-  local text = suggestion.text
+local parse_suggestion = function(text, char)
   local matches = {}
   local start = 1
   local lower_char = string.lower(char)
@@ -83,8 +73,11 @@ local function highlight_jump_accept()
     table.insert(matches, index)
     start = index + 1
   end
-  assert(#matches > 0, 'No matches found')
+  return matches
+end
 
+local function hightlight_label_for_jump(matches, text)
+  vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
   local line = vim.fn.line '.' - 1
   local current_col = vim.fn.col '.' - 1
@@ -92,8 +85,6 @@ local function highlight_jump_accept()
   local labels = {}
   local virt_text = {}
   local prev_pos = 1
-
-  vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
 
   for i, pos in ipairs(matches) do
     if pos > prev_pos then
@@ -114,17 +105,40 @@ local function highlight_jump_accept()
     virt_text = virt_text,
     virt_text_pos = 'overlay',
   })
-
   vim.cmd 'redraw'
-  local choice = vim.fn.nr2char(vim.fn.getchar())
 
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+  return labels, ns
+end
+
+local function jump_from_user_choice(labels, ns, text)
+  local choice = vim.fn.nr2char(vim.fn.getchar())
   local pos = labels[choice]
   if pos then
     local partial = string.sub(text, 1, pos)
     vim.api.nvim_feedkeys(partial, 'n', false)
-    clear_copilot()
   end
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+end
+
+local function highlight_jump_accept()
+  local char = vim.fn.nr2char(vim.fn.getchar())
+  local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
+  local text = suggestion.text
+  assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
+  assert(text, 'suggestion text not found')
+
+  local matches = parse_suggestion(text, char)
+  if #matches == 0 then
+    return
+  end
+
+  if #matches == 1 then
+    local partial = string.sub(text, 1, matches[1])
+    vim.api.nvim_feedkeys(partial, 'n', false)
+    return
+  end
+  local labels, ns = hightlight_label_for_jump(matches, text)
+  jump_from_user_choice(labels, ns, text)
 end
 
 return {
@@ -133,12 +147,12 @@ return {
     local map = vim.keymap.set
     vim.g.copilot_no_tab_map = true
 
-    map('i', '<M-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
-    map('i', '<M-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
+    map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
+    map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
 
     map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
     -- ================== Custom mappings ==================
-    map('i', '<M-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
 
     map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
