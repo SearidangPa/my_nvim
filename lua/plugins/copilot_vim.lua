@@ -1,53 +1,47 @@
 local function accept()
   local accept = vim.fn['copilot#Accept']
-  if accept then
-    local res = accept()
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end
+  assert(accept, 'copilot#Accept not found')
+  local res = accept()
+  vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 local function accept_with_newline()
   local accept = vim.fn['copilot#Accept']
-  if accept then
-    local res = accept()
-    res = res .. '\r'
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end
+  assert(accept, 'copilot#Accept not found')
+  local res = accept()
+  res = res .. '\r'
+  vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 local function accept_word()
   local accept_word = vim.fn['copilot#AcceptWord']
-  if accept_word then
-    local res = accept_word()
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end
+  assert(accept_word, 'copilot#AcceptWord not found')
+  local res = accept_word()
+  vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 local function accept_line()
   local accept_line = vim.fn['copilot#AcceptLine']
-  if accept_line then
-    local res = accept_line()
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end
+  assert(accept_line, 'copilot#AcceptLine not found')
+  local res = accept_line()
+  vim.api.nvim_feedkeys(res, 'n', false)
 end
 
--- ================== experiment =================
 local function accept_until_char()
-  local char = vim.fn.getchar()
-  -- Convert numeric char code to string
-  char = type(char) == 'number' and vim.fn.nr2char(char) or char
+  local char = vim.fn.nr2char(vim.fn.getchar())
 
-  local accept = vim.fn['copilot#Accept']
-  if accept == nil then
-    return
+  local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
+  local clear_copilot = vim.fn['copilot#Clear']
+  assert(clear_copilot, 'copilot#Clear not found')
+  assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
+
+  local text = suggestion.text
+  local index = string.find(text, char, 1, true)
+  if index then
+    local partial = string.sub(text, 1, index)
+    vim.api.nvim_feedkeys(partial, 'n', false)
+    clear_copilot()
   end
-
-  -- Match everything until (but not including) the target character
-  local pattern = '[^' .. vim.fn.escape(char, '^$()%.[]*+-?') .. ']*'
-  print('Pattern:', pattern)
-
-  local res = vim.fn['copilot#Accept']('', pattern)
-  vim.api.nvim_feedkeys(res, 'n', false)
 end
 
 return {
@@ -56,12 +50,12 @@ return {
     local map = vim.keymap.set
     vim.g.copilot_no_tab_map = true
 
-    map('i', '<C-x>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
+    map('i', '<M-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
 
     -- ================== Copilot =================
-    map('i', '<C-l>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<C-;>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
-    map('i', '<M-Right>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+    map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
     map('i', '<M-Enter>', accept_with_newline, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
   end,
 }
