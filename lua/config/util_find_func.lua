@@ -117,9 +117,9 @@ function Nearest_func_name()
   end
 end
 
-vim.api.nvim_create_user_command('NearestFunc', function()
+vim.api.nvim_create_user_command('NearestFuncName', function()
   local func_name = Nearest_func_name()
-  print("Nearest function:", func_name)
+  print("Nearest func name: " .. func_name)
 end, {})
 
 local function yank_function()
@@ -135,5 +135,21 @@ end
 
 vim.api.nvim_create_user_command('YankFunction', yank_function, {})
 vim.keymap.set('n', 'yf', yank_function, { desc = 'Yank nearest function' })
+
+local function visual_function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local line = cursor_pos[1] - 1
+  local func_node = nearest_function_at_line(bufnr, line)
+  if func_node then
+    local start_row, start_col, end_row, end_col = func_node:range()
+    vim.api.nvim_set_cursor(0, { start_row + 1, start_col })
+    vim.api.nvim_feedkeys('v', 'n', true)
+    vim.api.nvim_set_cursor(0, { end_row + 1, end_col })
+  end
+end
+
+vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
+vim.keymap.set('n', 'vf', visual_function, { desc = 'Visual nearest function' })
 
 
