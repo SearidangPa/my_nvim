@@ -73,7 +73,7 @@ return {
     require 'config.util_find_func'
 
     local function nearest_func_name_if_exists()
-      local func_name = Nearest_function_decl_at_cursor()
+      local func_name = Nearest_func_name()
       if func_name then
         return '%#TabLineSelItalic#' .. func_name
       end
