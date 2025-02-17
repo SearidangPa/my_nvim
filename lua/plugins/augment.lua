@@ -20,23 +20,23 @@ return {
       map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { expr = false, desc = 'Accept Augment' })
     end
 
-    -- map('n', '<leader>ae', function()
-    --   vim.cmd [[Augment enable]]
-    --   vim.cmd [[Copilot disable]]
-    --   map_accept_augment()
-    --   print 'Augment enabled'
-    -- end, map_opt { desc = '[A]ugment [E]nable' })
+    map('n', '<localleader>ae', function()
+      vim.cmd [[Augment enable]]
+      vim.cmd [[Copilot disable]]
+      map_accept_augment()
+      print 'Augment enabled'
+    end, map_opt { desc = '[A]ugment [E]nable' })
 
-    map('n', '<leader>ad', function()
+    map('n', '<localleader>ad', function()
       vim.cmd [[Augment disable]]
       vim.cmd [[Copilot enable]]
       Map_copilot()
       print 'Augment disabled'
     end, map_opt { desc = '[A]ugment [D]isable' })
 
-    map('n', '<leader>at', ':Augment chat-toggle<CR>', map_opt { desc = '[C]hat [T]oggle' })
+    map('n', '<localleader>at', ':Augment chat-toggle<CR>', map_opt { desc = '[C]hat [T]oggle' })
 
-    map({ 'n', 'v' }, '<leader>ac', function()
+    map({ 'n', 'v' }, '<localleader>ac', function()
       vim.cmd [[Augment enable]]
       vim.cmd [[Copilot disable]]
       vim.cmd [[Augment chat]]

@@ -9,7 +9,6 @@ return {
 
     -- Document existing key chains
     spec = {
-      { '<leader>a', group = '[A]ugment' },
       { '<leader>b', group = '[B]rowse' },
       { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
       { '<leader>d', group = '[D]ocument' },
@@ -27,7 +26,9 @@ return {
       { '<leader>w', group = '[W]orkspace' },
       { '<leader>x', group = '[x]' },
       { '<leader>g', group = '[G]o' },
+      { '<leader>a', group = '[A]vante' },
 
+      { '<localleader>a', group = '[A]ugment' },
       { '<localleader>s', group = '[S]earch plugin' },
       { '<localleader>x', group = '[Ex]ecute' },
       { '<localleader>t', group = '[T]erminal' },
