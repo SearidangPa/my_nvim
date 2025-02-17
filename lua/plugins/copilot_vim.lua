@@ -35,7 +35,7 @@ local function accept_until_char()
   local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
   local clear_copilot = vim.fn['copilot#Clear']
   assert(clear_copilot, 'copilot#Clear not found')
-  assert(suggestion, 'copilot#GetDisplayedSuggestion not found')
+  ave progress: map copilot
 
   local text = suggestion.text
   local index = string.find(text, char, 1, true)
