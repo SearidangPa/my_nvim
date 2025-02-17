@@ -47,11 +47,12 @@ func init() {
 
 	markFlagsRequired(<cmd>Cmd, pathKey)
 	<cmd>Cmd.Run = func(_ *cobra.Command, _ []string) {
-		<cmd>CLI()
+		<cmd>CLI(path)
 	}
 }
 
 func <cmd>CLI(path string){
+      <finish>
 }
       ]],
       {
@@ -59,6 +60,7 @@ func <cmd>CLI(path string){
         cmd = f(KebabToCamelCase, { 1 }),
         short_desc = f(ReplaceDashWithSpace, { 1 }),
         flag_desc = i(2, 'flag_description'),
+        finish = i(0),
       }
     )
   ),

@@ -61,8 +61,6 @@ return {
           ls.change_choice(1)
         end
       end, { silent = true })
-
-      require 'config.snip_go_if'
     end,
   },
 }
