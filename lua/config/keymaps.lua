@@ -24,14 +24,6 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
--- ================== Augment =================
-map('n', '<leader>at', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
-map({ 'n', 'v' }, '<leader>ac', function()
-  vim.cmd [[Augment enable]]
-  vim.cmd [[Copilot disable]]
-  vim.cmd [[Augment chat]]
-end, map_opt '[A]ugment [C]hat')
-
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
@@ -70,6 +62,10 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 -- ================== local leader===================
 map('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
+map('n', '<localleader>q', function()
+  vim.cmd [[wq]]
+  vim.cmd [[qa]]
+end, map_opt 'write all and quit all')
 
 -- =================== colorscheme ==================
 map('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
@@ -81,23 +77,11 @@ map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
 map('i', '<C-e>', '<End>', map_opt 'Move to the end of the line')
 map('i', '<C-a>', '<Esc>I', map_opt 'Move to the beginning of the line')
 
--- Treewalker movement
-map({ 'n', 'v' }, '<M-k>', '<cmd>Treewalker Up<cr>', { silent = true })
-map({ 'n', 'v' }, '<M-j>', '<cmd>Treewalker Down<cr>', { silent = true })
-map({ 'n', 'v' }, '<M-h>', '<cmd>Treewalker Left<cr>', { silent = true })
-map({ 'n', 'v' }, '<M-l>', '<cmd>Treewalker Right<cr>', { silent = true })
-
--- Treewalker swapping
-map('n', '<M-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true })
-map('n', '<M-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true })
-map('n', '<M-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
-map('n', '<M-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
+map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 
 vim.api.nvim_create_user_command('ClearExtmarks', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { nargs = 0 })
-
-map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
-map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
 
 return {}

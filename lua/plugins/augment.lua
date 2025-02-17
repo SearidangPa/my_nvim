@@ -1,3 +1,8 @@
+local map = vim.keymap.set
+local map_opt = function(desc)
+  return { noremap = true, silent = true, desc = desc }
+end
+
 return {
   'augmentcode/augment.vim',
   config = function()
@@ -9,10 +14,6 @@ return {
     }
     vim.cmd [[:Augment disable]]
 
-    local map = vim.keymap.set
-    local map_opt = function(desc)
-      return { noremap = true, silent = true, desc = desc }
-    end
     local function map_accept_augment()
       vim.keymap.set('i', '<C-l>', function()
         local accept = vim.fn['augment#Accept']
@@ -35,5 +36,12 @@ return {
       vim.cmd [[Copilot enable]]
       Map_accept_line_copilot()
     end, map_opt '[A]ugment [D]isable')
+
+    map('n', '<leader>at', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
+    map({ 'n', 'v' }, '<leader>ac', function()
+      vim.cmd [[Augment enable]]
+      vim.cmd [[Copilot disable]]
+      vim.cmd [[Augment chat]]
+    end, map_opt '[A]ugment [C]hat')
   end,
 }
