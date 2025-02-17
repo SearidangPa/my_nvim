@@ -127,15 +127,15 @@ local function yank_function()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
   local func_node = nearest_function_at_line(bufnr, line)
-  if func_node then
-    local func_text = vim.treesitter.get_node_text(func_node, bufnr)
-    vim.fn.setreg('*', func_text)
+  assert(func_node, 'No function found')
+  local func_text = vim.treesitter.get_node_text(func_node, bufnr)
+  vim.fn.setreg('*', func_text)
   for child in func_node:iter_children() do
-      if child:type() == 'identifier' or child:type() == 'name' then
-          local func_name =vim.treesitter.get_node_text(child, bufnr)
-          break
-      end
-  end
+    if child:type() == 'identifier' or child:type() == 'name' then
+      local func_name =vim.treesitter.get_node_text(child, bufnr)
+      print("Yanked function: " .. func_name)
+      break
+    end
   end
 end
 
