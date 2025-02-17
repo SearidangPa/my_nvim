@@ -115,7 +115,7 @@ ls.add_snippets('go', {
           t 'err := ',
         }),
         funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
+        args = i(2),
         processedFuncName = f(GetLastFuncName, { 1 }),
         finish = i(0),
       }

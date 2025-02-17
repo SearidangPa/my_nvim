@@ -149,11 +149,8 @@ local function visual_function()
   local func_node = nearest_function_at_line(bufnr, line)
   if func_node then
     local start_row, start_col, end_row, end_col = func_node:range()
-    -- Enter visual mode and make selection
     vim.cmd('normal! v')
-    -- Move to start position
     vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-    -- Move to end position in visual mode
     vim.cmd('normal! o')
     vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
   end
@@ -165,5 +162,7 @@ vim.keymap.set('n', 'vf', visual_function, { desc = 'Visual nearest function' })
 
 vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
 vim.keymap.set('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
+
+
 
 
