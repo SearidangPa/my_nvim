@@ -1,5 +1,5 @@
 local build_command
-if vim.fn.Has 'win32' == 1 then
+if vim.fn.has 'win32' == 1 then
   build_command = 'powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false'
 else
   build_command = 'make'
