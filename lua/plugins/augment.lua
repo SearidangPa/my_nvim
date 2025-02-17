@@ -17,8 +17,6 @@ return {
     vim.g.disable_tab_mapping = true
 
     local function map_accept_augment()
-      local info = vim.fn['augment#suggestion#Clear'](true)
-      print(info)
       map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { expr = false, desc = 'Accept Augment' })
     end
 
