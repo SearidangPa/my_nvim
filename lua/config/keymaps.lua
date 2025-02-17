@@ -30,7 +30,7 @@ map({ 'n', 'v' }, '<leader>ac', function()
   vim.cmd [[Augment enable]]
   vim.cmd [[Copilot disable]]
   vim.cmd [[Augment chat]]
-end, map_opt '[C]hat [C]ontinue')
+end, map_opt '[A]ugment [C]hat')
 
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
