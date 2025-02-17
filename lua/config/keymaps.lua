@@ -29,17 +29,13 @@ map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
 map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the lower window')
 map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the upper window')
-
 -- =================== Terminal ===================
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 -- =================== delete ===================
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
-
 -- =================== Insert Assistance ===================
 map('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
-map('i', '<M-(>', '()<left>', { noremap = true, silent = true, desc = 'Insert ()' })
 
 -- =================== Quickfix ===================
 map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })

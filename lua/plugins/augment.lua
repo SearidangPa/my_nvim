@@ -23,7 +23,7 @@ return {
     vim.cmd [[:Augment disable]]
 
     local function map_accept_augment()
-      vim.keymap.set('i', '<C-l>', augment_accept, { expr = true, silent = true, desc = 'Accept Augment' })
+      vim.keymap.set('i', '<C-l>', augment_accept, { expr = true, desc = 'Accept Augment' })
     end
 
     map('n', '<leader>ae', function()
