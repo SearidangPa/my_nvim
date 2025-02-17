@@ -1,3 +1,4 @@
+local map = vim.keymap.set
 local function accept()
   local accept = vim.fn['copilot#Accept']
   assert(accept, 'copilot#Accept not found')
@@ -134,32 +135,28 @@ local function highlight_jump_accept()
   jump_from_user_choice(labels, ns, text)
 end
 
-Map_accept_line_copilot = function()
-  vim.keymap.set('i', '<C-l>', function()
-    local accept_line = vim.fn['copilot#AcceptLine']
-    if not accept_line then
-      return
-    end
-    local res = accept_line()
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+local function accept_line()
+  local accept_line = vim.fn['copilot#AcceptLine']
+  assert(accept_line, 'copilot#AcceptLine not found')
+  local res = accept_line()
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+Map_copilot = function()
+  map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+  map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+  map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
+  map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
+
+  map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+  map('i', '<C-Enter>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+  map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
 end
 
 return {
   'github/copilot.vim',
   config = function()
-    local map = vim.keymap.set
     vim.g.copilot_no_tab_map = true
-
-    map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
-    map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
-
-    map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
-    -- ================== Custom mappings ==================
-    map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-    map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
-    Map_accept_line_copilot()
-
-    map('i', '<C-Enter>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+    Map_copilot()
   end,
 }

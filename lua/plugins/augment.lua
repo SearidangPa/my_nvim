@@ -34,7 +34,7 @@ return {
     map('n', '<leader>ad', function()
       vim.cmd [[Augment disable]]
       vim.cmd [[Copilot enable]]
-      Map_accept_line_copilot()
+      Map_copilot()
     end, map_opt '[A]ugment [D]isable')
 
     map('n', '<leader>at', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
