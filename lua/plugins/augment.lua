@@ -16,7 +16,7 @@ return {
     vim.cmd [[:Augment disable]]
 
     local function map_accept_augment()
-      map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { desc = 'Accept Augment' })
+      map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { expr = false, desc = 'Accept Augment' })
     end
 
     map('n', '<leader>ae', function()
