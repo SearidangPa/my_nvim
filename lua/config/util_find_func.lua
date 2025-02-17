@@ -130,6 +130,12 @@ local function yank_function()
   if func_node then
     local func_text = vim.treesitter.get_node_text(func_node, bufnr)
     vim.fn.setreg('*', func_text)
+  for child in func_node:iter_children() do
+      if child:type() == 'identifier' or child:type() == 'name' then
+          local func_name =vim.treesitter.get_node_text(child, bufnr)
+          break
+      end
+  end
   end
 end
 
@@ -143,13 +149,21 @@ local function visual_function()
   local func_node = nearest_function_at_line(bufnr, line)
   if func_node then
     local start_row, start_col, end_row, end_col = func_node:range()
-    vim.api.nvim_set_cursor(0, { start_row + 1, start_col })
-    vim.api.nvim_feedkeys('v', 'n', true)
-    vim.api.nvim_set_cursor(0, { end_row + 1, end_col })
+    -- Enter visual mode and make selection
+    vim.cmd('normal! v')
+    -- Move to start position
+    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+    -- Move to end position in visual mode
+    vim.cmd('normal! o')
+    vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
   end
 end
 
 vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
 vim.keymap.set('n', 'vf', visual_function, { desc = 'Visual nearest function' })
+
+
+vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
+vim.keymap.set('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 
 

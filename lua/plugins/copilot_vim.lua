@@ -22,7 +22,11 @@ end
 
 local function accept_line()
   local accept_line = vim.fn['copilot#AcceptLine']
-  assert(accept_line, 'copilot#AcceptLine not found')
+  if not accept_line then
+    vim.cmd [[Augment disable]]
+    vim.cmd [[Copilot enable]]
+    local accept_line = vim.fn['copilot#AcceptLine']
+  end
   local res = accept_line()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
