@@ -1,6 +1,6 @@
 local map = vim.keymap.set
 local map_opt = function(opts)
-  local opts = vim.tabl_deep_extend('force', opts, { noremap = true, silent = true })
+  local opts = vim.tbl_deep_extend('force', opts, { noremap = true, silent = true })
   return opts
 end
 
