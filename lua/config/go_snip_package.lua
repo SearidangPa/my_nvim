@@ -51,7 +51,7 @@ func init() {
 	}
 }
 
-func <cmd>CLI(<finish>
+func <cmd>CLI(path string){
 }
       ]],
       {
@@ -59,7 +59,6 @@ func <cmd>CLI(<finish>
         cmd = f(KebabToCamelCase, { 1 }),
         short_desc = f(ReplaceDashWithSpace, { 1 }),
         flag_desc = i(2, 'flag_description'),
-        finish = i(0),
       }
     )
   ),
