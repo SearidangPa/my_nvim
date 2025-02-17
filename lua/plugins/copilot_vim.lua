@@ -148,8 +148,8 @@ Map_copilot = function()
   map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
 
   map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-  map('i', '<C-Enter>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-  map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+  map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+  map('i', '<M-;>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
 end
 
 return {

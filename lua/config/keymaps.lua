@@ -74,8 +74,6 @@ map('i', '<C-e>', '<End>', map_opt 'Move to the end of the line')
 map('i', '<C-a>', '<Esc>I', map_opt 'Move to the beginning of the line')
 
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
-map('n', '<leader>lr', ':LspRestart<CR>', map_opt '[L]SP [R]estart')
-
 vim.api.nvim_create_user_command('ClearExtmarks', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { nargs = 0 })
