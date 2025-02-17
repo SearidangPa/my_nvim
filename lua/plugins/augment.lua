@@ -20,12 +20,12 @@ return {
       map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { expr = false, desc = 'Accept Augment' })
     end
 
-    map('n', '<leader>ae', function()
-      vim.cmd [[Augment enable]]
-      vim.cmd [[Copilot disable]]
-      map_accept_augment()
-      print 'Augment enabled'
-    end, map_opt { desc = '[A]ugment [E]nable' })
+    -- map('n', '<leader>ae', function()
+    --   vim.cmd [[Augment enable]]
+    --   vim.cmd [[Copilot disable]]
+    --   map_accept_augment()
+    --   print 'Augment enabled'
+    -- end, map_opt { desc = '[A]ugment [E]nable' })
 
     map('n', '<leader>ad', function()
       vim.cmd [[Augment disable]]
