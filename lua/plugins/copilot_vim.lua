@@ -20,17 +20,6 @@ local function accept_word()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
-local function accept_line()
-  local accept_line = vim.fn['copilot#AcceptLine']
-  if not accept_line then
-    vim.cmd [[Augment disable]]
-    vim.cmd [[Copilot enable]]
-    local accept_line = vim.fn['copilot#AcceptLine']
-  end
-  local res = accept_line()
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
 local function accept_line_with_indent()
   local accept_line = vim.fn['copilot#AcceptLine']
   assert(accept_line, 'copilot#AcceptLine not found')
@@ -145,6 +134,17 @@ local function highlight_jump_accept()
   jump_from_user_choice(labels, ns, text)
 end
 
+Map_accept_line_copilot = function()
+  vim.keymap.set('i', '<C-l>', function()
+    local accept_line = vim.fn['copilot#AcceptLine']
+    if not accept_line then
+      return
+    end
+    local res = accept_line()
+    vim.api.nvim_feedkeys(res, 'n', false)
+  end, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+end
+
 return {
   'github/copilot.vim',
   config = function()
@@ -158,8 +158,8 @@ return {
     -- ================== Custom mappings ==================
     map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-Enter>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+    Map_accept_line_copilot()
 
-    map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
     map('i', '<C-Enter>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
   end,
 }

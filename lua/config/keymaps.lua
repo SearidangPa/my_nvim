@@ -27,20 +27,10 @@ end
 -- ================== Augment =================
 map('n', '<leader>ct', ':Augment chat-toggle<CR>', map_opt '[C]hat [T]oggle')
 
-map('n', '<leader>ae', function()
-  vim.cmd [[Augment enable]]
-  vim.cmd [[Copilot disable]]
-end, map_opt '[A]ugment [E]nable')
-
-map('n', '<leader>ad', function()
-  vim.cmd [[Augment disable]]
-  vim.cmd [[Copilot enable]]
-end, map_opt '[A]ugment [D]isable')
-
 map({ 'n', 'v' }, '<leader>cc', function()
   vim.cmd [[Augment enable]]
+  vim.cmd [[Copilot disable]]
   vim.cmd [[Augment chat]]
-  vim.cmd [[RenderMarkdown buf_disable]]
 end, map_opt '[C]hat [C]ontinue')
 
 -- =================== Window Navigation ===================
