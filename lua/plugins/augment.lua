@@ -4,13 +4,6 @@ local map_opt = function(opts)
   return opts
 end
 
-local augment_accept = function()
-  local accept = vim.fn['augment#Accept']
-  assert(accept, 'augment#Accept not found')
-  local res = accept()
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
 return {
   'augmentcode/augment.vim',
   config = function()
@@ -23,19 +16,21 @@ return {
     vim.cmd [[:Augment disable]]
 
     local function map_accept_augment()
-      vim.keymap.set('i', '<C-l>', augment_accept, { expr = true, desc = 'Accept Augment' })
+      map('i', '<C-l>', '<cmd>call augment#Accept()<CR>', { desc = 'Accept Augment' })
     end
 
     map('n', '<leader>ae', function()
       vim.cmd [[Augment enable]]
       vim.cmd [[Copilot disable]]
       map_accept_augment()
+      print 'Augment enabled'
     end, map_opt { desc = '[A]ugment [E]nable' })
 
     map('n', '<leader>ad', function()
       vim.cmd [[Augment disable]]
       vim.cmd [[Copilot enable]]
       Map_copilot()
+      print 'Augment disabled'
     end, map_opt { desc = '[A]ugment [D]isable' })
 
     map('n', '<leader>at', ':Augment chat-toggle<CR>', map_opt { desc = '[C]hat [T]oggle' })
