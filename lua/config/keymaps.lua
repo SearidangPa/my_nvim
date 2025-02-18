@@ -70,8 +70,6 @@ map('n', '<leader>tck', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]o
 
 -- =================== Navigation ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
-map('i', '<C-e>', '<End>', map_opt 'Move to the end of the line')
-map('i', '<C-a>', '<Esc>I', map_opt 'Move to the beginning of the line')
 
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 vim.api.nvim_create_user_command('ClearExtmarks', function()
