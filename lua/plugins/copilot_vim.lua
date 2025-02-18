@@ -141,21 +141,17 @@ local function accept_line()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
-Map_copilot = function()
-  map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-  map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
-  map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
-  map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
-
-  map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-  map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-  map('i', '<M-;>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
-end
-
 return {
   'github/copilot.vim',
   config = function()
     vim.g.copilot_no_tab_map = true
-    Map_copilot()
+    map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+    map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+    map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
+    map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
+
+    map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+    map('i', '<M-;>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
   end,
 }
