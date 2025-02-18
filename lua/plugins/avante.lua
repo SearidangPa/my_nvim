@@ -12,6 +12,7 @@ return {
   version = '*',
   opts = {
     provider = 'copilot',
+    hints = { enable = false },
   },
   build = build_command,
   -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
