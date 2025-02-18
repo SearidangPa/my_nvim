@@ -12,10 +12,9 @@ return {
   version = '*',
   opts = {
     provider = 'copilot',
-    hints = { enable = false },
+    hints = { disable = true },
   },
   build = build_command,
-  -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
   dependencies = {
     'zbirenbaum/copilot.lua', -- for providers='copilot'
     'stevearc/dressing.nvim',
