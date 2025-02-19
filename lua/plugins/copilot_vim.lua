@@ -1,20 +1,15 @@
 local map = vim.keymap.set
 
+---@param text string
+---@param char string
+---@return table<number>
 local parse_suggestion = function(text, char)
   local matches = {}
-  local start = 1
+  local lower_text = string.lower(text)
   local lower_char = string.lower(char)
-  local upper_char = string.upper(char)
+  local start = 1
   while true do
-    local index_lower = string.find(text, lower_char, start, true)
-    local index_upper = string.find(text, upper_char, start, true)
-
-    local index
-    if index_lower and index_upper then
-      index = math.min(index_lower, index_upper)
-    else
-      index = index_lower or index_upper
-    end
+    local index = string.find(lower_text, lower_char, start, true)
     if not index then
       break
     end
@@ -37,27 +32,8 @@ local function index_to_row_col(text, index)
   return row, col
 end
 
-local function hightlight_label_for_jump_multiline(matches, text)
-  vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
-  local ns = vim.api.nvim_create_namespace 'copilot_jump'
-
-  local labels = {}
+local function build_virtual_lines(text, lines, matches_by_row)
   local virt_lines = {}
-  local lines = vim.split(text, '\n', { plain = true })
-
-  local matches_by_row = {}
-  for i, abs_index in ipairs(matches) do
-    local row, col = index_to_row_col(text, abs_index)
-    if not matches_by_row[row] then
-      matches_by_row[row] = {}
-    end
-    -- Create a label for this match (e.g., 'a', 'b', etc.).
-    local label = string.char(string.byte 'a' + i - 1)
-    table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
-    labels[label] = abs_index
-  end
-
-  -- Build virtual lines for each line of the suggestion.
   for row, line_text in ipairs(lines) do
     local virt_chunks = {}
     -- Adjust row to 0-indexed for our stored matches.
@@ -84,6 +60,36 @@ local function hightlight_label_for_jump_multiline(matches, text)
     table.insert(virt_lines, virt_chunks)
   end
 
+  return virt_lines
+end
+
+---@class match
+---@field col number
+---@field label string
+---@field abs number
+---
+---@class matches_by_row
+---@field number table<number, match>
+
+local function hightlight_label_for_jump_multiline(matches, text)
+  local ns = vim.api.nvim_create_namespace 'copilot_jump'
+
+  local labels = {}
+  local lines = vim.split(text, '\n', { plain = true })
+
+  local matches_by_row = {}
+  for i, abs_index in ipairs(matches) do
+    local row, col = index_to_row_col(text, abs_index)
+    if not matches_by_row[row] then
+      matches_by_row[row] = {}
+    end
+    -- Create a label for this match (e.g., 'a', 'b', etc.).
+    local label = string.char(string.byte 'a' + i - 1)
+    table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
+    labels[label] = abs_index
+  end
+
+  local virt_lines = build_virtual_lines(text, lines, matches_by_row)
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
   local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
   local start_col = vim.fn.col '.' - 1
@@ -201,6 +207,7 @@ return {
     map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 
     -- === customized behavior ===
+    vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
     map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
     map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
   end,
