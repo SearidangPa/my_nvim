@@ -19,6 +19,7 @@ local function generate_keymap()
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
   keymap['<Tab>'] = { 'snippet_forward', 'fallback' }
   keymap['<S-Tab>'] = { 'snippet_backward', 'fallback' }
+  keymap['<C-e>'] = { 'hide' }
 
   return keymap
 end

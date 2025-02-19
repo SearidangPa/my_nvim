@@ -24,37 +24,81 @@ local parse_suggestion = function(text, char)
   return matches
 end
 
-local function hightlight_label_for_jump(matches, text)
+local function index_to_row_col(text, index)
+  local row = 0
+  local last_newline = 0
+  for i = 1, index do
+    if text:sub(i, i) == '\n' then
+      row = row + 1
+      last_newline = i
+    end
+  end
+  local col = index - last_newline - 1 -- zero-indexed column
+  return row, col
+end
+
+local function hightlight_label_for_jump_multiline(matches, text)
   vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
-  local line = vim.fn.line '.' - 1
-  local current_col = vim.fn.col '.' - 1
+  local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
+  local start_col = vim.fn.col '.' - 1
 
   local labels = {}
-  local virt_text = {}
-  local prev_pos = 1
+  local virt_lines = {}
 
-  for i, pos in ipairs(matches) do
-    if pos > prev_pos then
-      table.insert(virt_text, { string.sub(text, prev_pos, pos - 1), 'CopilotSuggestion' })
+  -- Split the suggestion text into individual lines.
+  local lines = vim.split(text, '\n', { plain = true })
+
+  -- Organize match positions by row (rows are 0-indexed here).
+  local matches_by_row = {}
+  for i, abs_index in ipairs(matches) do
+    local row, col = index_to_row_col(text, abs_index)
+    if not matches_by_row[row] then
+      matches_by_row[row] = {}
+    end
+    -- Create a label for this match (e.g., 'a', 'b', etc.).
+    local label = string.char(string.byte 'a' + i - 1)
+    table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
+    labels[label] = abs_index
+  end
+
+  -- Build virtual lines for each line of the suggestion.
+  for row, line_text in ipairs(lines) do
+    local virt_chunks = {}
+    -- Adjust row to 0-indexed for our stored matches.
+    local line_matches = matches_by_row[row - 1] or {}
+    table.sort(line_matches, function(a, b)
+      return a.col < b.col
+    end)
+
+    local prev = 0
+    for _, m in ipairs(line_matches) do
+      -- Add text before the label.
+      if m.col > prev then
+        table.insert(virt_chunks, { line_text:sub(prev + 1, m.col), 'CopilotSuggestion' })
+      end
+      -- Insert the label.
+      table.insert(virt_chunks, { m.label, 'LabelHighlight' })
+      prev = m.col + 1
+    end
+    -- Add any remaining text after the last label.
+    if prev < #line_text then
+      table.insert(virt_chunks, { line_text:sub(prev + 1), 'CopilotSuggestion' })
     end
 
-    local label = string.char(string.byte 'a' + i - 1)
-    labels[label] = pos
-    table.insert(virt_text, { label, 'LabelHighlight' })
-
-    prev_pos = pos + 1
+    table.insert(virt_lines, virt_chunks)
   end
 
-  if prev_pos <= #text then
-    table.insert(virt_text, { string.sub(text, prev_pos), 'CopilotSuggestion' })
-  end
-  vim.api.nvim_buf_set_extmark(0, ns, line, current_col, {
-    virt_text = virt_text,
-    virt_text_pos = 'overlay',
+  -- Clear any existing virtual lines.
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+
+  -- Attach the virtual lines to the buffer at the current position.
+  vim.api.nvim_buf_set_extmark(0, ns, start_line, start_col, {
+    virt_lines = virt_lines,
+    virt_lines_above = false,
   })
   vim.cmd 'redraw'
-
+  vim.cmd [[Copilot disable]]
   return labels, ns
 end
 
@@ -85,15 +129,15 @@ local function highlight_jump_accept()
     vim.api.nvim_feedkeys(partial, 'n', false)
     return
   end
-  local labels, ns = hightlight_label_for_jump(matches, text)
+  local labels, ns = hightlight_label_for_jump_multiline(matches, text)
   jump_from_user_choice(labels, ns, text)
+  vim.cmd [[Copilot enable]]
 end
 
 return {
   'github/copilot.vim',
   config = function()
     vim.g.copilot_no_tab_map = true
-
     local function accept_until_char()
       local char = vim.fn.nr2char(vim.fn.getchar())
       local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
