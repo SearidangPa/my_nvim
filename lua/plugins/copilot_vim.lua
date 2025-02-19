@@ -36,33 +36,31 @@ local function index_to_row_col(text, index)
 end
 
 ---@param text string
+---@param matches_by_row matchesByRow
 local function build_virtual_lines(text, matches_by_row)
   local lines = vim.split(text, '\n', { plain = true })
   local virt_lines = {}
+
   for row, line_text in ipairs(lines) do
-    local virt_chunks = {}
-    -- Adjust row to 0-indexed for our stored matches.
-    local line_matches = matches_by_row[row - 1] or {}
+    local virt_line = {}
+    local line_matches = matches_by_row[row - 1] or {} -- Adjust row to 0-indexed for our stored matches.
     table.sort(line_matches, function(a, b)
       return a.col < b.col
     end)
 
     local prev = 0
     for _, m in ipairs(line_matches) do
-      -- Add text before the label.
       if m.col > prev then
-        table.insert(virt_chunks, { line_text:sub(prev + 1, m.col), 'CopilotSuggestion' })
+        table.insert(virt_line, { line_text:sub(prev + 1, m.col), 'CopilotSuggestion' })
       end
-      -- Insert the label.
-      table.insert(virt_chunks, { m.label, 'LabelHighlight' })
+      table.insert(virt_line, { m.label, 'LabelHighlight' })
       prev = m.col + 1
     end
-    -- Add any remaining text after the last label.
     if prev < #line_text then
-      table.insert(virt_chunks, { line_text:sub(prev + 1), 'CopilotSuggestion' })
+      table.insert(virt_line, { line_text:sub(prev + 1), 'CopilotSuggestion' })
     end
 
-    table.insert(virt_lines, virt_chunks)
+    table.insert(virt_lines, virt_line)
   end
 
   return virt_lines
@@ -85,8 +83,7 @@ local function hightlight_label_for_jump_multiline(matches, text, ns)
     if not matches_by_row[row] then
       matches_by_row[row] = {}
     end
-    -- Create a label for this match (e.g., 'a', 'b', etc.).
-    local label = string.char(string.byte 'a' + i - 1)
+    local label = string.char(string.byte 'a' + i - 1) -- Create a label for this match (e.g., 'a', 'b', etc.).
     table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
     labels[label] = abs_index
   end
