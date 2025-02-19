@@ -35,7 +35,9 @@ local function index_to_row_col(text, index)
   return row, col
 end
 
-local function build_virtual_lines(text, lines, matches_by_row)
+---@param text string
+local function build_virtual_lines(text, matches_by_row)
+  local lines = vim.split(text, '\n', { plain = true })
   local virt_lines = {}
   for row, line_text in ipairs(lines) do
     local virt_chunks = {}
@@ -66,17 +68,16 @@ local function build_virtual_lines(text, lines, matches_by_row)
   return virt_lines
 end
 
----@class match
+---@class matchInfo
 ---@field col number
 ---@field label string
 ---@field abs number
 ---
----@class matches_by_row
----@field number table<number, match>
+---@class matchesByRow
+---@field number table<number, matchInfo>
 
 local function hightlight_label_for_jump_multiline(matches, text, ns)
   local labels = {}
-  local lines = vim.split(text, '\n', { plain = true })
 
   local matches_by_row = {}
   for i, abs_index in ipairs(matches) do
@@ -90,7 +91,7 @@ local function hightlight_label_for_jump_multiline(matches, text, ns)
     labels[label] = abs_index
   end
 
-  local virt_lines = build_virtual_lines(text, lines, matches_by_row)
+  local virt_lines = build_virtual_lines(text, matches_by_row)
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
   local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
   local start_col = vim.fn.col '.' - 1
