@@ -40,16 +40,11 @@ end
 local function hightlight_label_for_jump_multiline(matches, text)
   vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
-  local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
-  local start_col = vim.fn.col '.' - 1
 
   local labels = {}
   local virt_lines = {}
-
-  -- Split the suggestion text into individual lines.
   local lines = vim.split(text, '\n', { plain = true })
 
-  -- Organize match positions by row (rows are 0-indexed here).
   local matches_by_row = {}
   for i, abs_index in ipairs(matches) do
     local row, col = index_to_row_col(text, abs_index)
@@ -90,6 +85,8 @@ local function hightlight_label_for_jump_multiline(matches, text)
   end
 
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+  local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
+  local start_col = vim.fn.col '.' - 1
   vim.api.nvim_buf_set_extmark(0, ns, start_line, start_col, {
     virt_lines = virt_lines,
     virt_lines_above = false,
