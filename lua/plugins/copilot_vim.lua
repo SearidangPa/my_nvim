@@ -19,6 +19,9 @@ local parse_suggestion = function(text, char)
   return matches
 end
 
+---@param text string
+---@param index number
+---@return number, number
 local function index_to_row_col(text, index)
   local row = 0
   local last_newline = 0
@@ -71,9 +74,7 @@ end
 ---@class matches_by_row
 ---@field number table<number, match>
 
-local function hightlight_label_for_jump_multiline(matches, text)
-  local ns = vim.api.nvim_create_namespace 'copilot_jump'
-
+local function hightlight_label_for_jump_multiline(matches, text, ns)
   local labels = {}
   local lines = vim.split(text, '\n', { plain = true })
 
@@ -99,7 +100,7 @@ local function hightlight_label_for_jump_multiline(matches, text)
   })
   vim.cmd 'redraw'
   vim.cmd [[Copilot disable]]
-  return labels, ns
+  return labels
 end
 
 local function split_into_lines(str)
@@ -143,7 +144,8 @@ local function highlight_jump_accept()
     vim.api.nvim_feedkeys(partial, 'n', false)
     return
   end
-  local labels, ns = hightlight_label_for_jump_multiline(matches, text)
+  local ns = vim.api.nvim_create_namespace 'copilot_jump'
+  local labels = hightlight_label_for_jump_multiline(matches, text, ns)
   jump_from_user_choice(labels, ns, text)
   vim.cmd [[Copilot enable]]
 end
