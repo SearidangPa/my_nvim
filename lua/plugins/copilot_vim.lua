@@ -1,8 +1,19 @@
 local map = vim.keymap.set
 
+---@class matchInfo
+---@field col number
+---@field label string
+---@field abs number
+---
+---@class matchesByRow
+---@field number table<number, matchInfo>
+---
+---@class labels table<string, number>
 ---@param text string
 ---@param char string
 ---@return table<number>
+---
+---
 local parse_suggestion = function(text, char)
   local matches = {}
   local lower_text = string.lower(text)
@@ -67,16 +78,6 @@ local function build_virtual_lines(text, matches_by_row)
   return virt_lines
 end
 
----@class matchInfo
----@field col number
----@field label string
----@field abs number
----
----@class matchesByRow
----@field number table<number, matchInfo>
----
----@class labels table<string, number>
-
 local function hightlight_label_for_jump_multiline(matches_by_row, text, ns)
   local virt_lines = build_virtual_lines(text, matches_by_row)
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
@@ -131,7 +132,7 @@ local function transform_abs_match(text, matches)
   return labels, matches_by_row
 end
 
-local function highlight_jump_accept()
+local function copilot_hop()
   local ns = vim.api.nvim_create_namespace 'copilot_jump'
   local char = vim.fn.nr2char(vim.fn.getchar())
   local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
@@ -160,16 +161,6 @@ return {
   'github/copilot.vim',
   config = function()
     vim.g.copilot_no_tab_map = true
-    local function accept_until_char()
-      local char = vim.fn.nr2char(vim.fn.getchar())
-      local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
-      local text = suggestion.text
-      local index = string.find(text, char, 1, true)
-      if index then
-        local partial = string.sub(text, 1, index)
-        vim.api.nvim_feedkeys(partial, 'n', false)
-      end
-    end
 
     local function accept()
       local accept = vim.fn['copilot#Accept']
@@ -216,7 +207,6 @@ return {
 
     -- === customized behavior ===
     vim.api.nvim_set_hl(0, 'LabelHighlight', { fg = '#5097A4' })
-    map('i', '<D-a>', accept_until_char, { silent = true, desc = 'Accept Copilot until char' })
-    map('i', '<D-s>', highlight_jump_accept, { silent = true, desc = 'Accept Copilot and jump' })
+    map('i', '<D-s>', copilot_hop, { silent = true, desc = 'Accept Copilot and jump' })
   end,
 }
