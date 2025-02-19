@@ -37,6 +37,7 @@ end
 
 ---@param text string
 ---@param matches_by_row matchesByRow
+---@return table<table<string, string>>
 local function build_virtual_lines(text, matches_by_row)
   local lines = vim.split(text, '\n', { plain = true })
   local virt_lines = {}
@@ -73,21 +74,10 @@ end
 ---
 ---@class matchesByRow
 ---@field number table<number, matchInfo>
+---
+---@class labels table<string, number>
 
-local function hightlight_label_for_jump_multiline(matches, text, ns)
-  local labels = {}
-
-  local matches_by_row = {}
-  for i, abs_index in ipairs(matches) do
-    local row, col = index_to_row_col(text, abs_index)
-    if not matches_by_row[row] then
-      matches_by_row[row] = {}
-    end
-    local label = string.char(string.byte 'a' + i - 1) -- Create a label for this match (e.g., 'a', 'b', etc.).
-    table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
-    labels[label] = abs_index
-  end
-
+local function hightlight_label_for_jump_multiline(matches_by_row, text, ns)
   local virt_lines = build_virtual_lines(text, matches_by_row)
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
   local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
@@ -98,7 +88,6 @@ local function hightlight_label_for_jump_multiline(matches, text, ns)
   })
   vim.cmd 'redraw'
   vim.cmd [[Copilot disable]]
-  return labels
 end
 
 local function split_into_lines(str)
@@ -125,7 +114,26 @@ local function jump_from_user_choice(labels, ns, text)
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 end
 
+---@param text string
+---@param matches table<number>
+---@return labels, matchesByRow
+local function transform_abs_match(text, matches)
+  local labels = {}
+  local matches_by_row = {}
+  for i, abs_index in ipairs(matches) do
+    local row, col = index_to_row_col(text, abs_index)
+    if not matches_by_row[row] then
+      matches_by_row[row] = {}
+    end
+    local label = string.char(string.byte 'a' + i - 1) -- Create a label for this match (e.g., 'a', 'b', etc.).
+    table.insert(matches_by_row[row], { col = col, label = label, abs = abs_index })
+    labels[label] = abs_index
+  end
+  return labels, matches_by_row
+end
+
 local function highlight_jump_accept()
+  local ns = vim.api.nvim_create_namespace 'copilot_jump'
   local char = vim.fn.nr2char(vim.fn.getchar())
   local suggestion = vim.fn['copilot#GetDisplayedSuggestion']()
   local text = suggestion.text
@@ -142,8 +150,9 @@ local function highlight_jump_accept()
     vim.api.nvim_feedkeys(partial, 'n', false)
     return
   end
-  local ns = vim.api.nvim_create_namespace 'copilot_jump'
-  local labels = hightlight_label_for_jump_multiline(matches, text, ns)
+
+  local labels, matches_by_row = transform_abs_match(text, matches)
+  hightlight_label_for_jump_multiline(matches, text, ns)
   jump_from_user_choice(labels, ns, text)
   vim.cmd [[Copilot enable]]
 end
