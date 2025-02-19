@@ -92,8 +92,7 @@ end
 
 local function split_into_lines(str)
   local lines = {}
-  -- This pattern captures each line including empty lines
-  for line in (str .. '\n'):gmatch '(.-)\n' do
+  for line in (str .. '\n'):gmatch '(.-)\n' do -- This pattern captures each line including empty lines
     table.insert(lines, line)
   end
   return lines
