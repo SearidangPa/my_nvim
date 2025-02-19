@@ -126,10 +126,23 @@ local function display_virtual_lines(matches_by_row, text, ns, virt_lines)
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
   local start_line = vim.fn.line '.' - 1 -- current line (0-indexed)
   local start_col = vim.fn.col '.' - 1
+
+  local inline_text = virt_lines[1] or {}
   vim.api.nvim_buf_set_extmark(0, ns, start_line, start_col, {
-    virt_lines = virt_lines,
-    virt_lines_above = false,
+    virt_text = inline_text,
+    virt_text_pos = 'inline', -- places text right after the cursor
   })
+
+  if #virt_lines > 1 then
+    local additional_lines = {}
+    for i = 2, #virt_lines do
+      table.insert(additional_lines, virt_lines[i])
+    end
+    vim.api.nvim_buf_set_extmark(0, ns, start_line, start_col, {
+      virt_lines = additional_lines,
+    })
+  end
+
   vim.cmd 'redraw'
   vim.cmd [[Copilot disable]]
 end
