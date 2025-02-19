@@ -89,10 +89,7 @@ local function hightlight_label_for_jump_multiline(matches, text)
     table.insert(virt_lines, virt_chunks)
   end
 
-  -- Clear any existing virtual lines.
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-
-  -- Attach the virtual lines to the buffer at the current position.
   vim.api.nvim_buf_set_extmark(0, ns, start_line, start_col, {
     virt_lines = virt_lines,
     virt_lines_above = false,
@@ -102,12 +99,26 @@ local function hightlight_label_for_jump_multiline(matches, text)
   return labels, ns
 end
 
+local function split_into_lines(str)
+  local lines = {}
+  -- This pattern captures each line including empty lines
+  for line in (str .. '\n'):gmatch '(.-)\n' do
+    table.insert(lines, line)
+  end
+  return lines
+end
+
+local function put_lines_as_is(str)
+  local lines = split_into_lines(str)
+  vim.api.nvim_put(lines, 'c', false, true)
+end
+
 local function jump_from_user_choice(labels, ns, text)
   local choice = vim.fn.nr2char(vim.fn.getchar())
   local pos = labels[choice]
   if pos then
     local partial = string.sub(text, 1, pos)
-    vim.api.nvim_feedkeys(partial, 'n', false)
+    put_lines_as_is(partial)
   end
   vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
 end
