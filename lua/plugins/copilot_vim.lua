@@ -1,19 +1,41 @@
-local map = vim.keymap.set
-
 ---@class matchInfo
 ---@field col number
 ---@field label string
 ---@field abs number
----
+
 ---@class matchesByRow
 ---@field number table<number, matchInfo>
----
+
 ---@class labels table<string, number>
+
+---@param labels labels
+---@param ns number
+---@param text string
+local function jump_from_user_choice(labels, ns, text)
+  local function split_into_lines(str)
+    local lines = {}
+    for line in (str .. '\n'):gmatch '(.-)\n' do -- This pattern captures each line including empty lines
+      table.insert(lines, line)
+    end
+    return lines
+  end
+  local function put_lines_as_is(str)
+    local lines = split_into_lines(str)
+    vim.api.nvim_put(lines, 'c', false, true)
+  end
+
+  local choice = vim.fn.nr2char(vim.fn.getchar())
+  local pos = labels[choice]
+  if pos then
+    local partial = string.sub(text, 1, pos)
+    put_lines_as_is(partial)
+  end
+  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
+end
+
 ---@param text string
 ---@param char string
 ---@return table<number>
----
----
 local parse_suggestion = function(text, char)
   local matches = {}
   local lower_text = string.lower(text)
@@ -91,29 +113,6 @@ local function hightlight_label_for_jump_multiline(matches_by_row, text, ns)
   vim.cmd [[Copilot disable]]
 end
 
-local function split_into_lines(str)
-  local lines = {}
-  for line in (str .. '\n'):gmatch '(.-)\n' do -- This pattern captures each line including empty lines
-    table.insert(lines, line)
-  end
-  return lines
-end
-
-local function put_lines_as_is(str)
-  local lines = split_into_lines(str)
-  vim.api.nvim_put(lines, 'c', false, true)
-end
-
-local function jump_from_user_choice(labels, ns, text)
-  local choice = vim.fn.nr2char(vim.fn.getchar())
-  local pos = labels[choice]
-  if pos then
-    local partial = string.sub(text, 1, pos)
-    put_lines_as_is(partial)
-  end
-  vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-end
-
 ---@param text string
 ---@param matches table<number>
 ---@return labels, matchesByRow
@@ -142,19 +141,15 @@ local function copilot_hop()
 
   local matches = parse_suggestion(text, char)
   if #matches == 0 then
-    return
-  end
-
-  if #matches == 1 then
+  elseif #matches == 1 then
     local partial = string.sub(text, 1, matches[1])
     vim.api.nvim_feedkeys(partial, 'n', false)
-    return
+  else
+    local labels, matches_by_row = transform_abs_match(text, matches)
+    hightlight_label_for_jump_multiline(matches, text, ns)
+    jump_from_user_choice(labels, ns, text)
+    vim.cmd [[Copilot enable]]
   end
-
-  local labels, matches_by_row = transform_abs_match(text, matches)
-  hightlight_label_for_jump_multiline(matches, text, ns)
-  jump_from_user_choice(labels, ns, text)
-  vim.cmd [[Copilot enable]]
 end
 
 return {
@@ -199,6 +194,7 @@ return {
       vim.api.nvim_feedkeys(res, 'n', false)
     end
 
+    local map = vim.keymap.set
     map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
     map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
