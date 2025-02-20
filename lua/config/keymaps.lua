@@ -94,8 +94,8 @@ end
 local map = vim.keymap.set
 map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-map('i', '<M-;>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+map('i', '<M-l>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+map('i', '<M-Down>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 
 -- =================== Extmarks ===================
