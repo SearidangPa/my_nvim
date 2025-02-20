@@ -81,6 +81,8 @@ return {
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
+        git_bcommits = { theme = 'ivy' },
+        git_commits = { theme = 'ivy' },
       },
       defaults = {
         file_ignore_patterns = {
