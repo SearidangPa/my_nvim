@@ -51,18 +51,17 @@ return {
     map('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     map('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
     map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
-    map('n', '<leader>sc', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
+    map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
 
     -- have not achieved muscle memory for these yet
     map('n', '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map('n', '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch [L]ast commits' })
     map('n', '<leader>sr', builtin.git_bcommits, { desc = '[S]earch [R]ecent commits on this branch' })
+    map('n', '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
 
     -- trying out
     map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
     map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-
-    -- useless?
     map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
     local opts = {
