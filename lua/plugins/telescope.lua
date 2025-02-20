@@ -19,18 +19,17 @@ return {
     local builtin = require 'telescope.builtin'
     local map = vim.keymap.set
 
-    map('n', '<leader>s/', function()
-      builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-        winblend = 10,
-        previewer = false,
-      })
-    end, { desc = '[/] Fuzzily search in current buffer' })
-
     map('n', '<leader>en', function()
       builtin.find_files {
         cwd = vim.fn.stdpath 'config',
       }
     end, { desc = '[E]dit [N]vim config' })
+
+    map('n', '<leader>ed', function()
+      builtin.find_files {
+        cwd = '~/Documents/drive/',
+      }
+    end, { desc = '[E]dit [P]lugins' })
 
     map('n', '<leader>ep', function()
       builtin.find_files {
@@ -44,6 +43,7 @@ return {
       }
     end, { desc = '[S]earch Plugin by [G]rep' })
 
+    map('n', '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
     map('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     map('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
@@ -68,6 +68,7 @@ return {
 
     local opts = {
       pickers = {
+        current_buffer_fuzzy_find = { theme = 'ivy' },
         help_tags = { theme = 'ivy' },
         find_files = { theme = 'ivy', hidden = true },
         live_grep = { theme = 'ivy' },
