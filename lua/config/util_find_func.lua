@@ -73,6 +73,9 @@ end
 
 
 
+---@param bufnr number
+---@param line number
+---@return TSNode|nil
 local function nearest_function_at_line(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
@@ -110,6 +113,7 @@ function Nearest_func_name()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
   local func_node = nearest_function_at_line(bufnr, line)
+  assert(func_node, 'No function found')
   for child in func_node:iter_children() do
       if child:type() == 'identifier' or child:type() == 'name' then
           return vim.treesitter.get_node_text(child, bufnr)
@@ -122,46 +126,16 @@ vim.api.nvim_create_user_command('NearestFuncName', function()
   print("Nearest func name: " .. func_name)
 end, {})
 
-local function yank_function()
+---@return TSNode
+function Nearest_func_node()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
   local func_node = nearest_function_at_line(bufnr, line)
   assert(func_node, 'No function found')
-  local func_text = vim.treesitter.get_node_text(func_node, bufnr)
-  vim.fn.setreg('*', func_text)
-  for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'name' then
-      local func_name =vim.treesitter.get_node_text(child, bufnr)
-      print("Yanked function: " .. func_name)
-      break
-    end
-  end
+  return func_node
 end
 
-vim.api.nvim_create_user_command('YankFunction', yank_function, {})
-vim.keymap.set('n', 'yf', yank_function, { desc = 'Yank nearest function' })
-
-local function visual_function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local line = cursor_pos[1] - 1
-  local func_node = nearest_function_at_line(bufnr, line)
-  if func_node then
-    local start_row, start_col, end_row, end_col = func_node:range()
-    vim.cmd('normal! v')
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-    vim.cmd('normal! o')
-    vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
-  end
-end
-
-vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
-vim.keymap.set('n', 'vf', visual_function, { desc = 'Visual nearest function' })
-
-
-vim.api.nvim_create_user_command('VisualFunction', visual_function, {})
-vim.keymap.set('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 
 
 

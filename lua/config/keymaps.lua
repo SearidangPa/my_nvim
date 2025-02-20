@@ -24,6 +24,35 @@ function RenameAndLowercase()
   vim.lsp.buf.rename(lowercase_word)
 end
 
+local function yank_function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local func_node = Nearest_func_node()
+  local func_text = vim.treesitter.get_node_text(func_node, bufnr)
+  vim.fn.setreg('*', func_text)
+  for child in func_node:iter_children() do
+    if child:type() == 'identifier' or child:type() == 'name' then
+      local func_name = vim.treesitter.get_node_text(child, bufnr)
+      print('Yanked function: ' .. func_name)
+      break
+    end
+  end
+end
+
+local function visual_function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local func_node = Nearest_func_node()
+  local start_row, start_col, end_row, end_col = func_node:range()
+  vim.cmd 'normal! v'
+  vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+  vim.cmd 'normal! o'
+  vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
+end
+
+local function delete_function()
+  visual_function()
+  vim.cmd 'normal! d'
+end
+
 -- =================== Copilot ===================
 local function accept()
   local accept = vim.fn['copilot#Accept']
@@ -69,6 +98,11 @@ map('i', '<C-;>', accept_line_with_indent, { expr = true, silent = true, desc = 
 map('i', '<M-;>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 
+-- =================== Extmarks ===================
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
+vim.api.nvim_create_user_command('ClearExtmarks', function()
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end, { nargs = 0 })
 -- =================== Window Navigation ===================
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
@@ -115,10 +149,8 @@ map('n', '<leader>tck', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]o
 
 -- =================== Navigation ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
-
-map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
-vim.api.nvim_create_user_command('ClearExtmarks', function()
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-end, { nargs = 0 })
+map('n', 'yf', yank_function, { desc = 'Yank nearest function' })
+map('n', 'vf', visual_function, { desc = 'Visual nearest function' })
+map('n', 'df', delete_function, { desc = 'Delete nearest function' })
 
 return {}
