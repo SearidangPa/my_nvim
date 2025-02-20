@@ -59,8 +59,12 @@ return {
     map('n', '<leader>sr', builtin.git_bcommits, { desc = '[S]earch [R]ecent commits on this branch' })
     map('n', '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
 
+    -- search current buffer with current word
+    map('n', '<leader>st', function()
+      builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' }
+    end, { desc = '[S]earch [T]his word' })
+
     -- trying out
-    map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
     map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
