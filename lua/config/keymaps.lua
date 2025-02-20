@@ -149,8 +149,8 @@ map('n', '<leader>tck', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]o
 
 -- =================== Navigation ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
-map('n', 'yf', yank_function, { desc = 'Yank nearest function' })
-map('n', 'vf', visual_function, { desc = 'Visual nearest function' })
-map('n', 'df', delete_function, { desc = 'Delete nearest function' })
+map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
+map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
+map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
 return {}
