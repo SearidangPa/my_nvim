@@ -81,6 +81,7 @@ return {
         lsp_document_symbols = { theme = 'ivy' },
         git_bcommits = { theme = 'ivy' },
         git_commits = { theme = 'ivy' },
+        git_bcommits_range = { theme = 'ivy' },
       },
       defaults = {
         file_ignore_patterns = {
