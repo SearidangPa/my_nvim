@@ -64,7 +64,6 @@ return {
 
     -- useless?
     map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
-    map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
 
     local opts = {
       pickers = {
