@@ -133,4 +133,5 @@ map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
+vim.keymap.set('x', '<leader>p', [["_dP]])
 return {}

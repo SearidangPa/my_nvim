@@ -1,6 +1,10 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 
+function R(name)
+  require('plenary.reload').reload_module(name)
+end
+
 vim.g.have_nerd_font = true
 vim.opt.number = true
 vim.opt.relativenumber = true
