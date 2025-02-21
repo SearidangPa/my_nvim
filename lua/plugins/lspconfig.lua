@@ -33,7 +33,6 @@ local function lsp_attach_keybind()
           desc = 'LSP: ' .. desc,
         })
       end
-      map('i', '<C-h>', vim.lsp.buf.definition, 'Show signature help')
       map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
       map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
       map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
