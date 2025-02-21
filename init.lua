@@ -1,10 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 
-function R(name)
-  require('plenary.reload').reload_module(name)
-end
-
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
