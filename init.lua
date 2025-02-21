@@ -1,39 +1,14 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
+vim.g.copilot_no_tab_map = true -- copilot plugin config
+vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
+require 'set_vim_opt'
+require 'lazy_init' -- must be before leader mappings
+require 'config_init'
 
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
 end)
-
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { 'Failed to clone lazy.nvim:\n', 'ErrorMsg' },
-      { out, 'WarningMsg' },
-      { '\nPress any key to exit...' },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
-end
-vim.opt.rtp:prepend(lazypath)
-
-require('lazy').setup {
-  spec = {
-    {
-      import = 'plugins',
-    },
-    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-    'tpope/vim-rhubarb', -- Fugitive-companion to interact with github
-    'mbbill/undotree', -- Visualize the undo tree
-    'MTDL9/vim-log-highlighting',
-  },
-  checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
-  change_detection = { enabled = true },
-}
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -42,22 +17,3 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
-
-vim.schedule(function()
-  local stdpath = vim.fn.stdpath 'config'
-  local config_path
-  if vim.fn.has 'win32' == 1 then
-    config_path = stdpath .. '\\lua\\config'
-  else
-    config_path = stdpath .. '/lua/config'
-  end
-
-  --@diagnostic disable-next-line: param-type-mismatch
-  local files = vim.fn.globpath(config_path, '*.lua', true, true)
-  for _, file in ipairs(files) do
-    local module = vim.fn.fnamemodify(file, ':t:r')
-    if not string.match(module, 'util_') then
-      require('config.' .. module)
-    end
-  end
-end)
