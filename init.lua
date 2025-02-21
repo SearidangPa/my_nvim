@@ -32,8 +32,16 @@ require('lazy').setup {
     'MTDL9/vim-log-highlighting',
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
-  change_detection = { enabled = false },
+  change_detection = { enabled = true },
 }
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Highlight when yanking (copying) text',
+  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
 
 vim.schedule(function()
   local stdpath = vim.fn.stdpath 'config'
@@ -52,20 +60,4 @@ vim.schedule(function()
       require('config.' .. module)
     end
   end
-
-  vim.api.nvim_create_autocmd('TextYankPost', {
-    desc = 'Highlight when yanking (copying) text',
-    group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
-    callback = function()
-      vim.highlight.on_yank()
-    end,
-  })
-
-  vim.api.nvim_create_user_command('Split4060', function()
-    local total = vim.o.columns
-    local left = math.floor(total * 0.4)
-    vim.cmd 'leftabove vsplit'
-    vim.cmd 'wincmd h'
-    vim.cmd('vertical resize ' .. left)
-  end, {})
 end)

@@ -93,6 +93,13 @@ vim.api.nvim_create_user_command('ClearExtmarks', function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end, { nargs = 0 })
 -- =================== Window Navigation ===================
+vim.api.nvim_create_user_command('Split4060', function()
+  local total = vim.o.columns
+  local left = math.floor(total * 0.4)
+  vim.cmd 'leftabove vsplit'
+  vim.cmd 'wincmd h'
+  vim.cmd('vertical resize ' .. left)
+end, {})
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
 map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the lower window')
