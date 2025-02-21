@@ -15,7 +15,11 @@ vim.opt.undofile = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
+
+--- === Live Preview ===
 vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
 
 -- copilot plugin config
 vim.g.copilot_no_tab_map = true
