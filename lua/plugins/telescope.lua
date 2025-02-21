@@ -18,53 +18,56 @@ return {
   config = function()
     local builtin = require 'telescope.builtin'
     local map = vim.keymap.set
+    local map_modes = { 'n', 'v' }
 
-    map('n', '<leader>en', function()
+    map(map_modes, '<leader>en', function()
       builtin.find_files {
         cwd = vim.fn.stdpath 'config',
       }
     end, { desc = '[E]dit [N]vim config' })
 
-    map('n', '<leader>ed', function()
+    map(map_modes, '<leader>ed', function()
       builtin.find_files {
         cwd = '~/Documents/drive/',
       }
     end, { desc = '[E]dit [P]lugins' })
 
-    map('n', '<leader>ep', function()
+    map(map_modes, '<leader>ep', function()
       builtin.find_files {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end, { desc = '[E]dit [P]lugins' })
 
-    map('n', '<localleader>sg', function()
+    map(map_modes, '<localleader>sg', function()
       builtin.live_grep {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end, { desc = '[S]earch Plugin by [G]rep' })
 
-    map('n', '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
-    map('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
-    map('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    map('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-    map('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
-    map('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+    map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+    map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
+    map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+    map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+    map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
+    map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
+    map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
+    map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
 
     -- have not achieved muscle memory for these yet
-    map('n', '<leader>sr', builtin.oldfiles, { desc = '[S]earch old [R]ecent files' })
-    map('n', '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
-    map('n', '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
-    map('n', '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
+    map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
+    map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch [L]ast commits' })
+    map(map_modes, '<leader>sr', builtin.git_bcommits, { desc = '[S]earch [R]ecent commits on this branch' })
+    map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
+
+    -- search current buffer with current word
+    map(map_modes, '<leader>st', function()
+      builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' }
+    end, { desc = '[S]earch [T]his word' })
 
     -- trying out
-    map('n', '<leader>st', builtin.treesitter, { desc = '[S]earch [T]reesitter' })
-    map('n', '<leader>sc', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
-    map('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-    map('n', '<leader>sl', builtin.reloader, { desc = '[S]earch [L]oader' })
-
-    -- useless?
-    map('n', '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
-    map('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
+    map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
+    map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
     local opts = {
       pickers = {
@@ -81,6 +84,9 @@ return {
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
+        git_bcommits = { theme = 'ivy' },
+        git_commits = { theme = 'ivy' },
+        git_bcommits_range = { theme = 'ivy' },
       },
       defaults = {
         file_ignore_patterns = {
