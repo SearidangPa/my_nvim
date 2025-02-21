@@ -18,13 +18,9 @@ return {
   config = function()
     local builtin = require 'telescope.builtin'
     local map = vim.keymap.set
-<<<<<<< Updated upstream
     local map_modes = { 'n', 'v' }
 
-    map(map_modes, '<leader>en', function()
-=======
     local function find_files(opts)
->>>>>>> Stashed changes
       builtin.find_files {
         cwd = opts.cwd,
       }
@@ -33,24 +29,8 @@ return {
       find_files {
         cwd = vim.fn.stdpath 'config',
       }
-<<<<<<< Updated upstream
-    end, { desc = '[E]dit [N]vim config' })
-
-    map(map_modes, '<leader>ed', function()
-      builtin.find_files {
-        cwd = '~/Documents/drive/',
-      }
-    end, { desc = '[E]dit [P]lugins' })
-
-    map(map_modes, '<leader>ep', function()
-      builtin.find_files {
-        cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
-      }
-    end, { desc = '[E]dit [P]lugins' })
-
-    map(map_modes, '<localleader>sg', function()
-=======
     end
+
     local function find_files_plugins()
       find_files {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
@@ -62,16 +42,15 @@ return {
       }
     end
     local function grep_plugins()
->>>>>>> Stashed changes
       builtin.live_grep {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end
 
-    map('n', '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
-    map('n', '<leader>ed', find_files_drive, { desc = '[E]dit [P]lugins' })
-    map('n', '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
-    map('n', '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
+    map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
+    map(map_modes, '<leader>ed', find_files_drive, { desc = '[E]dit [P]lugins' })
+    map(map_modes, '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
+    map(map_modes, '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
 
     map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
     map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
