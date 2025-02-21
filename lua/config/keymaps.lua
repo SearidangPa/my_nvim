@@ -43,27 +43,6 @@ local function delete_function()
   vim.cmd 'normal! d'
 end
 
----================== Quickfix ===================
-local function toggle_quickfix()
-  if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
-    vim.cmd 'cclose'
-  else
-    vim.cmd 'copen'
-  end
-end
-
--- Quickfix navigation
-map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
-map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
-map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-
--- Quickfix control
-map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
-map('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
-map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
-map('n', '<leader>qr', vim.diagnostic.reset, { desc = 'diagnostics [r]eset' })
-
 -- =================== Copilot ===================
 local function accept()
   local accept = vim.fn['copilot#Accept']
