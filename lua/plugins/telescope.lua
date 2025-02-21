@@ -46,32 +46,38 @@ return {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end
+    local function search_this_word()
+      builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' }
+    end
 
-    map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
+    -- custom
     map(map_modes, '<leader>ed', find_files_drive, { desc = '[E]dit [P]lugins' })
+
+    -- ci/cd haha
+    map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
     map(map_modes, '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
     map(map_modes, '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
 
-    map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+    -- help
     map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+
+    -- jumping around
+    map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
-    map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
-    map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
 
-    -- have not achieved muscle memory for these yet
+    map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
+    map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
+    map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
+
+    -- git
+    map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
+    map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch [L]ast commits' })
     map(map_modes, '<leader>sr', builtin.git_bcommits, { desc = '[S]earch [R]ecent commits on this branch' })
-    map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
-
-    -- search current buffer with current word
-    map(map_modes, '<leader>st', function()
-      builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' }
-    end, { desc = '[S]earch [T]his word' })
 
     -- trying out
     map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -92,6 +98,7 @@ return {
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
+        lsp_incoming_calls = { theme = 'ivy' },
         git_bcommits = { theme = 'ivy' },
         git_commits = { theme = 'ivy' },
         git_bcommits_range = { theme = 'ivy' },
