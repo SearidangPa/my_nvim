@@ -73,13 +73,13 @@ end
 -- Quickfix navigation
 map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
-map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 
 -- Quickfix window controls
-map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
+map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 map('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
 map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
 
---- LSP References
+--- Quickfix load
+map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
 map('n', '<leader>qr', lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
