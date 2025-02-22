@@ -140,5 +140,20 @@ map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
+-- === Remap ===
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
+vim.keymap.set('n', 'J', 'mzJ`z') -- join line
+vim.keymap.set('n', 'n', 'nzzzv')
+
+vim.keymap.set('n', '<C-u>', '<C-u>zz')
+vim.keymap.set('n', '<C-d>', '<C-d>zz')
+
 vim.keymap.set('x', '<leader>p', [["_dP]])
+vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
+vim.keymap.set('n', '<leader>Y', [["+Y]])
+
+vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
+vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
+vim.keymap.set('n', '<leader>gs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 return {}

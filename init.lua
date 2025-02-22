@@ -11,7 +11,6 @@ vim.schedule(function()
 end)
 
 local yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
-
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = yank_group,
