@@ -3,8 +3,8 @@ vim.g.maplocalleader = ','
 vim.g.copilot_no_tab_map = true -- copilot plugin config
 vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
 require 'set_vim_opt'
-require 'lazy_init' -- must be before leader mappings
-require 'config_init'
+require 'init_lazy' -- must be before leader mappings
+require 'init_config'
 
 vim.schedule(function()
   vim.opt.clipboard = 'unnamedplus'
