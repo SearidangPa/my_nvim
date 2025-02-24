@@ -164,9 +164,14 @@ map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
 map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>gc', function()
   require 'config.git_flow'
-  Git_commit_with_message_prompt(function()
+  local push_func = function()
     vim.cmd [[G push]]
-  end)
+  end
+  local commit_func = function(commit_msg, push_func)
+    vim.cmd('G commit -m "' .. commit_msg .. '"')
+    push_func()
+  end
+  Git_commit_with_message_prompt(commit_func, push_func)
 end, map_opt '[G]it [C]ommit and push')
 
 return {}

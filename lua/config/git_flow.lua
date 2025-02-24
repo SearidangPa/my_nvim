@@ -37,9 +37,11 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
-local function perform_commit(on_success_cb)
+---@param commit_msg_local string
+---@param on_success_cb function
+local function perform_commit_with_cb(commit_msg_local, on_success_cb)
   ---@diagnostic disable-next-line: undefined-field
-  local cmd = 'git commit -m "' .. commit_msg .. '"'
+  local cmd = 'git commit -m "' .. commit_msg_local .. '"'
   Start_job {
     cmd = cmd,
     on_success_cb = on_success_cb,
@@ -55,7 +57,7 @@ local function git_add_all(on_success_cb)
   }
 end
 
-local function git_push()
+local function perform_push()
   local commit_format_notification = [[Push successfully
 Commit: %s]]
 
@@ -68,7 +70,7 @@ Commit: %s]]
   }
 end
 
-local function handle_choice(choice, on_success_cb)
+local function handle_choice(choice, perform_commit_func, perform_push_func)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
     return
@@ -77,7 +79,7 @@ local function handle_choice(choice, on_success_cb)
   commit_msg = choice
 
   if Contains(default_no_more_input, choice) then
-    perform_commit(on_success_cb)
+    perform_commit_func(commit_msg, perform_push_func)
     return
   end
 
@@ -86,7 +88,7 @@ local function handle_choice(choice, on_success_cb)
     default_value = string.format('%s: ', commit_msg),
     on_submit = function(value)
       commit_msg = value
-      perform_commit(on_success_cb)
+      perform_commit_func(commit_msg, perform_push_func)
     end,
   }
 
@@ -98,7 +100,7 @@ local function handle_choice(choice, on_success_cb)
   end)
 end
 
-function Git_commit_with_message_prompt(on_success_cb, perform_commit)
+function Git_commit_with_message_prompt(perform_commit_func, perform_push_func)
   local opts = {
     prompt = 'Select suggested commit message:',
     format_item = function(item)
@@ -107,15 +109,13 @@ function Git_commit_with_message_prompt(on_success_cb, perform_commit)
   }
 
   vim.ui.select(choice_options, opts, function(choice)
-    handle_choice(choice, on_success_cb)
+    handle_choice(choice, perform_commit_func, perform_push_func)
   end)
 end
 
 local function push_add_all()
   git_add_all(function()
-    Git_commit_with_message_prompt(function()
-      git_push()
-    end, perform_commit)
+    Git_commit_with_message_prompt(perform_commit_with_cb, perform_push)
   end)
 end
 
