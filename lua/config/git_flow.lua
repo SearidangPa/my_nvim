@@ -10,14 +10,12 @@ local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
   '',
-  '====================',
   'Done with what I set out to do',
 }
 
 local item_options = {
   'Save progress',
   'Checkpoint',
-  'Half progress',
   'Refinement',
 }
 
