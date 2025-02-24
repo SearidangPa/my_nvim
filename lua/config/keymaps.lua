@@ -1,4 +1,4 @@
-local map = vim.keymap.set
+local map = map
 local function map_opt(desc)
   return { noremap = true, silent = true, desc = desc }
 end
@@ -141,37 +141,23 @@ map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
 -- === Remap ===
-vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
-vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
-vim.keymap.set('n', 'J', 'mzJ`z') -- join line
-vim.keymap.set('n', 'n', 'nzzzv')
+map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
+map('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
+map('n', 'J', 'mzJ`z') -- join line
+map('n', 'n', 'nzzzv')
 
-vim.keymap.set('n', '<C-u>', '<C-u>zz')
-vim.keymap.set('n', '<C-d>', '<C-d>zz')
+map('n', '<C-u>', '<C-u>zz')
+map('n', '<C-d>', '<C-d>zz')
 
-vim.keymap.set('x', '<leader>p', [["_dP]])
-vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
-vim.keymap.set('n', '<leader>Y', [["pY]])
-vim.keymap.set('n', '<leader>P', [["pp]])
+map('x', '<leader>p', [["_dP]])
+map({ 'n', 'v' }, '<leader>y', [["+y]])
+map('n', '<leader>Y', [["pY]])
+map('n', '<leader>P', [["pp]])
 
-vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
-vim.keymap.set('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
-vim.keymap.set('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
-
----@return string
-local function get_visual_selection()
-  local start_line = vim.fn.line "'<"
-  local start_col = vim.fn.col "'<"
-  local end_col = vim.fn.col "'>"
-  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)
-  return lines[1]:sub(start_col, end_col)
-end
-
-vim.keymap.set('v', '<leader>vs', function()
-  local visual_selection = get_visual_selection()
-  vim.cmd(string.format(':%%s/%s/%s/gc<Left><Left><Left>', visual_selection, visual_selection))
-end, map_opt 'replace word selected')
+map('n', '<C-k>', '<cmd>cnext<CR>zz')
+map('n', '<C-j>', '<cmd>cprev<CR>zz')
+map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
+map('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
 
 -- === Git ===
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
