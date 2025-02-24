@@ -43,7 +43,6 @@ function Highlight_Line_With_Treesitter(line, pos)
   return result, line_pos
 end
 
-local map = vim.keymap.set
 local hl = vim.api.nvim_get_hl(0, { name = 'Folded' })
 hl.bg = vim.api.nvim_get_hl(0, { name = 'StatusLine' }).bg
 vim.api.nvim_set_hl(0, 'Folded', hl)
@@ -154,7 +153,6 @@ local function fold_err()
   Fold_err_if_node(query, root, bufnr)
 end
 
-vim.api.nvim_create_user_command('FoldErr', fold_err, {})
 function Fold_switch()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
@@ -253,25 +251,10 @@ vim.api.nvim_create_user_command('FoldComm', Fold_comm, {})
 vim.api.nvim_create_user_command('FoldFunc', Fold_Func, {})
 vim.api.nvim_create_user_command('FoldTypeDecl', Fold_Type_Decl, {})
 vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
-
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'go',
-  callback = function()
-    vim.api.nvim_create_user_command('FoldShortVarDecl', Fold_short_var_decl, {})
-    map('n', '<leader>fv', Fold_short_var_decl, { desc = '[F]old [V]ariable declaration' })
-  end,
-})
-
+vim.api.nvim_create_user_command('FoldShortVarDecl', Fold_short_var_decl, {})
+vim.api.nvim_create_user_command('FoldErr', fold_err, {})
+vim.api.nvim_create_user_command('FoldErrIfNode', Fold_err_if_node, {})
 vim.api.nvim_create_user_command('FoldCase', function()
   Fold_switch()
   Fold_comm()
 end, {})
-
--- ============= keymaps =============
-map('n', '<leader>fs', Fold_switch, { desc = '[F]old [S]witch' })
-map('n', '<leader>fc', Fold_comm, { desc = '[F]old [C]ommunication' })
-map('n', '<leader>fi', Fold_if, { desc = '[F]old [I]f' })
-map('n', '<leader>fr', Fold_return, { desc = '[F]old [R]eturn' })
-map('n', '<leader>fa', Fold_all, { desc = '[F]old [A]ll' })
-map('n', '<leader>fe', Fold_err_if_node, { desc = '[F]old [E]rror block' })
-map('n', '<leader>ff', Fold_Func, { desc = '[F]old [F]unction' })
