@@ -9,6 +9,7 @@ local f = ls.function_node
 local t = ls.text_node
 local fmta = require('luasnip.extras.fmt').fmta
 
+--- === snip if ===
 if vim.fn.has 'win' == 1 then
   ls.add_snippets('go', {
     s(

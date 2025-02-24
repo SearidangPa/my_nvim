@@ -8,12 +8,12 @@ ls.add_snippets('markdown', {
     fmt(
       [[
     <details\>
-      <summary>{summ}</summary>
+      <summary>{sum}</summary>
       {finish}
     </details>
     ]],
       {
-        summ = i(1, 'Summary'),
+        sum = i(1, 'Summary'),
         finish = i(0),
       }
     )
