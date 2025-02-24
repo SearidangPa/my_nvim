@@ -14,3 +14,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+if vim.o.background == 'light' then
+  vim.cmd.colorscheme 'catppuccin-latte'
+else
+  vim.cmd.colorscheme 'rose-pine-moon'
+end
