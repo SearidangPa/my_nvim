@@ -178,21 +178,20 @@ map('n', '<leader>gc', function()
 end, map_opt '[G]it [C]ommit and push')
 
 local tr = require 'trouble'
-vim.keymap.set('n', ']d', function()
+map('n', ']d', function()
   ---@diagnostic disable-next-line: missing-fields
   tr.next {}
   ---@diagnostic disable-next-line: missing-fields
   tr.jump {}
 end, { silent = true, noremap = true, desc = 'Go to next trouble item' })
 
-vim.keymap.set('n', '[d', function()
+map('n', '[d', function()
   tr.prev {}
   tr.jump {}
 end, { silent = true, noremap = true, desc = 'Go to previous trouble item' })
 
-vim.keymap.set('n', '<leader>tq', function()
-  tr.close {}
-end, { silent = true, noremap = true, desc = 'Close trouble' })
+map('n', '<leader>tq', tr.close, map_opt 'Close trouble')
+map('n', '<leader>to', tr.open, map_opt 'Open trouble')
 
 local open_with_trouble = require('trouble.sources.telescope').open
 local telescope = require 'telescope'
