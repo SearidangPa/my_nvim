@@ -6,6 +6,8 @@ require 'init_opt'
 require 'init_lazy' -- must be before leader mappings
 require 'init_config'
 
+vim.treesitter.language.register('bash', 'zsh') -- ducktape solution because there is no treesitter support for zsh
+
 local yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',

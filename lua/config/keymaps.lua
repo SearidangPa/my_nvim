@@ -163,7 +163,6 @@ map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
 map('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
 
 -- === Git ===
-vim.treesitter.language.register('bash', 'zsh')
 
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
 map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
