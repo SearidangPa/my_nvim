@@ -38,8 +38,7 @@ local popup_option = {
 }
 
 ---@param commit_msg_local string
----@param on_success_cb function
-local function perform_commit_with_cb(commit_msg_local, on_success_cb)
+local function perform_commit_with_cb(commit_msg_local)
   local function perform_push()
     local commit_format_notification = [[Push successfully
 Commit: %s]]

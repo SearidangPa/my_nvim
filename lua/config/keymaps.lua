@@ -170,7 +170,7 @@ map('n', '<leader>gc', function()
       vim.cmd [[G push]]
     end)
   end
-  Git_commit_with_message_prompt(commit_func, push_func)
+  Git_commit_with_message_prompt(commit_func)
 end, map_opt '[G]it [C]ommit and push')
 
 return {}
