@@ -97,7 +97,7 @@ function Fold_captured_nodes_recursively(query)
   end
 end
 
-function Fold_err_if_node(query, root, bufnr)
+local function fold_err_if_node(query, root, bufnr)
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if not node then
       return
@@ -150,10 +150,10 @@ local function fold_err()
   local root = tree:root()
   assert(root, 'Tree root is nil')
 
-  Fold_err_if_node(query, root, bufnr)
+  fold_err_if_node(query, root, bufnr)
 end
 
-function Fold_switch()
+local function fold_switch()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -166,7 +166,7 @@ function Fold_switch()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_comm()
+local function fold_comm()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -178,7 +178,7 @@ function Fold_comm()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_Func()
+local function fold_Func()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -190,7 +190,7 @@ function Fold_Func()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_Type_Decl()
+local function fold_Type_Decl()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -201,7 +201,7 @@ function Fold_Type_Decl()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_if()
+local function fold_if()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -212,7 +212,7 @@ function Fold_if()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_short_var_decl()
+local function fold_short_var_decl()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -223,7 +223,7 @@ function Fold_short_var_decl()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_return()
+local function fold_return()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local query = vim.treesitter.query.parse(
     lang,
@@ -234,27 +234,27 @@ function Fold_return()
   Fold_captured_nodes_recursively(query)
 end
 
-function Fold_all()
-  Fold_switch()
-  Fold_comm()
-  Fold_if()
-  Fold_short_var_decl()
-  Fold_return()
-  Fold_Type_Decl()
+local function fold_all()
+  fold_switch()
+  fold_comm()
+  fold_if()
+  fold_short_var_decl()
+  fold_return()
+  fold_Type_Decl()
 end
 
 -- ============= User commands =============
-vim.api.nvim_create_user_command('FoldIf', Fold_if, {})
-vim.api.nvim_create_user_command('FoldReturn', Fold_return, {})
-vim.api.nvim_create_user_command('FoldSwitch', Fold_switch, {})
-vim.api.nvim_create_user_command('FoldComm', Fold_comm, {})
-vim.api.nvim_create_user_command('FoldFunc', Fold_Func, {})
-vim.api.nvim_create_user_command('FoldTypeDecl', Fold_Type_Decl, {})
-vim.api.nvim_create_user_command('FoldAll', Fold_all, {})
-vim.api.nvim_create_user_command('FoldShortVarDecl', Fold_short_var_decl, {})
+vim.api.nvim_create_user_command('FoldIf', fold_if, {})
+vim.api.nvim_create_user_command('FoldReturn', fold_return, {})
+vim.api.nvim_create_user_command('FoldSwitch', fold_switch, {})
+vim.api.nvim_create_user_command('FoldComm', fold_comm, {})
+vim.api.nvim_create_user_command('FoldFunc', fold_Func, {})
+vim.api.nvim_create_user_command('FoldTypeDecl', fold_Type_Decl, {})
+vim.api.nvim_create_user_command('FoldAll', fold_all, {})
+vim.api.nvim_create_user_command('FoldShortVarDecl', fold_short_var_decl, {})
 vim.api.nvim_create_user_command('FoldErr', fold_err, {})
-vim.api.nvim_create_user_command('FoldErrIfNode', Fold_err_if_node, {})
+vim.api.nvim_create_user_command('FoldErrIfNode', fold_err_if_node, {})
 vim.api.nvim_create_user_command('FoldCase', function()
-  Fold_switch()
-  Fold_comm()
+  fold_switch()
+  fold_comm()
 end, {})
