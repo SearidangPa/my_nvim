@@ -12,7 +12,7 @@ return {
     indent = { enable = true, disable = { 'ruby' } },
   },
   config = function()
-    require('nvim-treesitter.parsers').filetype_to_parsername.zsh = 'bash'
+    vim.treesitter.language.register('bash', 'zsh')
   end,
 
   -- There are additional nvim-treesitter modules that you can use to interact
