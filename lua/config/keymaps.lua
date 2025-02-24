@@ -151,13 +151,27 @@ vim.keymap.set('n', '<C-d>', '<C-d>zz')
 
 vim.keymap.set('x', '<leader>p', [["_dP]])
 vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]])
-vim.keymap.set('n', '<leader>Y', [["+Y]])
+vim.keymap.set('n', '<leader>Y', [["pY]])
+vim.keymap.set('n', '<leader>P', [["pp]])
 
 vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
-vim.keymap.set('n', '<localleader>ss', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-
+vim.keymap.set('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
 vim.keymap.set('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
+
+---@return string
+local function get_visual_selection()
+  local start_line = vim.fn.line "'<"
+  local start_col = vim.fn.col "'<"
+  local end_col = vim.fn.col "'>"
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, start_line, false)
+  return lines[1]:sub(start_col, end_col)
+end
+
+vim.keymap.set('v', '<leader>vs', function()
+  local visual_selection = get_visual_selection()
+  vim.cmd(string.format(':%%s/%s/%s/gc<Left><Left><Left>', visual_selection, visual_selection))
+end, map_opt 'replace word selected')
 
 -- === Git ===
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')

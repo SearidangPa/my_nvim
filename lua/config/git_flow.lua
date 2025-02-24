@@ -98,7 +98,7 @@ local function handle_choice(choice, on_success_cb)
   end)
 end
 
-local function git_commit_with_message_prompt(on_success_cb)
+function Git_commit_with_message_prompt(on_success_cb)
   local opts = {
     prompt = 'Select suggested commit message:',
     format_item = function(item)
@@ -113,7 +113,7 @@ end
 
 local function push_add_all()
   git_add_all(function()
-    git_commit_with_message_prompt(function()
+    Git_commit_with_message_prompt(function()
       git_push()
     end)
   end)
