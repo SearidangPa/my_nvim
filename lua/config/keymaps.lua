@@ -163,17 +163,12 @@ map('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current fi
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
 map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>gc', function()
-  vim.cmd [[Gwrite]]
   require 'config.git_flow'
-  require 'config.util_start_job'
-  local push_func = function()
-    Start_job 'G push'
-  end
   local commit_func = function(commit_msg, push_func)
-    Start_job {
-      cmd = 'G commit -m "' .. commit_msg .. '"',
-      on_success_cb = push_func,
-    }
+    vim.schedule(function()
+      vim.cmd('G commit -m "' .. commit_msg .. '"')
+      vim.cmd [[G push]]
+    end)
   end
   Git_commit_with_message_prompt(commit_func, push_func)
 end, map_opt '[G]it [C]ommit and push')
