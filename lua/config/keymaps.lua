@@ -157,8 +157,6 @@ map('n', '<localleader>P', [["pP]])
 map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 map('n', '<leader>dd', [["_dd]], map_opt '[D]elete into black hole')
 
-map('n', '<C-k>', '<cmd>cnext<CR>zz')
-map('n', '<C-j>', '<cmd>cprev<CR>zz')
 map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
 map('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
 
