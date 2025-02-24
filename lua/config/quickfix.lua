@@ -1,10 +1,8 @@
 local M = {}
 
 function M.lsp_references_to_quickfix(line, col)
-  if not line or not col then
-    print 'Line and column are required.'
-    return
-  end
+  assert(line, 'line is nil')
+  assert(col, 'col is nil')
 
   local params = {
     textDocument = vim.lsp.util.make_text_document_params(),
@@ -13,29 +11,28 @@ function M.lsp_references_to_quickfix(line, col)
   }
 
   vim.lsp.buf_request(0, 'textDocument/references', params, function(err, result, _, _)
-    if err or not result then
-      print 'No references found or an error occurred.'
-      return
-    end
+    assert(result, 'result is nil')
+    assert(not err, 'err is not nil')
 
     local qflist = {}
     for _, ref in ipairs(result) do
       local uri = ref.uri or ref.targetUri
-      if uri then
-        local filename = vim.uri_to_fname(uri)
-        if filename and not filename:match '_test%.go$' then
-          local range = ref.range or ref.targetSelectionRange
-          if range and range.start then
-            local ref_lnum = range.start.line + 1
-            local ref_col = range.start.character + 1
-            table.insert(qflist, {
-              filename = filename,
-              lnum = ref_lnum,
-              col = ref_col,
-              text = filename .. ':' .. ref_lnum,
-            })
-          end
-        end
+      assert(uri, 'URI is nil')
+
+      local filename = vim.uri_to_fname(uri)
+      if filename and not filename:match '_test%.go$' then
+        local range = ref.range or ref.targetSelectionRange
+        assert(range, 'range is nil')
+        assert(range.start, 'range.start is nil')
+
+        local ref_lnum = range.start.line + 1
+        local ref_col = range.start.character + 1
+        table.insert(qflist, {
+          filename = filename,
+          lnum = ref_lnum,
+          col = ref_col,
+          text = filename .. ':' .. ref_lnum,
+        })
       end
     end
 
