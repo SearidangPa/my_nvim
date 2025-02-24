@@ -37,12 +37,12 @@ local popup_option = {
   win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
 }
 
+local commit_format_notification = [[Push successfully
+Commit: %s]]
+
 ---@param commit_msg_local string
 local function perform_commit_with_cb(commit_msg_local)
   local function perform_push()
-    local commit_format_notification = [[Push successfully
-Commit: %s]]
-
     Start_job {
       cmd = 'git push',
       on_success_cb = function()
