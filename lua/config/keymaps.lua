@@ -155,7 +155,18 @@ vim.keymap.set('n', '<leader>Y', [["+Y]])
 
 vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
 vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
-vim.keymap.set('n', '<leader>gs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.keymap.set('n', '<localleader>ss', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 vim.keymap.set('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
+
+-- === Git ===
+map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
+map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
+map('n', '<leader>gc', function()
+  require 'config.git_flow'
+  Git_commit_with_message_prompt(function()
+    vim.cmd [[G push]]
+  end)
+end, map_opt '[G]it [C]ommit')
+
 return {}
