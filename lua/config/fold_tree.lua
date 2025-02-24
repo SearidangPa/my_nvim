@@ -1,7 +1,14 @@
 function Highlight_Line_With_Treesitter(line, pos)
+  assert(vim.treesitter, 'Treesitter is not available')
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  if not lang then
+    print 'Language not supported'
+    return vim.fn.foldtext()
+  end
   local parser = vim.treesitter.get_parser(0, lang)
+  assert(parser, 'Parser not found')
   local query = vim.treesitter.query.get(parser:lang(), 'highlights')
+  assert(query, 'Query not found')
 
   if query == nil then
     print 'No highlights query found'
