@@ -64,6 +64,13 @@ local function set_diagnostics_and_quickfix(output, ns)
   end
 end
 
+---@class opts
+---@field cmd string|table
+---@field silent boolean
+---@field ns number
+---@field on_success_cb function
+
+---@param opts opts
 Start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
