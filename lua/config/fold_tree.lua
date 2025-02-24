@@ -245,17 +245,19 @@ end
 
 -- ============= User commands =============
 local user_cmd = vim.api.nvim_create_user_command
-user_cmd('FoldIf', fold_if, {})
-user_cmd('FoldReturn', fold_return, {})
-user_cmd('FoldSwitch', fold_switch, {})
-user_cmd('FoldComm', fold_comm, {})
-user_cmd('FoldFunc', fold_Func, {})
-user_cmd('FoldTypeDecl', fold_Type_Decl, {})
-user_cmd('FoldAll', fold_all, {})
-user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
 user_cmd('FoldErr', fold_err, {})
-user_cmd('FoldErrIfNode', fold_err_if_node, {})
 user_cmd('FoldCase', function()
   fold_switch()
   fold_comm()
 end, {})
+
+user_cmd('FoldAll', fold_all, {})
+user_cmd('FoldFunc', fold_Func, {})
+
+user_cmd('FoldSwitch', fold_switch, {})
+user_cmd('FoldComm', fold_comm, {})
+
+user_cmd('FoldTypeDecl', fold_Type_Decl, {})
+user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
+user_cmd('FoldIf', fold_if, {})
+user_cmd('FoldReturn', fold_return, {})
