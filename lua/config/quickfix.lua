@@ -71,8 +71,8 @@ local function toggle_quickfix()
 end
 
 -- Quickfix navigation
-map('n', '<leader>qn', ':cnext<CR>', { desc = 'Next Quickfix item' })
-map('n', '<leader>qp', ':cprevious<CR>', { desc = 'Previous Quickfix item' })
+map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
+map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- Quickfix window controls
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
