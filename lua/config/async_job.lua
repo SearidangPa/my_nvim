@@ -34,7 +34,7 @@ vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = Start_job { cmd = cmd }
 end, {})
 
-local linter_ns = vim.api.nvim_create_namespace 'cloud_drive_linter'
+local linter_ns = vim.api.nvim_create_namespace 'linter'
 vim.api.nvim_create_user_command('MakeLint', function()
   local cmd
   if vim.fn.has 'win32' == 1 then
@@ -58,10 +58,7 @@ vim.api.nvim_create_user_command('ToggleErrors', function()
   toggle_float(errors)
 end, {})
 
-map('n', '<leader>to', ':ToggleOutput<CR>', { desc = '[T]oggle [O]utput for command' })
-map('n', '<leader>te', ':ToggleErrors<CR>', { desc = '[T]oggle [E]rrors for command' })
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
-map('n', '<leader>rm', ':messages<CR>', { desc = '[R]ead [M]essages' })
 
 return {}
