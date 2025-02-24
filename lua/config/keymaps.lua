@@ -150,7 +150,10 @@ map('n', '<C-u>', '<C-u>zz')
 map('n', '<C-d>', '<C-d>zz')
 
 map({ 'n', 'v' }, '<leader>y', [["+y]])
-map('n', '<leader>Y', [["pY]])
+map('n', '<localleader>Y', [["pY]])
+map('n', '<localleader>p', [["pp]])
+map('n', '<localleader>P', [["pP]])
+
 map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 map('n', '<leader>dd', [["_dd]], map_opt '[D]elete into black hole')
 
