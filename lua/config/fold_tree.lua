@@ -3,16 +3,16 @@ function Highlight_Line_With_Treesitter(line, pos)
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   if not lang then
     print 'Language not supported'
-    return vim.fn.foldtext()
+    return nil, 0
   end
+
   local parser = vim.treesitter.get_parser(0, lang)
   assert(parser, 'Parser not found')
   local query = vim.treesitter.query.get(parser:lang(), 'highlights')
-  assert(query, 'Query not found')
 
   if query == nil then
     print 'No highlights query found'
-    return vim.fn.foldtext()
+    return nil, 0
   end
 
   local tree = parser:parse({ pos - 1, pos })[1]
@@ -55,6 +55,9 @@ function HighlightedFoldtext()
   local line_count = end_pos - pos + 1
   local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
   local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
+  if not result then
+    return vim.fn.foldtext()
+  end
 
   table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
   if line_pos < #line then
