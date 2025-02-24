@@ -1,4 +1,4 @@
-local map = map
+local map = vim.keymap.set
 local function map_opt(desc)
   return { noremap = true, silent = true, desc = desc }
 end
