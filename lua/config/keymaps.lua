@@ -149,10 +149,10 @@ map('n', 'n', 'nzzzv')
 map('n', '<C-u>', '<C-u>zz')
 map('n', '<C-d>', '<C-d>zz')
 
-map('x', '<leader>p', [["_dP]])
 map({ 'n', 'v' }, '<leader>y', [["+y]])
 map('n', '<leader>Y', [["pY]])
-map('n', '<leader>P', [["pp]])
+map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
+map('n', '<leader>dd', [["_dd]], map_opt '[D]elete into black hole')
 
 map('n', '<C-k>', '<cmd>cnext<CR>zz')
 map('n', '<C-j>', '<cmd>cprev<CR>zz')
@@ -177,4 +177,31 @@ map('n', '<leader>gc', function()
   Git_commit_with_message_prompt(commit_func)
 end, map_opt '[G]it [C]ommit and push')
 
+local tr = require 'trouble'
+vim.keymap.set('n', ']d', function()
+  ---@diagnostic disable-next-line: missing-fields
+  tr.next {}
+  ---@diagnostic disable-next-line: missing-fields
+  tr.jump {}
+end, { silent = true, noremap = true, desc = 'Go to next trouble item' })
+
+vim.keymap.set('n', '[d', function()
+  tr.prev {}
+  tr.jump {}
+end, { silent = true, noremap = true, desc = 'Go to previous trouble item' })
+
+vim.keymap.set('n', '<leader>tq', function()
+  tr.close {}
+end, { silent = true, noremap = true, desc = 'Close trouble' })
+
+local open_with_trouble = require('trouble.sources.telescope').open
+local telescope = require 'telescope'
+telescope.setup {
+  defaults = {
+    mappings = {
+      i = { ['<c-t>'] = open_with_trouble },
+      n = { ['<c-t>'] = open_with_trouble },
+    },
+  },
+}
 return {}
