@@ -166,8 +166,10 @@ map('n', '<leader>gc', function()
   require 'config.git_flow'
   local commit_func = function(commit_msg, push_func)
     vim.schedule(function()
-      vim.cmd('G commit -m "' .. commit_msg .. '"')
-      vim.cmd [[G push]]
+      vim.cmd 'silent! Gwrite'
+      vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
+      vim.cmd 'silent! G push'
+      vim.cmd 'redraw!'
     end)
   end
   Git_commit_with_message_prompt(commit_func)
