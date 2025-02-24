@@ -206,4 +206,19 @@ telescope.setup {
     },
   },
 }
+
+-- === Quickfix navigation ===
+local quickfix = require 'config.quickfix'
+map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
+map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
+
+-- === Quickfix window controls ===
+map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+map('n', '<leader>qt', quickfix.toggle_quickfix, { desc = 'toggle diagnostic windows' })
+map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
+
+--- === Quickfix load ===
+map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
+map('n', '<leader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
 return {}

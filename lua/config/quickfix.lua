@@ -1,4 +1,6 @@
-local function lsp_references_to_quickfix(line, col)
+local M = {}
+
+function M.lsp_references_to_quickfix(line, col)
   if not line or not col then
     print 'Line and column are required.'
     return
@@ -41,7 +43,7 @@ local function lsp_references_to_quickfix(line, col)
   end)
 end
 
-local function lsp_references_nearest_function()
+function M.lsp_references_nearest_function()
   require 'config.util_find_func'
   local func_node = Nearest_func_node()
   assert(func_node, 'No function found')
@@ -56,13 +58,12 @@ local function lsp_references_nearest_function()
   local start_row, start_col = func_identifier:range()
   assert(start_row, 'start_row is nil')
   assert(start_col, 'start_col is nil')
-  lsp_references_to_quickfix(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
+  M.lsp_references_to_quickfix(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
 end
 
-vim.api.nvim_create_user_command('LspReferencesFunc', lsp_references_nearest_function, {})
-local map = vim.keymap.set
+vim.api.nvim_create_user_command('LspReferencesFunc', M.lsp_references_nearest_function, {})
 
-local function toggle_quickfix()
+function M.toggle_quickfix()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
     vim.cmd 'cclose'
   else
@@ -70,16 +71,4 @@ local function toggle_quickfix()
   end
 end
 
--- Quickfix navigation
-map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
-map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
-
--- Quickfix window controls
-map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<leader>qt', toggle_quickfix, { desc = 'toggle diagnostic windows' })
-map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
-
---- Quickfix load
-map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
-map('n', '<leader>qr', lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
+return M
