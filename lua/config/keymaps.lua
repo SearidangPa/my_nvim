@@ -167,9 +167,7 @@ map('n', '<leader>gc', function()
   local commit_func = function(commit_msg, push_func)
     vim.schedule(function()
       vim.cmd 'Gwrite'
-      vim.cmd 'redraw!'
-      vim.cmd('G commit -m "' .. commit_msg .. '"')
-      vim.cmd 'redraw!'
+      vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
       vim.cmd 'G push'
       vim.cmd 'redraw!'
     end)
