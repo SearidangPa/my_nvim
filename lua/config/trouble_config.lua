@@ -16,8 +16,13 @@ map('n', '[d', function()
   tr.jump {}
 end, { silent = true, noremap = true, desc = 'Go to previous trouble item' })
 
-map('n', '<leader>tq', tr.close, map_opt 'Close trouble')
-map('n', '<leader>to', tr.open, map_opt 'Open trouble')
+map('n', '<leader>tq', function()
+  tr.close {}
+end, map_opt 'Close trouble')
+
+map('n', '<leader>to', function()
+  tr.open {}
+end, map_opt 'Open trouble')
 
 local open_with_trouble = require('trouble.sources.telescope').open
 local telescope = require 'telescope'
