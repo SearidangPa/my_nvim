@@ -3,6 +3,7 @@ return {
   dependencies = {
     'nvim-telescope/telescope.nvim',
   },
+  opts = {},
   cmd = 'Trouble',
   keys = {
     {
