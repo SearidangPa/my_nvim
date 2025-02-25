@@ -143,7 +143,7 @@ map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 -- === Remap ===
 map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
 map('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
-map('n', 'J', 'mzJ`z') -- join line
+map('n', 'J', ':mzJ`z') -- join line
 map('n', 'n', 'nzzzv')
 
 map('n', '<C-u>', '<C-u>zz')
