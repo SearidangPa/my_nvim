@@ -41,7 +41,7 @@ local function lsp_attach_keybind()
       map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
       map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
       map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-      map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+      map('<localleader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
