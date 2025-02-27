@@ -183,7 +183,9 @@ map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
 map('n', '<leader>qc', function()
-  vim.cmd [[':cclose<CR>']]
+  if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
+    vim.cmd [[':cclose<CR>']]
+  end
   local tr = require 'trouble'
   tr.close {}
 end, { desc = 'Close Quickfix window' })
