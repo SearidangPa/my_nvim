@@ -182,13 +182,7 @@ map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
 map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
-map('n', '<leader>qc', function()
-  if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
-    vim.cmd [[':cclose<CR>']]
-  end
-  local tr = require 'trouble'
-  tr.close {}
-end, { desc = 'Close Quickfix window' })
+map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 
 map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
 map('n', '<leader>qt', quickfix.toggle_quickfix, { desc = 'toggle diagnostic windows' })
