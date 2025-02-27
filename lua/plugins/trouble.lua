@@ -7,9 +7,14 @@ return {
   cmd = 'Trouble',
   keys = {
     {
-      '<leader><leader>',
-      '<cmd>Trouble diagnostics toggle<cr>',
-      desc = '[x] Diagnostics',
+      '<leader>ts',
+      '<cmd>Trouble symbols toggle focus=false<cr>',
+      desc = '[T]oggle [S]ymbols',
+    },
+    {
+      '<leader>xq',
+      '<cmd>Trouble qflist toggle<cr>',
+      desc = 'Quickfix List (Trouble)',
     },
     {
       '<leader>xb',
@@ -17,9 +22,9 @@ return {
       desc = '[x] current [b]uffer',
     },
     {
-      '<leader>ts',
-      '<cmd>Trouble symbols toggle focus=false<cr>',
-      desc = '[T]oggle [S]ymbols',
+      '<leader>xd',
+      '<cmd>Trouble diagnostics toggle<cr>',
+      desc = '[x] Diagnostics',
     },
   },
 }
