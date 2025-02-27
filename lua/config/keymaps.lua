@@ -195,4 +195,11 @@ map('n', '<leader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
 
+-- nnoremap <leader>sc :enew<CR>:setlocal buftype=nofile bufhidden=hide noswapfile<CR>
+local function new_scratch_buffer()
+  vim.cmd [[':enew<CR>:setlocal buftype=nofile bufhidden=hide noswapfile<CR>']]
+end
+
+vim.api.nvim_create_user_command('NewScratchBuf', new_scratch_buffer, { desc = 'Start a scratch buffer' })
+
 return {}
