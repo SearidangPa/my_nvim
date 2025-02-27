@@ -63,7 +63,7 @@ return {
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
-    -- jumping around
+    -- === jumping around ===
     map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     map(map_modes, '<leader>si', builtin.lsp_incoming_calls, { desc = '[S]earch [I]ncoming calls' })
@@ -72,13 +72,13 @@ return {
     map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
+    map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
-    -- git
+    -- === git ===
     map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
     map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch [L]ast commits' })
-    map(map_modes, '<leader>sr', builtin.git_bcommits, { desc = '[S]earch [R]ecent commits on this branch' })
 
     -- trying out
     map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })

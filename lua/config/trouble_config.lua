@@ -17,11 +17,11 @@ map('n', '[d', function()
 end, { silent = true, noremap = true, desc = 'Go to previous trouble item' })
 
 map('n', '<leader>tq', function()
-  tr.close {}
+  tr.close 'my_trouble'
 end, map_opt 'Close trouble')
 
 map('n', '<leader>to', function()
-  tr.open {}
+  tr.open 'my_trouble'
 end, map_opt 'Open trouble')
 
 local open_with_trouble = require('trouble.sources.telescope').open
