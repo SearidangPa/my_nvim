@@ -5,6 +5,16 @@ return {
   },
   config = function()
     local copilot_hop = require 'copilot_hop'
-    copilot_hop.setup()
+
+    local trigger_key
+    if vim.fn.has 'win32' == 1 then
+      trigger_key = '<M-S>'
+    else
+      trigger_key = '<D-s>'
+    end
+
+    copilot_hop.setup {
+      trigger_key = trigger_key,
+    }
   end,
 }
