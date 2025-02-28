@@ -42,17 +42,17 @@ local function get_harpoon_filenames(opts)
   return list_names
 end
 
-local function get_harpoon_filenames_second_half()
-  return get_harpoon_filenames {
-    start_index = 4,
-    end_index = 6,
-  }
-end
+-- local function get_harpoon_filenames_second_half()
+--   return get_harpoon_filenames {
+--     start_index = 4,
+--     end_index = 4,
+--   }
+-- end
 
 local function get_harpoon_filenames_first_three()
   return get_harpoon_filenames {
     start_index = 1,
-    end_index = 3,
+    end_index = 4,
   }
 end
 
@@ -97,14 +97,8 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 3 } },
         lualine_x = { nearest_func_name_if_exists },
-        lualine_y = { get_harpoon_filenames_second_half },
-        lualine_z = {
-          {
-            'harpoon2',
-            indicators = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' },
-            active_indicators = { '[1]', '[2]', '[3]', '[4]', '[5]', '[6]', '[7]', '[8]', '[9]', '[10]' },
-          },
-        },
+        lualine_y = {},
+        lualine_z = {},
       },
       tabline = {
         lualine_a = {},

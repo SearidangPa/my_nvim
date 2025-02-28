@@ -73,6 +73,7 @@ return {
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
+    map(map_modes, '<leader>sp', ':Telescope harpoon marks<CR>', { desc = '[S]earch [P]ooned files' })
 
     -- === git ===
     map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
@@ -124,7 +125,7 @@ return {
     require('telescope').setup(opts)
     require('telescope').load_extension 'fzf'
     require('telescope').load_extension 'ui-select'
-
+    require('telescope').load_extension 'harpoon'
     require('config.telescope_multigrep').setup()
   end,
 }
