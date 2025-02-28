@@ -195,11 +195,22 @@ map('n', '<leader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
 
+--- === Scratch buffer ===
 local function new_scratch_buffer()
   vim.cmd 'enew'
   vim.cmd 'setlocal buftype=nofile bufhidden=hide noswapfile'
 end
-
 vim.api.nvim_create_user_command('NewBuf', new_scratch_buffer, { desc = 'Start a scratch buffer' })
+
+--- === logging ===
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
+  callback = function()
+    vim.keymap.set('n', '<leader>ll', 'olog.Printf("=====> %v\\n", ', {
+      buffer = true,
+      desc = 'Insert logging line',
+    })
+  end,
+})
 
 return {}
