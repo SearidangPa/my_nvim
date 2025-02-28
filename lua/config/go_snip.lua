@@ -283,3 +283,21 @@ ls.add_snippets('go', {
     )
   ),
 })
+
+ls.add_snippets('go', {
+  s(
+    'at', -- annotation test
+    fmta(
+      [[
+        tests <testPurpose>
+        setup: <setup>
+        assert that: <condition>
+      ]],
+      {
+        testPurpose = i(1, 'testPurpose'),
+        setup = i(2, 'setup'),
+        condition = i(3, 'condition'),
+      }
+    )
+  ),
+})
