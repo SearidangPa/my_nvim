@@ -115,7 +115,7 @@ function Nearest_func_name()
   local func_node = nearest_function_at_line(bufnr, line)
   assert(func_node, 'No function found')
   for child in func_node:iter_children() do
-      if child:type() == 'identifier' or child:type() == 'name' then
+      if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
           return vim.treesitter.get_node_text(child, bufnr)
       end
   end
