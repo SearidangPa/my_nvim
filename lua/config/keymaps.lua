@@ -212,5 +212,7 @@ vim.api.nvim_create_autocmd('FileType', {
     })
   end,
 })
-
+vim.keymap.set('n', '<Leader>nf', function()
+  require('neogen').generate()
+end, map_opt 'Generate a new annotation')
 return {}
