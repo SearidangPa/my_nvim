@@ -290,13 +290,13 @@ ls.add_snippets('go', {
     fmta(
       [[
         tests <testPurpose>
-        setup: <setup>
-        assert that: <condition>
+        // setup: <setup>
+        // assert that: <condition>
       ]],
       {
-        testPurpose = i(1, 'testPurpose'),
-        setup = i(2, 'setup'),
-        condition = i(3, 'condition'),
+        testPurpose = i(1),
+        setup = i(2),
+        condition = i(3),
       }
     )
   ),
