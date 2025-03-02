@@ -36,25 +36,23 @@ return {
     require('dapui').setup {
       layouts = {
         {
-          -- You can change the order of elements in the sidebar
           elements = {
-            -- Provide IDs as strings or tables with "id" and "size" keys
             {
               id = 'scopes',
-              size = 0.5, -- Can be float or integer > 1
+              size = 0.5,
             },
             { id = 'breakpoints', size = 0.1 },
             { id = 'stacks', size = 0.4 },
           },
           size = 40,
-          position = 'left', -- Can be "left" or "right"
+          position = 'left',
         },
         {
           elements = {
             'repl',
           },
           size = 10,
-          position = 'bottom', -- Can be "bottom" or "top"
+          position = 'bottom',
         },
       },
     }
