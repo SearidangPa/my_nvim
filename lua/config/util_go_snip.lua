@@ -135,6 +135,9 @@ local function go_result_type(info)
       break
     end
   end
+  if not function_node then
+    return { t 'nil' }
+  end
 
   local query = vim.treesitter.query.get('go', 'LuaSnip_Result')
 

@@ -67,8 +67,6 @@ else
   })
 end
 
--- E5108: Error executing lua: ...s/Neovim/share/nvim/runtime/lua/vim/treesitter/query.lua:816: attempt to index local 'node' (a nil value)                                                                                                                                      stack traceback:                                                                                                                               ...s/Neovim/share/nvim/runtime/lua/vim/treesitter/query.lua:816: in function 'value_or_node_range'                                     ...s/Neovim/share/nvim/runtime/lua/vim/treesitter/query.lua:869: in function 'iter_captures'                                           ...ers/dangs/AppData/Local/nvim/lua/config/util_go_snip.lua:145: in function 'go_result_type'                                          ...ers/dangs/AppData/Local/nvim/lua/config/util_go_snip.lua:164: in function 'fn'                                                      ...nvim-data/lazy/LuaSnip/lua/luasnip/nodes/dynamicNode.lua:152: in function 'update'                                                  ...cal/nvim-data/lazy/LuaSnip/lua/luasnip/nodes/snippet.lua:1026: in function 'update'                                                 ...cal/nvim-data/lazy/LuaSnip/lua/luasnip/nodes/snippet.lua:769: in function 'trigger_expand'                                          ...ppData/Local/nvim-data/lazy/LuaSnip/lua/luasnip/init.lua:272: in function 'snip_expand'                                             ...ppData/Local/nvim-data/lazy/LuaSnip/lua/luasnip/init.lua:341: in function 'expand'                                                  ...ppData/Local/nvim-data/lazy/LuaSnip/lua/luasnip/init.lua:384: in function 'jump'                                                    C:/Users/dangs/AppData/Local/nvim/lua/plugins/luasnip.lua:52: in function <C:/Users/dangs/AppData/Local/nvim/lua/plugins/luasnip.lua:51>
-
 ls.add_snippets('go', {
   s(
     'ife',
@@ -308,25 +306,32 @@ ls.add_snippets('go', {
 })
 
 local lg_choice_node_1 = {
-  fmta [[
-            logEntry := logging.UserField(<userField>).WithFields(log.Fields{
-            "<fields>": <values>,<finish>]],
-  {
-    userField = i(1),
-    fields = f(GetLastFuncName, { 2 }),
-    values = i(2),
-  },
+  fmta(
+    [[
+    logEntry := logging.UserField(<userField>).WithFields(log.Fields{
+      "<fields>": <values>, <finish>}
+  ]],
+    {
+      userField = i(1),
+      fields = f(GetLastFuncName, { 2 }),
+      values = i(2),
+      finish = i(0),
+    }
+  ),
 }
 
---- === snip log ===
 ls.add_snippets('go', {
   s(
-    'lg', -- annotation test
+    'lg', -- trigger word
     fmta(
       [[
         <choiceNode>
       ]],
-      {}
+      {
+        choiceNode = c(1, {
+          lg_choice_node_1,
+        }),
+      }
     )
   ),
 })
