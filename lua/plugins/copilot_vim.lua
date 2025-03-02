@@ -13,6 +13,6 @@ return {
       triggerkey = '<D-s>'
     end
 
-    vim.keymap.set('i', triggerkey, copilot_hop.copilot_hop(), { expr = true, silent = true, description = 'copilot_hop' })
+    vim.keymap.set('i', triggerkey, copilot_hop.copilot_hop, { silent = true, description = 'copilot_hop' })
   end,
 }
