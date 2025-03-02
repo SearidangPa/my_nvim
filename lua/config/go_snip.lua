@@ -7,6 +7,9 @@ local i = ls.insert_node
 local s = ls.snippet
 local f = ls.function_node
 local t = ls.text_node
+local extras = require 'luasnip.extras'
+local rep = extras.rep
+
 local fmta = require('luasnip.extras.fmt').fmta
 
 --- === snip if ===
@@ -300,6 +303,30 @@ ls.add_snippets('go', {
         setup = i(2),
         condition = i(3),
       }
+    )
+  ),
+})
+
+local lg_choice_node_1 = {
+  fmta [[
+            logEntry := logging.UserField(<userField>).WithFields(log.Fields{
+            "<fields>": <values>,<finish>]],
+  {
+    userField = i(1),
+    fields = f(GetLastFuncName, { 2 }),
+    values = i(2),
+  },
+}
+
+--- === snip log ===
+ls.add_snippets('go', {
+  s(
+    'lg', -- annotation test
+    fmta(
+      [[
+        <choiceNode>
+      ]],
+      {}
     )
   ),
 })
