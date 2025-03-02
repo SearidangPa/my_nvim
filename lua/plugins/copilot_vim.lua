@@ -13,6 +13,7 @@ return {
       triggerkey = '<D-s>'
     end
 
+    print('copilot_hop.setup', triggerkey)
     copilot_hop.setup {
       triggerkey = triggerkey,
     }
