@@ -75,8 +75,19 @@ return {
           auto_show_delay_ms = 500,
         },
       },
-
       keymap = generate_keymap(),
+      cmdline = {
+        keymap = {
+          preset = 'cmdline',
+        },
+        completion = {
+          menu = {
+            auto_show = function(ctx)
+              return vim.fn.getcmdtype() == ':'
+            end,
+          },
+        },
+      },
     },
   },
 }
