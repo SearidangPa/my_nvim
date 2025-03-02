@@ -91,8 +91,8 @@ end
 
 map('i', accept_key .. 'y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', accept_key .. 'l>', accept_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
-map('i', accept_key .. 'Down>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-map('i', accept_key .. 'f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+map('i', '<M-Down>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line With newline' })
+map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 
 -- =================== Extmarks ===================
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')

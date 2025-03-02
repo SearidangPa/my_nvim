@@ -25,5 +25,5 @@ require('lazy').setup {
     'MTDL9/vim-log-highlighting',
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
-  change_detection = { enabled = true },
+  change_detection = { enabled = false },
 }

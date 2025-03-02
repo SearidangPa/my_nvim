@@ -1,3 +1,4 @@
+-- === keymap ===
 local function generate_keymap()
   local keymap = {}
   keymap.preset = 'none' -- Explicit assignment to avoid conflicts
@@ -22,6 +23,40 @@ local function generate_keymap()
   return keymap
 end
 
+--- === snippets ===
+local snippets = {
+  preset = 'luasnip',
+  expand = function(snippet)
+    require('luasnip').lsp_expand(snippet)
+  end,
+  active = function(filter)
+    if filter and filter.direction then
+      return require('luasnip').jumpable(filter.direction)
+    end
+    return require('luasnip').in_snippet()
+  end,
+  jump = function(direction)
+    require('luasnip').jump(direction)
+  end,
+}
+
+--- === cmdline ===
+local cmdline = {
+  keymap = {
+    preset = 'cmdline',
+  },
+  completion = {
+    menu = {
+      auto_show = function(ctx)
+        return vim.fn.getcmdtype() == ':'
+      end,
+    },
+  },
+}
+
+--- === completion ===
+com
+
 return {
   {
     'saghen/blink.cmp',
@@ -30,64 +65,14 @@ return {
     },
     version = '*',
     opts = {
-      appearance = {
-        use_nvim_cmp_as_default = true,
-        nerd_font_variant = 'mono',
-      },
+      appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
       signature = { enabled = true },
+      sources = { default = { 'lsp', 'path', 'snippets', 'buffer' } },
+      snippets = snippets,
 
-      sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' },
-      },
-
-      snippets = {
-        preset = 'luasnip',
-        expand = function(snippet)
-          require('luasnip').lsp_expand(snippet)
-        end,
-        active = function(filter)
-          if filter and filter.direction then
-            return require('luasnip').jumpable(filter.direction)
-          end
-          return require('luasnip').in_snippet()
-        end,
-        jump = function(direction)
-          require('luasnip').jump(direction)
-        end,
-      },
-
-      completion = {
-        menu = {
-          draw = {
-            columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
-            components = {
-              item_idx = {
-                text = function(ctx)
-                  return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx)
-                end,
-                highlight = 'BlinkCmpItemIdx',
-              },
-            },
-          },
-        },
-        documentation = {
-          auto_show = true,
-          auto_show_delay_ms = 500,
-        },
-      },
+      completion = ,
       keymap = generate_keymap(),
-      cmdline = {
-        keymap = {
-          preset = 'cmdline',
-        },
-        completion = {
-          menu = {
-            auto_show = function(ctx)
-              return vim.fn.getcmdtype() == ':'
-            end,
-          },
-        },
-      },
+      cmdline = cmdline,
     },
   },
 }
