@@ -11,6 +11,7 @@ return {
         return vim.fn.executable 'make' == 1
       end,
     },
+    { 'nvim-telescope/telescope-dap.nvim' },
     { 'nvim-telescope/telescope-ui-select.nvim' },
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
   },
@@ -126,6 +127,7 @@ return {
     require('telescope').load_extension 'fzf'
     require('telescope').load_extension 'ui-select'
     require('telescope').load_extension 'harpoon'
+    require('telescope').load_extension 'dap'
     require('config.telescope_multigrep').setup()
   end,
 }
