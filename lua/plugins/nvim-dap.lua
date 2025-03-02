@@ -2,7 +2,7 @@ return {
   'mfussenegger/nvim-dap',
   dependencies = {
     'leoluz/nvim-dap-go',
-    { 'igorlfs/nvim-dap-view', opts = {} },
+    'rcarriga/nvim-dap-ui',
     'theHamsta/nvim-dap-virtual-text',
     'nvim-neotest/nvim-nio',
     'williamboman/mason.nvim',
@@ -19,12 +19,6 @@ return {
       },
     }
 
-    dap.adapters.delve = {
-      type = 'server',
-      host = '127.0.0.1',
-      port = 38697,
-    }
-
     require('dap-go').setup()
     vim.keymap.set('n', '<space>td', function()
       require('dap-go').debug_test()
@@ -33,9 +27,52 @@ return {
     vim.keymap.set('n', '<space>b', dap.toggle_breakpoint)
     vim.keymap.set('n', '<space>gb', dap.run_to_cursor)
 
-    vim.keymap.set('n', '<localleader>c', dap.continue)
+    vim.keymap.set('n', '<D-g>', dap.continue)
     vim.keymap.set('n', '<D-i>', dap.step_into)
     vim.keymap.set('n', '<D-o>', dap.step_out)
-    vim.keymap.set('n', '<D-j', dap.step_over)
+    vim.keymap.set('n', '<D-j>', dap.step_over) -- next. WTF?
+
+    local dapui = require 'dapui'
+    require('dapui').setup {
+      layouts = {
+        {
+          -- You can change the order of elements in the sidebar
+          elements = {
+            -- Provide IDs as strings or tables with "id" and "size" keys
+            {
+              id = 'scopes',
+              size = 0.5, -- Can be float or integer > 1
+            },
+            { id = 'breakpoints', size = 0.1 },
+            { id = 'stacks', size = 0.4 },
+          },
+          size = 40,
+          position = 'left', -- Can be "left" or "right"
+        },
+        {
+          elements = {
+            'repl',
+          },
+          size = 10,
+          position = 'bottom', -- Can be "bottom" or "top"
+        },
+      },
+    }
+    vim.keymap.set('n', '<localleader><localleader>', function()
+      require('dapui').eval(nil, { enter = true })
+    end)
+    dap.listeners.before.attach.dapui_config = function()
+      dapui.open()
+    end
+    dap.listeners.before.launch.dapui_config = function()
+      dapui.open()
+    end
+    dap.listeners.before.event_terminated.dapui_config = function()
+      dapui.close()
+    end
+    dap.listeners.before.event_exited.dapui_config = function()
+      dapui.close()
+    end
+    vim.keymap.set('n', '<space>du', require('dapui').toggle, { desc = 'Toggle DAP UI' })
   end,
 }

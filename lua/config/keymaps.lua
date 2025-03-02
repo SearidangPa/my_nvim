@@ -132,9 +132,8 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 map('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 map('n', '<localleader>q', function()
-  vim.cmd [[wq]]
-  vim.cmd [[qa]]
-end, map_opt 'write all and quit all')
+  vim.cmd [[q]]
+end, map_opt '[Q]uit')
 
 -- =================== colorscheme ==================
 map('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
