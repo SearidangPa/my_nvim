@@ -55,7 +55,22 @@ local cmdline = {
 }
 
 --- === completion ===
-com
+local completion = {
+  menu = {
+    draw = {
+      columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
+      components = {
+        item_idx = {
+          text = function(ctx)
+            return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx)
+          end,
+          highlight = 'BlinkCmpItemIdx',
+        },
+      },
+    },
+  },
+  documentation = { auto_show = true, auto_show_delay_ms = 500 },
+}
 
 return {
   {
@@ -69,8 +84,7 @@ return {
       signature = { enabled = true },
       sources = { default = { 'lsp', 'path', 'snippets', 'buffer' } },
       snippets = snippets,
-
-      completion = ,
+      completion = completion,
       keymap = generate_keymap(),
       cmdline = cmdline,
     },
