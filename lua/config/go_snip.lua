@@ -305,33 +305,30 @@ ls.add_snippets('go', {
   ),
 })
 
-local lg_choice_node_1 = {
-  fmta(
-    [[
-    logEntry := logging.UserField(<userField>).WithFields(log.Fields{
-      "<fields>": <values>, <finish>}
-  ]],
-    {
-      userField = i(1),
-      fields = f(GetLastFuncName, { 2 }),
-      values = i(2),
-      finish = i(0),
-    }
-  ),
-}
-
 ls.add_snippets('go', {
   s(
     'lg', -- trigger word
-    fmta(
-      [[
-        <choiceNode>
-      ]],
-      {
-        choiceNode = c(1, {
-          lg_choice_node_1,
-        }),
-      }
-    )
+    c(1, {
+      fmta(
+        [[
+          logEntry := logging.UserField(<userField>).WithFields(log.Fields{
+            "<fields>": <values>, <finish>}
+        ]],
+        {
+          userField = i(1),
+          fields = f(GetLastFuncName, { 2 }),
+          values = i(2),
+          finish = i(0),
+        }
+      ),
+      fmta(
+        [[
+          logEntry := logging.UserField(<userField>)
+        ]],
+        {
+          userField = i(1),
+        }
+      ),
+    })
   ),
 })
