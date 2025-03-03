@@ -24,14 +24,6 @@ return {
       require('dap-go').debug_test()
     end, { desc = 'Debug test' })
 
-    vim.keymap.set('n', '<space>b', dap.toggle_breakpoint)
-    vim.keymap.set('n', '<space>gb', dap.run_to_cursor)
-
-    vim.keymap.set('n', '<D-g>', dap.continue)
-    vim.keymap.set('n', '<D-i>', dap.step_into)
-    vim.keymap.set('n', '<D-o>', dap.step_out)
-    vim.keymap.set('n', '<D-j>', dap.step_over) -- next. WTF?
-
     local dapui = require 'dapui'
     require('dapui').setup {
       layouts = {
@@ -59,6 +51,13 @@ return {
     vim.keymap.set('n', '<localleader><localleader>', function()
       require('dapui').eval(nil, { enter = true })
     end)
+    vim.keymap.set('n', '<space>b', dap.toggle_breakpoint, { desc = 'Toggle breakpoint' })
+    vim.keymap.set('n', '<space>gb', dap.run_to_cursor, { desc = 'Run to cursor' })
+    vim.keymap.set('n', '<D-g>', dap.continue, { desc = 'Continue' })
+    vim.keymap.set('n', '<D-i>', dap.step_into, { desc = 'Step into' })
+    vim.keymap.set('n', '<D-o>', dap.step_out, { desc = 'Step out' })
+    vim.keymap.set('n', '<D-j>', dap.step_over, { desc = 'next' })
+
     dap.listeners.before.attach.dapui_config = function()
       dapui.open()
     end
