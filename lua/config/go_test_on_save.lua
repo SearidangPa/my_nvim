@@ -284,7 +284,7 @@ local function drive_test_on_save_staging()
   attach_to_buffer(vim.api.nvim_get_current_buf(), drive_test_command())
 end
 
-vim.api.nvim_create_user_command('ClearGoTestOnSave', clear_group_ns, {})
+vim.api.nvim_create_user_command('GoTestClear', clear_group_ns, {})
 vim.api.nvim_create_user_command('DriveTestOnSaveDev', drive_test_on_save_dev, {})
 vim.api.nvim_create_user_command('DriveTestOnSaveStaging', drive_test_on_save_staging, {})
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test, {})
