@@ -139,7 +139,7 @@ local attach_to_buffer = function(bufnr, command)
 
   vim.api.nvim_create_user_command('OutputAllTest', output_go_test_all, {})
   vim.api.nvim_create_user_command('OutputOneTest', output_one_go_test, {})
-  vim.keymap.set('n', '<leader>go', output_one_go_test, { desc = '[G]o [O]utput Test ' })
+  vim.keymap.set('n', '<leader>to', output_one_go_test, { desc = 'Test [O]utput', buffer = bufnr })
 
   local extmark_ids = {}
   vim.api.nvim_create_autocmd('BufWritePost', {
@@ -290,7 +290,5 @@ vim.api.nvim_create_user_command('DriveTestOnSaveStaging', drive_test_on_save_st
 vim.api.nvim_create_user_command('GoTestOnSave', attach_go_test, {})
 vim.api.nvim_create_user_command('GoTestOnSaveBuf', attach_all_go_test_in_buf, {})
 vim.keymap.set('n', '<leader>gt', attach_go_test, { desc = '[T]oggle [G]o Test on save' })
-vim.keymap.set('n', '<leader>dt', drive_test_on_save_dev, { desc = '[D]rive [T]est on save' })
-vim.keymap.set('n', '<leader>gc', clear_group_ns, { desc = '[G]o [C]lear test on save' })
 
 return {}
