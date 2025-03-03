@@ -170,7 +170,7 @@ map('n', '<leader>gc', function()
     vim.schedule(function()
       vim.cmd 'Gwrite'
       vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
-      vim.cmd 'G push'
+      vim.cmd 'silent G push'
       vim.cmd 'redraw!'
     end)
   end
@@ -214,9 +214,7 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
-vim.keymap.set('n', '<localleader>m', function()
-  vim.cmd [[:messages]]
-end, map_opt 'Show [M]essages')
+vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
 
 vim.keymap.set('n', '<leader>ng', function()
   require('neogen').generate()
