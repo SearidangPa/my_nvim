@@ -130,4 +130,25 @@ vim.keymap.set('n', '<leader>gp', push_add_all, {
   desc = '[G]it [P]ush all',
 })
 
+-- === Git ===
+local map = vim.keymap.set
+local function map_opt(desc)
+  return { noremap = true, silent = true, desc = desc }
+end
+
+map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
+map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
+map('n', '<leader>gc', function()
+  require 'config.git_flow'
+  local commit_func = function(commit_msg, push_func)
+    vim.schedule(function()
+      vim.cmd 'Gwrite'
+      vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
+      vim.cmd 'silent G push'
+      vim.cmd 'redraw!'
+      make_notify(string.format(commit_format_notification, commit_msg))
+    end)
+  end
+  Git_commit_with_message_prompt(commit_func)
+end, map_opt '[G]it [C]ommit and push')
 return {}
