@@ -20,12 +20,9 @@ return {
     }
 
     require('dap-go').setup()
-    vim.keymap.set('n', '<space>td', function()
-      require('dap-go').debug_test()
-    end, { desc = 'Debug test' })
 
     local dapui = require 'dapui'
-    require('dapui').setup {
+    dapui.setup {
       layouts = {
         {
           elements = {
@@ -49,8 +46,12 @@ return {
       },
     }
     vim.keymap.set('n', '<localleader><localleader>', function()
-      require('dapui').eval(nil, { enter = true })
+      dapui.eval(nil, { enter = true })
     end)
+    vim.keymap.set('n', '<space>td', function()
+      require('dap-go').debug_test()
+    end, { desc = 'Debug test' })
+
     vim.keymap.set('n', '<space>b', dap.toggle_breakpoint, { desc = 'Toggle breakpoint' })
     vim.keymap.set('n', '<space>gb', dap.run_to_cursor, { desc = 'Run to cursor' })
     vim.keymap.set('n', '<D-g>', dap.continue, { desc = 'Continue' })
