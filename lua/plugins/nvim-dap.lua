@@ -18,9 +18,7 @@ return {
         program = './integration_tests',
       },
     }
-
     require('dap-go').setup()
-
     local dapui = require 'dapui'
     dapui.setup {
       layouts = {
