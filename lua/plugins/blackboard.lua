@@ -11,7 +11,6 @@ return {
       bb.preview_mark(key)
     end
     vim.keymap.set('n', '<leader>tm', bb.toggle_mark_window, { desc = '[T]oggle [M]ark list window' })
-    vim.keymap.set('n', '<leader>mc', bb.toggle_mark_context, { desc = '[M]ark [C]ontext' })
     vim.keymap.set('n', '<localleader>m', wait_for_key_and_preview, { desc = 'Preview [M]ark' })
   end,
 }
