@@ -172,6 +172,7 @@ map('n', '<leader>gc', function()
       vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
       vim.cmd 'silent G push'
       vim.cmd 'redraw!'
+      print(string.format('push successfully: %s', commit_msg))
     end)
   end
   Git_commit_with_message_prompt(commit_func)
