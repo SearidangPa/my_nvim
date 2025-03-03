@@ -128,9 +128,9 @@ map('n', '<localleader>q', function()
 end, map_opt '[Q]uit')
 
 -- =================== colorscheme ==================
-map('n', '<leader>tcl', ':colorscheme github_light_default<CR>', map_opt '[T]oggle [C]olorscheme [L]ight')
-map('n', '<leader>tcr', ':colorscheme rose-pine-moon<CR>', map_opt '[T]oggle [C]olorscheme [R]ose-pine')
-map('n', '<leader>tck', ':colorscheme kanagawa-wave<CR>', map_opt '[T]oggle [C]olorscheme [K]anagawa')
+map('n', '<leader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')
+map('n', '<leader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [R]ose-pine')
+map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
 
 -- =================== Navigation ===================
 map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
