@@ -41,6 +41,7 @@ end
 
 Live_search = function(opts)
   opts = opts or {}
+  ---@diagnostic disable-next-line: undefined-field
   opts.cwd = opts.cwd or vim.uv.cwd()
   opts = vim.tbl_deep_extend('force', themes.get_ivy(), opts)
   assert(opts.args_constructor, 'You need to pass an args_constructor')
