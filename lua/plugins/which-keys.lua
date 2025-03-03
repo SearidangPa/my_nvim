@@ -17,14 +17,11 @@ return {
       { '<leader>s', group = '[S]earch' },
       { '<leader>q', group = '[Q]uickfix' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-
       { '<leader>m', group = '[M]ake' },
       { '<leader>n', group = '[N]ew' },
       { '<leader>t', group = '[T]oggle, [T]est Dap' },
-
       { '<leader>w', group = '[W]orkspace' },
-      { '<leader>x', goup = '[x] Trouble' },
-
+      { '<leader>x', group = '[x] Trouble' },
       { '<localleader>c', group = '[C]ode', mode = { 'n', 'x' } },
       { '<localleader>s', group = '[S]earch plugin' },
       { '<localleader>t', group = '[T]erminal' },

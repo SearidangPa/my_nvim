@@ -155,7 +155,10 @@ map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboa
 map('n', '<leader>dd', [["_dd]], map_opt '[D]elete into black hole')
 
 map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
-map('n', '<leader>cp', [[:let @+ = expand('%:p')<CR>]], map_opt 'Copy current file path')
+
+vim.api.nvim_create_user_command('CopyCurrentFilePath', function()
+  vim.fn.setreg('+', vim.fn.expand '%:p')
+end, { nargs = 0 })
 
 -- === Git ===
 
