@@ -16,9 +16,9 @@ map('n', '[d', function()
   tr.jump {}
 end, { silent = true, noremap = true, desc = 'Go to previous trouble item' })
 
-map('n', '<leader>tq', function()
+map('n', '<leader>tc', function()
   tr.close 'telescope'
-end, map_opt 'Close trouble')
+end, map_opt '[T]rouble [C]lose')
 
 map('n', '<leader>to', function()
   tr.open 'telescope'
