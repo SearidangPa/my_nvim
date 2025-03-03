@@ -305,9 +305,11 @@ ls.add_snippets('go', {
   ),
 })
 
+--- === snip log ===
+
 ls.add_snippets('go', {
   s(
-    'lg', -- trigger word
+    'lg',
     c(1, {
       fmta(
         [[
