@@ -4,13 +4,15 @@ return {
     'github/copilot.vim',
   },
   config = function()
-    local copilot_hop = require 'copilot_hop'
-    local triggerkey
+    local trigger_key
     if vim.fn.has 'win32' == 1 then
-      triggerkey = '<M-S>'
+      trigger_key = '<M-S>'
     else
-      triggerkey = '<D-s>'
+      trigger_key = '<D-s>'
     end
-    vim.keymap.set('i', triggerkey, copilot_hop.copilot_hop, { silent = true, desc = 'copilot_hop' })
+
+    local copilot_hop = require 'copilot_hop'
+    copilot_hop.setup()
+    vim.keymap.set('i', trigger_key, copilot_hop.copilot_hop, { silent = true, desc = 'copilot_hop' })
   end,
 }
