@@ -105,34 +105,6 @@ local function handle_choice(choice, perform_commit_func)
   end)
 end
 
-local function generate_commit_message()
-  -- Get the staged changes diff
-  local diff_handle = io.popen 'git diff --cached'
-  assert(diff_handle, 'Failed to run git diff')
-  local diff = diff_handle:read '*a'
-  diff_handle:close()
-
-  -- Check if there are staged changes
-  if diff == '' then
-    print 'No staged changes to create a commit message from'
-    return 1
-  end
-
-  -- Prepare the prompt
-  local prompt = 'Generate a concise git commit message for the following code changes. '
-    .. 'Follow the conventional git commit message, and add some emojis if you can. '
-    .. "Here's the diff:\n"
-    .. diff
-
-  -- Run ollama with qwen2.5-coder model
-  local cmd = string.format('ollama run qwen2.5-coder "%s"', prompt:gsub('"', '\\"'))
-  local commit_msg_handle = io.popen(cmd)
-  assert(commit_msg_handle, 'Failed to run ollama')
-
-  local commit_msg = commit_msg_handle:read '*a'
-  commit_msg_handle:close()
-  return commit_msg
-end
 
 function Git_commit_with_message_prompt(perform_commit_func)
   local opts = {
@@ -140,15 +112,9 @@ function Git_commit_with_message_prompt(perform_commit_func)
     format_item = function(item)
       return item
     end,
-efactor commit message generation using staged changes diff 🔄
-
-      - Extracted commit message generation logic into `generate_commit_message` function.
-      - Replaced AI-based commit message generation with a local script that fetches the staged changes diff and uses Ollama to generate a concise commit message.
-      ```
-
-      : 
-  local generate_commit_message = generate_commit_message()
-  choice_options = vim.list_extend(item_options, { generate_commit_message })
+  }
+  local ai_gen_msg = generate_commit_message()
+  choice_options = vim.list_extend(item_options, { ai_gen_msg })
 
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, perform_commit_func)
