@@ -109,7 +109,6 @@ function Handle_choice(opts)
       vim.fn.chansend(channel_id, '\x03')
     else
       vim.fn.chansend(channel_id, string.format('%s%s', choice, end_of_line))
-      focus_above_small_terminal(term_state)
     end
     return
   end
