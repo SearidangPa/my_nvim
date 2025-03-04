@@ -110,6 +110,7 @@ local function commit_msg_from_AI()
   local command_str = 'zsh -c "gen_commit_msg"'
   local job_id = vim.fn.jobstart(command_str, {
     on_stdout = function(_, data)
+      print('data: ' .. vim.inspect(data))
       for _, line in ipairs(data) do
         if line and line ~= '' then
           table.insert(result, line)
