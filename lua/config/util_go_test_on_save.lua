@@ -65,7 +65,7 @@ Go_test_all_output = function(test_state, win_state)
 end
 
 ---@param win_state winState
-Go_test_one_output = function(test_state, win_state)
+Toggle_test_output = function(test_state, win_state)
   if vim.api.nvim_win_is_valid(win_state.floating.win) then
     vim.api.nvim_win_hide(win_state.floating.win)
     return

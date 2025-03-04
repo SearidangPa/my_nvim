@@ -160,24 +160,6 @@ vim.api.nvim_create_user_command('CopyCurrentFilePath', function()
   vim.fn.setreg('+', vim.fn.expand '%:p')
 end, { nargs = 0 })
 
--- === Git ===
-
-map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
-map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
-map('n', '<leader>gc', function()
-  require 'config.git_flow'
-  local commit_func = function(commit_msg, push_func)
-    vim.schedule(function()
-      vim.cmd 'Gwrite'
-      vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
-      vim.cmd 'silent G push'
-      vim.cmd 'redraw!'
-      print(string.format('push successfully: %s', commit_msg))
-    end)
-  end
-  Git_commit_with_message_prompt(commit_func)
-end, map_opt '[G]it [C]ommit and push')
-
 -- === Quickfix navigation ===
 local quickfix = require 'config.quickfix'
 map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
