@@ -11,6 +11,10 @@ return {
       harpoon:list():add()
     end, { desc = 'harpoon [A]dd' })
 
+    vim.keymap.set('n', '<localleader>hp', function()
+      harpoon:list():prepend()
+    end, { desc = 'harpoon [P]repend' })
+
     vim.keymap.set('n', '<localleader>l', function()
       harpoon.ui:toggle_quick_menu(harpoon:list())
     end, { desc = 'harpoon [L]ist' })
