@@ -133,7 +133,7 @@ vim.keymap.set('n', '<leader>gp', push_add_all, {
 vim.keymap.set(
   'n',
   '<leader>ga',
-  [[:!source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push<CR>]],
+  [[:!silent source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push<CR>]],
   { noremap = true, silent = true, desc = '[G]it [A]dd all and push with AI commit message' }
 )
 
