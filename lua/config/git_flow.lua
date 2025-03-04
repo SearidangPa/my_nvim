@@ -105,6 +105,24 @@ local function handle_choice(choice, perform_commit_func)
   end)
 end
 
+local function commit_msg_from_AI()
+  local result = {}
+  vim.fn.jobstart('gen_commit_msg', {
+    on_stdout = function(_, data)
+      for _, line in ipairs(data) do
+        if line and line ~= '' then
+          table.insert(result, line)
+        end
+      end
+    end,
+    on_exit = function()
+      print('AI suggestion: ' .. table.concat(result, '\n'))
+    end,
+    stdout_buffered = true,
+  })
+  return result
+end
+
 function Git_commit_with_message_prompt(perform_commit_func)
   local opts = {
     prompt = 'Select suggested commit message:',
@@ -112,6 +130,7 @@ function Git_commit_with_message_prompt(perform_commit_func)
       return item
     end,
   }
+  local oh_yeah_commit_msg = commit_msg_from_AI()
 
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, perform_commit_func)
