@@ -134,8 +134,9 @@ local function async_git_push()
   Job:new({
     command = 'zsh',
     args = {
+      '-i',
       '-c',
-      'source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push',
+      'source ~/.zshrc && git add . && git commit -m "$(gen_commit_msg)" && git push',
     },
     on_exit = function(j, exit_code)
       vim.schedule(function()
