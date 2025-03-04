@@ -16,8 +16,6 @@ local default_no_more_input = {
   'To live without hope is to cease to live.-- Fyodor Dostoevsky',
   'Taking a new step, uttering a new word, is what people fear most. -- Fyodor Dostoevsky',
   'Man is sometimes extraordinarily, passionately, in love with suffering. -- Fyodor Dostoevsky',
-  'The darker the night, the brighter the stars, the deeper the grief, the closer is God! -- Fyodor Dostoevsky',
-  'Man is tormented by no greater anxiety than to find an individual consciousness. -- Fyodor Dostoevsky',
   'What is hell? I maintain that it is the suffering of being unable to love. -- Fyodor Dostoevsky',
   'The cleverest of all, in my opinion, is the man who calls himself a fool at least once a month. -- Fyodor Dostoevsky',
 }
@@ -133,7 +131,7 @@ vim.keymap.set('n', '<leader>gp', push_add_all, {
 vim.keymap.set(
   'n',
   '<leader>ga',
-  [[:!silent source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push<CR>]],
+  [[:silent !source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push<CR>]],
   { noremap = true, silent = true, desc = '[G]it [A]dd all and push with AI commit message' }
 )
 
