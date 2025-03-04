@@ -105,7 +105,6 @@ local function handle_choice(choice, perform_commit_func)
   end)
 end
 
-
 function Git_commit_with_message_prompt(perform_commit_func)
   local opts = {
     prompt = 'Select suggested commit message:',
@@ -113,8 +112,6 @@ function Git_commit_with_message_prompt(perform_commit_func)
       return item
     end,
   }
-  local ai_gen_msg = generate_commit_message()
-  choice_options = vim.list_extend(item_options, { ai_gen_msg })
 
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, perform_commit_func)
