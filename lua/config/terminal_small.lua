@@ -47,7 +47,7 @@ local function toggle_small_terminal()
   return small_term_state.win
 end
 
-vim.keymap.set('n', '<localleader>ts', function()
+vim.keymap.set('n', '<localleader>td', function()
   Send_command_toggle_term {
     is_float = false,
     toggle_term_func = toggle_small_terminal,
@@ -55,7 +55,7 @@ vim.keymap.set('n', '<localleader>ts', function()
   }
 end, { desc = '[T]oggle [S]mall terminal with command prompt' })
 
-vim.keymap.set('n', '<localleader>td', function()
+vim.keymap.set('n', '<localleader>ts', function()
   toggle_small_terminal()
 end, { desc = 'Toggle small terminal' })
 return {}
