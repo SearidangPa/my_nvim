@@ -128,12 +128,28 @@ vim.keymap.set('n', '<leader>gp', push_add_all, {
   desc = '[G]it [P]ush all',
 })
 
-vim.keymap.set(
-  'n',
-  '<leader>ga',
-  [[:silent !source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push<CR>]],
-  { noremap = true, silent = true, desc = '[G]it [A]dd all and push with AI commit message' }
-)
+local Job = require 'plenary.job'
+
+local function async_git_push()
+  Job:new({
+    command = 'zsh',
+    args = {
+      '-c',
+      'source ~/.zshrc && git add -A && git commit -m "$(gen_commit_msg)" && git push',
+    },
+    on_exit = function(j, exit_code)
+      vim.schedule(function()
+        if exit_code == 0 then
+          make_notify 'Git push completed successfully!'
+        else
+          make_notify(string.format('Git push failed with exit code: %d', exit_code))
+        end
+      end)
+    end,
+  }):start()
+end
+
+vim.keymap.set('n', '<leader>ga', async_git_push, { noremap = true, silent = true, desc = '[G]it [A]dd all and push with AI commit message' })
 
 -- === Git ===
 local map = vim.keymap.set
