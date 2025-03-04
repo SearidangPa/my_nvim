@@ -107,7 +107,8 @@ end
 
 local function commit_msg_from_AI()
   local result = {}
-  vim.fn.jobstart('gen_commit_msg', {
+  local command_str = 'zsh -c "gen_commit_msg"'
+  local job_id = vim.fn.jobstart(command_str, {
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
         if line and line ~= '' then
@@ -116,10 +117,22 @@ local function commit_msg_from_AI()
       end
     end,
     on_exit = function()
+      -- Now do something with the result
       print('AI suggestion: ' .. table.concat(result, '\n'))
     end,
     stdout_buffered = true,
   })
+
+  if job_id == 0 then
+    print 'Invalid arguments!'
+  elseif job_id == -1 then
+    print 'Command not executable!'
+  else
+    print('Job started with ID: ' .. job_id)
+  end
+
+  -- This will return immediately before the job completes
+  -- You can't directly return 'result' here as the job is asynchronous
   return result
 end
 
@@ -130,7 +143,8 @@ function Git_commit_with_message_prompt(perform_commit_func)
       return item
     end,
   }
-  local oh_yeah_commit_msg = commit_msg_from_AI()
+  local result = commit_msg_from_AI()
+  print(vim.inspect(result))
 
   vim.ui.select(choice_options, opts, function(choice)
     handle_choice(choice, perform_commit_func)
