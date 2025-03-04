@@ -123,14 +123,6 @@ local function commit_msg_from_AI()
     stdout_buffered = true,
   })
 
-  if job_id == 0 then
-    print 'Invalid arguments!'
-  elseif job_id == -1 then
-    print 'Command not executable!'
-  else
-    print('Job started with ID: ' .. job_id)
-  end
-
   -- This will return immediately before the job completes
   -- You can't directly return 'result' here as the job is asynchronous
   return result
