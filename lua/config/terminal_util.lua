@@ -5,10 +5,10 @@ local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 
 local choice_options_unix = {
+  'gaa && pg',
   'rds',
   'MODE=dev ./bin/client dial',
   'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
-  'gaa && pg',
 }
 
 local choice_options_win = {
@@ -74,9 +74,9 @@ local function focus_above_small_terminal(small_term_state)
     end
   end
 
-  if target_win then
-    vim.api.nvim_set_current_win(target_win)
-  end
+  -- if target_win then
+  --   vim.api.nvim_set_current_win(target_win)
+  -- end
 end
 
 function Handle_choice(opts)
