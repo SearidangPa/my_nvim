@@ -15,7 +15,7 @@ local function small_terminal()
   end
   vim.cmd.wincmd 'J'
 
-  local small_term_height = 10
+  local small_term_height = 9
   vim.api.nvim_win_set_height(0, small_term_height)
   small_term_state.buf = vim.api.nvim_get_current_buf()
   small_term_state.win = vim.api.nvim_get_current_win()
@@ -41,7 +41,7 @@ local function toggle_small_terminal()
     col = 0,
     style = 'minimal',
   })
-  vim.cmd.wincmd 'J'
+  vim.cmd.wincmd 'j'
 
   small_term_state.chan = vim.bo.channel
   return small_term_state.win
