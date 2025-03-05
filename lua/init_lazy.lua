@@ -23,6 +23,8 @@ require('lazy').setup {
     'tpope/vim-rhubarb', -- Fugitive-companion to interact with github
     'mbbill/undotree', -- Visualize the undo tree
     'MTDL9/vim-log-highlighting',
+    'vim-scripts/AnsiEsc.vim',
+    'MunifTanjim/nui.nvim',
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
   change_detection = { enabled = false },

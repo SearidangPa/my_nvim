@@ -61,6 +61,7 @@ Go_test_all_output = function(test_state, win_state)
     end
   end
   win_state.floating.buf, win_state.floating.win = Create_floating_window(win_state.floating.buf)
+  vim.bo[win_state.floating.buf].filetype = 'term'
   vim.api.nvim_buf_set_lines(win_state.floating.buf, 0, -1, false, content)
 end
 
