@@ -122,6 +122,22 @@ local function drive_test_staging()
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
   toggle_test_floating_terminal()
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+
+  vim.api.nvim_buf_attach(floating_term_state.buf, false, {
+    on_lines = function(_, buf, _, first_line, last_line)
+      local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
+      for _, line in ipairs(lines) do
+        if string.match(line, '--- FAIL') then
+          make_notify 'Test failed'
+          return false
+        elseif string.match(line, '--- PASS') then
+          make_notify 'Test passed'
+          return false
+        end
+      end
+      return false
+    end,
+  })
 end
 
 vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
