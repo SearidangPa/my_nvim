@@ -200,7 +200,7 @@ end
 
 local go_test = function()
   local test_name = Get_enclosing_test()
-  make_notify(string.format('Attaching test: %s', test_name))
+  make_notify(string.format('test: %s', test_name))
   local command_str = string.format('go test ./... -json -v -run %s', test_name)
 
   start_new_test(vim.api.nvim_get_current_buf(), command_str)
@@ -213,27 +213,25 @@ vim.api.nvim_create_user_command('GoTestBuf', test_all_in_buf, {})
 
 local function drive_test_command()
   local test_name = Get_enclosing_test()
-  make_notify(string.format('Attaching drive test: %s', test_name))
+  make_notify(string.format('test: %s', test_name))
   local command = { 'go', 'test', './integration_tests/*.go', '-json', '-v', '-run', test_name }
   local command_str = string.format('go test integration_tests/*.go -json -v -run %s', test_name)
   return command_str
 end
 
-local function drive_test_on_save_dev()
+local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  new_attach_instance()
-  M.attach_to_buffer(vim.api.nvim_get_current_buf(), drive_test_command())
+  start_new_test(vim.api.nvim_get_current_buf(), drive_test_command())
 end
 
-local function drive_test_on_save_staging()
+local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  new_attach_instance()
-  M.attach_to_buffer(vim.api.nvim_get_current_buf(), drive_test_command())
+  start_new_test(vim.api.nvim_get_current_buf(), drive_test_command())
 end
 
-vim.api.nvim_create_user_command('DriveTestOnSaveDev', drive_test_on_save_dev, {})
-vim.api.nvim_create_user_command('DriveTestOnSaveStaging', drive_test_on_save_staging, {})
+vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
 
 return M
