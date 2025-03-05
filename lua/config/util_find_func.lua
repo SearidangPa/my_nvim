@@ -33,6 +33,7 @@ Find_test_line_by_name = function(go_bufnr, testName)
   end
 end
 
+-- maybe this is not needed
 local function_query = [[
 (function_declaration
   name: (identifier) @name
