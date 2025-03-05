@@ -158,7 +158,7 @@ function Get_enclosing_fn_info()
 end
 
 function Get_enclosing_test()
-  local _, testName = Get_enclosing_fn_info()
+  local test_line, testName = Get_enclosing_fn_info()
   if not testName then
     print 'Not in a function'
     return nil
@@ -167,7 +167,7 @@ function Get_enclosing_test()
     print(string.format('Not in a test function: %s', testName))
     return nil
   end
-  return testName
+  return testName, test_line
 end
 
 
