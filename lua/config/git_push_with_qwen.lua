@@ -54,9 +54,7 @@ local toggle_qwen_floating_terminal = function()
 end
 
 local function get_commit_message_and_time()
-  -- Get commit message
   local message = vim.fn.system 'git log -1 --pretty=%B'
-  -- Get commit time
   local time = vim.fn.system "git log -1 --pretty=%ad --date=format:'%Y-%m-%d %H:%M:%S'"
 
   return {
