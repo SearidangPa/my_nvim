@@ -111,6 +111,7 @@ local ns = vim.api.nvim_create_namespace(ns_name)
 local drive_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
+  make_notify(string.format('running test: %s', test_name))
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
 
   toggle_test_floating_terminal(test_name)
@@ -127,7 +128,7 @@ local drive_test = function()
         elseif string.match(line, '--- PASS') then
           local current_time = os.date '%H:%M:%S'
           vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
-            virt_text = { { string.format('✅ %s', current_time), 'passed' } },
+            virt_text = { { string.format('✅ %s', current_time) } },
             virt_text_pos = 'eol',
           })
           make_notify 'Test passed'
