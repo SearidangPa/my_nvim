@@ -52,13 +52,13 @@ local toggle_floating_terminal = function()
   return floating_term_state.win
 end
 
-vim.keymap.set('n', '<localleader>tf', function()
+vim.keymap.set('n', '<localleader>ts', function()
   Send_command_toggle_term {
     is_float = true,
     toggle_term_func = toggle_floating_terminal,
     term_state = floating_term_state,
   }
-end, { desc = '[T]erminal [F]loat' })
+end, { desc = '[T]erminal [S]end command' })
 
 vim.keymap.set({ 't', 'n' }, '<localleader>tt', toggle_floating_terminal, { desc = '[T]erminal [T]oggle' })
 return {}
