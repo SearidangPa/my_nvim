@@ -10,7 +10,7 @@ return {
       model = 'claude-3.7-sonnet',
       prompts = {
         Docs = {
-          prompt = 'Add documentation to the selected code. Focus on the flow and when error is return. As concise as possible. Avoid empty and vague words. I want specific details',
+          prompt = 'Add documentation to the selected code. Focus on the flow and when error is return. As concise as possible. Avoid empty and vague words. I want specific details. I want it in /**/ format. I want at most 5 lines in total',
         },
       },
     },
