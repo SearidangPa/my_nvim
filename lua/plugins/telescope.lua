@@ -67,7 +67,7 @@ return {
     -- === jumping around ===
     map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-    map(map_modes, '<leader>si', builtin.lsp_incoming_calls, { desc = '[S]earch [I]ncoming calls' })
+    map(map_modes, '<leader>si', builtin.command_history, { desc = '[S]earch [I]nteractive command history' })
     map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
 
     map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
