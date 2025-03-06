@@ -7,8 +7,12 @@ return {
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-      -- See Configuration section for options
+      model = 'claude-3.7-sonnet',
+      prompts = {
+        Docs = {
+          prompt = 'Add documentation to the selected code. Focus on the flow and when error is return. As concise as possible. Avoid empty and vague words. I want specific details',
+        },
+      },
     },
-    -- See Commands section for default commands if you want to lazy load on them
   },
 }
