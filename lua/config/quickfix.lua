@@ -61,7 +61,7 @@ end
 
 vim.api.nvim_create_user_command('FuncRefQuickfix', M.lsp_references_nearest_function, {})
 
-vim.keymap.set('n', '<leader>qi', '<cmd>FuncRefQuickfix<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>qi', '<cmd>FuncRefQuickfix<CR>', { noremap = true, silent = true, desc = 'load references in quickfix list' })
 
 function M.toggle_quickfix()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
