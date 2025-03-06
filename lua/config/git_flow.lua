@@ -45,34 +45,6 @@ local popup_option = {
 local commit_format_notification = [[Push successfully
 Commit: %s]]
 
----@param commit_msg_local string
-local function perform_commit_with_cb(commit_msg_local)
-  local function perform_push()
-    Start_job {
-      cmd = 'git push',
-      on_success_cb = function()
-        make_notify(string.format(commit_format_notification, commit_msg))
-      end,
-      silent = true,
-    }
-  end
-  ---@diagnostic disable-next-line: undefined-field
-  local cmd = 'git commit -m "' .. commit_msg_local .. '"'
-  Start_job {
-    cmd = cmd,
-    on_success_cb = perform_push,
-    silent = true,
-  }
-end
-
-local function git_add_all(on_success_cb)
-  Start_job {
-    cmd = 'git add .',
-    on_success_cb = on_success_cb,
-    silent = true,
-  }
-end
-
 local function handle_choice(choice, perform_commit_func)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
@@ -103,7 +75,7 @@ local function handle_choice(choice, perform_commit_func)
   end)
 end
 
-function Git_commit_with_message_prompt(perform_commit_func)
+local function git_commit_with_message_prompt(perform_commit_func)
   local opts = {
     prompt = 'Select suggested commit message:',
     format_item = function(item)
@@ -116,36 +88,13 @@ function Git_commit_with_message_prompt(perform_commit_func)
   end)
 end
 
-local function push_add_all()
-  git_add_all(function()
-    Git_commit_with_message_prompt(perform_commit_with_cb)
-  end)
-end
-
-vim.keymap.set('n', '<leader>gp', push_add_all, {
-  noremap = true,
-  silent = true,
-  desc = '[G]it [P]ush all',
-})
-
-vim.keymap.set('n', '<leader>ga', function()
-  vim.cmd [[G add .]]
-end, {
-  noremap = true,
-  silent = true,
-  desc = '[G]it [A]i push',
-})
-
 -- === Git ===
 local map = vim.keymap.set
 local function map_opt(desc)
   return { noremap = true, silent = true, desc = desc }
 end
 
-map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
-map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>gc', function()
-  require 'config.git_flow'
   local commit_func = function(commit_msg, push_func)
     vim.schedule(function()
       vim.cmd 'Gwrite'
@@ -154,6 +103,9 @@ map('n', '<leader>gc', function()
       make_notify(string.format(commit_format_notification, commit_msg))
     end)
   end
-  Git_commit_with_message_prompt(commit_func)
+  git_commit_with_message_prompt(commit_func)
 end, map_opt '[G]it [C]ommit and push')
+
+map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
+map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 return {}
