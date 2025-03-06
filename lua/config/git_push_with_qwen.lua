@@ -81,7 +81,7 @@ local push_all_with_qwen = function()
               local commit_info = get_commit_message_and_time()
               make_notify(commit_info.message)
             end
-          end, 5000)
+          end, 2000)
         end
       end
       return false
