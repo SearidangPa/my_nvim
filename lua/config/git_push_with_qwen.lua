@@ -63,10 +63,9 @@ local function get_commit_message_and_time()
   }
 end
 
-local push_all_with_qwen = function()
+local push_all_with_qwen = function(command_str)
   toggle_qwen_floating_terminal()
   toggle_qwen_floating_terminal()
-  local command_str = 'git add . && pg'
   vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
 
   local notification_sent = false
@@ -90,7 +89,15 @@ local push_all_with_qwen = function()
   })
 end
 
-vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
+vim.api.nvim_create_user_command('GitPushWithQwen7b', function()
+  local command_str = 'git add . && pg_7b'
+  push_all_with_qwen(command_str)
+end, {})
+vim.api.nvim_create_user_command('GitPushWithQwen14b', function()
+  local command_str = 'git add . && pg_14b'
+  push_all_with_qwen(command_str)
+end, {})
+
 vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
 vim.api.nvim_create_user_command('LastCommitMessage', function()
   local commit_info = get_commit_message_and_time()
@@ -98,6 +105,7 @@ vim.api.nvim_create_user_command('LastCommitMessage', function()
   print(string.format('Time: %s', commit_info.time))
 end, {})
 
-vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
+vim.keymap.set('n', '<leader>p7', ':GitPushWithQwen7b<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
+vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen14b<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
 
 return M
