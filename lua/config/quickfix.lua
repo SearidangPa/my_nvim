@@ -56,6 +56,7 @@ function M.lsp_references_nearest_function()
   assert(start_row, 'start_row is nil')
   assert(start_col, 'start_col is nil')
   M.lsp_references_to_quickfix(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
+  vim.cmd 'copen'
 end
 
 vim.api.nvim_create_user_command('FuncRefQuickfix', M.lsp_references_nearest_function, {})
