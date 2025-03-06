@@ -56,11 +56,19 @@ local push_all_with_qwen = function()
   toggle_qwen_floating_terminal()
   local command_str = 'gaa && pg'
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+  vim.api.nvim_buf_attach(floating_term_state.buf, false, {
+    on_lines = function(_, buf, _, first_line, last_line)
+      local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
+      for _, line in ipairs(lines) do
+        print(line)
+      end
+      return false
+    end,
+  })
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
 vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
-
 vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { desc = '[Git] [P]ush with Qwen' })
 
 return M
