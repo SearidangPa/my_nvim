@@ -234,7 +234,7 @@ local function fold_return()
   Fold_captured_nodes_recursively(query)
 end
 
-local function fold_indent()
+local function fold_tree()
   fold_switch()
   fold_comm()
   fold_if()
@@ -251,12 +251,10 @@ user_cmd('FoldCase', function()
   fold_comm()
 end, {})
 
-user_cmd('FoldIndent', fold_indent, {})
+user_cmd('FoldTree', fold_tree, {})
 user_cmd('FoldFunc', fold_Func, {})
-
 user_cmd('FoldSwitch', fold_switch, {})
 user_cmd('FoldComm', fold_comm, {})
-
 user_cmd('FoldTypeDecl', fold_Type_Decl, {})
 user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
 user_cmd('FoldIf', fold_if, {})
