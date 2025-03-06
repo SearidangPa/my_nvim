@@ -75,13 +75,10 @@ local push_all_with_qwen = function(command_str)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
           notification_sent = true
-
-          vim.defer_fn(function()
-            if not notification_sent then
-              local commit_info = get_commit_message_and_time()
-              make_notify(commit_info.message)
-            end
-          end, 500)
+          if not notification_sent then
+            local commit_info = get_commit_message_and_time()
+            make_notify(commit_info.message)
+          end
         end
       end
       return false
@@ -90,11 +87,11 @@ local push_all_with_qwen = function(command_str)
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen7b', function()
-  local command_str = 'git add . && pg_7b'
+  local command_str = 'git add . && pg_7'
   push_all_with_qwen(command_str)
 end, {})
 vim.api.nvim_create_user_command('GitPushWithQwen14b', function()
-  local command_str = 'git add . && pg_14b'
+  local command_str = 'git add . && pg_14'
   push_all_with_qwen(command_str)
 end, {})
 
