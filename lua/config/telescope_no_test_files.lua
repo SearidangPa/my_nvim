@@ -3,7 +3,7 @@ local pickers = require 'telescope.pickers'
 local conf = require('telescope.config').values
 local themes = require 'telescope.themes'
 
-local function lsp_references_filtered()
+local function lsp_references_filtered_test_files()
   vim.lsp.buf_request(0, 'textDocument/references', vim.lsp.util.make_position_params(), function(err, result, _, _)
     if err or not result then
       return
@@ -45,7 +45,7 @@ local function lsp_references_filtered()
     pickers.new(opts):find()
   end)
 end
-vim.keymap.set('n', '<leader>gr', lsp_references_filtered, { desc = 'Go to references (excluding test files)' })
+vim.keymap.set('n', '<leader>gr', lsp_references_filtered_test_files, { desc = 'Go to references (excluding test files)' })
 
 local construct_args_glob_no_test_files = function(prompt)
   if not prompt or prompt == '' then
@@ -72,11 +72,11 @@ end, { desc = 'Search [G]rep [X](excluding test files)' })
 
 local builtin = require 'telescope.builtin'
 
-vim.keymap.set('n', '<leader>cx', function()
+vim.keymap.set('n', '<leader>sx', function()
   builtin.grep_string {
     additional_args = function(opts)
       return { '--glob', '!*test*' }
     end,
     prompt_title = 'find word (excluding test files)',
   }
-end, { desc = '[S]earch [C]urrent word (excluding tests)' })
+end, { desc = '[S]earch current word e[x]cluding tests' })
