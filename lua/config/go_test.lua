@@ -3,7 +3,13 @@ require 'config.util_find_func'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local all_tests_term = {}
+---@class floating_term_state
+---@field buf number
+---@field win number
+---@field chan number
+
+---@type table<string, floating_term_state>
+M.all_tests_term = {}
 
 local floating_term_state = {
   buf = -1,
@@ -11,7 +17,7 @@ local floating_term_state = {
   chan = 0,
 }
 
-function Create_floating_window(buf_input)
+local function create_test_floating_window(buf_input)
   buf_input = buf_input or -1
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
@@ -38,13 +44,26 @@ function Create_floating_window(buf_input)
   return buf, win
 end
 
-local toggle_test_floating_terminal = function()
+---@param test_name string
+local toggle_test_floating_terminal = function(test_name)
+  assert(test_name, 'test_name is required')
+
+  floating_term_state = M.all_tests_term[test_name]
+  if not floating_term_state then
+    floating_term_state = {
+      buf = -1,
+      win = -1,
+      chan = 0,
+    }
+    M.all_tests_term[test_name] = floating_term_state
+  end
+
   if vim.api.nvim_win_is_valid(floating_term_state.win) then
     vim.api.nvim_win_hide(floating_term_state.win)
     return
   end
 
-  floating_term_state.buf, floating_term_state.win = Create_floating_window(floating_term_state.buf)
+  floating_term_state.buf, floating_term_state.win = create_test_floating_window(floating_term_state.buf)
   if vim.bo[floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
@@ -74,24 +93,6 @@ local test_all_in_buf = function()
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
 end
 
-local function drive_test_all_staging()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'staging'
-  local concatTestName = get_all_tests_in_buf()
-  local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
-  toggle_test_floating_terminal()
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-end
-
-local function drive_test_all_dev()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'dev'
-  local concatTestName = get_all_tests_in_buf()
-  local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
-  toggle_test_floating_terminal()
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-end
-
 local go_test = function()
   local test_name = Get_enclosing_test()
   make_notify(string.format('test: %s', test_name))
@@ -107,15 +108,13 @@ vim.api.nvim_create_user_command('GoTestBuf', test_all_in_buf, {})
 local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
-local function drive_test_dev()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'dev'
+local drive_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
 
-  toggle_test_floating_terminal()
-  toggle_test_floating_terminal()
+  toggle_test_floating_terminal(test_name)
+  toggle_test_floating_terminal(test_name)
 
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
@@ -139,43 +138,41 @@ local function drive_test_dev()
   })
 end
 
+local function drive_test_dev()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'dev'
+  drive_test()
+end
+
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  local test_name, test_line = Get_enclosing_test()
-  local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  local source_bufnr = vim.api.nvim_get_current_buf()
-
-  toggle_test_floating_terminal()
-  toggle_test_floating_terminal()
-
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-  vim.api.nvim_buf_attach(floating_term_state.buf, false, {
-    on_lines = function(_, buf, _, first_line, last_line)
-      local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
-      for _, line in ipairs(lines) do
-        if string.match(line, '--- FAIL') then
-          make_notify 'Test failed'
-          return false
-        elseif string.match(line, '--- PASS') then
-          local current_time = os.date '%H:%M:%S'
-          vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line, 0, {
-            virt_text = { { string.format('✅ %s', current_time), 'passed' } },
-            virt_text_pos = 'eol',
-          })
-          make_notify 'Test passed'
-        end
-      end
-      return false
-    end,
-  })
+  drive_test()
 end
 
 vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
-vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggle go test terminal' })
 
+-- local function drive_test_all_staging()
+--   vim.env.UKS = 'others'
+--   vim.env.MODE = 'staging'
+--   local concatTestName = get_all_tests_in_buf()
+--   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
+--   toggle_test_floating_terminal()
+--   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+-- end
+--
+-- local function drive_test_all_dev()
+--   vim.env.UKS = 'others'
+--   vim.env.MODE = 'dev'
+--   local concatTestName = get_all_tests_in_buf()
+--   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
+--   toggle_test_floating_terminal()
+--   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+-- end
+--
+-- vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
+-- vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
 return M
