@@ -63,7 +63,8 @@ local push_all_with_qwen = function()
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          make_notify 'Git Push With Qwen Success'
+          local commit_message = vim.fn.system 'git log -1 --pretty=%B'
+          make_notify(string.format('Pushed: %s', commit_message))
         end
       end
     end,
