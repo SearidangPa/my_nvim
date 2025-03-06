@@ -46,7 +46,7 @@ local toggle_float = function(content)
     vim.api.nvim_win_hide(state.floating.win)
     return
   end
-  state.floating.buf, state.floating.win = Create_test_floating_window(state.floating.buf)
+  state.floating.buf, state.floating.win = Create_floating_window(state.floating.buf)
   vim.api.nvim_buf_set_lines(state.floating.buf, 0, -1, false, content)
 end
 

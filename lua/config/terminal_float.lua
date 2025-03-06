@@ -6,7 +6,7 @@ local floating_term_state = {
   chan = 0,
 }
 
-function Create_test_floating_window(buf_input)
+function Create_floating_window(buf_input)
   buf_input = buf_input or -1
   local width = math.floor(vim.o.columns * 0.9)
   local height = math.floor(vim.o.lines * 0.9)
@@ -39,7 +39,7 @@ local toggle_floating_terminal = function()
     return
   end
 
-  floating_term_state.buf, floating_term_state.win = Create_test_floating_window(floating_term_state.buf)
+  floating_term_state.buf, floating_term_state.win = Create_floating_window(floating_term_state.buf)
   if vim.bo[floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
