@@ -54,7 +54,7 @@ end
 local push_all_with_qwen = function()
   toggle_qwen_floating_terminal()
   toggle_qwen_floating_terminal()
-  local command_str = 'gaa && pg'
+  local command_str = 'git add . && pg'
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
@@ -62,7 +62,6 @@ local push_all_with_qwen = function()
       for _, line in ipairs(lines) do
         print(line)
       end
-      return false
     end,
   })
 end
