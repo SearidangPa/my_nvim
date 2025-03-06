@@ -74,17 +74,13 @@ local push_all_with_qwen = function()
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          local commit_info = get_commit_message_and_time()
           command_done = true
-          vim.schedule(function()
+          vim.defer_fn(function()
             if command_done then
-              make_notify('Git Push Done', {
-                title = 'Git Push Done',
-                message = string.format('Last commit message: %s\nTime: %s', commit_info.message, commit_info.time),
-                timeout = 5000,
-              })
+              local commit_info = get_commit_message_and_time()
+              make_notify(commit_info.message)
             end
-          end)
+          end, 5000)
         end
       end
 
