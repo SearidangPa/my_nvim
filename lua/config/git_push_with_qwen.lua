@@ -72,6 +72,7 @@ local push_all_with_qwen = function(command_str)
   vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
+
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
           if not notification_sent then
@@ -81,6 +82,7 @@ local push_all_with_qwen = function(command_str)
           end
         end
       end
+
       return false
     end,
   })
