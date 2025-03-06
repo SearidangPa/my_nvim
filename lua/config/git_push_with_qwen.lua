@@ -74,10 +74,10 @@ local push_all_with_qwen = function(command_str)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          notification_sent = true
           if not notification_sent then
             local commit_info = get_commit_message_and_time()
             make_notify(commit_info.message)
+            notification_sent = true
           end
         end
       end
