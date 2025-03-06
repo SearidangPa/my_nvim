@@ -1,4 +1,6 @@
 local M = {}
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
 
 local qwen_floating_term_state = {
   buf = -1,
@@ -60,7 +62,9 @@ local push_all_with_qwen = function()
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
-        print(line)
+        if string.match(line, 'To github.com:') then
+          make_notify 'Git Push With Qwen Success'
+        end
       end
     end,
   })
