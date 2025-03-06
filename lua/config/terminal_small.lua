@@ -44,7 +44,6 @@ local function toggle_small_terminal()
   vim.cmd.wincmd 'j'
 
   small_term_state.chan = vim.bo.channel
-  return small_term_state.win
 end
 
 vim.keymap.set('n', '<localleader>td', function()

@@ -109,6 +109,9 @@ function Handle_choice(opts)
       vim.fn.chansend(channel_id, '\x03')
     else
       vim.fn.chansend(channel_id, string.format('%s%s', choice, end_of_line))
+      if choice == 'gaa && pg' then
+        toggle_term_func()
+      end
     end
     return
   end
