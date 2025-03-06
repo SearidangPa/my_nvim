@@ -88,7 +88,7 @@ local push_all_with_qwen = function()
       make_notify(commit_info.message)
       command_done = false
     end
-  end, 2000)
+  end, 500)
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
