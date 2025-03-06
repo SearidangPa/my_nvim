@@ -78,6 +78,8 @@ local push_all_with_qwen = function()
           make_notify(string.format('Time: %s', commit_info.time))
         end
       end
+
+      return false
     end,
   })
 end
