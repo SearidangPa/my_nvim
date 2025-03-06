@@ -86,6 +86,12 @@ end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
 vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
+vim.api.nvim_create_user_command('LastCommitMessage', function()
+  local commit_info = get_commit_message_and_time()
+  print(string.format('Last commit message: %s', commit_info.message))
+  print(string.format('Time: %s', commit_info.time))
+end, {})
+
 vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
 
 return M
