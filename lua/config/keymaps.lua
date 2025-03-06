@@ -197,4 +197,6 @@ vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages'
 vim.keymap.set('n', '<leader>ng', function()
   require('neogen').generate()
 end, map_opt '[N]eogen [G]enerate')
+
+vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
 return {}
