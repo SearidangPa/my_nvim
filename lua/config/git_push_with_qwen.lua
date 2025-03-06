@@ -53,6 +53,18 @@ local toggle_qwen_floating_terminal = function()
   end
 end
 
+local function get_commit_message_and_time()
+  -- Get commit message
+  local message = vim.fn.system 'git log -1 --pretty=%B'
+  -- Get commit time
+  local time = vim.fn.system "git log -1 --pretty=%ad --date=format:'%Y-%m-%d %H:%M:%S'"
+
+  return {
+    message = vim.fn.trim(message),
+    time = vim.fn.trim(time),
+  }
+end
+
 local push_all_with_qwen = function()
   toggle_qwen_floating_terminal()
   toggle_qwen_floating_terminal()
@@ -63,8 +75,9 @@ local push_all_with_qwen = function()
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          local commit_message = vim.fn.system 'git log -1 --pretty=%B'
-          make_notify(string.format('Pushed: %s', commit_message))
+          local commit_info = get_commit_message_and_time()
+          make_notify(string.format('Pushed: %s', commit_info.message))
+          make_notify(string.format('Time: %s', commit_info.time))
         end
       end
     end,
@@ -73,6 +86,6 @@ end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
 vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
-vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { desc = '[Git] [P]ush with Qwen' })
+vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
 
 return M
