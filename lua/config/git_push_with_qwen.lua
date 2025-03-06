@@ -59,6 +59,8 @@ local push_all_with_qwen = function()
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
+vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
+
 vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen<CR>', { desc = '[Git] [P]ush with Qwen' })
 
 return M
