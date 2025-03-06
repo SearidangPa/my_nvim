@@ -11,7 +11,7 @@ return {
       harpoon:list():add()
     end, { desc = 'harpoon [A]dd' })
 
-    vim.keymap.set('n', '<localleader>hp', function()
+    vim.keymap.set('n', '<localleader>p', function()
       harpoon:list():prepend()
     end, { desc = 'harpoon [P]repend' })
 

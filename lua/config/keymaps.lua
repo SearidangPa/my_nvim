@@ -122,6 +122,7 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 
 -- ================== local leader===================
 map('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
+map('n', '<localleader>d', [["_dd]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 map('n', '<localleader>q', function()
   vim.cmd [[q]]
@@ -146,13 +147,7 @@ map('n', 'n', 'nzzzv')
 map('n', '<C-u>', '<C-u>zz')
 map('n', '<C-d>', '<C-d>zz')
 
-map({ 'n', 'v' }, '<leader>y', [["+y]])
-map('n', '<localleader>Y', [["pY]])
-map('n', '<localleader>p', [["pp]])
-map('n', '<localleader>P', [["pP]])
-
 map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
-map('n', '<leader>dd', [["_dd]], map_opt '[D]elete into black hole')
 
 map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]])
 
