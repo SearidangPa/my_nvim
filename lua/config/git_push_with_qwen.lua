@@ -1,6 +1,6 @@
 local M = {}
 
-local floating_term_state = {
+local qwen_floating_term_state = {
   buf = -1,
   win = -1,
   chan = 0,
@@ -34,20 +34,20 @@ local function create_qwen_floating_window(buf_input)
 end
 
 local toggle_qwen_floating_terminal = function()
-  if vim.api.nvim_win_is_valid(floating_term_state.win) then
-    vim.api.nvim_win_hide(floating_term_state.win)
+  if vim.api.nvim_win_is_valid(qwen_floating_term_state.win) then
+    vim.api.nvim_win_hide(qwen_floating_term_state.win)
     return
   end
 
-  floating_term_state.buf, floating_term_state.win = create_qwen_floating_window(floating_term_state.buf)
-  if vim.bo[floating_term_state.buf].buftype ~= 'terminal' then
+  qwen_floating_term_state.buf, qwen_floating_term_state.win = create_qwen_floating_window(qwen_floating_term_state.buf)
+  if vim.bo[qwen_floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
     else
       vim.cmd.term()
     end
 
-    floating_term_state.chan = vim.bo.channel
+    qwen_floating_term_state.chan = vim.bo.channel
   end
 end
 
@@ -55,8 +55,8 @@ local push_all_with_qwen = function()
   toggle_qwen_floating_terminal()
   toggle_qwen_floating_terminal()
   local command_str = 'git add . && pg'
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-  vim.api.nvim_buf_attach(floating_term_state.buf, false, {
+  vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
+  vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
