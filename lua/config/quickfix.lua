@@ -58,7 +58,9 @@ function M.lsp_references_nearest_function()
   M.lsp_references_to_quickfix(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
 end
 
-vim.api.nvim_create_user_command('LspReferencesFunc', M.lsp_references_nearest_function, {})
+vim.api.nvim_create_user_command('FuncRefQuickfix', M.lsp_references_nearest_function, {})
+
+vim.keymap.set('n', '<leader>qi', '<cmd>FuncRefQuickfix<CR>', { noremap = true, silent = true })
 
 function M.toggle_quickfix()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
