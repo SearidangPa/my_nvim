@@ -54,7 +54,6 @@ local toggle_test_floating_terminal = function()
 
     floating_term_state.chan = vim.bo.channel
   end
-  return floating_term_state.win
 end
 
 local get_all_tests_in_buf = function()
@@ -116,6 +115,8 @@ local function drive_test_dev()
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
 
   toggle_test_floating_terminal()
+  toggle_test_floating_terminal()
+
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
@@ -145,6 +146,7 @@ local function drive_test_staging()
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
   local source_bufnr = vim.api.nvim_get_current_buf()
 
+  toggle_test_floating_terminal()
   toggle_test_floating_terminal()
 
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
