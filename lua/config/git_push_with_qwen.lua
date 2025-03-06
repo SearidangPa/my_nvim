@@ -69,26 +69,24 @@ local push_all_with_qwen = function()
   local command_str = 'git add . && pg'
   vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
 
-  local command_done = false
+  local notification_sent = false
   vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          command_done = true
+          notification_sent = true
+          vim.defer_fn(function()
+            if not notification_sent then
+              local commit_info = get_commit_message_and_time()
+              make_notify(commit_info.message)
+            end
+          end, 500)
         end
       end
       return false
     end,
   })
-
-  vim.defer_fn(function()
-    if command_done then
-      local commit_info = get_commit_message_and_time()
-      make_notify(commit_info.message)
-      command_done = false
-    end
-  end, 500)
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen', push_all_with_qwen, {})
