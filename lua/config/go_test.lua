@@ -72,7 +72,7 @@ end
 local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
-local test = function(source_bufnr, test_name, test_line, test_command)
+local go_test_command = function(source_bufnr, test_name, test_line, test_command)
   test_command = test_command or string.format('go test .\\... -v -run %s', test_name)
 
   make_notify(string.format('running test: %s', test_name))
@@ -117,35 +117,35 @@ local test = function(source_bufnr, test_name, test_line, test_command)
   })
 end
 
-local go_test = function(test_format)
+local go_test_with_format = function(test_format)
   M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   local test_command = string.format(test_format, test_name)
-  test(source_bufnr, test_name, test_line, test_command)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  local test_command = 'go test integration_tests/*.go -v -run %s'
-  go_test(test_command)
+  local test_format = 'go test integration_tests/*.go -v -run %s'
+  go_test_with_format(test_format)
 end
 
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  local test_command = 'go test integration_tests/*.go -v -run %s'
-  go_test(test_command)
+  local test_format = 'go test integration_tests/*.go -v -run %s'
+  go_test_with_format(test_format)
 end
 
 local function drive_test_buf()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   M.reset()
-  local test_command = 'go test integration_tests/*.go -v -run %s'
   for test_name, test_line in pairs(testsInCurrBuf) do
-    test(bufnr, test_name, test_line, test_command)
+    local test_format = 'go test integration_tests/*.go -v -run %s'
+    go_test_with_format(test_format)
   end
 end
 
@@ -193,7 +193,7 @@ end
 
 vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTest', go_test, {})
+vim.api.nvim_create_user_command('GoTest', go_test_with_format, {})
 vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GOTestStaging', drive_test_staging, {})
 
