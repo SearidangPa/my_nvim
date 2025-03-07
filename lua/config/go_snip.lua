@@ -313,9 +313,9 @@ ls.add_snippets('go', {
     fmta(
       [[
         <funcPurpose>
-        // takes in: <args>
-        // return error when: <condition>
-        // flow: <flow>
+        // - takes in: <args>
+        // - return error when: <condition>
+        // - flows: <flow>
       ]],
       {
         funcPurpose = i(1),

@@ -194,9 +194,9 @@ vim.api.nvim_create_autocmd('FileType', {
 
 vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
 
-vim.keymap.set('n', '<leader>ng', function()
+vim.keymap.set('n', '<leader>nf', function()
   require('neogen').generate()
-end, map_opt '[N]eogen [G]enerate')
+end, map_opt '[N]eogen [F]unction')
 
 vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
 return {}
