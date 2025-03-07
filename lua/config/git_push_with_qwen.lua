@@ -66,8 +66,8 @@ end
 local push_all_with_qwen = function(command_str)
   toggle_qwen_floating_terminal()
   toggle_qwen_floating_terminal()
-  vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
   local commit_info_prev = get_commit_message_and_time()
+  vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
 
   vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
