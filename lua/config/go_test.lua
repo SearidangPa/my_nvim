@@ -144,8 +144,8 @@ local function drive_test_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   M.reset()
   for test_name, test_line in pairs(testsInCurrBuf) do
-    local test_format = 'go test integration_tests/*.go -v -run %s'
-    go_test_with_format(test_format)
+    local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
+    go_test_with_format(test_command)
   end
 end
 
