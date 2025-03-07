@@ -110,22 +110,24 @@ local drive_test = function(source_bufnr, test_name, test_line)
   toggle_test_floating_terminal(test_name)
 
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-
   local notification_sent = false
 
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
 
+      local current_time = os.date '%H:%M:%S'
       for _, line in ipairs(lines) do
         if string.match(line, '--- FAIL') then
-          if not notification_sent then
-            make_notify 'Test failed'
-            notification_sent = true
-            return true
-          end
+          vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
+            virt_text = { { string.format('❌ %s', current_time) } },
+            virt_text_pos = 'eol',
+          })
+
+          make_notify 'Test failed'
+          notification_sent = true
+          return true
         elseif string.match(line, '--- PASS') then
-          local current_time = os.date '%H:%M:%S'
           vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
             virt_text = { { string.format('✅ %s', current_time) } },
             virt_text_pos = 'eol',
@@ -147,6 +149,7 @@ end
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
+  M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   drive_test(source_bufnr, test_name, test_line)
@@ -155,6 +158,7 @@ end
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
+  M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   drive_test(source_bufnr, test_name, test_line)
@@ -168,6 +172,7 @@ vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggl
 local function test_all()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
+  M.reset()
   for test_name, test_line in pairs(testsInCurrBuf) do
     drive_test(bufnr, test_name, test_line)
   end
@@ -187,4 +192,18 @@ end
 
 vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
+
+--- reset all tests terminal
+M.reset = function()
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      vim.api.nvim_chan_send(floating_term_state.chan, 'clear\n')
+    end
+  end
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end
+
+vim.api.nvim_create_user_command('ResetTestTerminal', M.reset, {})
+
 return M
