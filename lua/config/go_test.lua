@@ -3,12 +3,6 @@ require 'config.util_find_func'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
----@class floating_term_state
----@field buf number
----@field win number
----@field chan number
-
----@type table<string, floating_term_state>
 M.all_tests_term = {}
 
 local floating_term_state = {
@@ -44,7 +38,6 @@ local function create_test_floating_window(buf_input)
   return buf, win
 end
 
----@param test_name string
 local toggle_test_floating_terminal = function(test_name)
   assert(test_name, 'test_name is required')
 
