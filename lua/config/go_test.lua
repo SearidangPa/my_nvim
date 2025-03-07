@@ -124,8 +124,6 @@ local go_test = function(test_format)
   test(source_bufnr, test_name, test_line, test_command)
 end
 
-vim.api.nvim_create_user_command('GoTest', go_test, {})
-
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
@@ -139,9 +137,6 @@ local function drive_test_staging()
   local test_command = 'go test integration_tests/*.go -v -run %s'
   go_test(test_command)
 end
-
-vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
 
 local function test_all()
   local bufnr = vim.api.nvim_get_current_buf()
@@ -164,9 +159,6 @@ local function drive_test_all_dev()
   test_all()
 end
 
-vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
-
 --- reset all tests terminal
 M.reset = function()
   for test_name, _ in pairs(M.all_tests_term) do
@@ -177,8 +169,6 @@ M.reset = function()
   end
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
-
-vim.api.nvim_create_user_command('ResetTestTerminal', M.reset, {})
 
 local function toggle_view_test_terminal()
   local needs_open = true
@@ -198,6 +188,12 @@ local function toggle_view_test_terminal()
     toggle_test_floating_terminal(test_name)
   end
 end
+
+vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('GoTest', go_test, {})
+vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GoTestStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_view_test_terminal, { desc = 'Toggle go test terminal' })
 
