@@ -38,6 +38,7 @@ local function create_test_floating_window(buf_input)
   return buf, win
 end
 
+---@param test_name string
 local toggle_test_floating_terminal = function(test_name)
   assert(test_name, 'test_name is required')
 
@@ -149,15 +150,29 @@ vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggle go test terminal' })
 
--- local function drive_test_all_staging()
---   vim.env.UKS = 'others'
---   vim.env.MODE = 'staging'
---   local concatTestName = get_all_tests_in_buf()
---   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
---   toggle_test_floating_terminal()
---   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
--- end
---
+---@return table<string>
+local list_all_tests_in_buf = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  local res = {}
+  for testName, _ in pairs(testsInCurrBuf) do
+    table.insert(res, testName)
+  end
+  return res
+end
+
+local function drive_test_all_staging()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'staging'
+  local tests_list = list_all_tests_in_buf()
+  for _, test_name in ipairs(tests_list) do
+    local command_str = string.format("go test integration_tests/*.go -v -run '%s'", test_name)
+    toggle_test_floating_terminal(test_name)
+    toggle_test_floating_terminal(test_name)
+    vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+  end
+end
+
 -- local function drive_test_all_dev()
 --   vim.env.UKS = 'others'
 --   vim.env.MODE = 'dev'
@@ -167,6 +182,6 @@ vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggl
 --   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
 -- end
 --
--- vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
 -- vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
 return M
