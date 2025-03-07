@@ -117,7 +117,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   })
 end
 
-local go_test_with_format = function(test_format)
+local go_test_this = function(test_format)
   M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
@@ -129,14 +129,14 @@ local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
   local test_format = 'go test integration_tests/*.go -v -run %s'
-  go_test_with_format(test_format)
+  go_test_this(test_format)
 end
 
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
   local test_format = 'go test integration_tests/*.go -v -run %s'
-  go_test_with_format(test_format)
+  go_test_this(test_format)
 end
 
 local function drive_test_buf()
@@ -145,7 +145,7 @@ local function drive_test_buf()
   M.reset()
   for test_name, test_line in pairs(testsInCurrBuf) do
     local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-    go_test_with_format(test_command)
+    go_test_command(bufnr, test_name, test_line, test_command)
   end
 end
 
@@ -193,7 +193,7 @@ end
 
 vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTest', go_test_with_format, {})
+vim.api.nvim_create_user_command('GoTest', go_test_this, {})
 vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GOTestStaging', drive_test_staging, {})
 
