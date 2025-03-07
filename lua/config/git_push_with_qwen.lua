@@ -69,20 +69,16 @@ local push_all_with_qwen = function(command_str)
   vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
   local commit_info_prev = get_commit_message_and_time()
 
-  local notification_sent = false
   vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
 
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          if not notification_sent then
-            notification_sent = true
-            local commit_info_now = get_commit_message_and_time()
-            if commit_info_now.message ~= commit_info_prev.message then
-              make_notify(commit_info_now.message)
-              return true
-            end
+          local commit_info_now = get_commit_message_and_time()
+          if commit_info_now.message ~= commit_info_prev.message then
+            make_notify(commit_info_now.message)
+            return true
           end
         end
       end
