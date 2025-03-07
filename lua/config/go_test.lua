@@ -170,7 +170,7 @@ M.reset = function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
 
-local function toggle_view_test_terminal()
+local function toggle_view_enclosing_test()
   local needs_open = true
 
   for test_name, _ in pairs(M.all_tests_term) do
@@ -193,8 +193,10 @@ vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
 vim.api.nvim_create_user_command('GoTest', go_test, {})
 vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GoTestStaging', drive_test_staging, {})
+vim.api.nvim_create_user_command('GOTestStaging', drive_test_staging, {})
 
-vim.keymap.set('n', '<leader>gt', toggle_view_test_terminal, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+
+--TODO: Wire telescope to select which test terminal to open
 
 return M
