@@ -167,8 +167,6 @@ end
 vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
 
-vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggle go test terminal' })
-
 local function test_all()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
@@ -205,5 +203,10 @@ M.reset = function()
 end
 
 vim.api.nvim_create_user_command('ResetTestTerminal', M.reset, {})
+
+vim.keymap.set('n', '<leader>gt', function()
+  local test_name = Get_enclosing_test()
+  toggle_test_floating_terminal(test_name)
+end, { desc = 'Toggle go test terminal' })
 
 return M
