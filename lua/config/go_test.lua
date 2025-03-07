@@ -102,9 +102,7 @@ vim.api.nvim_create_user_command('GoTestBuf', test_all_in_buf, {})
 local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
-local drive_test = function()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
+local drive_test = function(source_bufnr, test_name, test_line)
   make_notify(string.format('running test: %s', test_name))
   local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
 
@@ -136,13 +134,17 @@ end
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  drive_test()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  drive_test(source_bufnr, test_name, test_line)
 end
 
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  drive_test()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  drive_test(source_bufnr, test_name, test_line)
 end
 
 vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
@@ -150,26 +152,13 @@ vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggle go test terminal' })
 
----@return table<string>
-local list_all_tests_in_buf = function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  local res = {}
-  for testName, _ in pairs(testsInCurrBuf) do
-    table.insert(res, testName)
-  end
-  return res
-end
-
 local function drive_test_all_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  local tests_list = list_all_tests_in_buf()
-  for _, test_name in ipairs(tests_list) do
-    local command_str = string.format("go test integration_tests/*.go -v -run '%s'", test_name)
-    toggle_test_floating_terminal(test_name)
-    toggle_test_floating_terminal(test_name)
-    vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  for test_line, test_name in pairs(testsInCurrBuf) do
+    drive_test(bufnr, test_name, test_line)
   end
 end
 
