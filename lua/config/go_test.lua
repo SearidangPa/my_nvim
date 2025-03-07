@@ -205,6 +205,15 @@ end
 vim.api.nvim_create_user_command('ResetTestTerminal', M.reset, {})
 
 vim.keymap.set('n', '<leader>gt', function()
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      if vim.api.nvim_win_is_valid(floating_term_state.win) then
+        vim.api.nvim_win_hide(floating_term_state.win)
+      end
+    end
+  end
+
   local test_name = Get_enclosing_test()
   toggle_test_floating_terminal(test_name)
 end, { desc = 'Toggle go test terminal' })
