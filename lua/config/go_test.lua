@@ -167,7 +167,7 @@ local function drive_test_all_dev()
   vim.env.MODE = 'dev'
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
-  for test_line, test_name in pairs(testsInCurrBuf) do
+  for test_name, test_line in pairs(testsInCurrBuf) do
     drive_test(bufnr, test_name, test_line)
   end
 end
