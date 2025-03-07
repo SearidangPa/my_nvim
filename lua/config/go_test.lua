@@ -162,15 +162,16 @@ local function drive_test_all_staging()
   end
 end
 
--- local function drive_test_all_dev()
---   vim.env.UKS = 'others'
---   vim.env.MODE = 'dev'
---   local concatTestName = get_all_tests_in_buf()
---   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
---   toggle_test_floating_terminal()
---   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
--- end
---
+local function drive_test_all_dev()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'dev'
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  for test_line, test_name in pairs(testsInCurrBuf) do
+    drive_test(bufnr, test_name, test_line)
+  end
+end
+
 vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
--- vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
 return M
