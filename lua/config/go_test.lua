@@ -73,6 +73,8 @@ local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
 local test = function(source_bufnr, test_name, test_line, test_command)
+  test_command = test_command or string.format('go test .\\... -v -run %s', test_name)
+
   make_notify(string.format('running test: %s', test_name))
 
   toggle_test_floating_terminal(test_name)
@@ -116,7 +118,6 @@ local test = function(source_bufnr, test_name, test_line, test_command)
 end
 
 local go_test = function(test_format)
-  test_format = test_format or 'go test .\\... -v -run %s'
   M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
@@ -138,25 +139,26 @@ local function drive_test_staging()
   go_test(test_command)
 end
 
-local function test_all()
+local function drive_test_buf()
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   M.reset()
+  local test_command = 'go test integration_tests/*.go -v -run %s'
   for test_name, test_line in pairs(testsInCurrBuf) do
-    test(bufnr, test_name, test_line)
+    test(bufnr, test_name, test_line, test_command)
   end
 end
 
 local function drive_test_all_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  test_all()
+  drive_test_buf()
 end
 
 local function drive_test_all_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  test_all()
+  drive_test_buf()
 end
 
 --- reset all tests terminal
