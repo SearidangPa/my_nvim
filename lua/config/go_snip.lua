@@ -287,9 +287,11 @@ ls.add_snippets('go', {
   ),
 })
 
+--- === annotation ===
+
 ls.add_snippets('go', {
   s(
-    'at', -- annotation test
+    'ta', -- test annotation
     fmta(
       [[
         tests <testPurpose>
@@ -300,6 +302,26 @@ ls.add_snippets('go', {
         testPurpose = i(1),
         setup = i(2),
         condition = i(3),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'fa', -- func annotation
+    fmta(
+      [[
+        <funcPurpose>
+        // - takes in: <args>
+        // - return error when: <condition>
+        // - flows: <flow>
+      ]],
+      {
+        funcPurpose = i(1),
+        args = i(2),
+        condition = i(3),
+        flow = i(4),
       }
     )
   ),

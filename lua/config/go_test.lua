@@ -3,12 +3,6 @@ require 'config.util_find_func'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
----@class floating_term_state
----@field buf number
----@field win number
----@field chan number
-
----@type table<string, floating_term_state>
 M.all_tests_term = {}
 
 local floating_term_state = {
@@ -75,105 +69,136 @@ local toggle_test_floating_terminal = function(test_name)
   end
 end
 
-local get_all_tests_in_buf = function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  local concatTestName = ''
-  for testName, _ in pairs(testsInCurrBuf) do
-    concatTestName = concatTestName .. testName .. '|'
-  end
-  concatTestName = concatTestName:sub(1, -2) -- remove the last |
-  return concatTestName
-end
-
-local test_all_in_buf = function()
-  local concatTestName = get_all_tests_in_buf()
-  local command_str = string.format("go test ./... -v -run '%s'", concatTestName) -- don't forget the single quotes
-  toggle_test_floating_terminal()
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-end
-
-local go_test = function()
-  local test_name = Get_enclosing_test()
-  make_notify(string.format('test: %s', test_name))
-  local command_str = string.format('go test ./... -v -run %s', test_name)
-  toggle_test_floating_terminal()
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
-end
-
-vim.api.nvim_create_user_command('GoTest', go_test, {})
-vim.api.nvim_create_user_command('GoTestBuf', test_all_in_buf, {})
-
--- === Drive Test ===
 local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
-local drive_test = function()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
+local go_test_command = function(source_bufnr, test_name, test_line, test_command)
+  test_command = test_command or string.format('go test .\\... -v -run %s', test_name)
+
   make_notify(string.format('running test: %s', test_name))
-  local command_str = string.format('go test integration_tests/*.go -v -run %s', test_name)
 
   toggle_test_floating_terminal(test_name)
   toggle_test_floating_terminal(test_name)
 
-  vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+  vim.api.nvim_chan_send(floating_term_state.chan, test_command .. '\n')
+  local notification_sent = false
+
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
+
+      local current_time = os.date '%H:%M:%S'
       for _, line in ipairs(lines) do
         if string.match(line, '--- FAIL') then
-          make_notify 'Test failed'
-          return false
+          vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
+            virt_text = { { string.format('❌ %s', current_time) } },
+            virt_text_pos = 'eol',
+          })
+
+          make_notify(string.format('Test failed: %s', test_name))
+          notification_sent = true
+          return true
         elseif string.match(line, '--- PASS') then
-          local current_time = os.date '%H:%M:%S'
           vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
             virt_text = { { string.format('✅ %s', current_time) } },
             virt_text_pos = 'eol',
           })
-          make_notify 'Test passed'
+
+          if not notification_sent then
+            make_notify(string.format('Test passed: %s', test_name))
+            notification_sent = true
+            return true -- detach from the buffer
+          end
         end
       end
+
       return false
     end,
   })
 end
 
+local go_test_this = function(test_format)
+  M.reset()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  local test_command = string.format(test_format, test_name)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
+end
+
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  drive_test()
+  local test_format = 'go test integration_tests/*.go -v -run %s'
+  go_test_this(test_format)
 end
 
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  drive_test()
+  local test_format = 'go test integration_tests/*.go -v -run %s'
+  go_test_this(test_format)
 end
 
-vim.api.nvim_create_user_command('DriveTestDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('DriveTestStaging', drive_test_staging, {})
+local function drive_test_buf()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(bufnr)
+  M.reset()
+  for test_name, test_line in pairs(testsInCurrBuf) do
+    local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
+    go_test_command(bufnr, test_name, test_line, test_command)
+  end
+end
 
-vim.keymap.set('n', '<leader>gt', toggle_test_floating_terminal, { desc = 'Toggle go test terminal' })
+local function drive_test_all_staging()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'staging'
+  drive_test_buf()
+end
 
--- local function drive_test_all_staging()
---   vim.env.UKS = 'others'
---   vim.env.MODE = 'staging'
---   local concatTestName = get_all_tests_in_buf()
---   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
---   toggle_test_floating_terminal()
---   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
--- end
---
--- local function drive_test_all_dev()
---   vim.env.UKS = 'others'
---   vim.env.MODE = 'dev'
---   local concatTestName = get_all_tests_in_buf()
---   local command_str = string.format("go test integration_tests/*.go -v -run '%s'", concatTestName)
---   toggle_test_floating_terminal()
---   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
--- end
---
--- vim.api.nvim_create_user_command('DriveTestAllStaging', drive_test_all_staging, {})
--- vim.api.nvim_create_user_command('DriveTestAllDev', drive_test_all_dev, {})
+local function drive_test_all_dev()
+  vim.env.UKS = 'others'
+  vim.env.MODE = 'dev'
+  drive_test_buf()
+end
+
+--- reset all tests terminal
+M.reset = function()
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      vim.api.nvim_chan_send(floating_term_state.chan, 'clear\n')
+    end
+  end
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end
+
+local function toggle_view_enclosing_test()
+  local needs_open = true
+
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      if vim.api.nvim_win_is_valid(floating_term_state.win) then
+        vim.api.nvim_win_hide(floating_term_state.win)
+        needs_open = false
+      end
+    end
+  end
+
+  if needs_open then
+    local test_name = Get_enclosing_test()
+    toggle_test_floating_terminal(test_name)
+  end
+end
+
+vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('GoTest', go_test_this, {})
+vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GOTestStaging', drive_test_staging, {})
+
+vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+
+--TODO: Wire telescope to select which test terminal to open
+
 return M
