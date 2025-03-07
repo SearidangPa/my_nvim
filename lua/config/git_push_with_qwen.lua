@@ -76,9 +76,10 @@ local push_all_with_qwen = function(command_str)
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
           if not notification_sent then
+            notification_sent = true
             local commit_info = get_commit_message_and_time()
             make_notify(commit_info.message)
-            notification_sent = true
+            return true
           end
         end
       end
