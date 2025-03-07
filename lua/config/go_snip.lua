@@ -313,15 +313,15 @@ ls.add_snippets('go', {
     fmta(
       [[
         <funcPurpose>
-        // flow: <flow>
         // takes in: <args>
         // return error when: <condition>
+        // flow: <flow>
       ]],
       {
         funcPurpose = i(1),
-        flow = i(2),
-        args = i(3),
-        condition = i(4),
+        args = i(2),
+        condition = i(3),
+        flow = i(4),
       }
     )
   ),
