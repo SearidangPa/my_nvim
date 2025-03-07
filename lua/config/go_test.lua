@@ -73,7 +73,7 @@ local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
 local go_test_command = function(source_bufnr, test_name, test_line, test_command)
-  test_command = test_command or string.format('go test .\\... -v -run %s', test_name)
+  test_command = test_command or string.format('go test .\\... -v -run %s\r\n', test_name)
 
   make_notify(string.format('running test: %s', test_name))
 
@@ -117,26 +117,30 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   })
 end
 
-local go_test_this = function(test_format)
+local go_test_this = function()
   M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format(test_format, test_name)
+  local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
   go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
-  local test_format = 'go test integration_tests/*.go -v -run %s'
-  go_test_this(test_format)
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
 local function drive_test_staging()
   vim.env.UKS = 'others'
   vim.env.MODE = 'staging'
-  local test_format = 'go test integration_tests/*.go -v -run %s'
-  go_test_this(test_format)
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
 local function drive_test_buf()
@@ -144,7 +148,7 @@ local function drive_test_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
   M.reset()
   for test_name, test_line in pairs(testsInCurrBuf) do
-    local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
+    local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
     go_test_command(bufnr, test_name, test_line, test_command)
   end
 end
@@ -187,6 +191,7 @@ local function toggle_view_enclosing_test()
 
   if needs_open then
     local test_name = Get_enclosing_test()
+    assert(test_name, 'No test found')
     toggle_test_floating_terminal(test_name)
   end
 end
