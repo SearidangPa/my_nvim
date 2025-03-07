@@ -93,7 +93,7 @@ local test = function(source_bufnr, test_name, test_line, test_command)
             virt_text_pos = 'eol',
           })
 
-          make_notify 'Test failed'
+          make_notify(string.format('Test failed: %s', test_name))
           notification_sent = true
           return true
         elseif string.match(line, '--- PASS') then
@@ -103,7 +103,7 @@ local test = function(source_bufnr, test_name, test_line, test_command)
           })
 
           if not notification_sent then
-            make_notify 'Test passed'
+            make_notify(string.format('Test passed: %s', test_name))
             notification_sent = true
             return true -- detach from the buffer
           end
