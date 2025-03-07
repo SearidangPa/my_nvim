@@ -110,22 +110,35 @@ local drive_test = function(source_bufnr, test_name, test_line)
   toggle_test_floating_terminal(test_name)
 
   vim.api.nvim_chan_send(floating_term_state.chan, command_str .. '\n')
+
+  local notification_sent = false
+
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
+
       for _, line in ipairs(lines) do
         if string.match(line, '--- FAIL') then
-          make_notify 'Test failed'
-          return false
+          if not notification_sent then
+            make_notify 'Test failed'
+            notification_sent = true
+            return true
+          end
         elseif string.match(line, '--- PASS') then
           local current_time = os.date '%H:%M:%S'
           vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
             virt_text = { { string.format('✅ %s', current_time) } },
             virt_text_pos = 'eol',
           })
-          make_notify 'Test passed'
+
+          if not notification_sent then
+            make_notify 'Test passed'
+            notification_sent = true
+            return true
+          end
         end
       end
+
       return false
     end,
   })
