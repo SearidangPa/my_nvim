@@ -88,10 +88,6 @@ local push_all_with_qwen = function(command_str)
   })
 end
 
-vim.api.nvim_create_user_command('GitPushWithQwen7b', function()
-  local command_str = 'git add . && pg_7'
-  push_all_with_qwen(command_str)
-end, {})
 vim.api.nvim_create_user_command('GitPushWithQwen14b', function()
   local command_str = 'git add . && pg_14'
   push_all_with_qwen(command_str)
