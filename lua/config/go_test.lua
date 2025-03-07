@@ -134,7 +134,7 @@ local drive_test = function(source_bufnr, test_name, test_line)
           if not notification_sent then
             make_notify 'Test passed'
             notification_sent = true
-            return true
+            return true -- detach from the buffer
           end
         end
       end
