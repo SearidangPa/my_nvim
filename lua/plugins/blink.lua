@@ -87,6 +87,7 @@ return {
       completion = completion,
       keymap = generate_keymap(),
       cmdline = cmdline,
+      fuzzy = {implementation = "lua"}
     },
   },
 }
