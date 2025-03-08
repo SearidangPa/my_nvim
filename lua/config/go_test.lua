@@ -164,8 +164,7 @@ end
 -- end
 
 local function drive_test_dev()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'dev'
+  vim.env.MODE, vim.env.UKS = 'dev', 'others'
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
@@ -173,8 +172,7 @@ local function drive_test_dev()
 end
 
 local function drive_test_staging()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'staging'
+  vim.env.MODE, vim.env.UKS = 'staging', 'others'
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
@@ -192,14 +190,12 @@ local function drive_test_buf()
 end
 
 local function drive_test_all_staging()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'staging'
+  vim.env.MODE, vim.env.UKS = 'staging', 'others'
   drive_test_buf()
 end
 
 local function drive_test_all_dev()
-  vim.env.UKS = 'others'
-  vim.env.MODE = 'dev'
+  vim.env.MODE, vim.env.UKS = 'dev', 'others'
   drive_test_buf()
 end
 
