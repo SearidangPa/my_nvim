@@ -301,7 +301,6 @@ vim.api.nvim_create_user_command('GOTestDriveStaging', drive_test_staging, {})
 
 --- === View test terminal ===
 
---TODO: Wire telescope to select which test terminal to open
 local function toggle_view_enclosing_test()
   local needs_open = true
 
