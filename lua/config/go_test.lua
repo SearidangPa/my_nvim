@@ -131,6 +131,13 @@ M.reset = function()
       vim.api.nvim_chan_send(floating_term_state.chan, 'clear\n')
     end
   end
+
+  for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf_id) then
+      vim.api.nvim_buf_clear_namespace(buf_id, ns, 0, -1)
+      vim.fn.sign_unplace('GoTestErrorGroup', { buffer = buf_id })
+    end
+  end
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
 
@@ -148,8 +155,10 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   vim.api.nvim_buf_attach(floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
-
       local current_time = os.date '%H:%M:%S'
+      local error_file
+      local error_line
+
       for _, line in ipairs(lines) do
         if string.match(line, '--- FAIL') then
           vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
@@ -172,6 +181,48 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             return true -- detach from the buffer
           end
         end
+        -- Parse error trace information
+        -- Pattern matches strings like "Error Trace:    /Users/path/file.go:21"
+        local file, line_num = string.match(line, 'Error Trace:%s+([^:]+):(%d+)')
+        if file and line_num then
+          error_file = file
+          error_line = tonumber(line_num)
+
+          -- Try to find the buffer for this file
+          local error_bufnr
+          for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
+            local buf_name = vim.api.nvim_buf_get_name(buf_id)
+            if buf_name:match(file .. '$') then
+              error_bufnr = buf_id
+              break
+            end
+          end
+
+          -- -- If we found the buffer, mark the error line
+          if error_bufnr then
+            --   vim.api.nvim_buf_set_extmark(error_bufnr, ns, error_line - 1, 0, {
+            --     virt_text = { { '❌' .. test_name } },
+            --     virt_text_pos = 'eol',
+            --     hl_mode = 'combine',
+            --   })
+
+            -- Add a sign to make the error more visible
+            vim.fn.sign_define('GoTestError', { text = '✗', texthl = 'DiagnosticError' })
+            vim.fn.sign_place(0, 'GoTestErrorGroup', 'GoTestError', error_bufnr, { lnum = error_line })
+          end
+        end
+
+        -- Also look for more specific errors like "assert failed" with line information
+        local assertion_file, assertion_line = string.match(line, 'assert%s+failed%s+at%s+([^:]+):(%d+)')
+        if assertion_file and assertion_line then
+          -- Similar code to mark the specific assertion failure
+          -- (implementation similar to above)
+        end
+      end
+
+      -- Only detach if we're done processing (when test is complete)
+      if notification_sent and error_line then
+        return true
       end
 
       return false
