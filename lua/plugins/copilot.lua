@@ -6,7 +6,7 @@ return {
   config = function()
     local trigger_key
     if vim.fn.has 'win32' == 1 then
-      trigger_key = '<M-S>'
+      trigger_key = '<M-s>'
     else
       trigger_key = '<D-s>'
     end
