@@ -14,7 +14,7 @@ M.all_tests_term = {}
 ---@field chan number
 ---@field footer_buf number
 ---@field footer_win number
----
+
 local current_floating_term_state = {
   buf = -1,
   win = -1,
