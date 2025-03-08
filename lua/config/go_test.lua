@@ -56,6 +56,10 @@ local function create_test_floating_window(floating_term_state, test_name)
 
   vim.api.nvim_buf_add_highlight(footer_buf, -1, 'TestNameUnderlined', 0, #padding, -1)
 
+  vim.api.nvim_win_call(win, function()
+    vim.cmd 'normal! G'
+  end)
+
   local footer_win = vim.api.nvim_open_win(footer_buf, false, {
     relative = 'win',
     width = width,
@@ -123,6 +127,7 @@ local toggle_test_floating_terminal = function(test_name)
     '<cmd>lua require("config.go_test").navigate_test_terminal(-1)<CR>',
     { noremap = true, silent = true, desc = 'Previous test terminal' }
   )
+  vim.api.nvim_buf_set_keymap(currnet_floating_term_state.buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
 end
 
 M.reset = function()
@@ -289,16 +294,6 @@ local function windows_test_all()
   test_buf(test_format)
 end
 
-vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
-vim.api.nvim_create_user_command('GoTestAll', test_all, {})
-
-vim.api.nvim_create_user_command('GoTest', go_test, {})
-vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
-vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GOTestDriveStaging', drive_test_staging, {})
-
 --- === View test terminal ===
 
 local function toggle_view_enclosing_test()
@@ -345,9 +340,6 @@ local function search_test_term()
     handle_choice(choice)
   end)
 end
-
-vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
 
 --- === Navigate between test terminals ===;
 M.test_terminal_order = {} -- To keep track of the order of terminals
@@ -432,4 +424,18 @@ vim.api.nvim_create_autocmd('BufDelete', {
   end,
 })
 
+-- === Commands and keymaps ===
+
+vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
+vim.api.nvim_create_user_command('GoTestAll', test_all, {})
+vim.api.nvim_create_user_command('GoTestReset', M.reset, {})
+vim.api.nvim_create_user_command('GoTest', go_test, {})
+vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
+vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
+
+vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
 return M
