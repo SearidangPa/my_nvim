@@ -69,26 +69,6 @@ local toggle_test_floating_terminal = function(test_name)
   end
 end
 
-local function toggle_view_enclosing_test()
-  local needs_open = true
-
-  for test_name, _ in pairs(M.all_tests_term) do
-    floating_term_state = M.all_tests_term[test_name]
-    if floating_term_state then
-      if vim.api.nvim_win_is_valid(floating_term_state.win) then
-        vim.api.nvim_win_hide(floating_term_state.win)
-        needs_open = false
-      end
-    end
-  end
-
-  if needs_open then
-    local test_name = Get_enclosing_test()
-    assert(test_name, 'No test found')
-    toggle_test_floating_terminal(test_name)
-  end
-end
-
 M.reset = function()
   for test_name, _ in pairs(M.all_tests_term) do
     floating_term_state = M.all_tests_term[test_name]
@@ -221,8 +201,53 @@ vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GOTestDriveStaging', drive_test_staging, {})
 
-vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+--- === View test terminal ===
 
 --TODO: Wire telescope to select which test terminal to open
+local function toggle_view_enclosing_test()
+  local needs_open = true
 
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      if vim.api.nvim_win_is_valid(floating_term_state.win) then
+        vim.api.nvim_win_hide(floating_term_state.win)
+        needs_open = false
+      end
+    end
+  end
+
+  if needs_open then
+    local test_name = Get_enclosing_test()
+    assert(test_name, 'No test found')
+    toggle_test_floating_terminal(test_name)
+  end
+end
+
+local function search_test_term()
+  local opts = {
+    prompt = 'Select test terminal:',
+    format_item = function(item)
+      return item
+    end,
+  }
+
+  local all_test_names = {}
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      table.insert(all_test_names, test_name)
+    end
+  end
+  local handle_choice = function(test_name)
+    toggle_test_floating_terminal(test_name)
+  end
+
+  vim.ui.select(all_test_names, opts, function(choice)
+    handle_choice(choice)
+  end)
+end
+
+vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
 return M
