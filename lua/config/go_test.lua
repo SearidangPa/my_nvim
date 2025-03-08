@@ -147,7 +147,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   })
 end
 
-local go_test_this = function()
+local windows_test_this = function()
   M.reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
@@ -199,11 +199,11 @@ local function drive_test_all_dev()
   drive_test_buf()
 end
 
-vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('GoTestAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTest', go_test_this, {})
-vim.api.nvim_create_user_command('GoTestDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GOTestStaging', drive_test_staging, {})
+vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
+vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GOTestDriveStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 
