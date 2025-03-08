@@ -1,8 +1,8 @@
 local M = {}
--- local mini_notify = require 'mini.notify'
--- local make_notify = mini_notify.make_notify {}
--- local ns_name = 'live_go_test_ns'
--- local ns = vim.api.nvim_create_namespace(ns_name)
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
+local ns_name = 'push_flow'
+local ns = vim.api.nvim_create_namespace(ns_name)
 --
 -- local currnet_floating_term_state = {
 --   buf = -1,
