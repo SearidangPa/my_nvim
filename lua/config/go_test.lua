@@ -69,6 +69,36 @@ local toggle_test_floating_terminal = function(test_name)
   end
 end
 
+local function toggle_view_enclosing_test()
+  local needs_open = true
+
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      if vim.api.nvim_win_is_valid(floating_term_state.win) then
+        vim.api.nvim_win_hide(floating_term_state.win)
+        needs_open = false
+      end
+    end
+  end
+
+  if needs_open then
+    local test_name = Get_enclosing_test()
+    assert(test_name, 'No test found')
+    toggle_test_floating_terminal(test_name)
+  end
+end
+
+M.reset = function()
+  for test_name, _ in pairs(M.all_tests_term) do
+    floating_term_state = M.all_tests_term[test_name]
+    if floating_term_state then
+      vim.api.nvim_chan_send(floating_term_state.chan, 'clear\n')
+    end
+  end
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+end
+
 local ns_name = 'live_go_test_ns'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
@@ -125,6 +155,14 @@ local go_test_this = function()
   go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
+-- local go_test_this = function()
+--   M.reset()
+--   local source_bufnr = vim.api.nvim_get_current_buf()
+--   local test_name, test_line = Get_enclosing_test()
+--   local test_command = string.format('go test integration_tests/*.go -v -run %s\r\n', test_name)
+--   go_test_command(source_bufnr, test_name, test_line, test_command)
+-- end
+
 local function drive_test_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
@@ -163,37 +201,6 @@ local function drive_test_all_dev()
   vim.env.UKS = 'others'
   vim.env.MODE = 'dev'
   drive_test_buf()
-end
-
---- reset all tests terminal
-M.reset = function()
-  for test_name, _ in pairs(M.all_tests_term) do
-    floating_term_state = M.all_tests_term[test_name]
-    if floating_term_state then
-      vim.api.nvim_chan_send(floating_term_state.chan, 'clear\n')
-    end
-  end
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-end
-
-local function toggle_view_enclosing_test()
-  local needs_open = true
-
-  for test_name, _ in pairs(M.all_tests_term) do
-    floating_term_state = M.all_tests_term[test_name]
-    if floating_term_state then
-      if vim.api.nvim_win_is_valid(floating_term_state.win) then
-        vim.api.nvim_win_hide(floating_term_state.win)
-        needs_open = false
-      end
-    end
-  end
-
-  if needs_open then
-    local test_name = Get_enclosing_test()
-    assert(test_name, 'No test found')
-    toggle_test_floating_terminal(test_name)
-  end
 end
 
 vim.api.nvim_create_user_command('GoTestAllStaging', drive_test_all_staging, {})
