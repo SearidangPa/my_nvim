@@ -68,6 +68,7 @@ local push_all_with_qwen = function(command_str)
   toggle_qwen_floating_terminal()
   local commit_info_prev = get_commit_message_and_time()
   vim.api.nvim_chan_send(qwen_floating_term_state.chan, command_str .. '\n')
+  make_notify 'Sent request to push with Qwen14b'
 
   vim.api.nvim_buf_attach(qwen_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
@@ -100,7 +101,6 @@ vim.api.nvim_create_user_command('LastCommitMessage', function()
   print(string.format('Time: %s', commit_info.time))
 end, {})
 
-vim.keymap.set('n', '<leader>p7', ':GitPushWithQwen7b<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
 vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen14b<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
 
 return M
