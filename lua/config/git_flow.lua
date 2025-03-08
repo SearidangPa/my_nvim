@@ -108,4 +108,35 @@ end, map_opt '[G]it [C]ommit and push')
 
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
 map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
+
+-- === Async Git ===
+local function git_add_all(on_success_cb)
+  Start_job {
+    cmd = 'git add .',
+    on_success_cb = on_success_cb,
+    silent = true,
+  }
+end
+
+local function git_push()
+  local commit_format_notification = [[Push successfully
+Commit: %s]]
+
+  Start_job {
+    cmd = 'git push',
+    on_success_cb = function()
+      make_notify(string.format(commit_format_notification, commit_msg))
+    end,
+    silent = true,
+  }
+end
+
+local function push_all()
+  git_add_all(function()
+    git_commit_with_message_prompt(function()
+      git_push()
+    end)
+  end)
+end
+map('n', '<leader>gp', push_all, map_opt '[G]it [C]ommit and push')
 return {}

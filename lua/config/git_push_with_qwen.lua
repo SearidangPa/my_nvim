@@ -101,6 +101,6 @@ vim.api.nvim_create_user_command('LastCommitMessage', function()
   print(string.format('Time: %s', commit_info.time))
 end, {})
 
-vim.keymap.set('n', '<leader>gp', ':GitPushWithQwen14b<CR>', { silent = true, desc = '[Git] [P]ush with Qwen' })
+vim.keymap.set('n', '<leader>pq', ':GitPushWithQwen14b<CR>', { silent = true, desc = '[P]ush with [Q]wen14b' })
 
 return M
