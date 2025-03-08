@@ -218,70 +218,6 @@ local exec_command = function(source_bufnr, test_name, test_line, test_command)
   })
 end
 
-local function drive_test_dev()
-  vim.env.MODE, vim.env.UKS = 'dev', 'others'
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  exec_command(source_bufnr, test_name, test_line, test_command)
-end
-
-local function drive_test_staging()
-  vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  exec_command(source_bufnr, test_name, test_line, test_command)
-end
-
-local windows_test_this = function()
-  M.reset()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-  exec_command(source_bufnr, test_name, test_line, test_command)
-end
-
-local go_test = function()
-  M.reset()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
-  exec_command(source_bufnr, test_name, test_line, test_command)
-end
-
-local function test_buf(test_format)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
-  M.reset()
-  for test_name, test_line in pairs(testsInCurrBuf) do
-    local test_command = string.format(test_format, test_name)
-    exec_command(bufnr, test_name, test_line, test_command)
-  end
-end
-
-local function test_all()
-  local test_format = 'go test ./... -v -run %s'
-  test_buf(test_format)
-end
-
-local function drive_test_all_staging()
-  vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  local test_format = 'go test integration_tests/*.go -v -run %s'
-  test_buf(test_format)
-end
-
-local function drive_test_all_dev()
-  vim.env.MODE, vim.env.UKS = 'dev', 'others'
-  local test_format = 'go test integration_tests/*.go -v -run %s'
-  test_buf(test_format)
-end
-
-local function windows_test_all()
-  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
-  test_buf(test_format)
-end
-
 --- === View test terminal ===
 
 local function toggle_view_enclosing_test()
@@ -385,44 +321,7 @@ M.navigate_test_terminal = function(direction)
   toggle_float_terminal(next_test_name)
 end
 
--- Add this function to clean up when terminals are closed
--- This should be called when a terminal buffer is deleted
-M.cleanup_test_terminal = function(buf)
-  for test_name, state in pairs(M.all_tests_term) do
-    if state.buf == buf then
-      M.all_tests_term[test_name] = nil
-
-      -- Remove from order list
-      for i, name in ipairs(M.test_terminal_order) do
-        if name == test_name then
-          table.remove(M.test_terminal_order, i)
-          break
-        end
-      end
-
-      break
-    end
-  end
-end
-
--- Optional: Set up an autocmd to clean up when terminal buffers are deleted
-vim.api.nvim_create_autocmd('BufDelete', {
-  callback = function(ev)
-    M.cleanup_test_terminal(ev.buf)
-  end,
-})
-
 -- === Commands and keymaps ===
-
-vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
-vim.api.nvim_create_user_command('GoTestAll', test_all, {})
-vim.api.nvim_create_user_command('GoTestReset', M.reset, {})
-vim.api.nvim_create_user_command('GoTest', go_test, {})
-vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
-vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })

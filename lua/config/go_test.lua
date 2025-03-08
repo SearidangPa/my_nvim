@@ -397,31 +397,37 @@ M.navigate_test_terminal = function(direction)
   toggle_test_floating_terminal(next_test_name)
 end
 
--- Add this function to clean up when terminals are closed
--- This should be called when a terminal buffer is deleted
-M.cleanup_test_terminal = function(buf)
-  for test_name, state in pairs(M.all_tests_term) do
-    if state.buf == buf then
-      M.all_tests_term[test_name] = nil
+local delete_test_term = function()
+  local opts = {
+    prompt = 'Select test terminal:',
+    format_item = function(item)
+      return item
+    end,
+  }
 
-      -- Remove from order list
-      for i, name in ipairs(M.test_terminal_order) do
-        if name == test_name then
-          table.remove(M.test_terminal_order, i)
-          break
-        end
-      end
-
-      break
+  local all_test_names = {}
+  for test_name, _ in pairs(M.all_tests_term) do
+    current_floating_term_state = M.all_tests_term[test_name]
+    if current_floating_term_state then
+      table.insert(all_test_names, test_name)
     end
   end
-end
+  local handle_choice = function(test_name)
+    local float_test_term = M.all_tests_term[test_name]
+    vim.api.nvim_buf_delete(float_test_term.buf, { force = true })
+    M.all_tests_term[test_name] = nil
+    for i, name in ipairs(M.test_terminal_order) do
+      if name == test_name then
+        table.remove(M.test_terminal_order, i)
+        break
+      end
+    end
+  end
 
-vim.api.nvim_create_autocmd('BufDelete', {
-  callback = function(ev)
-    M.cleanup_test_terminal(ev.buf)
-  end,
-})
+  vim.ui.select(all_test_names, opts, function(choice)
+    handle_choice(choice)
+  end)
+end
 
 -- === Commands and keymaps ===
 
@@ -437,4 +443,5 @@ vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>dt', delete_test_term, { desc = '[D]elete [T]est terminal' })
 return M
