@@ -190,24 +190,24 @@ local function test_buf(test_format)
 end
 
 local function test_all()
-  local test_format = 'go test ./... -v -run %s\r\n'
+  local test_format = 'go test ./... -v -run %s'
   test_buf(test_format)
 end
 
 local function drive_test_all_staging()
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  local test_format = 'go test integration_tests/*.go -v -run %s\r\n'
+  local test_format = 'go test integration_tests/*.go -v -run %s'
   test_buf(test_format)
 end
 
 local function drive_test_all_dev()
   vim.env.MODE, vim.env.UKS = 'dev', 'others'
-  local test_format = 'go test integration_tests/*.go -v -run %s\r\n'
+  local test_format = 'go test integration_tests/*.go -v -run %s'
   test_buf(test_format)
 end
 
 local function windows_test_all()
-  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r\n'
+  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
   test_buf(test_format)
 end
 
