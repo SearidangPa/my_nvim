@@ -88,6 +88,7 @@ return {
 
     local opts = {
       pickers = {
+        buffers = { theme = 'ivy' },
         current_buffer_fuzzy_find = { theme = 'ivy' },
         help_tags = { theme = 'ivy' },
         find_files = { theme = 'ivy', hidden = true },
