@@ -8,14 +8,14 @@ vim.cmd [[highlight TestNameUnderlined gui=underline]]
 
 M.all_tests_term = {}
 
----@class FloatingTermState
+---@class FloatingTestTermState
 ---@field buf number
 ---@field win number
 ---@field chan number
 ---@field footer_buf number
 ---@field footer_win number
 ---
-local currnet_floating_term_state = {
+local current_floating_term_state = {
   buf = -1,
   win = -1,
   chan = 0,
@@ -23,7 +23,7 @@ local currnet_floating_term_state = {
   footer_win = -1,
 }
 
----@param floating_term_state FloatingTermState
+---@param floating_term_state FloatingTestTermState
 local function create_test_floating_window(floating_term_state, test_name)
   local buf_input = floating_term_state.buf or -1
   local width = math.floor(vim.o.columns)
@@ -80,61 +80,61 @@ end
 local toggle_test_floating_terminal = function(test_name)
   assert(test_name, 'test_name is required')
 
-  currnet_floating_term_state = M.all_tests_term[test_name]
-  if not currnet_floating_term_state then
-    currnet_floating_term_state = {
+  current_floating_term_state = M.all_tests_term[test_name]
+  if not current_floating_term_state then
+    current_floating_term_state = {
       buf = -1,
       win = -1,
       chan = 0,
       footer_buf = -1,
       footer_win = -1,
     }
-    M.all_tests_term[test_name] = currnet_floating_term_state
+    M.all_tests_term[test_name] = current_floating_term_state
   end
   if not vim.tbl_contains(M.test_terminal_order, test_name) then
     table.insert(M.test_terminal_order, test_name)
   end
 
-  if vim.api.nvim_win_is_valid(currnet_floating_term_state.win) then
-    vim.api.nvim_win_hide(currnet_floating_term_state.win)
-    vim.api.nvim_win_hide(currnet_floating_term_state.footer_win)
+  if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
+    vim.api.nvim_win_hide(current_floating_term_state.win)
+    vim.api.nvim_win_hide(current_floating_term_state.footer_win)
     return
   end
 
-  create_test_floating_window(currnet_floating_term_state, test_name)
-  if vim.bo[currnet_floating_term_state.buf].buftype ~= 'terminal' then
+  create_test_floating_window(current_floating_term_state, test_name)
+  if vim.bo[current_floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
     else
       vim.cmd.term()
     end
 
-    currnet_floating_term_state.chan = vim.bo.channel
+    current_floating_term_state.chan = vim.bo.channel
   end
 
   -- Set up navigation keys for this buffer
   vim.api.nvim_buf_set_keymap(
-    currnet_floating_term_state.buf,
+    current_floating_term_state.buf,
     'n',
     '>',
     '<cmd>lua require("config.go_test").navigate_test_terminal(1)<CR>',
     { noremap = true, silent = true, desc = 'Next test terminal' }
   )
   vim.api.nvim_buf_set_keymap(
-    currnet_floating_term_state.buf,
+    current_floating_term_state.buf,
     'n',
     '<',
     '<cmd>lua require("config.go_test").navigate_test_terminal(-1)<CR>',
     { noremap = true, silent = true, desc = 'Previous test terminal' }
   )
-  vim.api.nvim_buf_set_keymap(currnet_floating_term_state.buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
+  vim.api.nvim_buf_set_keymap(current_floating_term_state.buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
 end
 
 M.reset = function()
   for test_name, _ in pairs(M.all_tests_term) do
-    currnet_floating_term_state = M.all_tests_term[test_name]
-    if currnet_floating_term_state then
-      vim.api.nvim_chan_send(currnet_floating_term_state.chan, 'clear\n')
+    current_floating_term_state = M.all_tests_term[test_name]
+    if current_floating_term_state then
+      vim.api.nvim_chan_send(current_floating_term_state.chan, 'clear\n')
     end
   end
 
@@ -155,10 +155,10 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   toggle_test_floating_terminal(test_name)
   toggle_test_floating_terminal(test_name)
 
-  vim.api.nvim_chan_send(currnet_floating_term_state.chan, test_command .. '\n')
+  vim.api.nvim_chan_send(current_floating_term_state.chan, test_command .. '\n')
   local notification_sent = false
 
-  vim.api.nvim_buf_attach(currnet_floating_term_state.buf, false, {
+  vim.api.nvim_buf_attach(current_floating_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       local current_time = os.date '%H:%M:%S'
@@ -300,11 +300,11 @@ local function toggle_view_enclosing_test()
   local needs_open = true
 
   for test_name, _ in pairs(M.all_tests_term) do
-    currnet_floating_term_state = M.all_tests_term[test_name]
-    if currnet_floating_term_state then
-      if vim.api.nvim_win_is_valid(currnet_floating_term_state.win) then
-        vim.api.nvim_win_hide(currnet_floating_term_state.win)
-        vim.api.nvim_win_hide(currnet_floating_term_state.footer_win)
+    current_floating_term_state = M.all_tests_term[test_name]
+    if current_floating_term_state then
+      if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
+        vim.api.nvim_win_hide(current_floating_term_state.win)
+        vim.api.nvim_win_hide(current_floating_term_state.footer_win)
         needs_open = false
       end
     end
@@ -327,8 +327,8 @@ local function search_test_term()
 
   local all_test_names = {}
   for test_name, _ in pairs(M.all_tests_term) do
-    currnet_floating_term_state = M.all_tests_term[test_name]
-    if currnet_floating_term_state then
+    current_floating_term_state = M.all_tests_term[test_name]
+    if current_floating_term_state then
       table.insert(all_test_names, test_name)
     end
   end
@@ -389,9 +389,9 @@ M.navigate_test_terminal = function(direction)
   local next_test_name = M.test_terminal_order[next_index]
 
   -- Hide current terminal and show the next one
-  if vim.api.nvim_win_is_valid(currnet_floating_term_state.win) then
-    vim.api.nvim_win_hide(currnet_floating_term_state.win)
-    vim.api.nvim_win_hide(currnet_floating_term_state.footer_win)
+  if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
+    vim.api.nvim_win_hide(current_floating_term_state.win)
+    vim.api.nvim_win_hide(current_floating_term_state.footer_win)
   end
 
   toggle_test_floating_terminal(next_test_name)
