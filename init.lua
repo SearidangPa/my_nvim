@@ -22,3 +22,7 @@ if vim.o.background == 'light' then
 else
   vim.cmd.colorscheme 'rose-pine-moon'
 end
+
+if vim.fn.has 'win32' == 1 then
+  vim.opt.shell = 'powershell.exe'
+end
