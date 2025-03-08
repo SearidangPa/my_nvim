@@ -181,6 +181,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             return true -- detach from the buffer
           end
         end
+
         -- Parse error trace information
         -- Pattern matches strings like "Error Trace:    /Users/path/file.go:21"
         local file, line_num = string.match(line, 'Error Trace:%s+([^:]+):(%d+)')
@@ -198,15 +199,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             end
           end
 
-          -- -- If we found the buffer, mark the error line
           if error_bufnr then
-            --   vim.api.nvim_buf_set_extmark(error_bufnr, ns, error_line - 1, 0, {
-            --     virt_text = { { '❌' .. test_name } },
-            --     virt_text_pos = 'eol',
-            --     hl_mode = 'combine',
-            --   })
-
-            -- Add a sign to make the error more visible
             vim.fn.sign_define('GoTestError', { text = '✗', texthl = 'DiagnosticError' })
             vim.fn.sign_place(0, 'GoTestErrorGroup', 'GoTestError', error_bufnr, { lnum = error_line })
           end
@@ -215,6 +208,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
         -- Also look for more specific errors like "assert failed" with line information
         local assertion_file, assertion_line = string.match(line, 'assert%s+failed%s+at%s+([^:]+):(%d+)')
         if assertion_file and assertion_line then
+          print('assertion failed', assertion_file, assertion_line)
           -- Similar code to mark the specific assertion failure
           -- (implementation similar to above)
         end
