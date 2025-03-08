@@ -8,7 +8,7 @@ vim.cmd [[highlight TestNameUnderlined gui=underline]]
 
 M.all_tests_term = {}
 
----@class FloatingTestTermState
+---@class Float_Term_State
 ---@field buf number
 ---@field win number
 ---@field chan number
@@ -23,7 +23,7 @@ local current_floating_term_state = {
   footer_win = -1,
 }
 
----@param floating_term_state FloatingTestTermState
+---@param floating_term_state Float_Term_State
 local function create_test_floating_window(floating_term_state, test_name)
   local buf_input = floating_term_state.buf or -1
   local width = math.floor(vim.o.columns)
@@ -417,7 +417,6 @@ M.cleanup_test_terminal = function(buf)
   end
 end
 
--- Optional: Set up an autocmd to clean up when terminal buffers are deleted
 vim.api.nvim_create_autocmd('BufDelete', {
   callback = function(ev)
     M.cleanup_test_terminal(ev.buf)

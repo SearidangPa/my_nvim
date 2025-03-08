@@ -3,15 +3,15 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local ns_name = 'push_flow'
 local ns = vim.api.nvim_create_namespace(ns_name)
---
--- local currnet_floating_term_state = {
---   buf = -1,
---   win = -1,
---   chan = 0,
---   footer_buf = -1,
---   footer_win = -1,
--- }
---
+
+local current_floating_term_state = {
+  buf = -1,
+  win = -1,
+  chan = 0,
+  footer_buf = -1,
+  footer_win = -1,
+}
+
 -- ---@param floating_term_state FloatingTestTermState
 -- local function create_test_floating_window(floating_term_state, test_name)
 --   local buf_input = floating_term_state.buf or -1
@@ -19,14 +19,14 @@ local ns = vim.api.nvim_create_namespace(ns_name)
 --   local height = math.floor(vim.o.lines)
 --   local row = math.floor((vim.o.columns - width))
 --   local col = math.floor((vim.o.lines - height))
---
+
 --   local buf = nil
 --   if buf_input == -1 then
 --     buf = vim.api.nvim_create_buf(false, true)
 --   else
 --     buf = buf_input
 --   end
---
+
 --   local win = vim.api.nvim_open_win(buf, true, {
 --     relative = 'editor',
 --     width = width,
