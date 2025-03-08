@@ -171,6 +171,14 @@ local windows_test_this = function()
   go_test_command(source_bufnr, test_name, test_line, test_command)
 end
 
+local go_test = function()
+  M.reset()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
+end
+
 local function test_buf(test_format)
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
@@ -179,6 +187,11 @@ local function test_buf(test_format)
     local test_command = string.format(test_format, test_name)
     go_test_command(bufnr, test_name, test_line, test_command)
   end
+end
+
+local function test_all()
+  local test_format = 'go test ./... -v -run %s\r\n'
+  test_buf(test_format)
 end
 
 local function drive_test_all_staging()
@@ -201,7 +214,9 @@ end
 vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
 vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
+vim.api.nvim_create_user_command('GoTestAll', test_all, {})
 
+vim.api.nvim_create_user_command('GoTest', go_test, {})
 vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GOTestDriveStaging', drive_test_staging, {})
