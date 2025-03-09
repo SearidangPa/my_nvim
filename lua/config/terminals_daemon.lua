@@ -149,7 +149,7 @@ local exec_command = function(command, title)
   end, 3000)
 end
 
-local function search_daemon_term()
+local function search_daemon_terminals()
   local opts = {
     prompt = 'Select daemon terminal:',
     format_item = function(item)
@@ -230,18 +230,19 @@ M.navigate_daemon_terminal = function(direction)
 end
 
 -- === Commands and keymaps ===
-vim.api.nvim_create_user_command('RunDaemon', function()
+vim.api.nvim_create_user_command('RunDaemons', function()
   exec_command('dr;rds', 'drive')
 end, {})
 
 vim.keymap.set('n', '<leader>dr', function()
   if vim.fn.has 'win32' == 1 then
     exec_command('dr;rds\r', 'drive')
+    exec_command('m; std\n', 'cloud drive')
   else
     exec_command('kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
   end
 end, { silent = true, desc = 'Run drive daemon' })
 
-vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select daemon terminal' })
+vim.keymap.set('n', '<leader>sd', search_daemon_terminals, { desc = 'Select daemon terminal' })
 
 return M
