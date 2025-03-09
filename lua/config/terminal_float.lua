@@ -4,12 +4,14 @@ local floating_term_state = {
   buf = -1,
   win = -1,
   chan = 0,
+  footer_buf = -1,
+  footer_win = -1,
 }
 
-function Create_floating_window(buf_input)
-  buf_input = buf_input or -1
-  local width = math.floor(vim.o.columns * 0.9)
-  local height = math.floor(vim.o.lines * 0.9)
+local function create_float_window(floating_term_state, term_name)
+  local buf_input = floating_term_state.buf or -1
+  local width = math.floor(vim.o.columns)
+  local height = math.floor(vim.o.lines)
   local row = math.floor((vim.o.columns - width))
   local col = math.floor((vim.o.lines - height))
 
@@ -23,23 +25,49 @@ function Create_floating_window(buf_input)
   local win = vim.api.nvim_open_win(buf, true, {
     relative = 'editor',
     width = width,
-    height = height,
+    height = height - 2,
     row = row,
     col = col,
     style = 'minimal',
-    border = 'rounded',
+    border = 'none',
   })
 
-  return buf, win
+  local footer_buf = vim.api.nvim_create_buf(false, true)
+  local padding = string.rep(' ', width - #term_name - 1)
+  local footer_text = padding .. term_name
+  vim.api.nvim_buf_set_lines(footer_buf, 0, -1, false, { footer_text })
+  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'Title', 0, 0, -1)
+
+  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'TestNameUnderlined', 0, #padding, -1)
+
+  vim.api.nvim_win_call(win, function()
+    vim.cmd 'normal! G'
+  end)
+
+  local footer_win = vim.api.nvim_open_win(footer_buf, false, {
+    relative = 'win',
+    width = width,
+    height = 1,
+    row = height - 1,
+    col = 0,
+    style = 'minimal',
+    border = 'none',
+  })
+
+  floating_term_state.buf = buf
+  floating_term_state.win = win
+  floating_term_state.footer_buf = footer_buf
+  floating_term_state.footer_win = footer_win
 end
 
 local toggle_floating_terminal = function()
   if vim.api.nvim_win_is_valid(floating_term_state.win) then
     vim.api.nvim_win_hide(floating_term_state.win)
+    vim.api.nvim_win_hide(floating_term_state.footer_win)
     return
   end
 
-  floating_term_state.buf, floating_term_state.win = Create_floating_window(floating_term_state.buf)
+  create_float_window(floating_term_state, 'Terminal')
   if vim.bo[floating_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
@@ -49,7 +77,8 @@ local toggle_floating_terminal = function()
 
     floating_term_state.chan = vim.bo.channel
   end
-  return floating_term_state.win
+
+  vim.api.nvim_buf_set_keymap(floating_term_state.buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
 end
 
 vim.keymap.set('n', '<localleader>ts', function()
