@@ -68,7 +68,7 @@ end
 local toggle_float_terminal = function(test_name)
   assert(test_name, 'test_name is required')
 
-  current_float_term_state = M.all_tests_term[test_name]
+  current_float_term_state = M.all_daemons_term[test_name]
   if not current_float_term_state then
     current_float_term_state = {
       buf = -1,
@@ -77,7 +77,7 @@ local toggle_float_terminal = function(test_name)
       footer_buf = -1,
       footer_win = -1,
     }
-    M.all_tests_term[test_name] = current_float_term_state
+    M.all_daemons_term[test_name] = current_float_term_state
   end
   if not vim.tbl_contains(M.test_terminal_order, test_name) then
     table.insert(M.test_terminal_order, test_name)
@@ -119,8 +119,8 @@ local toggle_float_terminal = function(test_name)
 end
 
 M.reset = function()
-  for test_name, _ in pairs(M.all_tests_term) do
-    current_float_term_state = M.all_tests_term[test_name]
+  for test_name, _ in pairs(M.all_daemons_term) do
+    current_float_term_state = M.all_daemons_term[test_name]
     if current_float_term_state then
       vim.api.nvim_chan_send(current_float_term_state.chan, 'clear\n')
     end
@@ -135,15 +135,13 @@ M.reset = function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
 
-local exec_command = function(source_bufnr, test_name, test_line, test_command)
-  test_command = test_command or string.format('go test .\\... -v -run %s\r\n', test_name)
+local exec_command = function(source_bufnr, command, title)
+  make_notify(string.format('running %s', title))
 
-  make_notify(string.format('running test: %s', test_name))
+  toggle_float_terminal(title)
+  toggle_float_terminal(title)
 
-  toggle_float_terminal(test_name)
-  toggle_float_terminal(test_name)
-
-  vim.api.nvim_chan_send(current_float_term_state.chan, test_command .. '\n')
+  vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
   local notification_sent = false
 
   vim.api.nvim_buf_attach(current_float_term_state.buf, false, {
@@ -155,62 +153,16 @@ local exec_command = function(source_bufnr, test_name, test_line, test_command)
 
       for _, line in ipairs(lines) do
         if string.match(line, '--- FAIL') then
-          vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
-            virt_text = { { string.format('❌ %s', current_time) } },
-            virt_text_pos = 'eol',
-          })
-
-          make_notify(string.format('Test failed: %s', test_name))
+          make_notify(string.format('%s failed', title))
           notification_sent = true
           return true
         elseif string.match(line, '--- PASS') then
-          vim.api.nvim_buf_set_extmark(source_bufnr, ns, test_line - 1, 0, {
-            virt_text = { { string.format('✅ %s', current_time) } },
-            virt_text_pos = 'eol',
-          })
-
           if not notification_sent then
-            make_notify(string.format('Test passed: %s', test_name))
+            make_notify(string.format('%s passed', title))
             notification_sent = true
             return true -- detach from the buffer
           end
         end
-
-        -- Parse error trace information
-        -- Pattern matches strings like "Error Trace:    /Users/path/file.go:21"
-        local file, line_num = string.match(line, 'Error Trace:%s+([^:]+):(%d+)')
-        if file and line_num then
-          error_file = file
-          error_line = tonumber(line_num)
-
-          -- Try to find the buffer for this file
-          local error_bufnr
-          for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
-            local buf_name = vim.api.nvim_buf_get_name(buf_id)
-            if buf_name:match(file .. '$') then
-              error_bufnr = buf_id
-              break
-            end
-          end
-
-          if error_bufnr then
-            vim.fn.sign_define('GoTestError', { text = '✗', texthl = 'DiagnosticError' })
-            vim.fn.sign_place(0, 'GoTestErrorGroup', 'GoTestError', error_bufnr, { lnum = error_line })
-          end
-        end
-
-        -- Also look for more specific errors like "assert failed" with line information
-        local assertion_file, assertion_line = string.match(line, 'assert%s+failed%s+at%s+([^:]+):(%d+)')
-        if assertion_file and assertion_line then
-          print('assertion failed', assertion_file, assertion_line)
-          -- Similar code to mark the specific assertion failure
-          -- (implementation similar to above)
-        end
-      end
-
-      -- Only detach if we're done processing (when test is complete)
-      if notification_sent and error_line then
-        return true
       end
 
       return false
@@ -218,40 +170,17 @@ local exec_command = function(source_bufnr, test_name, test_line, test_command)
   })
 end
 
---- === View test terminal ===
-
-local function toggle_view_enclosing_test()
-  local needs_open = true
-
-  for test_name, _ in pairs(M.all_tests_term) do
-    current_float_term_state = M.all_tests_term[test_name]
-    if current_float_term_state then
-      if vim.api.nvim_win_is_valid(current_float_term_state.win) then
-        vim.api.nvim_win_hide(current_float_term_state.win)
-        vim.api.nvim_win_hide(current_float_term_state.footer_win)
-        needs_open = false
-      end
-    end
-  end
-
-  if needs_open then
-    local test_name = Get_enclosing_test()
-    assert(test_name, 'No test found')
-    toggle_float_terminal(test_name)
-  end
-end
-
-local function search_test_term()
+local function search_daemon_term()
   local opts = {
-    prompt = 'Select test terminal:',
+    prompt = 'Select daemon terminal:',
     format_item = function(item)
       return item
     end,
   }
 
   local all_test_names = {}
-  for test_name, _ in pairs(M.all_tests_term) do
-    current_float_term_state = M.all_tests_term[test_name]
+  for test_name, _ in pairs(M.all_daemons_term) do
+    current_float_term_state = M.all_daemons_term[test_name]
     if current_float_term_state then
       table.insert(all_test_names, test_name)
     end
@@ -280,7 +209,7 @@ M.navigate_test_terminal = function(direction)
   local current_test_name = nil
 
   -- Find which test terminal we're currently in
-  for test_name, state in pairs(M.all_tests_term) do
+  for test_name, state in pairs(M.all_daemons_term) do
     if state.buf == current_buf then
       current_test_name = test_name
       break
@@ -322,8 +251,10 @@ M.navigate_test_terminal = function(direction)
 end
 
 -- === Commands and keymaps ===
+vim.api.nvim_create_user_command('RunDaemon', function()
+  exec_command(0, 'dr;rds', 'run drive daemon')
+end, {})
 
-vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select test terminal' })
 
 return M
