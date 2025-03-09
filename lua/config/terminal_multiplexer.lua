@@ -14,6 +14,8 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field footer_buf number
 ---@field footer_win number
 
+--- === Create, Search, Delete, Navigate between terminals ===;
+
 -- @return TerminalMultiplexer
 function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
@@ -200,6 +202,8 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
   vim.keymap.set('n', '>', next_term, map_opts)
   vim.keymap.set('n', '<', prev_term, map_opts)
 end
+
+--- === Toggle terminal ===
 
 ---@param terminal_name string
 ---@param ensure_open boolean|nil If true, always ensure the terminal is open
