@@ -66,8 +66,8 @@ function TerminalMultiplexer:delete_terminal()
   end
 
   local handle_choice = function(terminal_name)
-    local float_test_term = self.all_terminals[terminal_name]
-    vim.api.nvim_buf_delete(float_test_term.buf, { force = true })
+    local float_terminal = self.all_terminals[terminal_name]
+    vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
     self.all_terminals[terminal_name] = nil
     for i, name in ipairs(self.terminal_order) do
       if name == terminal_name then
