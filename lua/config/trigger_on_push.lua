@@ -64,11 +64,11 @@ local function create_float_window(floating_term_state, term_name)
   floating_term_state.footer_win = footer_win
 end
 
----@param test_name string
-local toggle_float_terminal = function(test_name)
-  assert(test_name, 'test_name is required')
+---@param title string
+local toggle_float_terminal = function(title)
+  assert(title, 'title is required')
 
-  current_float_term_state = M.all_daemons_term[test_name]
+  current_float_term_state = M.all_daemons_term[title]
   if not current_float_term_state then
     current_float_term_state = {
       buf = -1,
@@ -77,10 +77,10 @@ local toggle_float_terminal = function(test_name)
       footer_buf = -1,
       footer_win = -1,
     }
-    M.all_daemons_term[test_name] = current_float_term_state
+    M.all_daemons_term[title] = current_float_term_state
   end
-  if not vim.tbl_contains(M.test_terminal_order, test_name) then
-    table.insert(M.test_terminal_order, test_name)
+  if not vim.tbl_contains(M.test_terminal_order, title) then
+    table.insert(M.test_terminal_order, title)
   end
 
   if vim.api.nvim_win_is_valid(current_float_term_state.win) then
@@ -89,7 +89,7 @@ local toggle_float_terminal = function(test_name)
     return
   end
 
-  create_float_window(current_float_term_state, test_name)
+  create_float_window(current_float_term_state, title)
   if vim.bo[current_float_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
       vim.cmd.term 'powershell.exe'
@@ -119,8 +119,8 @@ local toggle_float_terminal = function(test_name)
 end
 
 M.reset = function()
-  for test_name, _ in pairs(M.all_daemons_term) do
-    current_float_term_state = M.all_daemons_term[test_name]
+  for title, _ in pairs(M.all_daemons_term) do
+    current_float_term_state = M.all_daemons_term[title]
     if current_float_term_state then
       vim.api.nvim_chan_send(current_float_term_state.chan, 'clear\n')
     end
@@ -139,7 +139,7 @@ local exec_command = function(source_bufnr, command, title)
   toggle_float_terminal(title)
   toggle_float_terminal(title)
   vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
-  make_notify(string.format('running %s', title))
+  make_notify(string.format('running %s daemon', title))
 
   local notification_sent = false
 
@@ -178,14 +178,14 @@ local function search_daemon_term()
   }
 
   local all_test_names = {}
-  for test_name, _ in pairs(M.all_daemons_term) do
-    current_float_term_state = M.all_daemons_term[test_name]
+  for title, _ in pairs(M.all_daemons_term) do
+    current_float_term_state = M.all_daemons_term[title]
     if current_float_term_state then
-      table.insert(all_test_names, test_name)
+      table.insert(all_test_names, title)
     end
   end
-  local handle_choice = function(test_name)
-    toggle_float_terminal(test_name)
+  local handle_choice = function(title)
+    toggle_float_terminal(title)
   end
 
   vim.ui.select(all_test_names, opts, function(choice)
@@ -205,17 +205,17 @@ M.navigate_test_terminal = function(direction)
 
   -- Find the current buffer
   local current_buf = vim.api.nvim_get_current_buf()
-  local current_test_name = nil
+  local current_daemon_name = nil
 
   -- Find which test terminal we're currently in
-  for test_name, state in pairs(M.all_daemons_term) do
+  for title, state in pairs(M.all_daemons_term) do
     if state.buf == current_buf then
-      current_test_name = test_name
+      current_daemon_name = title
       break
     end
   end
 
-  if not current_test_name then
+  if not current_daemon_name then
     -- If we're not in a test terminal, just open the first one
     toggle_float_terminal(M.test_terminal_order[1])
     return
@@ -224,7 +224,7 @@ M.navigate_test_terminal = function(direction)
   -- Find the index of the current terminal
   local current_index = nil
   for i, name in ipairs(M.test_terminal_order) do
-    if name == current_test_name then
+    if name == current_daemon_name then
       current_index = i
       break
     end
@@ -251,7 +251,7 @@ end
 
 -- === Commands and keymaps ===
 vim.api.nvim_create_user_command('RunDaemon', function()
-  exec_command(0, 'dr;rds', 'run drive daemon')
+  exec_command(0, 'dr;rds', 'drive')
 end, {})
 
 vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select test terminal' })
