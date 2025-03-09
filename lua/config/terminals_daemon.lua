@@ -240,7 +240,7 @@ end, {})
 
 vim.keymap.set('n', '<leader>dr', function()
   if vim.fn.has 'win32' == 1 then
-    exec_command('m; std\n', 'cloud drive')
+    exec_command('dr;rds\r', 'drive')
   else
     exec_command('kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
   end
