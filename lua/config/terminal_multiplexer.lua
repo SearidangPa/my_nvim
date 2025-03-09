@@ -137,9 +137,9 @@ function TerminalMultiplexer:navigate_terminal(direction)
   self:toggle_float_terminal(next_terminal_name)
 end
 
----@param floating_term_state Float_Term_State
-function TerminalMultiplexer:create_test_floating_window(floating_term_state, test_name)
-  local buf_input = floating_term_state.buf or -1
+---@param float_terminal_state Float_Term_State
+function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_name)
+  local buf_input = float_terminal_state.buf or -1
   local width = math.floor(vim.o.columns)
   local height = math.floor(vim.o.lines)
   local row = math.floor((vim.o.columns - width))
@@ -163,8 +163,8 @@ function TerminalMultiplexer:create_test_floating_window(floating_term_state, te
   })
 
   local footer_buf = vim.api.nvim_create_buf(false, true)
-  local padding = string.rep(' ', width - #test_name - 1)
-  local footer_text = padding .. test_name
+  local padding = string.rep(' ', width - #terminal_name - 1)
+  local footer_text = padding .. terminal_name
   vim.api.nvim_buf_set_lines(footer_buf, 0, -1, false, { footer_text })
   vim.api.nvim_buf_add_highlight(footer_buf, -1, 'Title', 0, 0, -1)
 
@@ -184,10 +184,10 @@ function TerminalMultiplexer:create_test_floating_window(floating_term_state, te
     border = 'none',
   })
 
-  floating_term_state.buf = buf
-  floating_term_state.win = win
-  floating_term_state.footer_buf = footer_buf
-  floating_term_state.footer_win = footer_win
+  float_terminal_state.buf = buf
+  float_terminal_state.win = win
+  float_terminal_state.footer_buf = footer_buf
+  float_terminal_state.footer_win = footer_win
 
   local map_opts = { noremap = true, silent = true, buffer = buf }
 
@@ -211,37 +211,37 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, ensure_open)
     return nil
   end
 
-  local current_floating_term_state = self.all_terminals[terminal_name]
-  if not current_floating_term_state then
-    current_floating_term_state = {
+  local current_float_term_state = self.all_terminals[terminal_name]
+  if not current_float_term_state then
+    current_float_term_state = {
       buf = -1,
       win = -1,
       chan = 0,
       footer_buf = -1,
       footer_win = -1,
     }
-    self.all_terminals[terminal_name] = current_floating_term_state
+    self.all_terminals[terminal_name] = current_float_term_state
   end
 
   if not vim.tbl_contains(self.terminal_order, terminal_name) then
     table.insert(self.terminal_order, terminal_name)
   end
 
-  local is_visible = vim.api.nvim_win_is_valid(current_floating_term_state.win)
+  local is_visible = vim.api.nvim_win_is_valid(current_float_term_state.win)
 
   if is_visible then
-    vim.api.nvim_win_hide(current_floating_term_state.win)
-    vim.api.nvim_win_hide(current_floating_term_state.footer_win)
+    vim.api.nvim_win_hide(current_float_term_state.win)
+    vim.api.nvim_win_hide(current_float_term_state.footer_win)
     return self.all_terminals[terminal_name]
   else
-    self:create_test_floating_window(current_floating_term_state, terminal_name)
-    if vim.bo[current_floating_term_state.buf].buftype ~= 'terminal' then
+    self:create_float_window(current_float_term_state, terminal_name)
+    if vim.bo[current_float_term_state.buf].buftype ~= 'terminal' then
       if vim.fn.has 'win32' == 1 then
         vim.cmd.term 'powershell.exe'
       else
         vim.cmd.term()
       end
-      current_floating_term_state.chan = vim.bo.channel
+      current_float_term_state.chan = vim.bo.channel
     end
   end
 
