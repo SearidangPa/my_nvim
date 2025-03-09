@@ -1,7 +1,63 @@
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
-local function get_diagnostic_map(output)
+local function get_diagnostic_map_windows(output)
+  local diagnostics_map = {
+    diagnostics_list_per_bufnr = {},
+  }
+
+  -- Convert output to a single string if it's a table
+  local output_str = type(output) == 'table' and table.concat(output, '\n') or output
+
+  -- Find error messages in the Windows golangci-lint output format
+  for log_line in output_str:gmatch '([^\r\n]+)' do
+    -- Look for error log lines
+    local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
+
+    if error_msg then
+      -- Unescape newlines and process each diagnostic line
+      error_msg = error_msg:gsub('\\n', '\n')
+
+      for diag_line in error_msg:gmatch '([^\r\n]+)' do
+        -- Skip header lines
+        if not diag_line:match '^# ' then
+          -- Try to match Windows format (file.go:line:col: message)
+          local file, row, col, message = diag_line:match '([^:]+):(%d+):(%d+): (.+)'
+
+          if file and row and col and message then
+            -- Convert Windows path separators to Unix style
+            file = file:gsub('\\', '/')
+
+            local file_bufnr = vim.fn.bufnr(file)
+            if not vim.api.nvim_buf_is_valid(file_bufnr) then
+              file_bufnr = vim.fn.bufadd(file)
+              vim.fn.bufload(file_bufnr)
+            end
+
+            local diagnostic = {
+              bufnr = file_bufnr,
+              lnum = tonumber(row) - 1,
+              col = tonumber(col) - 1,
+              message = message,
+              severity = vim.diagnostic.severity.ERROR,
+              source = 'golangci-lint',
+              user_data = {},
+            }
+
+            if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+              diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+            end
+            table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
+          end
+        end
+      end
+    end
+  end
+
+  return diagnostics_map
+end
+
+local function get_diagnostic_map_unix(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
@@ -40,7 +96,13 @@ end
 local function set_diagnostics_and_quickfix(output, ns)
   vim.diagnostic.reset(ns)
 
-  local diagnostics_map = get_diagnostic_map(output)
+  local diagnostics_map
+  if vim.fn.has 'win32' == 1 then
+    diagnostics_map = get_diagnostic_map_windows(output)
+  else
+    diagnostics_map = get_diagnostic_map_unix(output)
+  end
+
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     vim.diagnostic.set(ns, bufnr, diagnostics, {})
   end
