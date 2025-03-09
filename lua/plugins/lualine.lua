@@ -21,13 +21,15 @@ local function get_harpoon_filenames(opts)
 
   local list_names = ''
   local current_file_path = vim.api.nvim_buf_get_name(0)
-
   for i = start_index, end_index do
     local display_sep = ' | '
     local val_at_index = harpoonList:get(i)
     local path = val_at_index.value
     local filename = vim.fn.fnamemodify(path, ':t')
-    local fullpath = root_dir .. os_sep .. path
+
+    -- Check if path is absolute (starts with / or drive letter on Windows)
+    local is_absolute = path:match '^/' or path:match '^%a:'
+    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
     if fullpath == current_file_path then
       list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
@@ -41,13 +43,6 @@ local function get_harpoon_filenames(opts)
 
   return list_names
 end
-
--- local function get_harpoon_filenames_second_half()
---   return get_harpoon_filenames {
---     start_index = 4,
---     end_index = 4,
---   }
--- end
 
 local function get_harpoon_filenames_first_three()
   return get_harpoon_filenames {
@@ -75,7 +70,7 @@ return {
     local function nearest_func_name_if_exists()
       local func_name = Nearest_func_name()
       if func_name then
-        return '%#TabLineSelItalic#' .. func_name
+        return func_name
       end
       return ''
     end
@@ -96,8 +91,8 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { { 'filename', path = 3 } },
-        lualine_x = { nearest_func_name_if_exists },
-        lualine_y = {},
+        lualine_x = {},
+        lualine_y = { nearest_func_name_if_exists },
         lualine_z = {},
       },
       tabline = {
