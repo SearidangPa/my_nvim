@@ -203,15 +203,15 @@ function TerminalMultiplexer:create_test_floating_window(floating_term_state, te
   vim.keymap.set('n', '<', prev_term, map_opts)
 end
 
----@param test_name string
+---@param terminal_name string
 ---@param ensure_open boolean|nil If true, always ensure the terminal is open
 ---@return table | nil
-function TerminalMultiplexer:toggle_float_terminal(test_name, ensure_open)
-  if not test_name then
+function TerminalMultiplexer:toggle_float_terminal(terminal_name, ensure_open)
+  if not terminal_name then
     return nil
   end
 
-  local current_floating_term_state = self.all_terminals[test_name]
+  local current_floating_term_state = self.all_terminals[terminal_name]
   if not current_floating_term_state then
     current_floating_term_state = {
       buf = -1,
@@ -220,11 +220,11 @@ function TerminalMultiplexer:toggle_float_terminal(test_name, ensure_open)
       footer_buf = -1,
       footer_win = -1,
     }
-    self.all_terminals[test_name] = current_floating_term_state
+    self.all_terminals[terminal_name] = current_floating_term_state
   end
 
-  if not vim.tbl_contains(self.terminal_order, test_name) then
-    table.insert(self.terminal_order, test_name)
+  if not vim.tbl_contains(self.terminal_order, terminal_name) then
+    table.insert(self.terminal_order, terminal_name)
   end
 
   local is_visible = vim.api.nvim_win_is_valid(current_floating_term_state.win)
@@ -232,9 +232,9 @@ function TerminalMultiplexer:toggle_float_terminal(test_name, ensure_open)
   if is_visible then
     vim.api.nvim_win_hide(current_floating_term_state.win)
     vim.api.nvim_win_hide(current_floating_term_state.footer_win)
-    return self.all_terminals[test_name]
+    return self.all_terminals[terminal_name]
   else
-    self:create_test_floating_window(current_floating_term_state, test_name)
+    self:create_test_floating_window(current_floating_term_state, terminal_name)
     if vim.bo[current_floating_term_state.buf].buftype ~= 'terminal' then
       if vim.fn.has 'win32' == 1 then
         vim.cmd.term 'powershell.exe'
@@ -245,7 +245,7 @@ function TerminalMultiplexer:toggle_float_terminal(test_name, ensure_open)
     end
   end
 
-  return self.all_terminals[test_name]
+  return self.all_terminals[terminal_name]
 end
 
 function TerminalMultiplexer:reset()
