@@ -27,7 +27,10 @@ vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = Start_job { cmd = cmd }
 end, {})
 
-M.start_linter_job = function()
+M.start_make_lint = function()
+  if vim.bo.filetype ~= 'go' then
+    return
+  end
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j lint' }
@@ -37,7 +40,7 @@ M.start_linter_job = function()
   _, output, errors = Start_job { cmd = cmd, ns = linter_ns }
 end
 
-vim.api.nvim_create_user_command('MakeLint', M.start_linter_job, {})
+vim.api.nvim_create_user_command('MakeLint', M.start_make_lint, {})
 
 vim.api.nvim_create_user_command('ClearQuickFix', function()
   vim.fn.setqflist({}, 'r')
