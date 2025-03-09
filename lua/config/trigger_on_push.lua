@@ -140,6 +140,7 @@ local exec_command = function(source_bufnr, command, title)
   toggle_float_terminal(title)
   vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
   make_notify(string.format('running %s', title))
+
   local notification_sent = false
 
   vim.api.nvim_buf_attach(current_float_term_state.buf, false, {
