@@ -82,11 +82,11 @@ function TerminalMultiplexer:delete_terminal()
   end)
 end
 
---- === Navigate between test terminals ===;
+--- === Navigate between terminals ===;
 ---@param direction number 1 for next, -1 for previous
 function TerminalMultiplexer:navigate_terminal(direction)
   if #self.terminal_order == 0 then
-    vim.notify('No test terminals available', vim.log.levels.INFO)
+    vim.notify('No terminals available', vim.log.levels.INFO)
     return
   end
 
@@ -94,7 +94,7 @@ function TerminalMultiplexer:navigate_terminal(direction)
   local current_buf = vim.api.nvim_get_current_buf()
   local current_terminal_name = nil
 
-  -- Find which test terminal we're currently in
+  -- Find which terminal we're currently in
   for terminal_name, state in pairs(self.all_terminals) do
     if state.buf == current_buf then
       current_terminal_name = terminal_name
@@ -103,7 +103,7 @@ function TerminalMultiplexer:navigate_terminal(direction)
   end
 
   if not current_terminal_name then
-    -- If we're not in a test terminal, just open the first one
+    -- If we're not in a terminal, just open the first one
     self:toggle_float_terminal(self.terminal_order[1])
     return
   end
