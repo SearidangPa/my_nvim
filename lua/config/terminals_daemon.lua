@@ -248,4 +248,8 @@ end, { silent = true, desc = 'Run drive daemon' })
 
 vim.keymap.set('n', '<leader>sd', search_daemon_terminals, { desc = 'Select daemon terminal' })
 
+vim.keymap.set('n', '<leader>cd', function()
+  exec_command('m; std', 'cloud drive')
+end, { desc = 'Run cloud drive daemon' })
+
 return M
