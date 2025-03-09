@@ -256,6 +256,6 @@ vim.keymap.set('n', '<leader>da', function()
   exec_command('dr;rds\r', 'drive')
   exec_command('m; std', 'cloud drive')
   M.navigate_daemon_terminal(1)
-end, { desc = '[D]aemon [C]loud drive' })
+end, { desc = '[D]aemon [A]ll' })
 
 return M
