@@ -1,21 +1,11 @@
 -- terminal_multiplexer.lua
 local TerminalMultiplexer = {}
 TerminalMultiplexer.__index = TerminalMultiplexer
+vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 
 ---@class TerminalMultiplexer
 ---@field all_terminals table<string, Float_Term_State>
 ---@field terminal_order string[]
-
--- Constructor for the TerminalMultiplexer
--- @return TerminalMultiplexer
-function TerminalMultiplexer.new()
-  local self = setmetatable({}, TerminalMultiplexer)
-  self.all_terminals = {}
-  self.terminal_order = {} -- To keep track of the order of terminals
-  return self
-end
-
-vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 
 ---@class Float_Term_State
 ---@field buf number
@@ -23,6 +13,14 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field chan number
 ---@field footer_buf number
 ---@field footer_win number
+
+-- @return TerminalMultiplexer
+function TerminalMultiplexer.new()
+  local self = setmetatable({}, TerminalMultiplexer)
+  self.all_terminals = {}
+  self.terminal_order = {}
+  return self
+end
 
 function TerminalMultiplexer:search_terminal()
   local opts = {
