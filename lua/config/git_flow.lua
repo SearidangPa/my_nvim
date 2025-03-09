@@ -131,10 +131,13 @@ Commit: %s]]
   }
 end
 
+local async_make_job = require 'config.async_make_job'
+
 local function push_all()
   git_add_all(function()
     git_commit_with_message_prompt(function()
       git_push()
+      async_make_job.start_linter_job()
     end)
   end)
 end

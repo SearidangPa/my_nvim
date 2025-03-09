@@ -1,3 +1,4 @@
+local M = {}
 local map = vim.keymap.set
 local linter_ns = vim.api.nvim_create_namespace 'linter'
 
@@ -26,7 +27,7 @@ vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = Start_job { cmd = cmd }
 end, {})
 
-vim.api.nvim_create_user_command('MakeLint', function()
+M.start_linter_job = function()
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j lint' }
@@ -34,7 +35,9 @@ vim.api.nvim_create_user_command('MakeLint', function()
     cmd = { 'make', '-j', 'lint' }
   end
   _, output, errors = Start_job { cmd = cmd, ns = linter_ns }
-end, {})
+end
+
+vim.api.nvim_create_user_command('MakeLint', M.start_linter_job, {})
 
 vim.api.nvim_create_user_command('ClearQuickFix', function()
   vim.fn.setqflist({}, 'r')
@@ -61,4 +64,4 @@ end, {})
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
-return {}
+return M

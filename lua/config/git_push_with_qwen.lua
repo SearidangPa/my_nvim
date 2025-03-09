@@ -90,8 +90,10 @@ local push_all_with_qwen = function(command_str)
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen14b', function()
+  local async_make_job = require 'config.async_make_job'
   local command_str = 'git add . && pg_14'
   push_all_with_qwen(command_str)
+  async_make_job.start_linter_job()
 end, {})
 
 vim.api.nvim_create_user_command('QwenTermToggle', toggle_qwen_floating_terminal, {})
