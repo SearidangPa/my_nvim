@@ -21,7 +21,64 @@ local current_floating_term_state = {
   chan = 0,
   footer_buf = -1,
   footer_win = -1,
+  passed = false,
 }
+
+--- === Navigate between test terminals ===;
+M.terminal_order = {} -- To keep track of the order of terminals
+
+---@param direction number 1 for next, -1 for previous
+M.navigate_terminal = function(direction)
+  if #M.terminal_order == 0 then
+    vim.notify('No test terminals available', vim.log.levels.INFO)
+    return
+  end
+
+  -- Find the current buffer
+  local current_buf = vim.api.nvim_get_current_buf()
+  local current_test_name = nil
+
+  -- Find which test terminal we're currently in
+  for test_name, state in pairs(M.all_tests_term) do
+    if state.buf == current_buf then
+      current_test_name = test_name
+      break
+    end
+  end
+
+  if not current_test_name then
+    -- If we're not in a test terminal, just open the first one
+    M.toggle_test_floating_terminal(M.terminal_order[1])
+    return
+  end
+
+  -- Find the index of the current terminal
+  local current_index = nil
+  for i, name in ipairs(M.terminal_order) do
+    if name == current_test_name then
+      current_index = i
+      break
+    end
+  end
+
+  if not current_index then
+    -- This shouldn't happen, but just in case
+    vim.notify('Current test terminal not found in order list', vim.log.levels.ERROR)
+    return
+  end
+
+  -- Calculate the next index with wrapping
+  local next_index = ((current_index - 1 + direction) % #M.terminal_order) + 1
+  local next_test_name = M.terminal_order[next_index]
+
+  -- Hide current terminal and show the next one
+  if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
+    vim.api.nvim_win_hide(current_floating_term_state.win)
+    vim.api.nvim_win_hide(current_floating_term_state.footer_win)
+  end
+
+  M.toggle_test_floating_terminal(next_test_name)
+end
 
 ---@param floating_term_state Float_Term_State
 local function create_test_floating_window(floating_term_state, test_name)
@@ -75,25 +132,21 @@ local function create_test_floating_window(floating_term_state, test_name)
   floating_term_state.footer_buf = footer_buf
   floating_term_state.footer_win = footer_win
 
-  vim.api.nvim_buf_set_keymap(
-    buf,
-    'n',
-    '>',
-    '<cmd>lua require("config.termials_test").navigate_test_terminal(1)<CR>',
-    { noremap = true, silent = true, desc = 'Next test terminal' }
-  )
-  vim.api.nvim_buf_set_keymap(
-    buf,
-    'n',
-    '<',
-    '<cmd>lua require("config.termials_test").navigate_test_terminal(-1)<CR>',
-    { noremap = true, silent = true, desc = 'Previous test terminal' }
-  )
-  vim.api.nvim_buf_set_keymap(buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
+  local map_opts = { noremap = true, silent = true, buffer = buf }
+  vim.keymap.set('n', 'q', '<cmd>q<CR>', map_opts)
+
+  local next_term = function()
+    M.navigate_terminal(1)
+  end
+  local prev_term = function()
+    M.navigate_terminal(-1)
+  end
+  vim.keymap.set('n', '>', next_term, map_opts)
+  vim.keymap.set('n', '<', prev_term, map_opts)
 end
 
 ---@param test_name string
-local toggle_test_floating_terminal = function(test_name)
+M.toggle_test_floating_terminal = function(test_name)
   if not test_name then
     return
   end
@@ -109,8 +162,8 @@ local toggle_test_floating_terminal = function(test_name)
     }
     M.all_tests_term[test_name] = current_floating_term_state
   end
-  if not vim.tbl_contains(M.test_terminal_order, test_name) then
-    table.insert(M.test_terminal_order, test_name)
+  if not vim.tbl_contains(M.terminal_order, test_name) then
+    table.insert(M.terminal_order, test_name)
   end
 
   if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
@@ -153,8 +206,8 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
 
   make_notify(string.format('running test: %s', test_name))
 
-  toggle_test_floating_terminal(test_name)
-  toggle_test_floating_terminal(test_name)
+  M.toggle_test_floating_terminal(test_name)
+  M.toggle_test_floating_terminal(test_name)
 
   vim.api.nvim_chan_send(current_floating_term_state.chan, test_command .. '\n')
   local notification_sent = false
@@ -314,7 +367,7 @@ local function toggle_view_enclosing_test()
   if needs_open then
     local test_name = Get_enclosing_test()
     assert(test_name, 'No test found')
-    toggle_test_floating_terminal(test_name)
+    M.toggle_test_floating_terminal(test_name)
   end
 end
 
@@ -334,68 +387,12 @@ local function search_test_term()
     end
   end
   local handle_choice = function(test_name)
-    toggle_test_floating_terminal(test_name)
+    M.toggle_test_floating_terminal(test_name)
   end
 
   vim.ui.select(all_test_names, opts, function(choice)
     handle_choice(choice)
   end)
-end
-
---- === Navigate between test terminals ===;
-M.test_terminal_order = {} -- To keep track of the order of terminals
-
----@param direction number 1 for next, -1 for previous
-M.navigate_test_terminal = function(direction)
-  if #M.test_terminal_order == 0 then
-    vim.notify('No test terminals available', vim.log.levels.INFO)
-    return
-  end
-
-  -- Find the current buffer
-  local current_buf = vim.api.nvim_get_current_buf()
-  local current_test_name = nil
-
-  -- Find which test terminal we're currently in
-  for test_name, state in pairs(M.all_tests_term) do
-    if state.buf == current_buf then
-      current_test_name = test_name
-      break
-    end
-  end
-
-  if not current_test_name then
-    -- If we're not in a test terminal, just open the first one
-    toggle_test_floating_terminal(M.test_terminal_order[1])
-    return
-  end
-
-  -- Find the index of the current terminal
-  local current_index = nil
-  for i, name in ipairs(M.test_terminal_order) do
-    if name == current_test_name then
-      current_index = i
-      break
-    end
-  end
-
-  if not current_index then
-    -- This shouldn't happen, but just in case
-    vim.notify('Current test terminal not found in order list', vim.log.levels.ERROR)
-    return
-  end
-
-  -- Calculate the next index with wrapping
-  local next_index = ((current_index - 1 + direction) % #M.test_terminal_order) + 1
-  local next_test_name = M.test_terminal_order[next_index]
-
-  -- Hide current terminal and show the next one
-  if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
-    vim.api.nvim_win_hide(current_floating_term_state.win)
-    vim.api.nvim_win_hide(current_floating_term_state.footer_win)
-  end
-
-  toggle_test_floating_terminal(next_test_name)
 end
 
 local delete_test_term = function()
@@ -417,9 +414,9 @@ local delete_test_term = function()
     local float_test_term = M.all_tests_term[test_name]
     vim.api.nvim_buf_delete(float_test_term.buf, { force = true })
     M.all_tests_term[test_name] = nil
-    for i, name in ipairs(M.test_terminal_order) do
+    for i, name in ipairs(M.terminal_order) do
       if name == test_name then
-        table.remove(M.test_terminal_order, i)
+        table.remove(M.terminal_order, i)
         break
       end
     end
