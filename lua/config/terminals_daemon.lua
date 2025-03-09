@@ -230,13 +230,16 @@ M.navigate_daemon_terminal = function(direction)
 end
 
 -- === Commands and keymaps ===
-vim.api.nvim_create_user_command('RunDaemons', function()
+vim.api.nvim_create_user_command('RunDrive', function()
   exec_command('dr;rds', 'drive')
+end, {})
+
+vim.api.nvim_create_user_command('RunCloudDrive', function()
+  exec_command('m; std', 'cloud drive')
 end, {})
 
 vim.keymap.set('n', '<leader>dr', function()
   if vim.fn.has 'win32' == 1 then
-    exec_command('dr;rds\r', 'drive')
     exec_command('m; std\n', 'cloud drive')
   else
     exec_command('kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
