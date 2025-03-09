@@ -78,7 +78,9 @@ end
 
 ---@param test_name string
 local toggle_test_floating_terminal = function(test_name)
-  assert(test_name, 'test_name is required')
+  if not test_name then
+    return
+  end
 
   current_floating_term_state = M.all_tests_term[test_name]
   if not current_floating_term_state then
