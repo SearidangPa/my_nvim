@@ -3,7 +3,6 @@ require 'config.util_find_func'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
-vim.cmd [[highlight TestNameUnderlined gui=underline]]
 
 local TerminalMultiplexer = require 'config.terminal_multiplexer'
 local terminal_multiplexer = TerminalMultiplexer.new()
@@ -20,7 +19,6 @@ local function toggle_view_enclosing_test()
       end
     end
   end
-
   if needs_open then
     local test_name = Get_enclosing_test()
     assert(test_name, 'No test found')
@@ -164,6 +162,7 @@ local function windows_test_all()
   test_buf(test_format)
 end
 
+--- === Go Test ===
 local go_test = function()
   terminal_multiplexer:reset()
   local source_bufnr = vim.api.nvim_get_current_buf()

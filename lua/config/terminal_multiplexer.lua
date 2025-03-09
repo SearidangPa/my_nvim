@@ -15,6 +15,8 @@ function TerminalMultiplexer.new()
   return self
 end
 
+vim.cmd [[highlight TerminalNameUnderline gui=underline]]
+
 ---@class Float_Term_State
 ---@field buf number
 ---@field win number
@@ -166,7 +168,7 @@ function TerminalMultiplexer:create_test_floating_window(floating_term_state, te
   vim.api.nvim_buf_set_lines(footer_buf, 0, -1, false, { footer_text })
   vim.api.nvim_buf_add_highlight(footer_buf, -1, 'Title', 0, 0, -1)
 
-  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'TestNameUnderlined', 0, #padding, -1)
+  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
 
   vim.api.nvim_win_call(win, function()
     vim.cmd 'normal! G'
