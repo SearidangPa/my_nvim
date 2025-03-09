@@ -180,14 +180,17 @@ end
 vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
 vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
-vim.api.nvim_create_user_command('GoTestAll', test_all, {})
-vim.api.nvim_create_user_command('GoTestReset', terminal_multiplexer.reset, {})
 vim.api.nvim_create_user_command('GoTest', go_test, {})
 vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
-
 vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
--- vim.keymap.set('n', '<leader>st', search_test_term, { desc = 'Select test terminal' })
--- vim.keymap.set('n', '<leader>dt', delete_test_term, { desc = '[D]elete [T]est terminal' })
+
+vim.api.nvim_create_user_command('GoTestAll', test_all, {})
+
+-- stylua: ignore start
+vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset() end, {})
+vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_test_term() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_test_term() end, { desc = '[D]elete [T]est terminal' })
+-- stylua: ignore end
 return M
