@@ -4,6 +4,8 @@ local make_notify = mini_notify.make_notify {}
 local ns_name = 'push_flow'
 local ns = vim.api.nvim_create_namespace(ns_name)
 
+M.all_daemons_term = {}
+
 local current_float_term_state = {
   buf = -1,
   win = -1,
@@ -135,38 +137,16 @@ M.reset = function()
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
 
-local exec_command = function(source_bufnr, command, title)
+local exec_command = function(command, title)
   toggle_float_terminal(title)
   toggle_float_terminal(title)
   vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
   make_notify(string.format('running %s daemon', title))
 
-  local notification_sent = false
-
-  vim.api.nvim_buf_attach(current_float_term_state.buf, false, {
-    on_lines = function(_, buf, _, first_line, last_line)
-      local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
-      local current_time = os.date '%H:%M:%S'
-      local error_file
-      local error_line
-
-      for _, line in ipairs(lines) do
-        if string.match(line, '--- FAIL') then
-          make_notify(string.format('%s failed', title))
-          notification_sent = true
-          return true
-        elseif string.match(line, '--- PASS') then
-          if not notification_sent then
-            make_notify(string.format('%s passed', title))
-            notification_sent = true
-            return true -- detach from the buffer
-          end
-        end
-      end
-
-      return false
-    end,
-  })
+  vim.defer_fn(function()
+    local output = vim.api.nvim_buf_get_lines(current_float_term_state.buf, 0, -1, false)
+    make_notify(string.format('output:\n%s', table.concat(output, '\n')))
+  end, 3000)
 end
 
 local function search_daemon_term()
@@ -251,8 +231,16 @@ end
 
 -- === Commands and keymaps ===
 vim.api.nvim_create_user_command('RunDaemon', function()
-  exec_command(0, 'dr;rds', 'drive')
+  exec_command('dr;rds', 'drive')
 end, {})
+
+vim.keymap.set('n', '<leader>dr', function()
+  if vim.fn.has 'win32' == 1 then
+    exec_command('dr;rds\r', 'drive')
+  else
+    exec_command('kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
+  end
+end, { silent = true, desc = 'Run drive daemon' })
 
 vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select daemon terminal' })
 
