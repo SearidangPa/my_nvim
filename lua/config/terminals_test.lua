@@ -74,7 +74,7 @@ local function create_test_floating_window(floating_term_state, test_name)
   floating_term_state.win = win
   floating_term_state.footer_buf = footer_buf
   floating_term_state.footer_win = footer_win
-  -- Set up navigation keys for this buffer
+
   vim.api.nvim_buf_set_keymap(
     buf,
     'n',
