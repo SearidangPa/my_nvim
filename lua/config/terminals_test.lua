@@ -74,6 +74,22 @@ local function create_test_floating_window(floating_term_state, test_name)
   floating_term_state.win = win
   floating_term_state.footer_buf = footer_buf
   floating_term_state.footer_win = footer_win
+  -- Set up navigation keys for this buffer
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    'n',
+    '>',
+    '<cmd>lua require("config.termials_test").navigate_test_terminal(1)<CR>',
+    { noremap = true, silent = true, desc = 'Next test terminal' }
+  )
+  vim.api.nvim_buf_set_keymap(
+    buf,
+    'n',
+    '<',
+    '<cmd>lua require("config.termials_test").navigate_test_terminal(-1)<CR>',
+    { noremap = true, silent = true, desc = 'Previous test terminal' }
+  )
+  vim.api.nvim_buf_set_keymap(buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
 end
 
 ---@param test_name string
@@ -113,23 +129,6 @@ local toggle_test_floating_terminal = function(test_name)
 
     current_floating_term_state.chan = vim.bo.channel
   end
-
-  -- Set up navigation keys for this buffer
-  vim.api.nvim_buf_set_keymap(
-    current_floating_term_state.buf,
-    'n',
-    '>',
-    '<cmd>lua require("config.go_test").navigate_test_terminal(1)<CR>',
-    { noremap = true, silent = true, desc = 'Next test terminal' }
-  )
-  vim.api.nvim_buf_set_keymap(
-    current_floating_term_state.buf,
-    'n',
-    '<',
-    '<cmd>lua require("config.go_test").navigate_test_terminal(-1)<CR>',
-    { noremap = true, silent = true, desc = 'Previous test terminal' }
-  )
-  vim.api.nvim_buf_set_keymap(current_floating_term_state.buf, 'n', 'q', '<cmd>q<CR>', { noremap = true, silent = true, desc = 'Previous test terminal' })
 end
 
 M.reset = function()
