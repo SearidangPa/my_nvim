@@ -242,14 +242,20 @@ vim.keymap.set('n', '<leader>dr', function()
   if vim.fn.has 'win32' == 1 then
     exec_command('dr;rds\r', 'drive')
   else
-    exec_command('kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
+    exec_command('dr && kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
   end
 end, { silent = true, desc = 'Run drive daemon' })
 
 vim.keymap.set('n', '<leader>sd', search_daemon_terminals, { desc = 'Select daemon terminal' })
 
-vim.keymap.set('n', '<leader>cd', function()
+vim.keymap.set('n', '<leader>dc', function()
   exec_command('m; std', 'cloud drive')
-end, { desc = 'Run cloud drive daemon' })
+end, { desc = '[D]aemon [C]loud drive' })
+
+vim.keymap.set('n', '<leader>da', function()
+  exec_command('dr;rds\r', 'drive')
+  exec_command('m; std', 'cloud drive')
+  M.navigate_daemon_terminal(1)
+end, { desc = '[D]aemon [C]loud drive' })
 
 return M
