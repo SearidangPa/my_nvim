@@ -79,8 +79,8 @@ local toggle_float_terminal = function(title)
     }
     M.all_daemons_term[title] = current_float_term_state
   end
-  if not vim.tbl_contains(M.test_terminal_order, title) then
-    table.insert(M.test_terminal_order, title)
+  if not vim.tbl_contains(M.daemon_terminal_order, title) then
+    table.insert(M.daemon_terminal_order, title)
   end
 
   if vim.api.nvim_win_is_valid(current_float_term_state.win) then
@@ -177,28 +177,28 @@ local function search_daemon_term()
     end,
   }
 
-  local all_test_names = {}
+  local all_daemon_names = {}
   for title, _ in pairs(M.all_daemons_term) do
     current_float_term_state = M.all_daemons_term[title]
     if current_float_term_state then
-      table.insert(all_test_names, title)
+      table.insert(all_daemon_names, title)
     end
   end
   local handle_choice = function(title)
     toggle_float_terminal(title)
   end
 
-  vim.ui.select(all_test_names, opts, function(choice)
+  vim.ui.select(all_daemon_names, opts, function(choice)
     handle_choice(choice)
   end)
 end
 
---- === Navigate between test terminals ===;
-M.test_terminal_order = {} -- To keep track of the order of terminals
+--- === Navigate between daemon terminals ===;
+M.daemon_terminal_order = {} -- To keep track of the order of terminals
 
 ---@param direction number 1 for next, -1 for previous
-M.navigate_test_terminal = function(direction)
-  if #M.test_terminal_order == 0 then
+M.navigate_daemon_terminal = function(direction)
+  if #M.daemon_terminal_order == 0 then
     vim.notify('No test terminals available', vim.log.levels.INFO)
     return
   end
@@ -207,7 +207,7 @@ M.navigate_test_terminal = function(direction)
   local current_buf = vim.api.nvim_get_current_buf()
   local current_daemon_name = nil
 
-  -- Find which test terminal we're currently in
+  -- Find which daemon terminal we're currently in
   for title, state in pairs(M.all_daemons_term) do
     if state.buf == current_buf then
       current_daemon_name = title
@@ -216,14 +216,14 @@ M.navigate_test_terminal = function(direction)
   end
 
   if not current_daemon_name then
-    -- If we're not in a test terminal, just open the first one
-    toggle_float_terminal(M.test_terminal_order[1])
+    -- If we're not in a daemon terminal, just open the first one
+    toggle_float_terminal(M.daemon_terminal_order[1])
     return
   end
 
   -- Find the index of the current terminal
   local current_index = nil
-  for i, name in ipairs(M.test_terminal_order) do
+  for i, name in ipairs(M.daemon_terminal_order) do
     if name == current_daemon_name then
       current_index = i
       break
@@ -232,13 +232,13 @@ M.navigate_test_terminal = function(direction)
 
   if not current_index then
     -- This shouldn't happen, but just in case
-    vim.notify('Current test terminal not found in order list', vim.log.levels.ERROR)
+    vim.notify('Current daemon terminal not found in order list', vim.log.levels.ERROR)
     return
   end
 
   -- Calculate the next index with wrapping
-  local next_index = ((current_index - 1 + direction) % #M.test_terminal_order) + 1
-  local next_test_name = M.test_terminal_order[next_index]
+  local next_index = ((current_index - 1 + direction) % #M.daemon_terminal_order) + 1
+  local next_daemon_name = M.daemon_terminal_order[next_index]
 
   -- Hide current terminal and show the next one
   if vim.api.nvim_win_is_valid(current_float_term_state.win) then
@@ -246,7 +246,7 @@ M.navigate_test_terminal = function(direction)
     vim.api.nvim_win_hide(current_float_term_state.footer_win)
   end
 
-  toggle_float_terminal(next_test_name)
+  toggle_float_terminal(next_daemon_name)
 end
 
 -- === Commands and keymaps ===
@@ -254,6 +254,6 @@ vim.api.nvim_create_user_command('RunDaemon', function()
   exec_command(0, 'dr;rds', 'drive')
 end, {})
 
-vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>sd', search_daemon_term, { desc = 'Select daemon terminal' })
 
 return M
