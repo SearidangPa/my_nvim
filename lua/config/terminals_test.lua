@@ -22,15 +22,15 @@ local function toggle_view_enclosing_test()
   if needs_open then
     local test_name = Get_enclosing_test()
     assert(test_name, 'No test found')
-    terminal_multiplexer:toggle_test_floating_terminal(test_name)
+    terminal_multiplexer:toggle_float_terminal(test_name)
   end
 end
 
 local go_test_command = function(source_bufnr, test_name, test_line, test_command)
   test_command = test_command or string.format('go test .\\... -v -run %s\r\n', test_name)
   make_notify(string.format('running test: %s', test_name))
-  terminal_multiplexer:toggle_test_floating_terminal(test_name)
-  local current_floating_term_state = terminal_multiplexer:toggle_test_floating_terminal(test_name, true)
+  terminal_multiplexer:toggle_float_terminal(test_name)
+  local current_floating_term_state = terminal_multiplexer:toggle_float_terminal(test_name, true)
   assert(current_floating_term_state, 'Failed to create floating terminal')
   vim.api.nvim_chan_send(current_floating_term_state.chan, test_command .. '\n')
 
@@ -190,7 +190,7 @@ vim.api.nvim_create_user_command('GoTestAll', test_all, {})
 
 -- stylua: ignore start
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset() end, {})
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_test_term() end, { desc = 'Select test terminal' })
-vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_test_term() end, { desc = '[D]elete [T]est terminal' })
+vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_terminal() end, { desc = '[D]elete [T]est terminal' })
 -- stylua: ignore end
 return M

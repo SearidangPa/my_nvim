@@ -24,60 +24,60 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field footer_buf number
 ---@field footer_win number
 
-function TerminalMultiplexer:search_test_term()
+function TerminalMultiplexer:search_terminal()
   local opts = {
-    prompt = 'Select test terminal:',
+    prompt = 'Select terminal:',
     format_item = function(item)
       return item
     end,
   }
 
-  local all_test_names = {}
-  for test_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[test_name]
+  local all_terminal_names = {}
+  for terminal_name, _ in pairs(self.all_terminals) do
+    local term_state = self.all_terminals[terminal_name]
     if term_state then
-      table.insert(all_test_names, test_name)
+      table.insert(all_terminal_names, terminal_name)
     end
   end
 
-  local handle_choice = function(test_name)
-    self:toggle_test_floating_terminal(test_name)
+  local handle_choice = function(terminal_name)
+    self:toggle_float_terminal(terminal_name)
   end
 
-  vim.ui.select(all_test_names, opts, function(choice)
+  vim.ui.select(all_terminal_names, opts, function(choice)
     handle_choice(choice)
   end)
 end
 
-function TerminalMultiplexer:delete_test_term()
+function TerminalMultiplexer:delete_terminal()
   local opts = {
-    prompt = 'Select test terminal:',
+    prompt = 'Select terminal:',
     format_item = function(item)
       return item
     end,
   }
 
-  local all_test_names = {}
-  for test_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[test_name]
+  local all_terminal_names = {}
+  for terminal_name, _ in pairs(self.all_terminals) do
+    local term_state = self.all_terminals[terminal_name]
     if term_state then
-      table.insert(all_test_names, test_name)
+      table.insert(all_terminal_names, terminal_name)
     end
   end
 
-  local handle_choice = function(test_name)
-    local float_test_term = self.all_terminals[test_name]
+  local handle_choice = function(terminal_name)
+    local float_test_term = self.all_terminals[terminal_name]
     vim.api.nvim_buf_delete(float_test_term.buf, { force = true })
-    self.all_terminals[test_name] = nil
+    self.all_terminals[terminal_name] = nil
     for i, name in ipairs(self.terminal_order) do
-      if name == test_name then
+      if name == terminal_name then
         table.remove(self.terminal_order, i)
         break
       end
     end
   end
 
-  vim.ui.select(all_test_names, opts, function(choice)
+  vim.ui.select(all_terminal_names, opts, function(choice)
     handle_choice(choice)
   end)
 end
@@ -92,26 +92,26 @@ function TerminalMultiplexer:navigate_terminal(direction)
 
   -- Find the current buffer
   local current_buf = vim.api.nvim_get_current_buf()
-  local current_test_name = nil
+  local current_terminal_name = nil
 
   -- Find which test terminal we're currently in
-  for test_name, state in pairs(self.all_terminals) do
+  for terminal_name, state in pairs(self.all_terminals) do
     if state.buf == current_buf then
-      current_test_name = test_name
+      current_terminal_name = terminal_name
       break
     end
   end
 
-  if not current_test_name then
+  if not current_terminal_name then
     -- If we're not in a test terminal, just open the first one
-    self:toggle_test_floating_terminal(self.terminal_order[1])
+    self:toggle_float_terminal(self.terminal_order[1])
     return
   end
 
   -- Find the index of the current terminal
   local current_index = nil
   for i, name in ipairs(self.terminal_order) do
-    if name == current_test_name then
+    if name == current_terminal_name then
       current_index = i
       break
     end
@@ -119,22 +119,22 @@ function TerminalMultiplexer:navigate_terminal(direction)
 
   if not current_index then
     -- This shouldn't happen, but just in case
-    vim.notify('Current test terminal not found in order list', vim.log.levels.ERROR)
+    vim.notify('Current terminal not found in order list', vim.log.levels.ERROR)
     return
   end
 
   -- Calculate the next index with wrapping
   local next_index = ((current_index - 1 + direction) % #self.terminal_order) + 1
-  local next_test_name = self.terminal_order[next_index]
+  local next_terminal_name = self.terminal_order[next_index]
 
   -- Hide current terminal and show the next one
-  local current_term_state = self.all_terminals[current_test_name]
+  local current_term_state = self.all_terminals[current_terminal_name]
   if vim.api.nvim_win_is_valid(current_term_state.win) then
     vim.api.nvim_win_hide(current_term_state.win)
     vim.api.nvim_win_hide(current_term_state.footer_win)
   end
 
-  self:toggle_test_floating_terminal(next_test_name)
+  self:toggle_float_terminal(next_terminal_name)
 end
 
 ---@param floating_term_state Float_Term_State
@@ -206,7 +206,7 @@ end
 ---@param test_name string
 ---@param ensure_open boolean|nil If true, always ensure the terminal is open
 ---@return table | nil
-function TerminalMultiplexer:toggle_test_floating_terminal(test_name, ensure_open)
+function TerminalMultiplexer:toggle_float_terminal(test_name, ensure_open)
   if not test_name then
     return nil
   end
@@ -249,8 +249,8 @@ function TerminalMultiplexer:toggle_test_floating_terminal(test_name, ensure_ope
 end
 
 function TerminalMultiplexer:reset()
-  for test_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[test_name]
+  for terminal_name, _ in pairs(self.all_terminals) do
+    local term_state = self.all_terminals[terminal_name]
     if term_state then
       vim.api.nvim_chan_send(term_state.chan, 'clear\n')
     end
