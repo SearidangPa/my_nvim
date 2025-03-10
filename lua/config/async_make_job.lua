@@ -29,22 +29,25 @@ M.make_lint = function()
   _, output, errors = start_job { cmd = cmd, ns = linter_ns }
 end
 
-vim.api.nvim_create_user_command('MakeAll', M.make_all, {})
-vim.api.nvim_create_user_command('MakeLint', M.make_lint, {})
-vim.api.nvim_create_user_command('PrintJobOutput', function() print(vim.inspect(output)) end, {})
-vim.api.nvim_create_user_command('PrintJobErrors', function() print(vim.inspect(errors)) end, {})
+local user_command = vim.api.nvim_create_user_command
 
-map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
-map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
-
-vim.api.nvim_create_user_command('ClearQuickFix', function()
+user_command('ClearQuickFix', function()
   vim.fn.setqflist({}, 'r')
   vim.diagnostic.reset(linter_ns)
 end, {})
 
-vim.api.nvim_create_user_command('GoModTidy', function()
-  local cmd = { 'go', 'mod', 'tidy' }
-  _, output, errors = start_job { cmd = cmd }
+user_command('GoModTidy', function()
+  _, output, errors = start_job { cmd = 'go mod tidy' }
 end, {})
+
+user_command('PrintJobOut', function()
+  print(vim.inspect(output))
+  print(vim.inspect(errors))
+end, {})
+
+user_command('MakeAll', M.make_all, {})
+user_command('MakeLint', M.make_lint, {})
+map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
+map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
 return M
