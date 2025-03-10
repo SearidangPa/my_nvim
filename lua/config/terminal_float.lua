@@ -13,6 +13,7 @@ local choice_options_unix = {
 local choice_options_win = {
   'un',
   'tu',
+  'GitBash -c "make -j lint"',
 }
 
 local function Send_command_toggle_term()
