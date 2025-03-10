@@ -98,10 +98,10 @@ map('n', '<leader>gc', function()
   select_commit_message_prompt(commit_func)
 end, map_opt '[G]it [C]ommit and push')
 
-map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
-map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
-
 -- === Async Git ===
+local start_job = require('config.util_job').start_job
+local async_make_job = require 'config.async_make_job'
+
 local function git_add_all(on_success_cb)
   start_job {
     cmd = 'git add .',
@@ -110,10 +110,10 @@ local function git_add_all(on_success_cb)
   }
 end
 
-local function git_push()
-  local commit_format_notification = [[Push successfully
+local commit_format_notification = [[Push successfully
 Commit: %s]]
 
+local function git_push()
   start_job {
     cmd = 'git push',
     on_success_cb = function() make_notify(string.format(commit_format_notification, commit_msg)) end,
@@ -121,16 +121,17 @@ Commit: %s]]
   }
 end
 
-local async_make_job = require 'config.async_make_job'
-
 local function push_all()
   local cb = function(commit_msg)
     vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
     git_push()
-    async_make_job.start_make_lint()
+    async_make_job.make_lint()
+    async_make_job.make_all()
   end
-
   git_add_all(function() select_commit_message_prompt(cb) end)
 end
+
+map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
+map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>gp', push_all, map_opt '[G]it [C]ommit and push')
 return {}

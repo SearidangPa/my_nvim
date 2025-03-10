@@ -6,7 +6,7 @@ local start_job = require('config.util_job').start_job
 local output = {}
 local errors = {}
 
-vim.api.nvim_create_user_command('MakeAll', function()
+M.make_all = function()
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
@@ -14,9 +14,9 @@ vim.api.nvim_create_user_command('MakeAll', function()
     cmd = { 'make', '-j', 'all' }
   end
   _, output, errors = start_job { cmd = cmd }
-end, {})
+end
 
-M.start_make_lint = function()
+M.make_lint = function()
   if vim.bo.filetype ~= 'go' then
     return
   end
@@ -29,7 +29,8 @@ M.start_make_lint = function()
   _, output, errors = start_job { cmd = cmd, ns = linter_ns }
 end
 
-vim.api.nvim_create_user_command('MakeLint', M.start_make_lint, {})
+vim.api.nvim_create_user_command('MakeAll', M.make_all, {})
+vim.api.nvim_create_user_command('MakeLint', M.make_lint, {})
 vim.api.nvim_create_user_command('PrintJobOutput', function() print(vim.inspect(output)) end, {})
 vim.api.nvim_create_user_command('PrintJobErrors', function() print(vim.inspect(errors)) end, {})
 
