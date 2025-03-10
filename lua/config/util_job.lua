@@ -1,3 +1,5 @@
+local M = {}
+
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 
@@ -133,7 +135,7 @@ end
 ---@field on_success_cb function
 
 ---@param opts opts
-Start_job = function(opts)
+M.start_job = function(opts)
   local cmd = opts.cmd
   local silent = opts.silent
   local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
@@ -205,3 +207,5 @@ function Contains(tbl, value)
   end
   return false
 end
+
+return M

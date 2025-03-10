@@ -34,7 +34,7 @@ local function get_harpoon_filenames(opts)
     if fullpath == current_file_path then
       list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
     else
-      list_names = list_names .. display_sep .. filename
+      list_names = list_names .. display_sep .. '%#TabLine#' .. filename
     end
   end
 
@@ -84,9 +84,7 @@ return {
         lualine_a = {
           {
             'mode',
-            fmt = function(str)
-              return str:sub(1, 1)
-            end,
+            fmt = function(str) return str:sub(1, 1) end,
           },
         },
         lualine_b = { 'branch', 'diagnostics' },

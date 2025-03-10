@@ -1,6 +1,7 @@
 local M = {}
 local map = vim.keymap.set
 local linter_ns = vim.api.nvim_create_namespace 'linter'
+local start_job = require('config.util_job').start_job
 
 local output = {}
 local errors = {}
@@ -12,7 +13,7 @@ vim.api.nvim_create_user_command('MakeAll', function()
   else
     cmd = { 'make', '-j', 'all' }
   end
-  _, output, errors = Start_job { cmd = cmd }
+  _, output, errors = start_job { cmd = cmd }
 end, {})
 
 M.start_make_lint = function()
@@ -25,13 +26,12 @@ M.start_make_lint = function()
   else
     cmd = { 'make', '-j', 'lint' }
   end
-  _, output, errors = Start_job { cmd = cmd, ns = linter_ns }
+  _, output, errors = start_job { cmd = cmd, ns = linter_ns }
 end
 
 vim.api.nvim_create_user_command('MakeLint', M.start_make_lint, {})
-
-vim.api.nvim_create_user_command('ToggleOutput', function() print(vim.inspect(output)) end, {})
-vim.api.nvim_create_user_command('ToggleErrors', function() print(vim.inspect(errors)) end, {})
+vim.api.nvim_create_user_command('PrintJobOutput', function() print(vim.inspect(output)) end, {})
+vim.api.nvim_create_user_command('PrintJobErrors', function() print(vim.inspect(errors)) end, {})
 
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
@@ -43,7 +43,7 @@ end, {})
 
 vim.api.nvim_create_user_command('GoModTidy', function()
   local cmd = { 'go', 'mod', 'tidy' }
-  _, output, errors = Start_job { cmd = cmd }
+  _, output, errors = start_job { cmd = cmd }
 end, {})
 
 return M

@@ -1,4 +1,4 @@
-require 'config.util_start_job'
+require 'config.util_job'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local nui_input = require 'nui.input'
@@ -70,29 +70,21 @@ local function handle_choice(choice, perform_commit_func)
   local input = nui_input(popup_option, nui_input_options)
   input:mount()
 
-  input:on(event.BufLeave, function()
-    input:unmount()
-  end)
+  input:on(event.BufLeave, function() input:unmount() end)
 end
 
 local function select_commit_message_prompt(cb)
   local opts = {
     prompt = 'Select suggested commit message:',
-    format_item = function(item)
-      return item
-    end,
+    format_item = function(item) return item end,
   }
 
-  vim.ui.select(choice_options, opts, function(choice)
-    handle_choice(choice, cb)
-  end)
+  vim.ui.select(choice_options, opts, function(choice) handle_choice(choice, cb) end)
 end
 
 -- === Git ===
 local map = vim.keymap.set
-local function map_opt(desc)
-  return { noremap = true, silent = true, desc = desc }
-end
+local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
 map('n', '<leader>gc', function()
   local commit_func = function(commit_msg, push_func)
@@ -111,7 +103,7 @@ map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 
 -- === Async Git ===
 local function git_add_all(on_success_cb)
-  Start_job {
+  start_job {
     cmd = 'git add .',
     on_success_cb = on_success_cb,
     silent = true,
@@ -122,11 +114,9 @@ local function git_push()
   local commit_format_notification = [[Push successfully
 Commit: %s]]
 
-  Start_job {
+  start_job {
     cmd = 'git push',
-    on_success_cb = function()
-      make_notify(string.format(commit_format_notification, commit_msg))
-    end,
+    on_success_cb = function() make_notify(string.format(commit_format_notification, commit_msg)) end,
     silent = true,
   }
 end
@@ -140,9 +130,7 @@ local function push_all()
     async_make_job.start_make_lint()
   end
 
-  git_add_all(function()
-    select_commit_message_prompt(cb)
-  end)
+  git_add_all(function() select_commit_message_prompt(cb) end)
 end
 map('n', '<leader>gp', push_all, map_opt '[G]it [C]ommit and push')
 return {}
