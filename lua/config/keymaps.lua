@@ -1,7 +1,5 @@
 local map = vim.keymap.set
-local function map_opt(desc)
-  return { noremap = true, silent = true, desc = desc }
-end
+local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
 function RenameAndCapitalize()
   local current_word = vim.fn.expand '<cword>'
@@ -88,9 +86,7 @@ map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copi
 
 -- =================== Extmarks ===================
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
-vim.api.nvim_create_user_command('ClearExtmarks', function()
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-end, { nargs = 0 })
+vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
 -- =================== Window Navigation ===================
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
@@ -121,12 +117,14 @@ map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize f
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 -- ================== local leader===================
-map('n', '<localleader>w', ':wa<CR>', map_opt '[W]rite all')
+map('n', '<localleader>w', function()
+  vim.cmd [[:wa]]
+  vim.cmd 'Gwrite'
+end, map_opt '[W]rite all')
+
 map('n', '<localleader>d', [["_dd]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
-map('n', '<localleader>q', function()
-  vim.cmd [[q]]
-end, map_opt '[Q]uit')
+map('n', '<localleader>q', function() vim.cmd [[q]] end, map_opt '[Q]uit')
 
 -- =================== colorscheme ==================
 map('n', '<leader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')
@@ -151,9 +149,7 @@ map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboa
 
 map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
-vim.api.nvim_create_user_command('CopyCurrentFilePath', function()
-  vim.fn.setreg('+', vim.fn.expand '%:p')
-end, { nargs = 0 })
+vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
 -- === Quickfix navigation ===
 local quickfix = require 'config.quickfix'
@@ -194,9 +190,7 @@ vim.api.nvim_create_autocmd('FileType', {
 
 vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
 
-vim.keymap.set('n', '<leader>nf', function()
-  require('neogen').generate()
-end, map_opt '[N]eogen [F]unction')
+vim.keymap.set('n', '<leader>nf', function() require('neogen').generate() end, map_opt '[N]eogen [F]unction')
 
 vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
 return {}

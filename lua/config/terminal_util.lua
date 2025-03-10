@@ -5,17 +5,11 @@ local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 
 local choice_options_unix = {
-  'gaa && pg',
-  'rds',
-  'MODE=dev ./bin/client dial',
-  'cs && MIX_ENV=dev USER_CREATES_PER_HOUR=9000000000000 iex --sname cs@localhost --cookie blih --erl "-kernel prevent_overlapping_partitions false +P 1000000" -S mix',
+  'gh_rerun_failed',
 }
 
 local choice_options_win = {
-  'dr; rds',
-  'un; Remove-Item -Path ~\\Documents\\Preveil_Sync_Root\\* -Recurse -Force -Confirm:$false; re;st',
-  're;st',
-  'gfl',
+  'un',
   'tu',
 }
 
@@ -30,9 +24,7 @@ vim.api.nvim_create_autocmd('TermOpen', {
 function Send_command_toggle_term(opts)
   local ui_select_opts = {
     prompt = 'Select command to send to terminal',
-    format_item = function(item)
-      return item
-    end,
+    format_item = function(item) return item end,
   }
   local choice_options
   if vim.fn.has 'win32' == 1 then
