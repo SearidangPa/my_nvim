@@ -75,7 +75,7 @@ local function handle_choice(choice, perform_commit_func)
   end)
 end
 
-local function git_commit_with_message_prompt(perform_commit_func)
+local function select_commit_message_prompt(cb)
   local opts = {
     prompt = 'Select suggested commit message:',
     format_item = function(item)
@@ -84,7 +84,7 @@ local function git_commit_with_message_prompt(perform_commit_func)
   }
 
   vim.ui.select(choice_options, opts, function(choice)
-    handle_choice(choice, perform_commit_func)
+    handle_choice(choice, cb)
   end)
 end
 
@@ -103,7 +103,7 @@ map('n', '<leader>gc', function()
       make_notify(string.format(commit_format_notification, commit_msg))
     end)
   end
-  git_commit_with_message_prompt(commit_func)
+  select_commit_message_prompt(commit_func)
 end, map_opt '[G]it [C]ommit and push')
 
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
@@ -134,11 +134,14 @@ end
 local async_make_job = require 'config.async_make_job'
 
 local function push_all()
+  local cb = function(commit_msg)
+    vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
+    git_push()
+    async_make_job.start_make_lint()
+  end
+
   git_add_all(function()
-    git_commit_with_message_prompt(function()
-      git_push()
-      async_make_job.start_make_lint()
-    end)
+    select_commit_message_prompt(cb)
   end)
 end
 map('n', '<leader>gp', push_all, map_opt '[G]it [C]ommit and push')
