@@ -141,6 +141,7 @@ local function test_buf(test_format)
     terminal_multiplexer:reset_terminal(test_name)
     local test_command = string.format(test_format, test_name)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+    make_notify(string.format('Running test: %s', test_name))
     go_test_command(test_info)
     M.test_tracker[test_name] = test_info
   end
@@ -154,6 +155,7 @@ local function drive_test_dev()
   assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  make_notify(string.format('Running dev test: %s', test_name))
   go_test_command(test_info)
   M.test_tracker[test_name] = test_info
 end
@@ -165,6 +167,7 @@ local function drive_test_staging()
   assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  make_notify(string.format('Running staging test: %s', test_name))
   go_test_command(test_info)
   M.test_tracker[test_name] = test_info
 end
@@ -177,6 +180,7 @@ local windows_test_this = function()
   terminal_multiplexer:reset_terminal(test_name)
   local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  make_notify(string.format('Running windows test: %s', test_name))
   go_test_command(test_info)
   M.test_tracker[test_name] = test_info
 end
