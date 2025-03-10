@@ -214,18 +214,26 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name)
   return self.all_terminals[terminal_name]
 end
 
-function TerminalMultiplexer:reset()
-  for terminal_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[terminal_name]
-    if term_state then
-      vim.api.nvim_chan_send(term_state.chan, 'clear\n')
-    end
+function TerminalMultiplexer:reset_terminal(terminal_name)
+  local term_state = self.all_terminals[terminal_name]
+  if term_state then
+    vim.api.nvim_chan_send(term_state.chan, 'clear\n')
   end
-
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
 end
 
-function TerminalMultiplexer:delete_terminal()
+function TerminalMultiplexer:delete_terminal(terminal_name)
+  local float_terminal = self.all_terminals[terminal_name]
+  vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
+  self.all_terminals[terminal_name] = nil
+  for i, name in ipairs(self.terminal_order) do
+    if name == terminal_name then
+      table.remove(self.terminal_order, i)
+      break
+    end
+  end
+end
+
+function TerminalMultiplexer:select_delete_terminal()
   local opts = {
     prompt = 'Select terminal:',
     format_item = function(item) return item end,

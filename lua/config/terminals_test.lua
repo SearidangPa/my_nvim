@@ -132,10 +132,11 @@ end
 local function test_buf(test_format)
   local bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(bufnr)
-  terminal_multiplexer:reset()
   for test_name, test_line in pairs(testsInCurrBuf) do
+    terminal_multiplexer:reset_terminal(test_name)
     local test_command = string.format(test_format, test_name)
     go_test_command(bufnr, test_name, test_line, test_command)
+    M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = bufnr }
   end
 end
 
@@ -144,21 +145,37 @@ local function drive_test_dev()
   vim.env.MODE, vim.env.UKS = 'dev', 'others'
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
+  assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   go_test_command(source_bufnr, test_name, test_line, test_command)
+  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
 end
 
 local function drive_test_staging()
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
+  assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   go_test_command(source_bufnr, test_name, test_line, test_command)
+  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
 end
 
-local function drive_test_all_staging()
-  vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  local test_format = 'go test integration_tests/*.go -v -run %s'
+--- === Windows Test ===
+local windows_test_this = function()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  assert(test_name, 'No test found')
+  terminal_multiplexer:reset_terminal(test_name)
+  local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
+  go_test_command(source_bufnr, test_name, test_line, test_command)
+  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+end
+
+--- === Test All In Buf ===
+
+local function windows_test_all()
+  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
   test_buf(test_format)
 end
 
@@ -168,17 +185,9 @@ local function drive_test_all_dev()
   test_buf(test_format)
 end
 
---- === Windows Test ===
-local windows_test_this = function()
-  terminal_multiplexer:reset()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-  go_test_command(source_bufnr, test_name, test_line, test_command)
-end
-
-local function windows_test_all()
-  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
+local function drive_test_all_staging()
+  vim.env.MODE, vim.env.UKS = 'staging', 'others'
+  local test_format = 'go test integration_tests/*.go -v -run %s'
   test_buf(test_format)
 end
 
@@ -200,24 +209,45 @@ end
 
 vim.api.nvim_create_user_command('GoTestList', test_list, {})
 
-vim.keymap.set('n', '<leader>gl', test_list, { desc = 'Run all tests in list' })
-vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>lt', test_list, { desc = '[T]est Tracker [L]ist' })
+vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<localleader>tw', windows_test_this, { desc = 'Run test in windows' })
 vim.keymap.set('n', '<localleader>td', drive_test_staging, { desc = 'Drive test in dev' })
 
 -- stylua: ignore start
-vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset() end, {})
+vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
 vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:search_terminal() end, {})
-vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:delete_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
-vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_terminal() end, { desc = '[D]elete [T]est terminal' })
 -- stylua: ignore end
+
+vim.keymap.set('n', '<leader>dt', function()
+  local test_name, test_line = Get_enclosing_test()
+  if not test_name then
+    make_notify 'No test found'
+    return
+  end
+  M.test_tracker[test_name] = nil
+  terminal_multiplexer:delete_terminal(test_name)
+  make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
+end, { desc = '[D]elete [T]est terminal' })
+
+vim.keymap.set('n', '<leader>gt', function()
+  local test_name, test_line = Get_enclosing_test()
+  if not test_name then
+    make_notify 'No test found'
+    return
+  end
+  M.test_tracker[test_name] = nil
+  terminal_multiplexer:delete_terminal(test_name)
+  make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
+end, { desc = '[D]elete [T]est terminal' })
 
 --- === Go Test ===
 local go_test = function()
-  terminal_multiplexer:reset()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
+  terminal_multiplexer:reset_terminal(test_name)
   assert(test_name, 'No test found')
   local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
   go_test_command(source_bufnr, test_name, test_line, test_command)
