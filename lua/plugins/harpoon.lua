@@ -19,6 +19,17 @@ return {
       harpoon.ui:toggle_quick_menu(harpoon:list())
     end, { desc = 'harpoon [L]ist' })
 
+    vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+    vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+
+    harpoon:extend {
+      UI_CREATE = function(cx)
+        vim.keymap.set('n', '<C-v>', function()
+          harpoon.ui:select_menu_item { vsplit = true }
+        end, { buffer = cx.bufnr })
+      end,
+    }
+
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6, 7 } do
       vim.keymap.set('n', string.format('<localleader>%d', idx), function()
         harpoon:list():select(idx)
