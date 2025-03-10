@@ -6,8 +6,8 @@ local TerminalMultiplexer = require 'config.terminal_multiplexer'
 local terminal_multiplexer = TerminalMultiplexer.new()
 
 local exec_command = function(command, title)
-  terminal_multiplexer.toggle_float_terminal(title)
-  local current_float_term_state = terminal_multiplexer.toggle_float_terminal(title)
+  terminal_multiplexer:toggle_float_terminal(title)
+  local current_float_term_state = terminal_multiplexer:toggle_float_terminal(title)
   assert(current_float_term_state, 'Failed to toggle float terminal')
   vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
   make_notify(string.format('running %s daemon', title))

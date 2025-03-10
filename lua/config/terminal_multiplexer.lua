@@ -28,9 +28,7 @@ end
 function TerminalMultiplexer:search_terminal()
   local opts = {
     prompt = 'Select terminal:',
-    format_item = function(item)
-      return item
-    end,
+    format_item = function(item) return item end,
   }
 
   local all_terminal_names = {}
@@ -41,21 +39,15 @@ function TerminalMultiplexer:search_terminal()
     end
   end
 
-  local handle_choice = function(terminal_name)
-    self:toggle_float_terminal(terminal_name)
-  end
+  local handle_choice = function(terminal_name) self:toggle_float_terminal(terminal_name) end
 
-  vim.ui.select(all_terminal_names, opts, function(choice)
-    handle_choice(choice)
-  end)
+  vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
 end
 
 function TerminalMultiplexer:delete_terminal()
   local opts = {
     prompt = 'Select terminal:',
-    format_item = function(item)
-      return item
-    end,
+    format_item = function(item) return item end,
   }
 
   local all_terminal_names = {}
@@ -78,9 +70,7 @@ function TerminalMultiplexer:delete_terminal()
     end
   end
 
-  vim.ui.select(all_terminal_names, opts, function(choice)
-    handle_choice(choice)
-  end)
+  vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
 end
 
 --- === Navigate between terminals ===;
@@ -167,9 +157,7 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
 
   vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
 
-  vim.api.nvim_win_call(float_terminal_state.win, function()
-    vim.cmd 'normal! G'
-  end)
+  vim.api.nvim_win_call(float_terminal_state.win, function() vim.cmd 'normal! G' end)
 
   float_terminal_state.footer_win = vim.api.nvim_open_win(float_terminal_state.footer_buf, false, {
     relative = 'win',
@@ -184,12 +172,8 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
   local map_opts = { noremap = true, silent = true, buffer = float_terminal_state.buf }
 
   local terminal_multiplexer = self -- capture self in closure
-  local next_term = function()
-    terminal_multiplexer:navigate_terminal(1)
-  end
-  local prev_term = function()
-    terminal_multiplexer:navigate_terminal(-1)
-  end
+  local next_term = function() terminal_multiplexer:navigate_terminal(1) end
+  local prev_term = function() terminal_multiplexer:navigate_terminal(-1) end
 
   vim.keymap.set('n', '>', next_term, map_opts)
   vim.keymap.set('n', '<', prev_term, map_opts)
@@ -202,10 +186,6 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
       vim.api.nvim_win_hide(float_terminal_state.win)
     end
   end
-
-  print 'Setting up keymaps'
-  print(vim.inspect(map_opts))
-  print(vim.inspect(float_terminal_state.buf))
   vim.keymap.set('n', 'q', close_term, map_opts)
 end
 
