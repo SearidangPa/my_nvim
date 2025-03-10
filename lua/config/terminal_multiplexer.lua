@@ -13,6 +13,7 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field footer_buf number
 ---@field footer_win number
 ---@field chan number
+---@field status string
 
 --- === Create, Search, Delete, Navigate between terminals ===;
 
@@ -40,13 +41,13 @@ function TerminalMultiplexer:search_terminal()
   }
 
   local all_terminal_names = {}
-  for terminal_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[terminal_name]
-    if term_state then
-      table.insert(all_terminal_names, terminal_name)
+  for test_name, test_info in pairs(self.all_terminals) do
+    if test_info.status == 'failed' then
+      table.insert(all_terminal_names, '\t' .. '❌' .. '  ' .. test_name)
+    elseif test_info.status == 'passed' then
+      table.insert(all_terminal_names, '\t' .. '✅' .. '  ' .. test_name)
     end
   end
-
   local handle_choice = function(terminal_name) self:toggle_float_terminal(terminal_name) end
 
   vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
@@ -171,7 +172,7 @@ end
 --- === Toggle terminal ===
 
 ---@param terminal_name string
----@return table | nil
+---@return Float_Term_State | nil
 function TerminalMultiplexer:toggle_float_terminal(terminal_name)
   if not terminal_name then
     return nil

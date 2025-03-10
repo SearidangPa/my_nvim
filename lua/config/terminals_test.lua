@@ -62,12 +62,12 @@ local go_test_command = function(test_info)
   local source_bufnr = test_info.test_bufnr
 
   terminal_multiplexer:toggle_float_terminal(test_name)
-  local current_floating_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
-  assert(current_floating_term_state, 'Failed to create floating terminal')
-  vim.api.nvim_chan_send(current_floating_term_state.chan, test_command .. '\n')
+  local float_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
+  assert(float_term_state, 'Failed to create floating terminal')
+  vim.api.nvim_chan_send(float_term_state.chan, test_command .. '\n')
 
   local notification_sent = false
-  vim.api.nvim_buf_attach(current_floating_term_state.buf, false, {
+  vim.api.nvim_buf_attach(float_term_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       local current_time = os.date '%H:%M:%S'
@@ -81,6 +81,7 @@ local go_test_command = function(test_info)
             virt_text_pos = 'eol',
           })
           test_info.status = 'failed'
+          float_term_state.status = 'failed'
 
           make_notify(string.format('Test failed: %s', test_name))
           notification_sent = true
@@ -91,6 +92,7 @@ local go_test_command = function(test_info)
             virt_text_pos = 'eol',
           })
           test_info.status = 'passed'
+          float_term_state.status = 'passed'
 
           if not notification_sent then
             make_notify(string.format('Test passed: %s', test_name))
@@ -273,11 +275,17 @@ vim.api.nvim_create_user_command('ViewGoTestList', function()
   end
 
   local all_tracked_tests = { '', '' }
-  for test_name, _ in pairs(M.test_tracker) do
-    table.insert(all_tracked_tests, '\t' .. test_name)
+
+  for test_name, test_info in pairs(M.test_tracker) do
+    if test_info.status == 'failed' then
+      table.insert(all_tracked_tests, '\t' .. '❌' .. '  ' .. test_name)
+    elseif test_info.status == 'passed' then
+      table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_name)
+    end
   end
-  local width = math.floor(vim.o.columns * 0.7)
-  local height = math.floor(vim.o.lines * 0.7)
+
+  local width = math.floor(vim.o.columns * 0.5)
+  local height = math.floor(vim.o.lines * 0.5)
   local row = math.floor((vim.o.lines - height) / 2)
   local col = math.floor((vim.o.columns - width) / 2)
 
