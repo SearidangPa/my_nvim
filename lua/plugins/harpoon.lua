@@ -6,20 +6,30 @@ return {
   config = function()
     local harpoon = require 'harpoon'
     harpoon:setup {}
+    local map = vim.keymap.set
 
-    vim.keymap.set('n', '<localleader>a', function() harpoon:list():add() end, { desc = 'harpoon [A]dd' })
-    vim.keymap.set('n', '<localleader>p', function() harpoon:list():prepend() end, { desc = 'harpoon [P]repend' })
-    vim.keymap.set('n', '<localleader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-    vim.keymap.set('n', '<C-S-P>', function() harpoon:list():prev() end)
-    vim.keymap.set('n', '<C-S-N>', function() harpoon:list():next() end)
+    map('n', '<localleader>a', function() harpoon:list():add() end, { desc = 'harpoon [A]dd' })
+    map('n', '<localleader>p', function() harpoon:list():prepend() end, { desc = 'harpoon [P]repend' })
+    map('n', '<localleader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+    map('n', '<C-S-P>', function() harpoon:list():prev() end)
+    map('n', '<C-S-N>', function() harpoon:list():next() end)
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-      vim.keymap.set('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon %d', idx) })
+      map('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
+
+      map('n', string.format('<leader>%d', idx), function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+        for _ = 1, idx - 1 do
+          vim.cmd 'normal! j'
+        end
+        vim.cmd 'normal! dd'
+        vim.cmd 'w'
+      end, { desc = string.format('harpoon remove %d', idx) })
     end
 
     harpoon:extend {
       UI_CREATE = function(cx)
-        vim.keymap.set('n', '<C-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, { buffer = cx.bufnr })
+        map('n', '<C-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, { buffer = cx.bufnr })
       end,
     }
     -- basic telescope configuration
@@ -42,6 +52,6 @@ return {
         :find()
     end
 
-    vim.keymap.set('n', '<leader>sp', function() toggle_telescope(harpoon:list()) end, { desc = 'harpoon [S]earch [P]inned' })
+    map('n', '<C-p>', function() toggle_telescope(harpoon:list()) end, { desc = 'harpoon Search [P]inned' })
   end,
 }
