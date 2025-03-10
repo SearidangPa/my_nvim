@@ -230,9 +230,9 @@ vim.keymap.set('n', '<localleader>td', drive_test_staging, { desc = 'Drive test 
 
 -- stylua: ignore start
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
-vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:search_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
 -- stylua: ignore end
 
 vim.keymap.set('n', '<leader>dt', function()

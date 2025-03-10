@@ -29,6 +29,6 @@ vim.api.nvim_create_user_command('RunDrive', run_drive, {})
 vim.api.nvim_create_user_command('RunCloudDrive', function() exec_command('m; std', 'cloud drive') end, {})
 vim.keymap.set('n', '<leader>dr', run_drive, { silent = true, desc = '[D]aemon [R]un drive' })
 vim.keymap.set('n', '<leader>dc', function() exec_command('m; std', 'cloud drive') end, { desc = '[D]aemon [C]loud drive' })
-vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
+vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:select_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 return M

@@ -20,9 +20,9 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 -- @return TerminalMultiplexer
 function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
-  self.all_terminals = {}
-  self.terminal_order = {}
-  self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true })
+  self.all_terminals = {} --- @type table<string, Float_Term_State>
+  self.terminal_order = {} --- @type string[]
+  self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true }) --- @type number
   return self
 end
 
@@ -34,21 +34,27 @@ function TerminalMultiplexer:list()
   return terminal_names
 end
 
-function TerminalMultiplexer:search_terminal()
+function TerminalMultiplexer:select_terminal()
   local opts = {
     prompt = 'Select terminal:',
     format_item = function(item) return item end,
   }
 
+  --- @type string[]
   local all_terminal_names = {}
-  for test_name, test_info in pairs(self.all_terminals) do
-    if test_info.status == 'failed' then
+
+  for test_name, terminal_info in pairs(self.all_terminals) do
+    if terminal_info.status == 'failed' then
       table.insert(all_terminal_names, '\t' .. '❌' .. '  ' .. test_name)
-    elseif test_info.status == 'passed' then
+    elseif terminal_info.status == 'passed' then
       table.insert(all_terminal_names, '\t' .. '✅' .. '  ' .. test_name)
     end
   end
-  local handle_choice = function(terminal_name) self:toggle_float_terminal(terminal_name) end
+  local handle_choice = function(terminal_name)
+    local terminal_name = vim.trim(terminal_name:sub(5))
+    print('Selected terminal:', terminal_name)
+    self:toggle_float_terminal(terminal_name)
+  end
 
   vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
 end
