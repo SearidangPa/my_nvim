@@ -4,12 +4,13 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
 
----@class testTracker
+---@class testInfo
 ---@field test_name string
 ---@field test_line number
 ---@field test_bufnr number
+---@field test_command string
+---@field status string
 
----@type testTracker
 M.test_tracker = {}
 M.view_tracker = -1
 
@@ -48,9 +49,18 @@ local function toggle_view_enclosing_test()
   end
 end
 
-local go_test_command = function(source_bufnr, test_name, test_line, test_command)
-  test_command = test_command or string.format('go test .\\... -v -run %s\r\n', test_name)
-  make_notify(string.format('running test: %s', test_name))
+---@param test_info testInfo
+local go_test_command = function(test_info)
+  assert(test_info.test_name, 'No test found')
+  assert(test_info.test_bufnr, 'No test buffer found')
+  assert(test_info.test_line, 'No test line found')
+  assert(test_info.test_command, 'No test command found')
+  assert(vim.api.nvim_buf_is_valid(test_info.test_bufnr), 'Invalid buffer')
+  local test_name = test_info.test_name
+  local test_line = test_info.test_line
+  local test_command = test_info.test_command
+  local source_bufnr = test_info.test_bufnr
+
   terminal_multiplexer:toggle_float_terminal(test_name)
   local current_floating_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
   assert(current_floating_term_state, 'Failed to create floating terminal')
@@ -70,6 +80,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             virt_text = { { string.format('❌ %s', current_time) } },
             virt_text_pos = 'eol',
           })
+          test_info.status = 'failed'
 
           make_notify(string.format('Test failed: %s', test_name))
           notification_sent = true
@@ -79,6 +90,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             virt_text = { { string.format('✅ %s', current_time) } },
             virt_text_pos = 'eol',
           })
+          test_info.status = 'passed'
 
           if not notification_sent then
             make_notify(string.format('Test passed: %s', test_name))
@@ -109,14 +121,6 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
             vim.fn.sign_place(0, 'GoTestErrorGroup', 'GoTestError', error_bufnr, { lnum = error_line })
           end
         end
-
-        -- Also look for more specific errors like "assert failed" with line information
-        local assertion_file, assertion_line = string.match(line, 'assert%s+failed%s+at%s+([^:]+):(%d+)')
-        if assertion_file and assertion_line then
-          print('assertion failed', assertion_file, assertion_line)
-          -- Similar code to mark the specific assertion failure
-          -- (implementation similar to above)
-        end
       end
 
       -- Only detach if we're done processing (when test is complete)
@@ -131,13 +135,14 @@ end
 
 --- === All Tests in Buffer ===
 local function test_buf(test_format)
-  local bufnr = vim.api.nvim_get_current_buf()
-  local testsInCurrBuf = Find_all_tests(bufnr)
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local testsInCurrBuf = Find_all_tests(source_bufnr)
   for test_name, test_line in pairs(testsInCurrBuf) do
     terminal_multiplexer:reset_terminal(test_name)
     local test_command = string.format(test_format, test_name)
-    go_test_command(bufnr, test_name, test_line, test_command)
-    M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = bufnr }
+    local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+    go_test_command(test_info)
+    M.test_tracker[test_name] = test_info
   end
 end
 
@@ -148,8 +153,9 @@ local function drive_test_dev()
   local test_name, test_line = Get_enclosing_test()
   assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  go_test_command(source_bufnr, test_name, test_line, test_command)
-  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
 end
 
 local function drive_test_staging()
@@ -158,8 +164,9 @@ local function drive_test_staging()
   local test_name, test_line = Get_enclosing_test()
   assert(test_name, 'No test found')
   local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  go_test_command(source_bufnr, test_name, test_line, test_command)
-  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
 end
 
 --- === Windows Test ===
@@ -169,8 +176,9 @@ local windows_test_this = function()
   assert(test_name, 'No test found')
   terminal_multiplexer:reset_terminal(test_name)
   local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-  go_test_command(source_bufnr, test_name, test_line, test_command)
-  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
 end
 
 --- === Test All In Buf ===
@@ -203,8 +211,7 @@ vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
 local function test_list()
   for test_name, test_info in pairs(M.test_tracker) do
-    local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-    go_test_command(test_info.test_bufnr, test_name, test_info.test_line, test_command)
+    go_test_command(test_info)
   end
 end
 
@@ -249,8 +256,9 @@ vim.keymap.set('n', '<leader>gt', function()
 
   terminal_multiplexer:reset_terminal(test_name)
   local source_bufnr = vim.api.nvim_get_current_buf()
-  go_test_command(source_bufnr, test_name, test_line, test_command)
-  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
   make_notify(string.format('Added test to tracker: %s', test_name))
 end, { desc = '[G]o [T]rack test' })
 
@@ -292,7 +300,9 @@ local go_test = function()
   terminal_multiplexer:reset_terminal(test_name)
   assert(test_name, 'No test found')
   local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
-  go_test_command(source_bufnr, test_name, test_line, test_command)
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
 end
 
 local function test_all()
