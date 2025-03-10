@@ -188,39 +188,30 @@ vim.api.nvim_create_autocmd('FileType', {
 
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
-  -- Get the visual selection boundaries
-  local start_line = vim.fn.line "'<"
-  local end_line = vim.fn.line "'>"
+  vim.cmd [[normal! d]]
+  local clipboard_content = vim.fn.getreg '*'
 
-  -- Get all the lines in the visual selection
-  if start_line == end_line then
-    print(string.format('start_line: %d, end_line: %d', start_line, end_line))
-    return
-  end
-  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
-
-  -- Process the lines to remove the // prefix
+  local lines = vim.split(clipboard_content, '\n')
   local processed_lines = {}
   for _, line in ipairs(lines) do
     local processed = line:gsub('^%s*// ?', '')
     table.insert(processed_lines, processed)
   end
 
-  -- Create the block comment
   local result = { '/*' }
   for _, line in ipairs(processed_lines) do
     table.insert(result, line)
   end
   table.insert(result, '*/')
 
-  -- Replace the text
-  vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, result)
+  print(table.concat(result, '\n'))
+  vim.cmd [[normal! P]]
 end
 
 -- Map the function to <localleader>*
 vim.keymap.set(
   { 'v', 'c' }, -- Visual mode
-  '<localleader>*', -- The key mapping
+  '<localleader>8', -- The key mapping
   function() convert_line_comments_to_block() end, -- The function to call
   { noremap = true, silent = true } -- Options
 )
