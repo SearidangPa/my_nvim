@@ -7,6 +7,27 @@ local ns = vim.api.nvim_create_namespace 'GoTestError'
 local TerminalMultiplexer = require 'config.terminal_multiplexer'
 local terminal_multiplexer = TerminalMultiplexer.new()
 
+vim.api.nvim_create_user_command('ListGoTests', function()
+  local all_test_names = terminal_multiplexer:list()
+  local width = math.floor(vim.o.columns * 0.5)
+  local height = math.floor(vim.o.lines * 0.5)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, all_test_names)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+  })
+end, {})
+
 local function toggle_view_enclosing_test()
   local needs_open = true
   for test_name, _ in pairs(terminal_multiplexer.all_terminals) do

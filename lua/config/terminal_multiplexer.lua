@@ -25,6 +25,14 @@ function TerminalMultiplexer.new()
   return self
 end
 
+function TerminalMultiplexer:list()
+  local terminal_names = {}
+  for terminal_name, _ in pairs(self.all_terminals) do
+    table.insert(terminal_names, terminal_name)
+  end
+  return terminal_names
+end
+
 function TerminalMultiplexer:search_terminal()
   local opts = {
     prompt = 'Select terminal:',
