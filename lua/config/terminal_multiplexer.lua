@@ -21,6 +21,7 @@ function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {}
   self.terminal_order = {}
+  self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true })
   return self
 end
 
@@ -139,57 +140,48 @@ end
 
 ---@param float_terminal_state Float_Term_State
 function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_name)
-  local buf_input = float_terminal_state.buf or -1
   local width = math.floor(vim.o.columns)
   local height = math.floor(vim.o.lines)
   local row = math.floor((vim.o.columns - width))
   local col = math.floor((vim.o.lines - height))
 
-  local buf = nil
-  if buf_input == -1 then
-    buf = vim.api.nvim_create_buf(false, true)
-  else
-    buf = buf_input
+  if float_terminal_state.buf == -1 then
+    float_terminal_state.buf = vim.api.nvim_create_buf(false, true)
   end
 
-  local win = vim.api.nvim_open_win(buf, true, {
+  float_terminal_state.win = vim.api.nvim_open_win(float_terminal_state.buf, true, {
     relative = 'editor',
     width = width,
-    height = height - 2,
+    height = height - 3,
     row = row,
     col = col,
     style = 'minimal',
     border = 'none',
   })
 
-  local footer_buf = vim.api.nvim_create_buf(false, true)
+  float_terminal_state.footer_buf = vim.api.nvim_create_buf(false, true)
   local padding = string.rep(' ', width - #terminal_name - 1)
   local footer_text = padding .. terminal_name
-  vim.api.nvim_buf_set_lines(footer_buf, 0, -1, false, { footer_text })
-  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'Title', 0, 0, -1)
+  vim.api.nvim_buf_set_lines(float_terminal_state.footer_buf, 0, -1, false, { footer_text })
+  vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'Title', 0, 0, -1)
 
-  vim.api.nvim_buf_add_highlight(footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
+  vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
 
-  vim.api.nvim_win_call(win, function()
+  vim.api.nvim_win_call(float_terminal_state.win, function()
     vim.cmd 'normal! G'
   end)
 
-  local footer_win = vim.api.nvim_open_win(footer_buf, false, {
+  float_terminal_state.footer_win = vim.api.nvim_open_win(float_terminal_state.footer_buf, false, {
     relative = 'win',
     width = width,
     height = 1,
-    row = height - 1,
+    row = height - 3,
     col = 0,
     style = 'minimal',
     border = 'none',
   })
 
-  float_terminal_state.buf = buf
-  float_terminal_state.win = win
-  float_terminal_state.footer_buf = footer_buf
-  float_terminal_state.footer_win = footer_win
-
-  local map_opts = { noremap = true, silent = true, buffer = buf }
+  local map_opts = { noremap = true, silent = true, buffer = float_terminal_state.buf }
 
   local terminal_multiplexer = self -- capture self in closure
   local next_term = function()
@@ -198,17 +190,30 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
   local prev_term = function()
     terminal_multiplexer:navigate_terminal(-1)
   end
-  vim.keymap.set('n', 'q', '<cmd>q<CR>', map_opts)
+
   vim.keymap.set('n', '>', next_term, map_opts)
   vim.keymap.set('n', '<', prev_term, map_opts)
+
+  local close_term = function()
+    if vim.api.nvim_win_is_valid(float_terminal_state.footer_win) then
+      vim.api.nvim_win_hide(float_terminal_state.footer_win)
+    end
+    if vim.api.nvim_win_is_valid(float_terminal_state.win) then
+      vim.api.nvim_win_hide(float_terminal_state.win)
+    end
+  end
+
+  print 'Setting up keymaps'
+  print(vim.inspect(map_opts))
+  print(vim.inspect(float_terminal_state.buf))
+  vim.keymap.set('n', 'q', close_term, map_opts)
 end
 
 --- === Toggle terminal ===
 
 ---@param terminal_name string
----@param ensure_open boolean|nil If true, always ensure the terminal is open
 ---@return table | nil
-function TerminalMultiplexer:toggle_float_terminal(terminal_name, ensure_open)
+function TerminalMultiplexer:toggle_float_terminal(terminal_name)
   if not terminal_name then
     return nil
   end
@@ -235,16 +240,16 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, ensure_open)
     vim.api.nvim_win_hide(current_float_term_state.win)
     vim.api.nvim_win_hide(current_float_term_state.footer_win)
     return self.all_terminals[terminal_name]
-  else
-    self:create_float_window(current_float_term_state, terminal_name)
-    if vim.bo[current_float_term_state.buf].buftype ~= 'terminal' then
-      if vim.fn.has 'win32' == 1 then
-        vim.cmd.term 'powershell.exe'
-      else
-        vim.cmd.term()
-      end
-      current_float_term_state.chan = vim.bo.channel
+  end
+
+  self:create_float_window(current_float_term_state, terminal_name)
+  if vim.bo[current_float_term_state.buf].buftype ~= 'terminal' then
+    if vim.fn.has 'win32' == 1 then
+      vim.cmd.term 'powershell.exe'
+    else
+      vim.cmd.term()
     end
+    current_float_term_state.chan = vim.bo.channel
   end
 
   return self.all_terminals[terminal_name]

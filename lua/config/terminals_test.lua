@@ -19,10 +19,23 @@ local function toggle_view_enclosing_test()
       end
     end
   end
+
   if needs_open then
     local test_name = Get_enclosing_test()
     assert(test_name, 'No test found')
-    terminal_multiplexer:toggle_float_terminal(test_name)
+    local float_terminal_state = terminal_multiplexer:toggle_float_terminal(test_name)
+    assert(float_terminal_state, 'Failed to create floating terminal')
+
+    -- Need this duplication. Otherwise, the keymap is bind to the buffer for for some reason
+    local close_term = function()
+      if vim.api.nvim_win_is_valid(float_terminal_state.footer_win) then
+        vim.api.nvim_win_hide(float_terminal_state.footer_win)
+      end
+      if vim.api.nvim_win_is_valid(float_terminal_state.win) then
+        vim.api.nvim_win_hide(float_terminal_state.win)
+      end
+    end
+    vim.keymap.set('n', 'q', close_term, { buffer = float_terminal_state.buf })
   end
 end
 
@@ -30,7 +43,7 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
   test_command = test_command or string.format('go test .\\... -v -run %s\r\n', test_name)
   make_notify(string.format('running test: %s', test_name))
   terminal_multiplexer:toggle_float_terminal(test_name)
-  local current_floating_term_state = terminal_multiplexer:toggle_float_terminal(test_name, true)
+  local current_floating_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
   assert(current_floating_term_state, 'Failed to create floating terminal')
   vim.api.nvim_chan_send(current_floating_term_state.chan, test_command .. '\n')
 
@@ -185,8 +198,9 @@ vim.api.nvim_create_user_command('GoTest', go_test, {})
 vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
-vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.api.nvim_create_user_command('GoTestAll', test_all, {})
+
+vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 
 -- stylua: ignore start
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset() end, {})
