@@ -179,11 +179,51 @@ vim.api.nvim_create_autocmd('FileType', {
   pattern = 'go',
   callback = function()
     vim.keymap.set('n', '<leader>ll', 'olog.Printf("=====> %v\\n", ', {
-      buffer = true,
       desc = 'Insert logging line',
     })
   end,
 })
+
+-- Add this to your init.lua or other Neovim config file
+
+-- Function to convert visually selected // comments to /* */ block comment
+local function convert_line_comments_to_block()
+  -- Get the visual selection boundaries
+  local start_line = vim.fn.line "'<"
+  local end_line = vim.fn.line "'>"
+
+  -- Get all the lines in the visual selection
+  if start_line == end_line then
+    print(string.format('start_line: %d, end_line: %d', start_line, end_line))
+    return
+  end
+  local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+
+  -- Process the lines to remove the // prefix
+  local processed_lines = {}
+  for _, line in ipairs(lines) do
+    local processed = line:gsub('^%s*// ?', '')
+    table.insert(processed_lines, processed)
+  end
+
+  -- Create the block comment
+  local result = { '/*' }
+  for _, line in ipairs(processed_lines) do
+    table.insert(result, line)
+  end
+  table.insert(result, '*/')
+
+  -- Replace the text
+  vim.api.nvim_buf_set_lines(0, start_line - 1, end_line, false, result)
+end
+
+-- Map the function to <localleader>*
+vim.keymap.set(
+  { 'v', 'c' }, -- Visual mode
+  '<localleader>*', -- The key mapping
+  function() convert_line_comments_to_block() end, -- The function to call
+  { noremap = true, silent = true } -- Options
+)
 
 vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
 
