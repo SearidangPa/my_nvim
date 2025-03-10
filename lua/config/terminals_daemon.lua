@@ -18,25 +18,19 @@ local exec_command = function(command, title)
   end, 3000)
 end
 
--- === Commands and keymaps ===
-vim.api.nvim_create_user_command('RunDrive', function() exec_command('dr;rds', 'drive') end, {})
-vim.api.nvim_create_user_command('RunCloudDrive', function() exec_command('m; std', 'cloud drive') end, {})
-
-vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
-vim.keymap.set('n', '<leader>dc', function() exec_command('m; std', 'cloud drive') end, { desc = '[D]aemon [C]loud drive' })
-
-vim.keymap.set('n', '<leader>dr', function()
+local function run_drive()
   if vim.fn.has 'win32' == 1 then
     exec_command('dr;rds\r', 'drive')
   else
-    exec_command('dr && kill_port_4420 && ./bin/client --stdout --onlyUserIDs spa@preveil.com', 'drive')
+    exec_command('dr && kill_port_4420 && ./bin/client --stdout --onlyUserIDs', 'drive')
   end
-end, { silent = true, desc = '[D]aemon [R]un drive' })
+end
 
-vim.keymap.set('n', '<leader>da', function()
-  exec_command('dr;rds\r', 'drive')
-  exec_command('m; std', 'cloud drive')
-  M.navigate_daemon_terminal(1)
-end, { desc = '[D]aemon [A]ll' })
+-- === Commands and keymaps ===
+vim.api.nvim_create_user_command('RunDrive', run_drive, {})
+vim.api.nvim_create_user_command('RunCloudDrive', function() exec_command('m; std', 'cloud drive') end, {})
+vim.keymap.set('n', '<leader>dr', run_drive, { silent = true, desc = '[D]aemon [R]un drive' })
+vim.keymap.set('n', '<leader>dc', function() exec_command('m; std', 'cloud drive') end, { desc = '[D]aemon [C]loud drive' })
+vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 return M
