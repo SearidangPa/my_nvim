@@ -78,7 +78,6 @@ local go_test_command = function(source_bufnr, test_name, test_line, test_comman
           end
         end
 
-        -- Parse error trace information
         -- Pattern matches strings like "Error Trace:    /Users/path/file.go:21"
         local file, line_num = string.match(line, 'Error Trace:%s+([^:]+):(%d+)')
 

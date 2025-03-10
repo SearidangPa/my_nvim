@@ -7,6 +7,9 @@ local output = {}
 local errors = {}
 
 M.make_all = function()
+  if vim.bo.filetype ~= 'go' then
+    return
+  end
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }

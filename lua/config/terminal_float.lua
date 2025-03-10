@@ -2,8 +2,7 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
-local TerminalMultiplexer = require 'config.terminal_multiplexer'
-local terminal_multiplexer = TerminalMultiplexer.new()
+local terminal_multiplexer = require('config.terminal_multiplexer').new()
 local terminal_name = 'terminal'
 
 local choice_options_unix = {
