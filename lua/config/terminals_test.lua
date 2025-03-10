@@ -212,4 +212,5 @@ vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
 vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_terminal() end, { desc = '[D]elete [T]est terminal' })
 -- stylua: ignore end
+
 return M
