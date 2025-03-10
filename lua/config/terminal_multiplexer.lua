@@ -44,35 +44,6 @@ function TerminalMultiplexer:search_terminal()
   vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
 end
 
-function TerminalMultiplexer:delete_terminal()
-  local opts = {
-    prompt = 'Select terminal:',
-    format_item = function(item) return item end,
-  }
-
-  local all_terminal_names = {}
-  for terminal_name, _ in pairs(self.all_terminals) do
-    local term_state = self.all_terminals[terminal_name]
-    if term_state then
-      table.insert(all_terminal_names, terminal_name)
-    end
-  end
-
-  local handle_choice = function(terminal_name)
-    local float_terminal = self.all_terminals[terminal_name]
-    vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
-    self.all_terminals[terminal_name] = nil
-    for i, name in ipairs(self.terminal_order) do
-      if name == terminal_name then
-        table.remove(self.terminal_order, i)
-        break
-      end
-    end
-  end
-
-  vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
-end
-
 --- === Navigate between terminals ===;
 ---@param direction number 1 for next, -1 for previous
 function TerminalMultiplexer:navigate_terminal(direction)
