@@ -47,7 +47,7 @@ end
 local function get_harpoon_filenames_first_three()
   return get_harpoon_filenames {
     start_index = 1,
-    end_index = 5,
+    end_index = 3,
   }
 end
 

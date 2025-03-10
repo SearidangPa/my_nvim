@@ -13,7 +13,7 @@ return {
     vim.keymap.set('n', '<C-S-P>', function() harpoon:list():prev() end)
     vim.keymap.set('n', '<C-S-N>', function() harpoon:list():next() end)
 
-    for _, idx in ipairs { 1, 2, 3, 4, 5 } do
+    for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       vim.keymap.set('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon %d', idx) })
     end
 

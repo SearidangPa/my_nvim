@@ -48,7 +48,6 @@ local push_all_with_qwen = function(command_str) end
 
 local function push_with_qwen()
   local command_str = 'gaa && pg_14\r'
-  print(command_str)
   push_all_with_qwen(command_str)
 
   local async_make_job = require 'config.async_make_job'
