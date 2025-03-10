@@ -184,14 +184,12 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Add this to your init.lua or other Neovim config file
-
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
   vim.cmd [[normal! d]]
-  local clipboard_content = vim.fn.getreg '*'
-
+  local clipboard_content = vim.trim(vim.fn.getreg '*')
   local lines = vim.split(clipboard_content, '\n')
+
   local processed_lines = {}
   for _, line in ipairs(lines) do
     local processed = line:gsub('^%s*// ?', '')
@@ -200,25 +198,17 @@ local function convert_line_comments_to_block()
 
   local result = { '/*' }
   for _, line in ipairs(processed_lines) do
-    table.insert(result, line)
+    table.insert(result, '  - ' .. line)
   end
-  table.insert(result, '*/')
+  table.insert(result, '*/\n')
 
-  print(table.concat(result, '\n'))
+  vim.fn.setreg('*', table.concat(result, '\n'))
   vim.cmd [[normal! P]]
 end
 
--- Map the function to <localleader>*
-vim.keymap.set(
-  { 'v', 'c' }, -- Visual mode
-  '<localleader>8', -- The key mapping
-  function() convert_line_comments_to_block() end, -- The function to call
-  { noremap = true, silent = true } -- Options
-)
-
+vim.keymap.set({ 'v', 'c' }, '<localleader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
 
 vim.keymap.set('n', '<leader>nf', function() require('neogen').generate() end, map_opt '[N]eogen [F]unction')
-
 vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
 return {}
