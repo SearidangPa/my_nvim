@@ -202,8 +202,13 @@ vim.api.nvim_create_user_command('GoTestAll', test_all, {})
 
 vim.keymap.set('n', '<leader>gt', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 
+vim.keymap.set('n', '<localleader>tw', windows_test_this, { desc = 'Run test in windows' })
+vim.keymap.set('n', '<localleader>td', drive_test_staging, { desc = 'Drive test in dev' })
+
 -- stylua: ignore start
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset() end, {})
+vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:search_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:delete_terminal() end, {})
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
 vim.keymap.set('n', '<leader>dt', function() terminal_multiplexer:delete_terminal() end, { desc = '[D]elete [T]est terminal' })
 -- stylua: ignore end
