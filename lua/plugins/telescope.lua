@@ -7,9 +7,7 @@ return {
     {
       'nvim-telescope/telescope-fzf-native.nvim',
       build = 'make',
-      cond = function()
-        return vim.fn.executable 'make' == 1
-      end,
+      cond = function() return vim.fn.executable 'make' == 1 end,
     },
     { 'nvim-telescope/telescope-dap.nvim' },
     { 'nvim-telescope/telescope-ui-select.nvim' },
@@ -47,9 +45,7 @@ return {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end
-    local function search_this_word()
-      builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' }
-    end
+    local function search_this_word() builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' } end
 
     -- custom
     map(map_modes, '<leader>ed', find_files_drive, { desc = '[E]dit [P]lugins' })
@@ -74,7 +70,6 @@ return {
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
-    map(map_modes, '<leader>sp', ':Telescope harpoon marks<CR>', { desc = '[S]earch [P]ooned files' })
 
     -- === git ===
     map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })

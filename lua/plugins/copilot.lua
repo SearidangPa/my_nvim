@@ -8,7 +8,7 @@ return {
     if vim.fn.has 'win32' == 1 then
       trigger_key = '<M-s>'
     else
-      trigger_key = '<D-s>'
+      trigger_key = '<C-s>'
     end
 
     local copilot_hop = require 'copilot_hop'

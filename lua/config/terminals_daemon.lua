@@ -3,6 +3,11 @@ local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
 local terminal_multiplexer = require('config.terminal_multiplexer').new()
 
+local harpoon = require 'harpoon'
+local new_harpoon = harpoon:new()
+
+-- vim.api.nvim_create_user_command('ViewTerminalMultiplexer',
+
 local exec_command = function(command, title)
   terminal_multiplexer:toggle_float_terminal(title)
   local current_float_term_state = terminal_multiplexer:toggle_float_terminal(title)
