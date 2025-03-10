@@ -11,6 +11,7 @@ local ns = vim.api.nvim_create_namespace 'GoTestError'
 
 ---@type testTracker
 M.test_tracker = {}
+M.view_tracker = -1
 
 local TerminalMultiplexer = require 'config.terminal_multiplexer'
 local terminal_multiplexer = TerminalMultiplexer.new()
@@ -238,10 +239,51 @@ vim.keymap.set('n', '<leader>gt', function()
     make_notify 'No test found'
     return
   end
-  M.test_tracker[test_name] = nil
-  terminal_multiplexer:delete_terminal(test_name)
-  make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
-end, { desc = '[D]elete [T]est terminal' })
+
+  local test_command
+  if vim.fn.has 'win32' == 1 then
+    test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
+  else
+    test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
+  end
+
+  terminal_multiplexer:reset_terminal(test_name)
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  go_test_command(source_bufnr, test_name, test_line, test_command)
+  M.test_tracker[test_name] = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr }
+  make_notify(string.format('Added test to tracker: %s', test_name))
+end, { desc = '[G]o [T]rack test' })
+
+vim.api.nvim_create_user_command('ViewGoTestList', function()
+  if vim.api.nvim_win_is_valid(M.view_tracker) then
+    vim.api.nvim_win_close(M.view_tracker, true)
+    return
+  end
+
+  local all_tracked_tests = { '', '' }
+  for test_name, _ in pairs(M.test_tracker) do
+    table.insert(all_tracked_tests, '\t' .. test_name)
+  end
+  local width = math.floor(vim.o.columns * 0.7)
+  local height = math.floor(vim.o.lines * 0.7)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, all_tracked_tests)
+  M.view_tracker = vim.api.nvim_open_win(buf, true, {
+    relative = 'editor',
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = 'minimal',
+    border = 'rounded',
+    title = 'Go Test Tracker',
+    title_pos = 'center',
+  })
+  vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
+end, {})
 
 --- === Go Test ===
 local go_test = function()
