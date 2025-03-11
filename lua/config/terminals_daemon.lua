@@ -27,13 +27,10 @@ end
 -- === cloud drive ===
 local run_cloud_drive_command = 'm; std\r'
 local cloud_drive_terminal_name = 'cloud drive'
-local quit_previous_daemon_run = '\x03\r\n'
 local function run_cloud_drive()
   local all_terminal_list = M.terminal_multiplexer:list()
   if Contains(all_terminal_list, cloud_drive_terminal_name) then
-    make_notify 'canceling previous cloud drive daemon'
-    M.exec_command(quit_previous_daemon_run, cloud_drive_terminal_name)
-    return
+    terminal_multiplexer:delete_terminal(cloud_drive_terminal_name)
   end
   M.exec_command(run_cloud_drive_command, cloud_drive_terminal_name)
 end
