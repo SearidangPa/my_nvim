@@ -56,8 +56,7 @@ function TerminalMultiplexer:select_terminal()
     if not terminal_name then
       return
     end
-    local terminal_name = vim.trim(terminal_name:sub(5))
-    print('Selected terminal:', terminal_name)
+    local terminal_name = terminal_name:match '[\t%s][^\t%s]+[\t%s]+(.+)$'
     self:toggle_float_terminal(terminal_name)
   end
 

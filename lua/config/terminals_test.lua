@@ -217,6 +217,7 @@ vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
 M.test_list = function()
   for test_name, test_info in pairs(M.test_tracker) do
+    make_notify(string.format('Running test: %s', test_name))
     go_test_command(test_info)
   end
 end
