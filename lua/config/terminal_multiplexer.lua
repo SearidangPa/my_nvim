@@ -48,6 +48,8 @@ function TerminalMultiplexer:select_terminal()
       table.insert(all_terminal_names, '\t' .. '❌' .. '  ' .. test_name)
     elseif terminal_info.status == 'passed' then
       table.insert(all_terminal_names, '\t' .. '✅' .. '  ' .. test_name)
+    else
+      table.insert(all_terminal_names, '\t' .. '🔵' .. '  ' .. test_name)
     end
   end
   local handle_choice = function(terminal_name)

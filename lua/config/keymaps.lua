@@ -71,16 +71,11 @@ local function accept_line_with_indent()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
-local accept_key
-if vim.fn.has 'win32' == 1 then
-  accept_key = '<M-'
-else
-  accept_key = '<D-'
-end
-
+map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<D-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
+map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<M-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-map('i', accept_key .. 'y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', accept_key .. 'l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot with newline' })
 map('i', '<M-Down>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot Line With newline' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 

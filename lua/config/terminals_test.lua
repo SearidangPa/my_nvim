@@ -221,9 +221,9 @@ M.test_list = function()
   end
 end
 
-vim.api.nvim_create_user_command('GoTestList', test_list, {})
+vim.api.nvim_create_user_command('GoTestList', M.test_list, {})
 
-vim.keymap.set('n', '<leader>lt', test_list, { desc = '[T]est Tracker [L]ist' })
+vim.keymap.set('n', '<leader>lt', M.test_list, { desc = '[T]est Tracker [L]ist' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<localleader>tw', windows_test_this, { desc = 'Run test in windows' })
 vim.keymap.set('n', '<localleader>td', drive_test_staging, { desc = 'Drive test in dev' })

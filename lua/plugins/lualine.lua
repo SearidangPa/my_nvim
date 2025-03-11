@@ -54,7 +54,7 @@ end
 local function get_harpoon_filenames_second_half()
   return get_harpoon_filenames {
     start_index = 4,
-    end_index = 6,
+    end_index = 5,
   }
 end
 
