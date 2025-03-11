@@ -136,4 +136,5 @@ end
 map('n', '<leader>gs', ':G<CR>', map_opt '[G]it [S]tatus')
 map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>gp', push_all, map_opt '[G]it [C]ommit and push')
+map('n', '<leader>gl', ':G pull<CR>', map_opt '[G]it Pu[l]l')
 return {}
