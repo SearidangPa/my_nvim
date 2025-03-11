@@ -4,11 +4,9 @@ local function generate_keymap()
   keymap.preset = 'none' -- Explicit assignment to avoid conflicts
 
   for i = 1, 10 do
-    local key = i == 10 and '<A-0>' or ('<A-' .. i .. '>')
+    local key = i == 10 and '<M-0>' or ('<M-' .. i .. '>')
     keymap[key] = {
-      function(cmp)
-        cmp.accept { index = i }
-      end,
+      function(cmp) cmp.accept { index = i } end,
     }
   end
 
@@ -26,18 +24,14 @@ end
 --- === snippets ===
 local snippets = {
   preset = 'luasnip',
-  expand = function(snippet)
-    require('luasnip').lsp_expand(snippet)
-  end,
+  expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
   active = function(filter)
     if filter and filter.direction then
       return require('luasnip').jumpable(filter.direction)
     end
     return require('luasnip').in_snippet()
   end,
-  jump = function(direction)
-    require('luasnip').jump(direction)
-  end,
+  jump = function(direction) require('luasnip').jump(direction) end,
 }
 
 --- === cmdline ===
@@ -47,9 +41,7 @@ local cmdline = {
   },
   completion = {
     menu = {
-      auto_show = function(ctx)
-        return vim.fn.getcmdtype() == ':'
-      end,
+      auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end,
     },
   },
 }
@@ -61,9 +53,7 @@ local completion = {
       columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
       components = {
         item_idx = {
-          text = function(ctx)
-            return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx)
-          end,
+          text = function(ctx) return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx) end,
           highlight = 'BlinkCmpItemIdx',
         },
       },
@@ -87,7 +77,7 @@ return {
       completion = completion,
       keymap = generate_keymap(),
       cmdline = cmdline,
-      fuzzy = {implementation = "lua"}
+      fuzzy = { implementation = 'lua' },
     },
   },
 }
