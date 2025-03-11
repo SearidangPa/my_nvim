@@ -42,13 +42,6 @@ local function delete_function()
 end
 
 -- =================== Copilot ===================
-local function accept()
-  local accept = vim.fn['copilot#Accept']
-  assert(accept, 'copilot#Accept not found')
-  local res = accept()
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
 local function accept_word()
   local accept_word = vim.fn['copilot#AcceptWord']
   assert(accept_word, 'copilot#AcceptWord not found')
@@ -68,6 +61,13 @@ local function accept_line_with_indent()
   assert(accept_line, 'copilot#AcceptLine not found')
   local res = accept_line()
   res = res .. '\r'
+  vim.api.nvim_feedkeys(res, 'n', false)
+end
+
+local function accept()
+  local accept = vim.fn['copilot#Accept']
+  assert(accept, 'copilot#Accept not found')
+  local res = accept()
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 
