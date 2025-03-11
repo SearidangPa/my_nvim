@@ -24,11 +24,20 @@ local function run_drive()
   end
 end
 
--- === coding ===
+-- === cloud drive ===
+local run_cloud_drive_command = 'm; std\r'
+local cloud_drive_terminal_name = 'cloud drive'
+local quit_previous_daemon_run = '\x03'
+local function run_cloud_drive()
+  M.exec_command(quit_previous_daemon_run, cloud_drive_terminal_name)
+  M.exec_command(run_cloud_drive_command, cloud_drive_terminal_name)
+end
+
+vim.api.nvim_create_user_command('RunCloudDrive', run_cloud_drive, {})
+vim.keymap.set('n', '<leader>dc', run_cloud_drive, { desc = '[D]aemon [C]loud drive' })
+
 vim.api.nvim_create_user_command('RunDrive', run_drive, {})
-vim.api.nvim_create_user_command('RunCloudDrive', function() M.exec_command('m; std', 'cloud drive') end, {})
 vim.keymap.set('n', '<leader>dr', run_drive, { silent = true, desc = '[D]aemon [R]un drive' })
-vim.keymap.set('n', '<leader>dc', function() M.exec_command('m; std', 'cloud drive') end, { desc = '[D]aemon [C]loud drive' })
 vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:select_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 -- === gh_actions ===
