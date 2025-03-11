@@ -53,6 +53,9 @@ function TerminalMultiplexer:select_terminal()
     end
   end
   local handle_choice = function(terminal_name)
+    if not terminal_name then
+      return
+    end
     local terminal_name = vim.trim(terminal_name:sub(5))
     print('Selected terminal:', terminal_name)
     self:toggle_float_terminal(terminal_name)
