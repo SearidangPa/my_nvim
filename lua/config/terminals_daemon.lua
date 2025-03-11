@@ -34,11 +34,12 @@ vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:select_termina
 -- === gh_actions ===
 local daemon_terminal_name = 'gh actions'
 vim.api.nvim_create_user_command('GhActionsCheckRetry', function() M.exec_command('gh-check-with-rerun', daemon_terminal_name) end, {})
+vim.api.nvim_create_user_command('GhActionsCheckStatus', function() M.exec_command('gh-check-status', daemon_terminal_name) end, {})
+vim.api.nvim_create_user_command('GhActionsTerminalToggle', function() terminal_multiplexer:toggle_float_terminal(daemon_terminal_name) end, {})
 
 vim.api.nvim_create_user_command('GhActionsRetryTillSuccess', function()
   local interval_minutes = 10
   M.exec_command(string.format('retry_until_success %d', interval_minutes), daemon_terminal_name)
 end, {})
 
-vim.api.nvim_create_user_command('GhActionsStatus', function() terminal_multiplexer:toggle_float_terminal(daemon_terminal_name) end, {})
 return M
