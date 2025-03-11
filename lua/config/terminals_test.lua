@@ -1,7 +1,6 @@
 local M = {}
 require 'config.util_find_func'
-local mini_notify = require 'mini.notify'
-local make_notify = mini_notify.make_notify {}
+local make_notify = require('mini.notify').make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
 
 ---@class testInfo
