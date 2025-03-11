@@ -215,7 +215,7 @@ vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
-local function test_list()
+M.test_list = function()
   for test_name, test_info in pairs(M.test_tracker) do
     go_test_command(test_info)
   end

@@ -13,21 +13,19 @@ local function get_commit_message_and_time()
   }
 end
 
-local push_all_with_qwen = function(command_str) end
-
 local function push_with_qwen()
-  local command_str = 'gaa && pg_14\r'
-  push_all_with_qwen(command_str)
-
   local async_make_job = require 'config.async_make_job'
   async_make_job.make_lint()
   async_make_job.make_all()
+  local terminals_test = require 'config.terminals_test'
+  terminals_test.test_list()
 
   terminal_multiplexer:toggle_float_terminal(terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(terminal_name)
 
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local commit_info_prev = get_commit_message_and_time()
+  local command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, command_str .. '\n')
   make_notify 'Sent request to push with Qwen14b'
 
