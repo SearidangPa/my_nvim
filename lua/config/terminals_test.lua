@@ -60,7 +60,6 @@ local go_test_command = function(test_info)
   local test_command = test_info.test_command
   local source_bufnr = test_info.test_bufnr
 
-  terminal_multiplexer:toggle_float_terminal(test_name)
   local float_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
   assert(float_term_state, 'Failed to create floating terminal')
   vim.api.nvim_chan_send(float_term_state.chan, test_command .. '\n')
@@ -70,7 +69,6 @@ local go_test_command = function(test_info)
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
       local current_time = os.date '%H:%M:%S'
-      local error_file
       local error_line
 
       for _, line in ipairs(lines) do
@@ -104,7 +102,6 @@ local go_test_command = function(test_info)
         local file, line_num = string.match(line, 'Error Trace:%s+([^:]+):(%d+)')
 
         if file and line_num then
-          error_file = file
           error_line = tonumber(line_num)
 
           -- Try to find the buffer for this file
@@ -147,39 +144,37 @@ local function test_buf(test_format)
   end
 end
 
+local function go_integration_test()
+  local test_name, test_line = Get_enclosing_test()
+  if not test_name then
+    make_notify 'No test found'
+    return
+  end
+
+  local test_command
+  if vim.fn.has 'win32' == 1 then
+    test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
+  else
+    test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
+  end
+
+  terminal_multiplexer:reset_terminal(test_name)
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  make_notify(string.format('Added test to tracker: %s', test_name))
+  return test_name, test_info
+end
+
 --- === Drive Test ===
 local function drive_test_dev()
   vim.env.MODE, vim.env.UKS = 'dev', 'others'
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  assert(test_name, 'No test found')
-  local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  make_notify(string.format('Running dev test: %s', test_name))
-  go_test_command(test_info)
+  go_integration_test()
 end
 
 local function drive_test_staging()
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  assert(test_name, 'No test found')
-  local test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  make_notify(string.format('Running staging test: %s', test_name))
-  go_test_command(test_info)
-end
-
---- === Windows Test ===
-local windows_test_this = function()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  assert(test_name, 'No test found')
-  terminal_multiplexer:reset_terminal(test_name)
-  local test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  make_notify(string.format('Running windows test: %s', test_name))
-  go_test_command(test_info)
+  go_integration_test()
 end
 
 --- === Test All In Buf ===
@@ -206,7 +201,7 @@ end
 vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
 vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
 vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
-vim.api.nvim_create_user_command('GoTestWindows', windows_test_this, {})
+vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 
@@ -219,10 +214,6 @@ end
 
 vim.api.nvim_create_user_command('GoTestList', M.test_list, {})
 
-vim.keymap.set('n', '<leader>lt', M.test_list, { desc = '[T]est Tracker [L]ist' })
-vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-vim.keymap.set('n', '<localleader>tw', windows_test_this, { desc = 'Run test in windows' })
-vim.keymap.set('n', '<localleader>td', drive_test_staging, { desc = 'Drive test in dev' })
 
 -- stylua: ignore start
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
@@ -244,32 +235,12 @@ vim.keymap.set('n', '<leader>dt', function()
   make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
 end, { desc = '[D]elete [T]est terminal' })
 
-local function go_test()
-  local test_name, test_line = Get_enclosing_test()
-  if not test_name then
-    make_notify 'No test found'
-    return
-  end
 
-  local test_command
-  if vim.fn.has 'win32' == 1 then
-    test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
-  else
-    test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
-  end
 
-  terminal_multiplexer:reset_terminal(test_name)
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  go_test_command(test_info)
-  make_notify(string.format('Added test to tracker: %s', test_name))
-  return test_name, test_info
-end
-
-vim.keymap.set('n', '<leader>gt', go_test, { desc = '[G]o [T]est' })
-
+vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
 vim.keymap.set('n', '<leader>at', function ()
-  local test_name, test_info = go_test()
+  local test_name, test_info = go_integration_test()
   assert(test_name, 'No test found')
   assert(test_info, 'No test info found')
   M.test_tracker[test_name] = test_info

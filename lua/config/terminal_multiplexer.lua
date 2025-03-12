@@ -228,7 +228,8 @@ end
 function TerminalMultiplexer:reset_terminal(terminal_name)
   local term_state = self.all_terminals[terminal_name]
   if term_state then
-    vim.api.nvim_chan_send(term_state.chan, 'clear\n')
+    self.delete_terminal(terminal_name)
+    self:toggle_float_terminal(terminal_name)
   end
 end
 
