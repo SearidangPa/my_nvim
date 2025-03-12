@@ -256,7 +256,7 @@ vim.api.nvim_create_user_command('ViewGoTestList', function()
 
   for test_name, test_info in pairs(M.test_tracker) do
     if test_info.status == 'failed' then
-      table.insert(all_tracked_tests, '\t' .. '❌' .. '  ' .. test_name)
+      table.insert(all_tracked_tests, '\t' .. ' ❌' .. '  ' .. test_name)
     elseif test_info.status == 'passed' then
       table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_name)
     end
