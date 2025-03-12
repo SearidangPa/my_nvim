@@ -131,7 +131,6 @@ local go_test_command = function(test_info)
   })
 end
 
---- === All Tests in Buffer ===
 local function test_buf(test_format)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(source_bufnr)
@@ -166,7 +165,6 @@ local function go_integration_test()
   return test_name, test_info
 end
 
---- === Drive Test ===
 local function drive_test_dev()
   vim.env.MODE, vim.env.UKS = 'dev', 'others'
   go_integration_test()
