@@ -28,7 +28,7 @@ local function get_harpoon_filenames(opts)
     local filename = vim.fn.fnamemodify(path, ':t')
 
     -- Check if path is absolute (starts with / or drive letter on Windows)
-    local is_absolute = path:match '^/' or path:match '^%a:'
+    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
     if fullpath == current_file_path then

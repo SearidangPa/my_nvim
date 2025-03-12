@@ -135,7 +135,7 @@ local function test_buf(test_format)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(source_bufnr)
   for test_name, test_line in pairs(testsInCurrBuf) do
-    terminal_multiplexer:reset_terminal(test_name)
+    terminal_multiplexer:delete_terminal(test_name)
     local test_command = string.format(test_format, test_name)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
     make_notify(string.format('Running test: %s', test_name))
@@ -157,7 +157,7 @@ local function go_integration_test()
     test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   end
 
-  terminal_multiplexer:reset_terminal(test_name)
+  terminal_multiplexer:delete_terminal(test_name)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   go_test_command(test_info)
@@ -195,7 +195,7 @@ end
 local go_normal_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
-  terminal_multiplexer:reset_terminal(test_name)
+  terminal_multiplexer:delete_terminal(test_name)
   assert(test_name, 'No test found')
   local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }

@@ -223,16 +223,12 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, do_not_open_wi
   return self.all_terminals[terminal_name]
 end
 
-function TerminalMultiplexer:reset_terminal(terminal_name)
-  local term_state = self.all_terminals[terminal_name]
-  if term_state then
-    self.delete_terminal(terminal_name)
-    self:toggle_float_terminal(terminal_name, true)
-  end
-end
-
 function TerminalMultiplexer:delete_terminal(terminal_name)
   local float_terminal = self.all_terminals[terminal_name]
+  if not float_terminal then
+    print(string.format('Terminal %s not found', terminal_name))
+    return
+  end
   vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
   self.all_terminals[terminal_name] = nil
   for i, name in ipairs(self.terminal_order) do
