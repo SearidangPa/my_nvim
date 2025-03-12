@@ -8,8 +8,7 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    map('n', '<localleader>a', function() harpoon:list():add() end, { desc = 'harpoon [A]dd' })
-    map('n', '<localleader>p', function() harpoon:list():prepend() end, { desc = 'harpoon [P]repend' })
+    map('n', '<localleader>a', function() harpoon:list():prepend() end, { desc = 'harpoon [A]dd' })
     map('n', '<localleader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<C-S-P>', function() harpoon:list():prev() end)
     map('n', '<C-S-N>', function() harpoon:list():next() end)
