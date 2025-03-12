@@ -193,7 +193,7 @@ local function convert_line_comments_to_block()
 
   local result = { '/*' }
   for _, line in ipairs(processed_lines) do
-    table.insert(result, '  - ' .. line)
+    table.insert(result, line)
   end
   table.insert(result, '*/\n')
 
