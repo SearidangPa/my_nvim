@@ -144,7 +144,6 @@ local function test_buf(test_format)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
     make_notify(string.format('Running test: %s', test_name))
     go_test_command(test_info)
-    M.test_tracker[test_name] = test_info
   end
 end
 
@@ -158,7 +157,6 @@ local function drive_test_dev()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   make_notify(string.format('Running dev test: %s', test_name))
   go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
 end
 
 local function drive_test_staging()
@@ -170,7 +168,6 @@ local function drive_test_staging()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   make_notify(string.format('Running staging test: %s', test_name))
   go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
 end
 
 --- === Windows Test ===
@@ -183,7 +180,6 @@ local windows_test_this = function()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   make_notify(string.format('Running windows test: %s', test_name))
   go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
 end
 
 --- === Test All In Buf ===
@@ -236,17 +232,19 @@ vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_termina
 -- stylua: ignore end
 
 vim.keymap.set('n', '<leader>dt', function()
-  local test_name, test_line = Get_enclosing_test()
+  local test_name, _ = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
     return
   end
-  M.test_tracker[test_name] = nil
+  if M.test_tracker[test_name] ~= nil then
+    M.test_tracker[test_name] = nil
+  end
   terminal_multiplexer:delete_terminal(test_name)
   make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
 end, { desc = '[D]elete [T]est terminal' })
 
-vim.keymap.set('n', '<leader>gt', function()
+local function go_test()
   local test_name, test_line = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
@@ -264,9 +262,17 @@ vim.keymap.set('n', '<leader>gt', function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
   make_notify(string.format('Added test to tracker: %s', test_name))
-end, { desc = '[G]o [T]rack test' })
+  return test_name, test_info
+end
+
+vim.keymap.set('n', '<leader>gt', go_test, { desc = '[G]o [T]est' })
+vim.keymap.set('n', '<leader>at', function ()
+  local test_name, test_info = go_test()
+  assert(test_name, 'No test found')
+  assert(test_info, 'No test info found')
+  M.test_tracker[test_name] = test_info
+end, { desc = '[G]o [T]est' })
 
 vim.api.nvim_create_user_command('ViewGoTestList', function()
   if vim.api.nvim_win_is_valid(M.view_tracker) then
@@ -306,7 +312,7 @@ vim.api.nvim_create_user_command('ViewGoTestList', function()
 end, {})
 
 --- === Go Test ===
-local go_test = function()
+local go_normal_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
   terminal_multiplexer:reset_terminal(test_name)
@@ -317,12 +323,12 @@ local go_test = function()
   M.test_tracker[test_name] = test_info
 end
 
-local function test_all()
+local function test_normal_all()
   local test_format = 'go test ./... -v -run %s'
   test_buf(test_format)
 end
 
-vim.api.nvim_create_user_command('GoTestAll', test_all, {})
-vim.api.nvim_create_user_command('GoTest', go_test, {})
+vim.api.nvim_create_user_command('GoTestNormalAll', test_normal_all, {})
+vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
 return M
