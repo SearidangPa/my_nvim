@@ -8,7 +8,7 @@ return {
     host = 'localhost', -- The host running the Ollama service.
     port = '11434', -- The port on which the Ollama service is listening.
     display_mode = 'float', -- The display mode. Can be "float" or "split" or "horizontal-split".
-    show_prompt = false, -- Shows the prompt submitted to Ollama. Can be true (3 lines) or "full".
+    show_prompt = true, -- Shows the prompt submitted to Ollama. Can be true (3 lines) or "full".
     show_model = false, -- Displays which model you are using at the beginning of your chat session.
     no_auto_close = false, -- Never closes the window automatically.
     file = false, -- Write the payload to a temporary file to keep the command short.
@@ -27,11 +27,4 @@ return {
     result_filetype = 'markdown', -- Configure filetype of the result buffer
     debug = false, -- Prints errors and the command which is run.
   },
-  config = function()
-    require('gen').prompts['annotate'] = {
-      prompt = 'Generate a better annotate than the following. Only output the result in format ```$filetype\n...\n```:\n```$filetype\n$text\n```',
-      replace = true,
-      extract = '```$filetype\n(.-)```',
-    }
-  end,
 }
