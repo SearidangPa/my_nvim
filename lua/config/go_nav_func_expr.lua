@@ -33,6 +33,9 @@ local function call_expr_statement(field_identifier_parent)
   if call_expression_parent and call_expression_parent:type() == 'expression_statement' then
     return true
   end
+  if call_expression_parent and call_expression_parent:type() == 'go_statement' then
+    return true
+  end
   return false
 end
 
