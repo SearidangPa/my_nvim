@@ -267,6 +267,7 @@ local function go_test()
 end
 
 vim.keymap.set('n', '<leader>gt', go_test, { desc = '[G]o [T]est' })
+
 vim.keymap.set('n', '<leader>at', function ()
   local test_name, test_info = go_test()
   assert(test_name, 'No test found')
