@@ -177,8 +177,6 @@ local function drive_test_staging()
   go_integration_test()
 end
 
---- === Test All In Buf ===
-
 local function windows_test_all()
   local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
   test_buf(test_format)
@@ -196,15 +194,6 @@ local function drive_test_all_staging()
   test_buf(test_format)
 end
 
-M.test_list = function()
-  for test_name, test_info in pairs(M.test_tracker) do
-    make_notify(string.format('Running test: %s', test_name))
-    go_test_command(test_info)
-  end
-end
-
-
---- === Go Test ===
 local go_normal_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
@@ -219,6 +208,16 @@ end
 local function test_normal_all()
   local test_format = 'go test ./... -v -run %s'
   test_buf(test_format)
+end
+
+
+--- === Test List ===
+
+M.test_list = function()
+  for test_name, test_info in pairs(M.test_tracker) do
+    make_notify(string.format('Running test: %s', test_name))
+    go_test_command(test_info)
+  end
 end
 
 local function delete_test_terminal()
