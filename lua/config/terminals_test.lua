@@ -196,15 +196,6 @@ local function drive_test_all_staging()
   test_buf(test_format)
 end
 
--- === Commands and keymaps ===
-
-vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
-vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
-vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
-
 M.test_list = function()
   for test_name, test_info in pairs(M.test_tracker) do
     make_notify(string.format('Running test: %s', test_name))
@@ -212,17 +203,25 @@ M.test_list = function()
   end
 end
 
-vim.api.nvim_create_user_command('GoTestList', M.test_list, {})
 
+--- === Go Test ===
+local go_normal_test = function()
+  local source_bufnr = vim.api.nvim_get_current_buf()
+  local test_name, test_line = Get_enclosing_test()
+  terminal_multiplexer:reset_terminal(test_name)
+  assert(test_name, 'No test found')
+  local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
+  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
+  go_test_command(test_info)
+  M.test_tracker[test_name] = test_info
+end
 
--- stylua: ignore start
-vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
-vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
-vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
--- stylua: ignore end
+local function test_normal_all()
+  local test_format = 'go test ./... -v -run %s'
+  test_buf(test_format)
+end
 
-vim.keymap.set('n', '<leader>dt', function()
+local function delete_test_terminal()
   local test_name, _ = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
@@ -233,20 +232,16 @@ vim.keymap.set('n', '<leader>dt', function()
   end
   terminal_multiplexer:delete_terminal(test_name)
   make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
-end, { desc = '[D]elete [T]est terminal' })
+end
 
-
-
-vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
-vim.keymap.set('n', '<leader>at', function ()
+local function add_test_to_tracker()
   local test_name, test_info = go_integration_test()
   assert(test_name, 'No test found')
   assert(test_info, 'No test info found')
   M.test_tracker[test_name] = test_info
-end, { desc = '[G]o [T]est' })
+end
 
-vim.api.nvim_create_user_command('ViewGoTestList', function()
+local function view_test_list()
   if vim.api.nvim_win_is_valid(M.view_tracker) then
     vim.api.nvim_win_close(M.view_tracker, true)
     return
@@ -281,26 +276,26 @@ vim.api.nvim_create_user_command('ViewGoTestList', function()
     title_pos = 'center',
   })
   vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
-end, {})
-
---- === Go Test ===
-local go_normal_test = function()
-  local source_bufnr = vim.api.nvim_get_current_buf()
-  local test_name, test_line = Get_enclosing_test()
-  terminal_multiplexer:reset_terminal(test_name)
-  assert(test_name, 'No test found')
-  local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
-  local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
 end
 
-local function test_normal_all()
-  local test_format = 'go test ./... -v -run %s'
-  test_buf(test_format)
-end
-
+vim.api.nvim_create_user_command('ViewGoTestList', view_test_list, {})
+vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
+vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
+vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
+vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
+vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
+vim.api.nvim_create_user_command('GoTestList', M.test_list, {})
+vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
+vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestNormalAll', test_normal_all, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
+
+vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
+vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
+vim.keymap.set('n', '<leader>dt', delete_test_terminal , { desc = '[D]elete [T]est terminal' })
 
 return M
