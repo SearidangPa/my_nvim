@@ -59,7 +59,7 @@ local go_test_command = function(test_info)
   local test_line = test_info.test_line
   local test_command = test_info.test_command
   local source_bufnr = test_info.test_bufnr
-
+  terminal_multiplexer:toggle_float_terminal(test_name)
   local float_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
   assert(float_term_state, 'Failed to create floating terminal')
   vim.api.nvim_chan_send(float_term_state.chan, test_command .. '\n')
