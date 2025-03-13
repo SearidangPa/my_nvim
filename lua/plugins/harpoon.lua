@@ -8,7 +8,6 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    map('n', '<localleader>a', function() harpoon:list():prepend() end, { desc = 'harpoon [A]dd' })
     map('n', '<localleader>b', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<localleader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<C-S-P>', function() harpoon:list():prev() end)
@@ -28,7 +27,7 @@ return {
     end
 
     -- Delete the current file from harpoon
-    local function delete_current_file()
+    local function delete_current_file(is_prepend)
       local currentFileRelative = vim.fn.expand '%:.' -- Get the file path relative to working directory
       local list = harpoon:list()
       local items = list.items
@@ -49,8 +48,16 @@ return {
         end
         vim.cmd 'normal! dd'
         vim.cmd 'w'
+        if is_prepend then
+          harpoon.ui:toggle_quick_menu(harpoon:list())
+        end
       end
     end
+
+    map('n', '<localleader>a', function()
+      delete_current_file(true)
+      harpoon:list():prepend()
+    end, { desc = 'harpoon [A]dd' })
 
     map('n', '<localleader>hd', delete_current_file, { desc = 'harpoon delete current file' })
 
