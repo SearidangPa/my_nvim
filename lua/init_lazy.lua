@@ -24,6 +24,12 @@ require('lazy').setup {
     'mbbill/undotree', -- Visualize the undo tree
     'MTDL9/vim-log-highlighting',
     'MunifTanjim/nui.nvim',
+    {
+      'grapp-dev/nui-components.nvim',
+      dependencies = {
+        'MunifTanjim/nui.nvim',
+      },
+    },
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
   change_detection = { enabled = false },

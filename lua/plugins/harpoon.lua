@@ -27,6 +27,34 @@ return {
       end, { desc = string.format('harpoon remove %d', idx) })
     end
 
+    -- Delete the current file from harpoon
+    local function delete_current_file()
+      local currentFileRelative = vim.fn.expand '%:.' -- Get the file path relative to working directory
+      local list = harpoon:list()
+      local items = list.items
+
+      local fileIndex = nil
+      for i, item in ipairs(items) do
+        if item.value == currentFileRelative then
+          fileIndex = i
+          break
+        end
+      end
+
+      if fileIndex then
+        table.remove(items, fileIndex)
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+        for _ = 1, fileIndex - 1 do
+          vim.cmd 'normal! j'
+        end
+        vim.cmd 'normal! dd'
+        vim.cmd 'w'
+      end
+    end
+
+    map('n', '<localleader>hd', delete_current_file, { desc = 'harpoon delete current file' })
+
+    -- === Telescope ===
     harpoon:extend {
       UI_CREATE = function(cx)
         map('n', '<C-v>', function() harpoon.ui:select_menu_item { vsplit = true } end, { buffer = cx.bufnr })
@@ -52,6 +80,6 @@ return {
         :find()
     end
 
-    map('n', '<C-p>', function() toggle_telescope(harpoon:list()) end, { desc = 'harpoon Search [P]inned' })
+    map('n', '<C-e>', function() toggle_telescope(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
   end,
 }
