@@ -1,14 +1,6 @@
--- === keymap ===
 local function generate_keymap()
   local keymap = {}
   keymap.preset = 'none' -- Explicit assignment to avoid conflicts
-
-  for i = 1, 10 do
-    local key = i == 10 and '<M-0>' or ('<M-' .. i .. '>')
-    keymap[key] = {
-      function(cmp) cmp.accept { index = i } end,
-    }
-  end
 
   keymap['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' }
   keymap['<C-y>'] = { 'select_and_accept' }
@@ -17,11 +9,64 @@ local function generate_keymap()
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
   keymap['<C-e>'] = { 'hide' }
-
+  keymap['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end }
+  keymap['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end }
+  keymap['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end }
+  keymap['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end }
+  keymap['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end }
+  keymap['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end }
+  keymap['<M-7>'] = { function(cmp) cmp.accept { index = 7 } end }
+  keymap['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end }
+  keymap['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end }
+  keymap['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end }
   return keymap
 end
 
---- === snippets ===
+local cmdline_opt = {
+  enabled = true,
+
+  keymap = {
+    ['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end },
+    ['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end },
+    ['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end },
+    ['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end },
+    ['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end },
+    ['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end },
+    ['<M-7>'] = { function(cmp) cmp.accept { index = 7 } end },
+    ['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end },
+    ['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end },
+    ['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end },
+  },
+
+  sources = function()
+    local type = vim.fn.getcmdtype()
+    -- Search forward and backward
+    if type == '/' or type == '?' then
+      return { 'buffer' }
+    end
+    -- Commands
+    if type == ':' or type == '@' then
+      return { 'cmdline' }
+    end
+    return {}
+  end,
+
+  completion = {
+    trigger = {
+      show_on_blocked_trigger_characters = {},
+      show_on_x_blocked_trigger_characters = {},
+    },
+    list = {
+      selection = {
+        preselect = true,
+        auto_insert = true,
+      },
+    },
+    menu = { auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end },
+    ghost_text = { enabled = true },
+  },
+}
+
 local snippets = {
   preset = 'luasnip',
   expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
@@ -34,19 +79,6 @@ local snippets = {
   jump = function(direction) require('luasnip').jump(direction) end,
 }
 
---- === cmdline ===
-local cmdline = {
-  keymap = {
-    preset = 'cmdline',
-  },
-  completion = {
-    menu = {
-      auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end,
-    },
-  },
-}
-
---- === completion ===
 local completion = {
   menu = {
     draw = {
@@ -76,8 +108,8 @@ return {
       snippets = snippets,
       completion = completion,
       keymap = generate_keymap(),
-      cmdline = cmdline,
       fuzzy = { implementation = 'lua' },
+      cmdline = cmdline_opt,
     },
   },
 }
