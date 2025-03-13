@@ -51,13 +51,6 @@ local function get_harpoon_filenames_one_two_three()
   }
 end
 
-local function get_harpoon_filenames_second_half()
-  return get_harpoon_filenames {
-    start_index = 4,
-    end_index = 5,
-  }
-end
-
 return {
   'nvim-lualine/lualine.nvim',
   dependencies = {
@@ -98,7 +91,7 @@ return {
         lualine_c = { { 'filename', path = 4 } },
         lualine_x = {},
         lualine_y = { nearest_func_name_if_exists },
-        lualine_z = { get_harpoon_filenames_second_half },
+        lualine_z = {},
       },
       tabline = {
         lualine_a = {},
