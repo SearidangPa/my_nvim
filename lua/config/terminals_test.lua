@@ -343,6 +343,12 @@ vim.api.nvim_create_user_command('GoTestNormalAll', test_normal_all, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set(
+  'n',
+  '<leader>tl',
+  function() terminal_multiplexer:toggle_float_terminal(terminal_multiplexer.last_selected_terminal) end,
+  { desc = 'Toggle go test terminal' }
+)
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
 vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })

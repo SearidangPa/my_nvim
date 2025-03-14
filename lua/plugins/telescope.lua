@@ -75,7 +75,7 @@ return {
     map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
     map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
-    map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch [L]ast commits' })
+    map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
     -- trying out
     map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
