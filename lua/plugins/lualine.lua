@@ -109,7 +109,7 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { get_harpoon_filenames_first_half },
         lualine_x = {},
-        lualine_y = { nearest_func_name_if_exists },
+        lualine_y = {},
         lualine_z = {},
       },
       tabline = {
