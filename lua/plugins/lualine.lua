@@ -32,9 +32,9 @@ local function get_harpoon_filenames(opts)
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
     if fullpath == current_file_path then
-      list_names = list_names .. '/'.. '%#TabLineSel#' .. filename .. '%#TabLine#'
+      list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
     else
-      list_names = list_names .. '/' .. '%#TabLine#' .. filename
+      list_names = list_names .. display_sep .. '%#TabLine#' .. filename
     end
   end
 
@@ -56,11 +56,7 @@ local function getDirnameAndFilename()
   local dirname = vim.fn.fnamemodify(path, ':h:t')
   local filename = vim.fn.fnamemodify(path, ':t')
 
-  local os_sep = '/'
-  if vim.fn.has 'win32' == 1 then
-    os_sep = '\\'
-  end
-  return '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
+  return '%#TabLineSelItalic#' .. dirname .. '/' .. filename .. '%#TabLine#'
 end
 
 local function tracked_tests_list()
