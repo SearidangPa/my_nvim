@@ -75,6 +75,9 @@ map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copi
 map('i', '<M-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
 map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<D-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<D-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
+map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 -- =================== Extmarks ===================
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
