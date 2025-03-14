@@ -85,14 +85,20 @@ return {
   config = function()
     local ll = require 'lualine'
     require 'config.util_find_func'
+    local toggle_nearest_func
 
     local function nearest_func_name_if_exists()
+      if not toggle_nearest_func then
+        return ''
+      end
       local func_name = Nearest_func_name()
       if func_name then
         return func_name
       end
       return ''
     end
+    vim.api.nvim_create_user_command('LualineToggleNearestFunc', function() toggle_nearest_func = not toggle_nearest_func end, { nargs = 0 })
+
     vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
 
     ll.setup {
@@ -109,7 +115,7 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { get_harpoon_filenames_first_half },
         lualine_x = {},
-        lualine_y = {},
+        lualine_y = { nearest_func_name_if_exists },
         lualine_z = {},
       },
       tabline = {
