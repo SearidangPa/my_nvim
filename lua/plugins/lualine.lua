@@ -63,7 +63,21 @@ local function getDirnameAndFilename()
   return '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
 end
 
-local function getPinnedTest() end
+local function tracked_tests_list()
+  local terminal_tests = require 'config.terminals_test'
+  local test_tracker = terminal_tests.test_tracker
+  local list_tests_names = ''
+
+  local list_tests_names_len = #test_tracker
+  if #test_tracker > 3 then
+    list_tests_names_len = 3
+  end
+
+  for i = 1, list_tests_names_len do
+    local test = test_tracker[i]
+    list_tests_names = list_tests_names .. ' | ' .. test.name
+  end
+end
 
 return {
   'nvim-lualine/lualine.nvim',
@@ -108,7 +122,7 @@ return {
         lualine_z = {},
       },
       tabline = {
-        lualine_a = {},
+        lualine_a = { tracked_tests_list },
         lualine_b = {},
         lualine_c = {},
         lualine_x = { getDirnameAndFilename },
