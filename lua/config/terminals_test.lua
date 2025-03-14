@@ -2,6 +2,8 @@ local M = {}
 require 'config.util_find_func'
 local make_notify = require('mini.notify').make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
+local TerminalMultiplexer = require 'config.terminal_multiplexer'
+local terminal_multiplexer = TerminalMultiplexer.new()
 
 ---@class testInfo
 ---@field test_name string
@@ -13,12 +15,14 @@ local ns = vim.api.nvim_create_namespace 'GoTestError'
 ---@type table<string, testInfo>
 M.test_tracker = {}
 
-M.get_test_tracker = function() return M.test_tracker end
+M.reset_test = function()
+  for test_name, _ in pairs(M.test_tracker) do
+    terminal_multiplexer:delete_terminal(test_name)
+  end
+  M.test_tracker = {}
+end
 
 M.view_tracker = -1
-
-local TerminalMultiplexer = require 'config.terminal_multiplexer'
-local terminal_multiplexer = TerminalMultiplexer.new()
 
 local function toggle_view_enclosing_test()
   local needs_open = true
@@ -287,7 +291,7 @@ vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
-vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
+vim.api.nvim_create_user_command('GoTestTrackReset', function() M.reset_test() end, {})
 vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestNormalAll', test_normal_all, {})
