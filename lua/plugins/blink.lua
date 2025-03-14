@@ -9,9 +9,14 @@ local function generate_keymap()
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
   keymap['<C-e>'] = { 'hide' }
+
   keymap['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end }
   keymap['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end }
   keymap['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end }
+  keymap['<F1>'] = { function(cmp) cmp.accept { index = 1 } end }
+  keymap['<F2>'] = { function(cmp) cmp.accept { index = 2 } end }
+  keymap['<F3>'] = { function(cmp) cmp.accept { index = 3 } end }
+
   keymap['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end }
   keymap['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end }
   keymap['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end }
@@ -29,6 +34,10 @@ local cmdline_opt = {
     ['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end },
     ['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end },
     ['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end },
+    ['<F1>'] = { function(cmp) cmp.accept { index = 1 } end },
+    ['<F2>'] = { function(cmp) cmp.accept { index = 2 } end },
+    ['<F3>'] = { function(cmp) cmp.accept { index = 3 } end },
+
     ['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end },
     ['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end },
     ['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end },
@@ -62,7 +71,7 @@ local cmdline_opt = {
         auto_insert = true,
       },
     },
-    menu = { auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end },
+    menu = { auto_show = function() return vim.fn.getcmdtype() == ':' end },
     ghost_text = { enabled = true },
   },
 }

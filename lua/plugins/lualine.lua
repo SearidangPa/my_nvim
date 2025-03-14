@@ -56,11 +56,7 @@ local function getDirnameAndFilename()
   local dirname = vim.fn.fnamemodify(path, ':h:t')
   local filename = vim.fn.fnamemodify(path, ':t')
 
-  local os_sep = '/'
-  if vim.fn.has 'win32' == 1 then
-    os_sep = '\\'
-  end
-  return '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
+  return '%#TabLineSelItalic#' .. dirname .. '/' .. filename .. '%#TabLine#'
 end
 
 local function tracked_tests_list()
@@ -113,7 +109,7 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { get_harpoon_filenames_first_half },
         lualine_x = {},
-        lualine_y = { nearest_func_name_if_exists },
+        lualine_y = {},
         lualine_z = {},
       },
       tabline = {
