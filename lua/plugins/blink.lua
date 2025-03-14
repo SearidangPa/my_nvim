@@ -71,7 +71,7 @@ local cmdline_opt = {
         auto_insert = true,
       },
     },
-    menu = { auto_show = function(ctx) return vim.fn.getcmdtype() == ':' end },
+    menu = { auto_show = function() return vim.fn.getcmdtype() == ':' end },
     ghost_text = { enabled = true },
   },
 }
