@@ -203,4 +203,63 @@ vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages'
 
 vim.keymap.set('n', '<leader>nf', function() require('neogen').generate() end, map_opt '[N]eogen [F]unction')
 vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
+
+--- === Yank inside fenced_code_block ===
+--- Very useful for copying code from copilot chat
+local function find_code_block(node, row, col)
+  assert(node, 'Node cannot be nil')
+
+  if node:type() == 'fenced_code_block' then
+    local start_row, _, end_row, _ = node:range()
+    if row >= start_row and row <= end_row then
+      return node
+    end
+  end
+
+  -- Search through children recursively
+  for child in node:iter_children() do
+    local result = find_code_block(child, row, col)
+    if result then
+      return result
+    end
+  end
+
+  return nil
+end
+
+local function yank_fenced_code_block()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local row = cursor_pos[1] - 1 -- Convert to 0-indexed
+  local col = cursor_pos[2]
+  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'markdown', 'This command only works in markdown files')
+  local parser = vim.treesitter.get_parser(bufnr, lang)
+  local root = parser:parse()[1]:root()
+  local code_block = find_code_block(root, row, col)
+  assert(code_block, 'No code block found at cursor position')
+
+  local content_node = nil
+  for child in code_block:iter_children() do
+    if child:type() == 'code_fence_content' then
+      content_node = child
+      break
+    end
+  end
+  assert(content_node, 'Could not find code content in block')
+  local start_row, start_col, end_row, end_col = content_node:range()
+  start_row = start_row + 1
+  end_row = end_row
+  vim.cmd(start_row .. ',' .. end_row .. 'yank')
+  vim.notify('Yanked code block content from line ' .. start_row .. ' to ' .. end_row, vim.log.levels.INFO)
+end
+
+-- Create the user command
+vim.api.nvim_create_user_command('YankCodeBlock', yank_fenced_code_block, {
+  desc = 'Yank content inside fenced code blocks using Tree-sitter',
+})
+
+-- Optional: Add a mapping for quick access
+vim.keymap.set('n', '<localleader>y', ':YankCodeBlock<CR>', { noremap = true, silent = true, desc = 'Yank code block content' })
+
 return {}
