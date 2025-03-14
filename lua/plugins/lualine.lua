@@ -32,9 +32,9 @@ local function get_harpoon_filenames(opts)
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
     if fullpath == current_file_path then
-      list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
+      list_names = list_names .. '/'.. '%#TabLineSel#' .. filename .. '%#TabLine#'
     else
-      list_names = list_names .. display_sep .. '%#TabLine#' .. filename
+      list_names = list_names .. '/' .. '%#TabLine#' .. filename
     end
   end
 
