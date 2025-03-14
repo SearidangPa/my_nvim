@@ -10,7 +10,11 @@ local ns = vim.api.nvim_create_namespace 'GoTestError'
 ---@field test_command string
 ---@field status string
 
+---@type table<string, testInfo>
 M.test_tracker = {}
+
+M.get_test_tracker = function() return M.test_tracker end
+
 M.view_tracker = -1
 
 local TerminalMultiplexer = require 'config.terminal_multiplexer'
@@ -143,11 +147,12 @@ local function test_buf(test_format)
   end
 end
 
+---@return string | nil, testInfo | nil
 local function go_integration_test()
   local test_name, test_line = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
-    return
+    return nil, nil
   end
 
   local test_command

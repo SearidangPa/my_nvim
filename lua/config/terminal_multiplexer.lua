@@ -137,26 +137,26 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
   vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
 
   if not do_not_open_win then
-  float_terminal_state.win = vim.api.nvim_open_win(float_terminal_state.buf, true, {
-    relative = 'editor',
-    width = width,
-    height = height - 3,
-    row = row,
-    col = col,
-    style = 'minimal',
-    border = 'none',
-  })
+    float_terminal_state.win = vim.api.nvim_open_win(float_terminal_state.buf, true, {
+      relative = 'editor',
+      width = width,
+      height = height - 3,
+      row = row,
+      col = col,
+      style = 'minimal',
+      border = 'none',
+    })
 
-  vim.api.nvim_win_call(float_terminal_state.win, function() vim.cmd 'normal! G' end)
-  float_terminal_state.footer_win = vim.api.nvim_open_win(float_terminal_state.footer_buf, false, {
-    relative = 'win',
-    width = width,
-    height = 1,
-    row = height - 3,
-    col = 0,
-    style = 'minimal',
-    border = 'none',
-  })
+    vim.api.nvim_win_call(float_terminal_state.win, function() vim.cmd 'normal! G' end)
+    float_terminal_state.footer_win = vim.api.nvim_open_win(float_terminal_state.footer_buf, false, {
+      relative = 'win',
+      width = width,
+      height = 1,
+      row = height - 3,
+      col = 0,
+      style = 'minimal',
+      border = 'none',
+    })
   end
 
   local map_opts = { noremap = true, silent = true, buffer = float_terminal_state.buf }
@@ -226,7 +226,6 @@ end
 function TerminalMultiplexer:delete_terminal(terminal_name)
   local float_terminal = self.all_terminals[terminal_name]
   if not float_terminal then
-    print(string.format('Terminal %s not found', terminal_name))
     return
   end
   vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
