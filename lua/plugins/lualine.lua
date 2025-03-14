@@ -44,17 +44,10 @@ local function get_harpoon_filenames(opts)
   return list_names
 end
 
-local function get_harpoon_filenames_one_two()
+local function get_harpoon_filenames_first_half()
   return get_harpoon_filenames {
     start_index = 1,
-    end_index = 2,
-  }
-end
-
-local function get_harpoon_filenames_second_half()
-  return get_harpoon_filenames {
-    start_index = 3,
-    end_index = 4,
+    end_index = 3,
   }
 end
 
@@ -67,7 +60,7 @@ local function getDirnameAndFilename()
   if vim.fn.has 'win32' == 1 then
     os_sep = '\\'
   end
-  return '     ' .. '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
+  return '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
 end
 
 return {
@@ -107,7 +100,7 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = { get_harpoon_filenames_one_two },
+        lualine_c = { get_harpoon_filenames_first_half },
         lualine_x = {},
         lualine_y = { nearest_func_name_if_exists },
         lualine_z = {},
@@ -115,9 +108,9 @@ return {
       tabline = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = { getDirnameAndFilename },
-        lualine_x = {},
-        lualine_y = { get_harpoon_filenames_second_half },
+        lualine_c = {},
+        lualine_x = { getDirnameAndFilename },
+        lualine_y = {},
         lualine_z = {},
       },
     }
