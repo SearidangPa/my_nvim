@@ -63,6 +63,8 @@ local function getDirnameAndFilename()
   return '%#TabLineSelItalic#' .. dirname .. os_sep .. filename .. '%#TabLine#'
 end
 
+local function getPinnedTest() end
+
 return {
   'nvim-lualine/lualine.nvim',
   dependencies = {

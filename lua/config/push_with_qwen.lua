@@ -18,7 +18,7 @@ local function push_with_qwen()
   async_make_job.make_lint()
   async_make_job.make_all()
   local terminals_test = require 'config.terminals_test'
-  terminals_test.test_list()
+  terminals_test.test_track()
 
   terminal_multiplexer:toggle_float_terminal(terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(terminal_name)

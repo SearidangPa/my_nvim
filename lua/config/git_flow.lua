@@ -128,7 +128,7 @@ local function push_all()
     async_make_job.make_lint()
     async_make_job.make_all()
     local terminals_test = require 'config.terminals_test'
-    terminals_test.test_list()
+    terminals_test.test_track()
   end
   git_add_all(function() select_commit_message_prompt(cb) end)
 end

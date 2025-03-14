@@ -208,10 +208,9 @@ local function test_normal_all()
   test_buf(test_format)
 end
 
-
 --- === Test List ===
 
-M.test_list = function()
+M.test_track = function()
   for test_name, test_info in pairs(M.test_tracker) do
     make_notify(string.format('Running test: %s', test_name))
     go_test_command(test_info)
@@ -282,7 +281,7 @@ vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
 vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
-vim.api.nvim_create_user_command('GoTestList', M.test_list, {})
+vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
 vim.api.nvim_create_user_command('GoTestReset', function() terminal_multiplexer:reset_test() end, {})
 vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
@@ -293,6 +292,6 @@ vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_termina
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
 vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
-vim.keymap.set('n', '<leader>dt', delete_test_terminal , { desc = '[D]elete [T]est terminal' })
+vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
 
 return M
