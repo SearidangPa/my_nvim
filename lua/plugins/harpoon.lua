@@ -13,15 +13,6 @@ return {
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       map('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
-
-      map('n', string.format('<leader>%d', idx), function()
-        harpoon.ui:toggle_quick_menu(harpoon:list())
-        for _ = 1, idx - 1 do
-          vim.cmd 'normal! j'
-        end
-        vim.cmd 'normal! dd'
-        vim.cmd 'w'
-      end, { desc = string.format('harpoon remove %d', idx) })
     end
 
     -- Delete the current file from harpoon

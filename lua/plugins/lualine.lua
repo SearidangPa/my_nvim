@@ -63,8 +63,8 @@ local function tracked_tests_list()
   local terminal_tests = require 'config.terminals_test'
   local test_tracker = terminal_tests.test_tracker
   local list_tests_names = ''
-  for test_name, _ in pairs(test_tracker) do
-    list_tests_names = list_tests_names .. ' | ' .. test_name
+  for _, test_info in ipairs(test_tracker) do
+    list_tests_names = list_tests_names .. ' | ' .. test_info.test_name
   end
   list_tests_names = list_tests_names:sub(4)
   return '%#TabLineSelItalic#' .. list_tests_names .. '%#TabLine#'

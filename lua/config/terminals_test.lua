@@ -4,6 +4,7 @@ local make_notify = require('mini.notify').make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
 local TerminalMultiplexer = require 'config.terminal_multiplexer'
 local terminal_multiplexer = TerminalMultiplexer.new()
+local map = vim.keymap.set
 
 ---@class testInfo
 ---@field test_name string
@@ -12,17 +13,45 @@ local terminal_multiplexer = TerminalMultiplexer.new()
 ---@field test_command string
 ---@field status string
 
----@type table<string, testInfo>
+---@type testInfo[]
 M.test_tracker = {}
 
 M.reset_test = function()
-  for test_name, _ in pairs(M.test_tracker) do
-    terminal_multiplexer:delete_terminal(test_name)
+  for _, test_info in ipairs(terminal_multiplexer.all_terminals) do
+    terminal_multiplexer:delete_terminal(test_info.test_name)
   end
   M.test_tracker = {}
 end
 
-local function go_to_tests(test_names)
+-- Function to jump to a specific tracked test by index
+local function jump_to_tracked_test_by_index(index)
+  if index > #M.test_tracker then
+    index = #M.test_tracker
+  end
+  local target_test = M.test_tracker[index].test_name
+
+  vim.lsp.buf_request(0, 'workspace/symbol', { query = target_test }, function(err, res)
+    if err or not res or #res == 0 then
+      vim.notify('No definition found for test: ' .. target_test, vim.log.levels.ERROR)
+      return
+    end
+
+    local result = res[1] -- Take the first result
+    local filename = vim.uri_to_fname(result.location.uri)
+    local start = result.location.range.start
+
+    vim.cmd('edit ' .. filename)
+    vim.api.nvim_win_set_cursor(0, { start.line + 1, start.character })
+  end)
+end
+
+for i = 1, 9 do
+  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
+  end
+end
+
+local function quickfix_load_tracked_tests(test_names)
   local results = {}
   local pending = #test_names
 
@@ -56,12 +85,12 @@ local function go_to_tests(test_names)
   end
 end
 
-vim.api.nvim_create_user_command('QuickfixTrackedTest', function()
+vim.api.nvim_create_user_command('QuickfixLoadTrackedTest', function()
   local test_names = {}
-  for test_name, _ in pairs(M.test_tracker) do
-    table.insert(test_names, test_name)
+  for _, test_info in ipairs(M.test_tracker) do
+    table.insert(test_names, test_info.test_name)
   end
-  go_to_tests(test_names)
+  quickfix_load_tracked_tests(test_names)
 end, {})
 
 -- Optional: Map a key sequence to start the command (you'll need to type the test name after the command)
@@ -229,18 +258,18 @@ local function drive_test_staging()
   go_integration_test()
 end
 
-local function windows_test_all()
+local function windows_test_buf()
   local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
   test_buf(test_format)
 end
 
-local function drive_test_all_dev()
+local function drive_test_dev_buf()
   vim.env.MODE, vim.env.UKS = 'dev', 'others'
   local test_format = 'go test integration_tests/*.go -v -run %s'
   test_buf(test_format)
 end
 
-local function drive_test_all_staging()
+local function drive_test_staging_buf()
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
   local test_format = 'go test integration_tests/*.go -v -run %s'
   test_buf(test_format)
@@ -254,10 +283,9 @@ local go_normal_test = function()
   local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
   go_test_command(test_info)
-  M.test_tracker[test_name] = test_info
 end
 
-local function test_normal_all()
+local function test_normal_buf()
   local test_format = 'go test ./... -v -run %s'
   test_buf(test_format)
 end
@@ -265,8 +293,8 @@ end
 --- === Test List ===
 
 M.test_track = function()
-  for test_name, test_info in pairs(M.test_tracker) do
-    make_notify(string.format('Running test: %s', test_name))
+  for _, test_info in ipairs(M.test_tracker) do
+    make_notify(string.format('Running test: %s', test_info.test_name))
     go_test_command(test_info)
   end
 end
@@ -277,8 +305,11 @@ local function delete_test_terminal()
     make_notify 'No test found'
     return
   end
-  if M.test_tracker[test_name] ~= nil then
-    M.test_tracker[test_name] = nil
+  for index, test_info in ipairs(M.test_tracker) do
+    if test_info.test_name == test_name then
+      table.remove(M.test_tracker, index)
+      break
+    end
   end
   terminal_multiplexer:delete_terminal(test_name)
   make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
@@ -288,7 +319,7 @@ local function add_test_to_tracker()
   local test_name, test_info = go_integration_test()
   assert(test_name, 'No test found')
   assert(test_info, 'No test info found')
-  M.test_tracker[test_name] = test_info
+  table.insert(M.test_tracker, test_info)
 end
 
 local function view_test_list()
@@ -329,17 +360,17 @@ local function view_test_list()
 end
 
 vim.api.nvim_create_user_command('ViewGoTestList', view_test_list, {})
-vim.api.nvim_create_user_command('GoTestDriveAllStaging', drive_test_all_staging, {})
-vim.api.nvim_create_user_command('GoTestDriveAllDev', drive_test_all_dev, {})
-vim.api.nvim_create_user_command('GoTestAllWindows', windows_test_all, {})
+vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
+vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
+vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
 vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
-vim.api.nvim_create_user_command('GoTestTrackReset', function() M.reset_test() end, {})
+vim.api.nvim_create_user_command('GoTestReset', function() M.reset_test() end, {})
 vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
-vim.api.nvim_create_user_command('GoTestNormalAll', test_normal_all, {})
+vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
