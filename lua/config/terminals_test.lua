@@ -354,7 +354,7 @@ local function add_test_to_tracker()
   table.insert(M.test_tracker, test_info)
 end
 
-local function view_test_list()
+local function view_test_tracked()
   if vim.api.nvim_win_is_valid(M.view_tracker) then
     vim.api.nvim_win_close(M.view_tracker, true)
     return
@@ -362,11 +362,11 @@ local function view_test_list()
 
   local all_tracked_tests = { '', '' }
 
-  for test_name, test_info in pairs(M.test_tracker) do
+  for _, test_info in ipairs(M.test_tracker) do
     if test_info.status == 'failed' then
-      table.insert(all_tracked_tests, '\t' .. ' ❌' .. '  ' .. test_name)
+      table.insert(all_tracked_tests, '\t' .. ' ❌' .. '  ' .. test_info.test_name)
     elseif test_info.status == 'passed' then
-      table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_name)
+      table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_info.test_name)
     end
   end
 
@@ -391,7 +391,7 @@ local function view_test_list()
   vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
 end
 
-vim.api.nvim_create_user_command('ViewGoTestList', view_test_list, {})
+vim.api.nvim_create_user_command('GoTestViewTracked', view_test_tracked, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
 vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
 vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
