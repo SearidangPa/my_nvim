@@ -229,11 +229,9 @@ function TerminalMultiplexer:delete_terminal(terminal_name)
     return
   end
 
-  vim.notify('Deleting terminal: ' .. terminal_name, vim.log.levels.INFO)
-  print(vim.inspect(float_terminal))
-
   vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
   vim.api.nvim_buf_delete(float_terminal.footer_buf, { force = true })
+  self.all_terminals[terminal_name] = nil
 
   for i, name in ipairs(self.terminal_order) do
     if name == terminal_name then

@@ -17,10 +17,12 @@ local map = vim.keymap.set
 M.test_tracker = {}
 
 M.reset_test = function()
-  for _, test_info in ipairs(terminal_multiplexer.all_terminals) do
-    vim.notify('Deleting terminal: ' .. test_info.test_name, vim.log.levels.INFO)
-    terminal_multiplexer:delete_terminal(test_info.test_name)
+  print 'Resetting all tests'
+  for test_name, _ in pairs(terminal_multiplexer.all_terminals) do
+    terminal_multiplexer:delete_terminal(test_name)
   end
+
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
   M.test_tracker = {}
 end
 

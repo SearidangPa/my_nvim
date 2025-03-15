@@ -80,8 +80,8 @@ map('i', '<D-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copi
 map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 -- =================== Extmarks ===================
-map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 -- =================== Window Navigation ===================
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
