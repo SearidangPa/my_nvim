@@ -404,25 +404,25 @@ local function view_tests_tracked()
   vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
 end
 
-vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:select_terminal(true) end, { desc = 'Select test terminal with pass filter' })
-
 vim.api.nvim_create_user_command('GoTestViewTracked', view_tests_tracked, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
 vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
 vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
-vim.api.nvim_create_user_command('GoTest', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
 vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
+
+vim.api.nvim_create_user_command('GoTestIntegration', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
 vim.api.nvim_create_user_command('GoTestReset', function() M.reset_test() end, {})
 vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
+
 vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:select_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-vim.keymap.set('n', '<leader>gt', go_integration_test, { desc = '[G]o [T]est' })
 vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
 vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
 
