@@ -364,14 +364,14 @@ local function view_test_tracked()
 
   for _, test_info in ipairs(M.test_tracker) do
     if test_info.status == 'failed' then
-      table.insert(all_tracked_tests, '\t' .. ' ❌' .. '  ' .. test_info.test_name)
+      table.insert(all_tracked_tests, '\t' .. '❌' .. '  ' .. test_info.test_name)
     elseif test_info.status == 'passed' then
       table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_info.test_name)
     end
   end
 
   local width = math.floor(vim.o.columns * 0.5)
-  local height = math.floor(vim.o.lines * 0.5)
+  local height = math.floor(vim.o.lines * 0.3)
   local row = math.floor((vim.o.lines - height) / 2)
   local col = math.floor((vim.o.columns - width) / 2)
 
