@@ -17,7 +17,6 @@ local map = vim.keymap.set
 M.test_tracker = {}
 
 M.reset_test = function()
-  print 'Resetting all tests'
   for test_name, _ in pairs(terminal_multiplexer.all_terminals) do
     terminal_multiplexer:delete_terminal(test_name)
   end
