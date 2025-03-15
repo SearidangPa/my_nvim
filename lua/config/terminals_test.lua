@@ -242,6 +242,11 @@ local function test_buf(test_format)
     local test_command = string.format(test_format, test_name)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
     make_notify(string.format('Running test: %s', test_name))
+    for index, existing_test_info in ipairs(M.test_tracker) do
+      if existing_test_info.test_name == test_info.test_name then
+        M.test_tracker[index] = test_info
+      end
+    end
     go_test_command(test_info)
   end
 end
@@ -360,7 +365,7 @@ local function add_test_to_tracker()
   table.insert(M.test_tracker, test_info)
 end
 
-local function view_test_tracked()
+local function view_tests_tracked()
   if vim.api.nvim_win_is_valid(M.view_tracker) then
     vim.api.nvim_win_close(M.view_tracker, true)
     return
@@ -373,6 +378,8 @@ local function view_test_tracked()
       table.insert(all_tracked_tests, '\t' .. '❌' .. '  ' .. test_info.test_name)
     elseif test_info.status == 'passed' then
       table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_info.test_name)
+    else
+      table.insert(all_tracked_tests, '\t' .. '⏳' .. '  ' .. test_info.test_name)
     end
   end
 
@@ -399,7 +406,7 @@ end
 
 vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:select_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 
-vim.api.nvim_create_user_command('GoTestViewTracked', view_test_tracked, {})
+vim.api.nvim_create_user_command('GoTestViewTracked', view_tests_tracked, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
 vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
 vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
