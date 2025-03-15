@@ -45,9 +45,23 @@ local function jump_to_tracked_test_by_index(index)
   end)
 end
 
+local function toggle_tracked_test_by_index(index)
+  if index > #M.test_tracker then
+    index = #M.test_tracker
+  end
+  local target_test = M.test_tracker[index].test_name
+  terminal_multiplexer:toggle_float_terminal(target_test)
+end
+
 for i = 1, 9 do
   for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
     map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
+  end
+end
+
+for i = 1, 9 do
+  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    map('n', string.format('<M-%d>', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
   end
 end
 
@@ -225,12 +239,12 @@ local function test_buf(test_format)
   end
 end
 
----@return string | nil, testInfo | nil
-local function go_integration_test()
+---@return  testInfo | nil
+local function go_integration_test(do_not_trigger_test)
   local test_name, test_line = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
-    return nil, nil
+    return nil
   end
 
   local test_command
@@ -243,9 +257,11 @@ local function go_integration_test()
   terminal_multiplexer:delete_terminal(test_name)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  go_test_command(test_info)
+  if not do_not_trigger_test then
+    go_test_command(test_info)
+  end
   make_notify(string.format('Added test to tracker: %s', test_name))
-  return test_name, test_info
+  return test_info
 end
 
 local function drive_test_dev()
@@ -290,6 +306,16 @@ local function test_normal_buf()
   test_buf(test_format)
 end
 
+local function test_normal_tracked()
+  local test_format = 'go test ./... -v -run %s'
+  for _, test_info in ipairs(M.test_tracker) do
+    test_info.test_command = string.format(test_format, test_info.test_name)
+    go_test_command(test_info)
+  end
+end
+
+vim.api.nvim_create_user_command('GoTestNormalTracked', test_normal_tracked, {})
+
 --- === Test List ===
 
 M.test_track = function()
@@ -316,8 +342,7 @@ local function delete_test_terminal()
 end
 
 local function add_test_to_tracker()
-  local test_name, test_info = go_integration_test()
-  assert(test_name, 'No test found')
+  local test_info = go_integration_test(true)
   assert(test_info, 'No test info found')
   table.insert(M.test_tracker, test_info)
 end
