@@ -62,13 +62,13 @@ end
 
 for i = 1, 9 do
   for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', string.format('<leader>t%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
+    map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
   end
 end
 
 for i = 1, 9 do
   for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', string.format('<M-%d>', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
+    map('n', string.format('<localleader>v%d', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
   end
 end
 
