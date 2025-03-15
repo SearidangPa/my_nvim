@@ -351,6 +351,12 @@ end
 local function add_test_to_tracker()
   local test_info = go_integration_test(true)
   assert(test_info, 'No test info found')
+  for _, existing_test_info in ipairs(M.test_tracker) do
+    if existing_test_info.test_name == test_info.test_name then
+      make_notify(string.format('Test already in tracker: %s', test_info.test_name))
+      return
+    end
+  end
   table.insert(M.test_tracker, test_info)
 end
 
@@ -390,6 +396,8 @@ local function view_test_tracked()
   })
   vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
 end
+
+vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:select_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 
 vim.api.nvim_create_user_command('GoTestViewTracked', view_test_tracked, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
