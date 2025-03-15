@@ -30,6 +30,11 @@ local function jump_to_tracked_test_by_index(index)
   if index > #M.test_tracker then
     index = #M.test_tracker
   end
+  if index < 1 then
+    vim.notify(string.format('Invalid index: %d', index), vim.log.levels.ERROR)
+    return
+  end
+
   local target_test = M.test_tracker[index].test_name
 
   vim.lsp.buf_request(0, 'workspace/symbol', { query = target_test }, function(err, res)
@@ -57,7 +62,7 @@ end
 
 for i = 1, 9 do
   for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
+    map('n', string.format('<leader>t%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
   end
 end
 
