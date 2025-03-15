@@ -22,7 +22,6 @@ function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {} --- @type table<string, Float_Term_State>
   self.terminal_order = {} --- @type string[]
-  self.last_selected_terminal = nil
   self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true }) --- @type number
   return self
 end
@@ -58,7 +57,6 @@ function TerminalMultiplexer:select_terminal()
       return
     end
     local terminal_name = terminal_name:match '[\t%s][^\t%s]+[\t%s]+(.+)$'
-    self.last_selected_terminal = terminal_name
     self:toggle_float_terminal(terminal_name)
   end
 
@@ -230,16 +228,18 @@ function TerminalMultiplexer:delete_terminal(terminal_name)
   if not float_terminal then
     return
   end
+
+  vim.notify('Deleting terminal: ' .. terminal_name, vim.log.levels.INFO)
+  print(vim.inspect(float_terminal))
+
   vim.api.nvim_buf_delete(float_terminal.buf, { force = true })
-  self.all_terminals[terminal_name] = nil
+  vim.api.nvim_buf_delete(float_terminal.footer_buf, { force = true })
+
   for i, name in ipairs(self.terminal_order) do
     if name == terminal_name then
       table.remove(self.terminal_order, i)
       break
     end
-  end
-  if self.last_selected_terminal == terminal_name then
-    self.last_selected_terminal = nil
   end
 end
 
