@@ -60,16 +60,12 @@ local function toggle_tracked_test_by_index(index)
   terminal_multiplexer:toggle_float_terminal(target_test)
 end
 
-for i = 1, 9 do
-  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
-  end
+for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+  map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
 end
 
-for i = 1, 9 do
-  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', string.format('<localleader>v%d', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
-  end
+for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+  map('n', string.format('<localleader>v%d', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
 end
 
 local function quickfix_load_tracked_tests(test_names)
@@ -276,8 +272,8 @@ local function go_integration_test()
     return nil
   end
   terminal_multiplexer:delete_terminal(test_info.test_name)
-    go_test_command(test_info)
-    make_notify(string.format('Running test: %s', test_info.test_name))
+  go_test_command(test_info)
+  make_notify(string.format('Running test: %s', test_info.test_name))
   return test_info
 end
 
@@ -421,16 +417,23 @@ vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 vim.api.nvim_create_user_command('GoTestIntegration', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
 vim.api.nvim_create_user_command('GoTestReset', function() M.reset_test() end, {})
-vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:select_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:search_terminal() end, {})
 vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
 
 vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:select_terminal() end, { desc = 'Select test terminal' })
-vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:select_terminal(true) end, { desc = 'Select test terminal with pass filter' })
+vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:search_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
+
+vim.keymap.set('n', '<leader>tl', function ()
+  terminal_multiplexer:toggle_float_terminal(terminal_multiplexer.last_terminal_name)
+end, { desc = 'Toggle last go test terminal' })
+
 vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
 vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
+
+vim.keymap.set('n', '<leader>G', go_integration_test, { desc = 'Go integration test' })
 
 return M

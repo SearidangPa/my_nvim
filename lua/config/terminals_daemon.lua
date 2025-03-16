@@ -40,7 +40,7 @@ vim.keymap.set('n', '<leader>dc', run_cloud_drive, { desc = '[D]aemon [C]loud dr
 
 vim.api.nvim_create_user_command('RunDrive', run_drive, {})
 vim.keymap.set('n', '<leader>dr', run_drive, { silent = true, desc = '[D]aemon [R]un drive' })
-vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:select_terminal() end, { desc = '[S]earch [D]aemon terminals' })
+vim.keymap.set('n', '<leader>sd', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 -- === gh_actions ===
 local daemon_terminal_name = 'gh actions'
