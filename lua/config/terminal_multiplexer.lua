@@ -22,6 +22,7 @@ function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {} --- @type table<string, Float_Term_State>
   self.terminal_order = {} --- @type string[]
+  self.last_terminal_name = nil
   self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true }) --- @type number
   return self
 end
@@ -34,7 +35,7 @@ function TerminalMultiplexer:list()
   return terminal_names
 end
 
-function TerminalMultiplexer:select_terminal(filter_pass)
+function TerminalMultiplexer:search_terminal(filter_pass)
   local opts = {
     prompt = 'Select terminal:',
     format_item = function(item) return item end,
@@ -220,6 +221,7 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, do_not_open_wi
     current_float_term_state.chan = vim.bo.channel
   end
 
+  self.last_terminal_name = terminal_name
   return self.all_terminals[terminal_name]
 end
 
