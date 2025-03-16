@@ -251,8 +251,7 @@ local function test_buf(test_format)
   end
 end
 
----@return  testInfo | nil
-local function go_integration_test(do_not_trigger_test)
+local function get_test_info_enclosing_test()
   local test_name, test_line = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
@@ -265,14 +264,20 @@ local function go_integration_test(do_not_trigger_test)
   else
     test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   end
-
-  terminal_multiplexer:delete_terminal(test_name)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  if not do_not_trigger_test then
-    go_test_command(test_info)
+  return test_info
+end
+
+---@return  testInfo | nil
+local function go_integration_test()
+  local test_info = get_test_info_enclosing_test()
+  if not test_info then
+    return nil
   end
-  make_notify(string.format('Added test to tracker: %s', test_name))
+  terminal_multiplexer:delete_terminal(test_info.test_name)
+    go_test_command(test_info)
+    make_notify(string.format('Running test: %s', test_info.test_name))
   return test_info
 end
 
@@ -354,8 +359,10 @@ local function delete_test_terminal()
 end
 
 local function add_test_to_tracker()
-  local test_info = go_integration_test(true)
-  assert(test_info, 'No test info found')
+  local test_info = get_test_info_enclosing_test()
+  if not test_info then
+    return nil
+  end
   for _, existing_test_info in ipairs(M.test_tracker) do
     if existing_test_info.test_name == test_info.test_name then
       make_notify(string.format('Test already in tracker: %s', test_info.test_name))
