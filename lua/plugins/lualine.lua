@@ -59,20 +59,43 @@ local function getDirnameAndFilename()
   return '%#TabLineSelItalic#' .. dirname .. '/' .. filename .. '%#TabLine#'
 end
 
-local function tracked_tests_first_half()
-  local terminal_tests = require 'config.terminals_test'
-  local test_tracker = terminal_tests.test_tracker
-  local list_tests_names = ''
-  local index = 1
-  for _, test_info in ipairs(test_tracker) do
-    list_tests_names = list_tests_names .. ' | ' .. test_info.test_name
-    index = index + 1
-    if index > 3 then
+local function getDirnameAndFilename()
+  local path = vim.fn.expand '%:p'
+  local filename = vim.fn.fnamemodify(path, ':t')
+
+  -- Get full directory path
+  local full_dir = vim.fn.fnamemodify(path, ':h')
+
+  -- Get last 3 directory components
+  local dir_parts = {}
+  local dir_count = 0
+  local max_dirs = 1
+
+  -- Extract directory components, working backwards
+  while dir_count < max_dirs do
+    local dirname = vim.fn.fnamemodify(full_dir, ':t')
+
+    -- Stop if we reached the root
+    if dirname == '' or dirname == '/' or dirname == full_dir then
       break
     end
+
+    table.insert(dir_parts, 1, dirname)
+    dir_count = dir_count + 1
+
+    -- Move up one directory level
+    full_dir = vim.fn.fnamemodify(full_dir, ':h')
   end
-  list_tests_names = list_tests_names:sub(4)
-  return '%#TabLineSelItalic#' .. list_tests_names .. '%#TabLine#'
+
+  -- Join directory parts with separator
+  local dirs = table.concat(dir_parts, '/')
+
+  -- If no directory components were found, use the immediate parent
+  if dirs == '' then
+    dirs = vim.fn.fnamemodify(path, ':h:t')
+  end
+
+  return '%#TabLineSelItalic#' .. dirs .. '/' .. filename .. '%#TabLine#'
 end
 
 return {
