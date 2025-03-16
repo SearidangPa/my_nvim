@@ -53,44 +53,23 @@ end
 
 local function getDirnameAndFilename()
   local path = vim.fn.expand '%:p'
-  local dirname = vim.fn.fnamemodify(path, ':h:t')
   local filename = vim.fn.fnamemodify(path, ':t')
-
-  return '%#TabLineSelItalic#' .. dirname .. '/' .. filename .. '%#TabLine#'
-end
-
-local function getDirnameAndFilename()
-  local path = vim.fn.expand '%:p'
-  local filename = vim.fn.fnamemodify(path, ':t')
-
-  -- Get full directory path
   local full_dir = vim.fn.fnamemodify(path, ':h')
-
-  -- Get last 3 directory components
   local dir_parts = {}
   local dir_count = 0
   local max_dirs = 1
 
-  -- Extract directory components, working backwards
   while dir_count < max_dirs do
     local dirname = vim.fn.fnamemodify(full_dir, ':t')
-
-    -- Stop if we reached the root
     if dirname == '' or dirname == '/' or dirname == full_dir then
       break
     end
-
     table.insert(dir_parts, 1, dirname)
     dir_count = dir_count + 1
-
-    -- Move up one directory level
     full_dir = vim.fn.fnamemodify(full_dir, ':h')
   end
 
-  -- Join directory parts with separator
   local dirs = table.concat(dir_parts, '/')
-
-  -- If no directory components were found, use the immediate parent
   if dirs == '' then
     dirs = vim.fn.fnamemodify(path, ':h:t')
   end
