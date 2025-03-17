@@ -51,6 +51,23 @@ local function get_harpoon_filenames_first_half()
   }
 end
 
+local function tracked_tests_first_half()
+  local terminal_tests = require 'config.terminals_test'
+  local test_tracker = terminal_tests.test_tracker
+  local list_tests_names = ''
+  local index = 1
+  for _, test_info in ipairs(test_tracker) do
+    list_tests_names = list_tests_names .. ' | ' .. test_info.test_name
+    index = index + 1
+    if index > 3 then
+      break
+    end
+  end
+  list_tests_names = list_tests_names:sub(4)
+  return '%#TabLineSelItalic#' .. list_tests_names .. '%#TabLine#'
+end
+
+
 local function getDirnameAndFilename()
   local path = vim.fn.expand '%:p'
   local filename = vim.fn.fnamemodify(path, ':t')
