@@ -25,6 +25,31 @@ M.reset_test = function()
   M.test_tracker = {}
 end
 
+function M.delete_tracked_test()
+  local opts = {
+    prompt = 'Select tracked test to delete',
+    format_item = function(item) return item end,
+  }
+
+  local all_tracked_test_names = {}
+  for _, testInfo in ipairs(M.test_tracker) do
+    table.insert(all_tracked_test_names, testInfo.test_name)
+  end
+
+  local handle_choice = function(tracked_test_name)
+    for index, testInfo in ipairs(M.test_tracker) do
+      if testInfo.test_name == tracked_test_name then
+        terminal_multiplexer:delete_terminal(tracked_test_name)
+        table.remove(M.test_tracker, index)
+        make_notify(string.format('Deleted test terminal from tracker: %s', tracked_test_name))
+        break
+      end
+    end
+  end
+
+  vim.ui.select(all_tracked_test_names, opts, function(choice) handle_choice(choice) end)
+end
+
 -- Function to jump to a specific tracked test by index
 local function jump_to_tracked_test_by_index(index)
   if index > #M.test_tracker then
@@ -427,9 +452,12 @@ vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_termina
 vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:search_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 
-vim.keymap.set('n', '<leader>tl', function ()
-  terminal_multiplexer:toggle_float_terminal(terminal_multiplexer.last_terminal_name)
-end, { desc = 'Toggle last go test terminal' })
+vim.keymap.set(
+  'n',
+  '<leader>tl',
+  function() terminal_multiplexer:toggle_float_terminal(terminal_multiplexer.last_terminal_name) end,
+  { desc = 'Toggle last go test terminal' }
+)
 
 vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
 vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
