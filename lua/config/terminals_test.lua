@@ -256,7 +256,7 @@ local function get_test_info_enclosing_test()
 
   local test_command
   if vim.fn.has 'win32' == 1 then
-    test_command = string.format('gitBash -c "go test integration_tests/*.go -v -race -run %s"\r', test_name)
+    test_command = string.format('gitBash -c "go test ./... -v -race -run %s"\r', test_name)
   else
     test_command = string.format('go test integration_tests/*.go -v -run %s', test_name)
   end
@@ -288,7 +288,7 @@ local function drive_test_staging()
 end
 
 local function windows_test_buf()
-  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
+  local test_format = 'gitBash -c "go test ./... -v -race -run %s"\r'
   test_buf(test_format)
 end
 
