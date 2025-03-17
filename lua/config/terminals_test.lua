@@ -74,6 +74,7 @@ local function jump_to_tracked_test_by_index(index)
 
     vim.cmd('edit ' .. filename)
     vim.api.nvim_win_set_cursor(0, { start.line + 1, start.character })
+    vim.cmd [[normal! zz]]
   end)
 end
 
