@@ -20,6 +20,7 @@ local function push_with_qwen()
   local terminals_test = require 'config.terminals_test'
   terminals_test.test_track()
 
+  terminal_multiplexer:delete_terminal(terminal_name)
   terminal_multiplexer:toggle_float_terminal(terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(terminal_name)
 

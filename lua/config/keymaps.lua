@@ -265,4 +265,12 @@ vim.api.nvim_create_user_command('YankCodeBlock', yank_fenced_code_block, {
 -- Optional: Add a mapping for quick access
 vim.keymap.set('n', '<localleader>y', ':YankCodeBlock<CR>', { noremap = true, silent = true, desc = 'Yank code block content' })
 
+-- In your init.lua or other config file
+vim.keymap.set('v', '<localleader>r', function()
+  local selected_text = vim.fn.escape(vim.fn.getregion(vim.fn.getpos "'<", vim.fn.getpos "'>"), '/\\')
+  vim.cmd 'normal! `<`>'
+  vim.fn.feedkeys(':%s/' .. selected_text .. '//gc', 'n')
+  vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Left><Left><Left>', true, false, true), 'n')
+end, { desc = 'Substitute the visual selection' })
+
 return {}
