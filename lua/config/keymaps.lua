@@ -257,20 +257,15 @@ local function yank_fenced_code_block()
   vim.notify('Yanked code block content from line ' .. start_row .. ' to ' .. end_row, vim.log.levels.INFO)
 end
 
--- Create the user command
 vim.api.nvim_create_user_command('YankCodeBlock', yank_fenced_code_block, {
   desc = 'Yank content inside fenced code blocks using Tree-sitter',
 })
-
--- Optional: Add a mapping for quick access
 vim.keymap.set('n', '<localleader>y', ':YankCodeBlock<CR>', { noremap = true, silent = true, desc = 'Yank code block content' })
 
--- In your init.lua or other config file
 vim.keymap.set('v', '<localleader>r', function()
-  local selected_text = vim.fn.escape(vim.fn.getregion(vim.fn.getpos "'<", vim.fn.getpos "'>"), '/\\')
-  vim.cmd 'normal! `<`>'
-  vim.fn.feedkeys(':%s/' .. selected_text .. '//gc', 'n')
-  vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Left><Left><Left>', true, false, true), 'n')
+  vim.cmd 'normal! y'
+  local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':%s/' .. selected_text .. '//gc<Left><Left><Left>', true, true, true), 'n', false)
 end, { desc = 'Substitute the visual selection' })
 
 return {}
