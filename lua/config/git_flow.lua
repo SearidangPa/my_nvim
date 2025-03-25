@@ -9,6 +9,8 @@ local row = math.floor((vim.o.lines - height) / 2)
 local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
+  'Save progress',
+  'Refinement',
   'Done with what I set out to do',
 
   [[Man only likes to count his troubles; he doesn't calculate his joys. -- Fyodor Dostoevsky]],
@@ -21,9 +23,7 @@ local default_no_more_input = {
 }
 
 local item_options = {
-  'Save progress',
   'Checkpoint',
-  'Refinement',
 }
 
 local choice_options = vim.list_extend(item_options, default_no_more_input)
