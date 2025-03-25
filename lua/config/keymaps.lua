@@ -182,8 +182,8 @@ vim.api.nvim_create_autocmd('FileType', {
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
   vim.cmd [[normal! d]]
-  local clipboard_content = vim.trim(vim.fn.getreg '*')
-  local lines = vim.split(clipboard_content, '\n')
+  local clipboard_content = vim.trim(vim.fn.getreg '+') -- use the '+' register on Windows
+  local lines = vim.split(clipboard_content, '\r?\n') -- split on CRLF or LF
 
   local processed_lines = {}
   for _, line in ipairs(lines) do
@@ -197,7 +197,7 @@ local function convert_line_comments_to_block()
   end
   table.insert(result, '*/\n')
 
-  vim.fn.setreg('*', table.concat(result, '\n'))
+  vim.fn.setreg('+', table.concat(result, '\n')) -- set the modified content to the '+' register
   vim.cmd [[normal! P]]
 end
 
