@@ -124,7 +124,7 @@ map('n', '<leader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [
 map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
 
 -- =================== Navigation ===================
-map('i', 'jj', '<Esc>', map_opt 'Exit insert mode with jj')
+map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
