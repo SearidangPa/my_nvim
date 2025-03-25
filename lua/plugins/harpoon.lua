@@ -11,6 +11,10 @@ return {
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<localleader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
 
+    map('n', '<M-[>', function() harpoon:list():next() end, { desc = 'harpoon next' })
+    map('n', '<M-]>', function() harpoon:list():prev() end, { desc = 'harpoon prev' })
+    map('n', '<M-;>', function() harpoon:list():select(1) end, { desc = 'harpoon select 1' })
+
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       map('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
     end
