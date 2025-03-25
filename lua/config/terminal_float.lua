@@ -9,10 +9,10 @@ M.float_terminal_state = nil
 
 local choice_options_unix = {
   'gh_rerun_failed',
+  'start_ollama',
 }
 
 local choice_options_win = {
-  'un',
   'tu',
   'GitBash -c "make -j lint"',
 }

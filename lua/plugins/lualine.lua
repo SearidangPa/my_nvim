@@ -67,6 +67,12 @@ local function tracked_tests_first_half()
   return '%#TabLineSelItalic#' .. list_tests_names .. '%#TabLine#'
 end
 
+local function modified_buffer()
+  if vim.bo.modified then
+    return '● ' -- Indicator for unsaved changes
+  end
+  return ''
+end
 
 local function getDirnameAndFilename()
   local path = vim.fn.expand '%:p'
@@ -91,7 +97,8 @@ local function getDirnameAndFilename()
     dirs = vim.fn.fnamemodify(path, ':h:t')
   end
 
-  return '%#TabLineSelItalic#' .. dirs .. '/' .. filename .. '%#TabLine#'
+  -- return '%#TabLineSelItalic#' .. dirs .. '/' .. filename .. '%#TabLine#'
+  return modified_buffer() .. dirs .. '/' .. filename
 end
 
 return {
@@ -110,6 +117,11 @@ return {
     local ll = require 'lualine'
     require 'config.util_find_func'
     local toggle_nearest_func
+    if vim.fn.has 'win32' == 1 then
+      toggle_nearest_func = false
+    else
+      toggle_nearest_func = true
+    end
 
     local function nearest_func_name_if_exists()
       if not toggle_nearest_func then
@@ -134,6 +146,7 @@ return {
           {
             'mode',
             fmt = function(str) return str:sub(1, 1) end,
+            show_modified_status = true,
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
