@@ -47,7 +47,14 @@ end
 local function get_harpoon_filenames_first_half()
   return get_harpoon_filenames {
     start_index = 1,
-    end_index = 4,
+    end_index = 3,
+  }
+end
+
+local function get_harpoon_filenames_second_half()
+  return get_harpoon_filenames {
+    start_index = 4,
+    end_index = 6,
   }
 end
 
@@ -152,15 +159,15 @@ return {
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = { get_harpoon_filenames_first_half },
         lualine_x = {},
-        lualine_y = { nearest_func_name_if_exists },
+        lualine_y = {},
         lualine_z = {},
       },
       tabline = {
         lualine_a = {},
-        lualine_b = {},
-        lualine_c = { tracked_tests_first_half },
-        lualine_x = { getDirnameAndFilename },
-        lualine_y = {},
+        lualine_b = { tracked_tests_first_half },
+        lualine_c = {},
+        lualine_x = { nearest_func_name_if_exists },
+        lualine_y = { getDirnameAndFilename },
         lualine_z = {},
       },
     }
