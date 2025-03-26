@@ -26,7 +26,7 @@ local item_options = {
   'Checkpoint',
 }
 
-local choice_options = vim.list_extend(item_options, default_no_more_input)
+local choice_options = vim.list_extend(default_no_more_input, item_options)
 local commit_msg = ''
 
 local popup_option = {
