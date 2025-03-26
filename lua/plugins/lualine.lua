@@ -51,13 +51,6 @@ local function get_harpoon_filenames_first_half()
   }
 end
 
-local function get_harpoon_filenames_second_half()
-  return get_harpoon_filenames {
-    start_index = 4,
-    end_index = 6,
-  }
-end
-
 local function tracked_tests_first_half()
   local terminal_tests = require 'config.terminals_test'
   local test_tracker = terminal_tests.test_tracker
@@ -104,7 +97,6 @@ local function getDirnameAndFilename()
     dirs = vim.fn.fnamemodify(path, ':h:t')
   end
 
-  -- return '%#TabLineSelItalic#' .. dirs .. '/' .. filename .. '%#TabLine#'
   return modified_buffer() .. dirs .. '/' .. filename
 end
 
@@ -123,24 +115,14 @@ return {
   config = function()
     local ll = require 'lualine'
     require 'config.util_find_func'
-    local toggle_nearest_func
-    if vim.fn.has 'win32' == 1 then
-      toggle_nearest_func = false
-    else
-      toggle_nearest_func = true
-    end
 
     local function nearest_func_name_if_exists()
-      if not toggle_nearest_func then
-        return ''
-      end
       local func_name = Nearest_func_name()
       if func_name then
-        return func_name
+        return '%#TabLineSelItalic#' .. func_name .. '%#TabLine#'
       end
       return ''
     end
-    vim.api.nvim_create_user_command('LualineToggleNearestFunc', function() toggle_nearest_func = not toggle_nearest_func end, { nargs = 0 })
 
     vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
 
