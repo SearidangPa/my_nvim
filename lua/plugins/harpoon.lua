@@ -46,6 +46,10 @@ return {
         end
       end
 
+      if fileIndex and vim.fn.has 'win32' == 1 then
+        fileIndex = fileIndex - 1
+      end
+
       if fileIndex then
         table.remove(items, fileIndex)
         harpoon.ui:toggle_quick_menu(harpoon:list())
