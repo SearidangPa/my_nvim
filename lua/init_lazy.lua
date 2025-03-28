@@ -14,6 +14,11 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local hererocks_enabled = true
+if vim.fn.has 'win32' == 1 then
+  hererocks_enabled = false
+end
+
 require('lazy').setup {
   spec = {
     {
@@ -32,7 +37,7 @@ require('lazy').setup {
     },
   },
   rocks = {
-    hererocks = true,
+    hererocks = hererocks_enabled,
   },
   checker = { enabled = false, frequency = 60 * 60 * 24 * 7 }, -- automatically check for plugin updates every week
   change_detection = { enabled = false },
