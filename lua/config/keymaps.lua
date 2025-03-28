@@ -60,7 +60,7 @@ local function accept_line_with_indent()
   local accept_line = vim.fn['copilot#AcceptLine']
   assert(accept_line, 'copilot#AcceptLine not found')
   local res = accept_line()
-  res = res .. '\r'
+  res = res .. '\r\t'
   vim.api.nvim_feedkeys(res, 'n', false)
 end
 

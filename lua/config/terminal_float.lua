@@ -13,6 +13,7 @@ local choice_options_unix = {
 }
 
 local choice_options_win = {
+  'dr;m;rds',
   'tu',
   'GitBash -c "make -j lint"',
 }
