@@ -32,6 +32,6 @@ vim.opt.signcolumn = 'yes'
 vim.opt.cursorline = true
 vim.opt.breakindent = true
 
-vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus'
-end)
+-- === luarocks ===
+
+vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
