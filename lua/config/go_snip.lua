@@ -356,3 +356,28 @@ ls.add_snippets('go', {
     })
   ),
 })
+
+ls.add_snippets('go', {
+  s(
+    'fo',
+    fmta(
+      [[
+        f, err := os.Open(<file>) // caution: open with read access
+        if err != nil {
+            return <funcName>
+        }
+        defer func() {
+            if err := f.Close(); err != nil {
+                logEntry.WithError(err).Error("failed to close file")
+            }
+        }()
+        <finish>
+      ]],
+      {
+        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        file = i(2, 'file'),
+        finish = i(0),
+      }
+    )
+  ),
+})
