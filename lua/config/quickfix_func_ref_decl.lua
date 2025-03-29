@@ -82,7 +82,9 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, M.qflist, processed_funcs)
     end
     vim.fn.setqflist(M.qflist)
-    vim.cmd 'copen' -- Open the quickfix window after everything is processed
+    if #M.qflist > 0 then
+      vim.cmd 'copen' -- Open the quickfix window after everything is processed
+    end
   end)
   return M.qflist
 end
