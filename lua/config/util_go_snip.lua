@@ -171,5 +171,9 @@ end
 
 function Go_ret_vals_nearest_func_decl()
   local func_name = Get_prev_func_call_with_equal()
+  if vim.fn.has 'win' == 1 then
+    return Go_ret_vals { func_name }
+  end
+
   return Go_ret_vals { { func_name } }
 end
