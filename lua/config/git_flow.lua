@@ -19,7 +19,15 @@ local item_options = {
   'Refinement',
 }
 
-local choice_options = vim.list_extend(item_options, default_no_more_input)
+local function copy_list(list)
+  local new_list = {}
+  for i, v in ipairs(list) do
+    new_list[i] = v
+  end
+  return new_list
+end
+
+local choice_options = vim.list_extend(copy_list(default_no_more_input), item_options)
 local commit_msg = ''
 
 local popup_option = {
