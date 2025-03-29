@@ -88,7 +88,7 @@ function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
       if func_ref_decl then
-        make_notify('found reference: ' .. func_ref_decl.text)
+        make_notify('found: ' .. func_ref_decl.text)
         M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
       end
     end
