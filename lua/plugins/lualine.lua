@@ -1,54 +1,35 @@
-local function get_harpoon_filenames(opts)
+local function get_harpoon_filenames()
   local harpoon = require 'harpoon'
-  local root_dir = harpoon:list().config:get_root_dir()
   local harpoonList = harpoon:list()
   local length = harpoonList:length()
 
-  local start_index = opts.start_index or 1
-  local end_index = opts.end_index or 3
-  if end_index > length then
-    end_index = length
-  end
-
-  if length < start_index then
+  if length == 0 then
     return ''
   end
 
-  local os_sep = '/'
-  if vim.fn.has 'win32' == 1 then
-    os_sep = '\\'
-  end
-
-  local list_names = ''
+  local root_dir = harpoonList.config:get_root_dir()
+  local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
   local current_file_path = vim.api.nvim_buf_get_name(0)
-  for i = start_index, end_index do
-    local display_sep = ' | '
-    local val_at_index = harpoonList:get(i)
-    local path = val_at_index.value
-    local filename = vim.fn.fnamemodify(path, ':t')
+  local result = {}
 
-    -- Check if path is absolute (starts with / or drive letter on Windows)
-    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\'
+  for i = 1, math.min(length, 3) do
+    local path = harpoonList:get(i).value
+    local filename = vim.fn.fnamemodify(path, ':t')
+    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
+    if i > 1 then
+      table.insert(result, ' | ')
+    end
+
     if fullpath == current_file_path then
-      list_names = list_names .. display_sep .. '%#TabLineSel#' .. filename .. '%#TabLine#'
+      table.insert(result, '[' .. filename .. ']') -- We'll use a visual marker instead
     else
-      list_names = list_names .. display_sep .. '%#TabLine#' .. filename
+      table.insert(result, filename)
     end
   end
 
-  -- remove the first separator
-  list_names = list_names:sub(4)
-
-  return list_names
-end
-
-local function get_harpoon_filenames_first_half()
-  return get_harpoon_filenames {
-    start_index = 1,
-    end_index = 4,
-  }
+  return table.concat(result)
 end
 
 local function tracked_tests_first_half()
@@ -139,7 +120,7 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = { get_harpoon_filenames_first_half },
+        lualine_c = { get_harpoon_filenames },
         lualine_x = {},
         lualine_y = {},
         lualine_z = {},
