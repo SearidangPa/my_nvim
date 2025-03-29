@@ -104,7 +104,7 @@ local function load_func_ref_decls()
   M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
-vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
 
 local function load_one_more_layer(bufnr, line, col)
   for _, item in ipairs(M.qflist) do
@@ -114,4 +114,4 @@ local function load_one_more_layer(bufnr, line, col)
     M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
   end
 end
-vim.keymap.set('n', '<leader>lr', load_one_more_layer, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>lr', load_one_more_layer, { desc = '[L]oad func ref [R]e', noremap = true, silent = true })
