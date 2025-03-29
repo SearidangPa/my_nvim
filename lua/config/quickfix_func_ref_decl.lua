@@ -1,4 +1,6 @@
 local M = {}
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
 M.qflist = {}
 M.processed_funcs = {} -- Track function declarations we've already added
 
@@ -52,7 +54,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
 
   M.processed_funcs[func_key] = true
 
-  local text = 'Function: ' .. func_name
+  local text = 'func: ' .. func_name
   local location = {
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
     col = func_range.start_col + 1,
@@ -77,8 +79,6 @@ function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
     assert(result, 'result is nil')
     assert(not err, 'err is not nil')
     for _, ref in ipairs(result) do
-      vim.notify('Found ' .. #result .. ' references. Loading their declarations', vim.log.levels.INFO)
-
       local uri = ref.uri or ref.targetUri
       assert(uri, 'URI is nil')
       local range = ref.range or ref.targetSelectionRange
@@ -88,6 +88,7 @@ function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
       if func_ref_decl then
+        make_notify('found reference: ' .. func_ref_decl.text)
         M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
       end
     end
