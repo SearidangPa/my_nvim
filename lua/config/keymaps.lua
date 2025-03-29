@@ -114,7 +114,7 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 -- ================== local leader===================
 map('n', '<localleader>w', function() vim.cmd [[:wa]] end, map_opt '[W]rite all')
 
-map('n', '<localleader>d', [["_dd]], map_opt '[D]elete into black hole')
+map({ 'n', 'v', 'x' }, '<localleader>d', [["_dd]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 map('n', '<localleader>q', function() vim.cmd [[q]] end, map_opt '[Q]uit')
 
