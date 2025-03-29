@@ -114,4 +114,5 @@ local function load_one_more_layer(bufnr, line, col)
     M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
   end
 end
+
 vim.keymap.set('n', '<leader>lr', load_one_more_layer, { desc = '[L]oad func ref [R]e', noremap = true, silent = true })
