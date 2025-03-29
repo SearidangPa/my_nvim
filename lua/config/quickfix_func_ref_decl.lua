@@ -54,7 +54,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
 
   M.processed_funcs[func_key] = true
 
-  local text = 'func: ' .. func_name
+  local text = func_name
   local location = {
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
     col = func_range.start_col + 1,
@@ -88,7 +88,7 @@ function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
       if func_ref_decl then
-        make_notify('found: ' .. func_ref_decl.text)
+        make_notify('ref func: ' .. func_ref_decl.text)
         M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
       end
     end
