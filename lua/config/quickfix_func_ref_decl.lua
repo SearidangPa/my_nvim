@@ -1,4 +1,5 @@
 local M = {}
+M.qflist = {}
 local util_find_func = require 'config.util_find_func'
 
 function M.add_to_quickfix(qflist, filename, location, text)
@@ -60,14 +61,15 @@ function M.lsp_ref_func_decl(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
-    textDocument = vim.lsp.util.make_text_document_params(),
+    textDocument = vim.lsp.util.make_text_document_params(bufnr),
     position = { line = line - 1, character = col - 1 },
     context = { includeDeclaration = false },
   }
+  print('Requesting references for', params.textDocument.uri, 'at', line, col)
+
   vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, _, _)
     assert(result, 'result is nil')
     assert(not err, 'err is not nil')
-    local qflist = {}
     local processed_funcs = {} -- Track function declarations we've already added
     for _, ref in ipairs(result) do
       local uri = ref.uri or ref.targetUri
@@ -77,15 +79,15 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
       local ref_col = range.start.character
-      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_funcs)
+      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, M.qflist, processed_funcs)
     end
-    vim.fn.setqflist(qflist)
+    vim.fn.setqflist(M.qflist)
     vim.cmd 'copen' -- Open the quickfix window after everything is processed
   end)
+  return M.qflist
 end
 
-function M.lsp_ref_func_decl__nearest_func()
-  require 'config.util_find_func'
+local function load_func_ref_decls()
   local func_node = Nearest_func_node()
   assert(func_node, 'No function found')
   local func_identifier
@@ -95,11 +97,7 @@ function M.lsp_ref_func_decl__nearest_func()
     end
   end
   local start_row, start_col = func_identifier:range()
-  assert(start_row, 'start_row is nil')
-  assert(start_col, 'start_col is nil')
-  local bufnr = vim.api.nvim_get_current_buf()
-  M.lsp_ref_func_decl(bufnr, start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
+  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
-vim.api.nvim_create_user_command('LoadFuncDeclRef', M.lsp_ref_func_decl__nearest_func, {})
-vim.keymap.set('n', '<leader>ld', M.lsp_ref_func_decl__nearest_func, { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { noremap = true, silent = true })

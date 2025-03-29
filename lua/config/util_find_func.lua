@@ -82,6 +82,7 @@ end
 M.nearest_function_at_line = function(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
+  assert(parser, 'parser is nil')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(tree, 'tree is nil')
