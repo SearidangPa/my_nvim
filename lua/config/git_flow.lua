@@ -10,20 +10,12 @@ local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
   'Save progress',
-  'Refinement',
   'Done with what I set out to do',
-
-  [[Man only likes to count his troubles; he doesn't calculate his joys. -- Fyodor Dostoevsky]],
-  'Beauty will save the world. -- Fyodor Dostoevsky',
-  'To live without hope is to cease to live.-- Fyodor Dostoevsky',
-  'Taking a new step, uttering a new word, is what people fear most. -- Fyodor Dostoevsky',
-  'Man is sometimes extraordinarily, passionately, in love with suffering. -- Fyodor Dostoevsky',
-  'What is hell? I maintain that it is the suffering of being unable to love. -- Fyodor Dostoevsky',
-  'The cleverest of all, in my opinion, is the man who calls himself a fool at least once a month. -- Fyodor Dostoevsky',
 }
 
 local item_options = {
   'Checkpoint',
+  'Refinement',
 }
 
 local choice_options = vim.list_extend(default_no_more_input, item_options)
