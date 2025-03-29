@@ -121,6 +121,10 @@ function Nearest_func_name()
       if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
           return vim.treesitter.get_node_text(child, bufnr)
       end
+      if child:type() == 'dot_index_expression' then
+          local field = child:field('field')[1]
+          return vim.treesitter.get_node_text(field, bufnr)
+      end
   end
 end
 

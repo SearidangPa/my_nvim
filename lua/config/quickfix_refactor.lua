@@ -54,6 +54,12 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
     col = func_range.start_col + 1,
   }
   M.add_to_quickfix(qflist, filename, location, text)
+  return {
+    filename = filename,
+    lnum = location.line,
+    col = location.col,
+    text = text,
+  }
 end
 
 function M.lsp_ref_func_decl(bufnr, line, col)
