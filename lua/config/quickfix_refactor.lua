@@ -12,14 +12,10 @@ function M.add_to_quickfix(qflist, filename, location, text)
 end
 
 function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_funcs)
-  print('Processing reference at line:', ref_line + 1, 'col:', ref_col + 1)
-  print('URI:', uri)
-  print('Ref line:', ref_line, 'col:', ref_col)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
     return false
   end
-  print('Filename:', filename)
 
   -- Convert URI to buffer number
   local bufnr = vim.fn.bufadd(filename)
