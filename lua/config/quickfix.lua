@@ -59,7 +59,7 @@ function M.lsp_references_nearest_function()
   vim.cmd 'copen'
 end
 
-vim.api.nvim_create_user_command('LoadFuncRefQuickfix', M.lsp_references_nearest_function, {})
+vim.api.nvim_create_user_command('LoadFuncRef', M.lsp_references_nearest_function, {})
 
 vim.keymap.set('n', '<leader>lf', M.lsp_references_nearest_function, { noremap = true, silent = true, desc = '[L]sp [F]unction Reference' })
 
