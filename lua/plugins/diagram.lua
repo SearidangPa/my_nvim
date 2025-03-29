@@ -10,7 +10,7 @@ return {
   config = function()
     require('diagram').setup {
       events = {
-        render_buffer = { 'InsertLeave' },
+        render_buffer = { 'TextChanged' },
         clear_buffer = { 'BufLeave' },
       },
       integrations = {
