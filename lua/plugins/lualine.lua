@@ -12,7 +12,7 @@ local function get_harpoon_filenames()
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
 
-  for i = 1, math.min(length, 3) do
+  for i = 1, math.min(length, 5) do
     local path = harpoonList:get(i).value
     local filename = vim.fn.fnamemodify(path, ':t')
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'

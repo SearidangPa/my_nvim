@@ -34,7 +34,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
 
   -- Get the function name from identifier node
   for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'name' then
+    if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
       func_name = vim.treesitter.get_node_text(child, bufnr)
       func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_node:range()
       break
