@@ -9,7 +9,32 @@ local function get_root_node(opts)
   assert(root, 'Tree root is nil')
 
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+
   local query
+  if lang == 'lua' then
+    if is_func_start then
+      query = vim.treesitter.query.parse(
+        lang,
+        [[
+      (function_declaration
+        name: (identifier) @func_decl_start
+      ) 
+    ]]
+      )
+      return root, query
+    else
+      query = vim.treesitter.query.parse(
+        lang,
+        [[
+      (function_declaration
+        name: (identifier) @func_decl_start
+      ) @func_decl_node
+    ]]
+      )
+      return root, query
+    end
+  end
+
   if is_func_start then
     query = vim.treesitter.query.parse(
       lang,
