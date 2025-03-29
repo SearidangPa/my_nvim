@@ -19,7 +19,7 @@ local item_options = {
   'Refinement',
 }
 
-local choice_options = vim.list_extend(default_no_more_input, item_options)
+local choice_options = vim.tbl_extend('force', default_no_more_input, item_options)
 local commit_msg = ''
 
 local popup_option = {
