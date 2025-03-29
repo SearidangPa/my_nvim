@@ -72,7 +72,6 @@ return {
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
     -- === git ===
-    map(map_modes, '<leader>sb', builtin.git_branches, { desc = '[S]earch Git [B]ranches' })
     map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
