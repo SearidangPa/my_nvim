@@ -58,6 +58,3 @@ end
 
 vim.api.nvim_create_user_command('LoadFuncDeclRef', M.lsp_ref_func_decl__nearest_func, {})
 vim.keymap.set('n', '<leader>ld', M.lsp_ref_func_decl__nearest_func, { desc = '[L]oad ref [D]eclaration' })
-
-vim.api.nvim_create_user_command('LoadFuncDeclRefRecursive', M.lsp_ref_func_decl_recursive, {})
-vim.keymap.set('n', '<leader>lr', M.lsp_ref_func_decl_recursive, { desc = '[L]oad ref decl [R]ecursive' })
