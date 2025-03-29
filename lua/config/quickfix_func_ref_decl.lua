@@ -66,7 +66,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
   }
 end
 
-function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
+function M.lsp_ref_func_decl(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -93,11 +93,6 @@ function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
       end
     end
     vim.fn.setqflist(M.qflist)
-    if #M.qflist > 0 then
-      if open_qf then
-        vim.cmd 'copen' -- Open the quickfix window after everything is processed
-      end
-    end
   end)
   return M.qflist
 end
@@ -112,7 +107,7 @@ local function load_func_ref_decls()
     end
   end
   local start_row, start_col = func_identifier:range()
-  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1, false)
+  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
 vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
@@ -122,7 +117,7 @@ local function load_one_more_layer(bufnr, line, col)
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
-    M.lsp_ref_func_decl(bufnr, item.lnum, item.col, true)
+    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
   end
 end
 
