@@ -1,4 +1,5 @@
 local M = {}
+M.qflist = {}
 local util_find_func = require 'config.util_find_func'
 
 function M.add_to_quickfix(qflist, filename, location, text)
@@ -56,8 +57,6 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
   M.add_to_quickfix(qflist, filename, location, text)
 end
 
-M.qflist = {}
-
 function M.lsp_ref_func_decl(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
@@ -83,7 +82,9 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, M.qflist, processed_funcs)
     end
     vim.fn.setqflist(M.qflist)
-    vim.cmd 'copen' -- Open the quickfix window after everything is processed
+    if #M.qflist > 0 then
+      vim.cmd 'copen' -- Open the quickfix window after everything is processed
+    end
   end)
   return M.qflist
 end
