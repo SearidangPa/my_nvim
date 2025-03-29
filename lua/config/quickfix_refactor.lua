@@ -54,13 +54,6 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
     col = func_range.start_col + 1,
   }
   M.add_to_quickfix(qflist, filename, location, text)
-
-  return {
-    filename = filename,
-    func_name = func_name,
-    start_row = func_range.start_row,
-    start_col = func_range.start_col,
-  }
 end
 
 function M.lsp_ref_func_decl(line, col)
@@ -105,8 +98,7 @@ function M.lsp_ref_func_decl__nearest_func()
   assert(start_row, 'start_row is nil')
   assert(start_col, 'start_col is nil')
   M.lsp_ref_func_decl(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
-  vim.cmd 'copen'
 end
 
 vim.api.nvim_create_user_command('LoadFuncDeclRef', M.lsp_ref_func_decl__nearest_func, {})
-vim.keymap.set('n', '<leader>ld', M.lsp_ref_func_decl__nearest_func, { desc = '[L]oad ref [D]eclaration' })
+vim.keymap.set('n', '<leader>ld', M.lsp_ref_func_decl__nearest_func, { noremap = true, silent = true })
