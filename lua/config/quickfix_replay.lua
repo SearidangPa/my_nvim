@@ -103,3 +103,17 @@ local function load_func_ref_decls()
 end
 
 vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { noremap = true, silent = true })
+
+local function try_one_more_layer(bufnr, line, col)
+  print 'Trying one more layer'
+  for _, item in ipairs(M.qflist) do
+    local filename = item.filename
+    local bufnr = vim.fn.bufadd(filename)
+    vim.fn.bufload(bufnr)
+
+    -- print('item.col', item.col)
+    -- print('item.lnum', item.lnum)
+    -- M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+  end
+end
+vim.keymap.set('n', '<leader>lr', try_one_more_layer, { noremap = true, silent = true })
