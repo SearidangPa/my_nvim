@@ -200,7 +200,6 @@ M.start_job = function(opts)
 end
 
 function Contains(tbl, value)
-  print(vim.inspect(tbl))
   for _, v in ipairs(tbl) do
     if v == value then
       return true
