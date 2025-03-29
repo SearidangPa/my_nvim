@@ -1,3 +1,5 @@
+local M = {}
+
 local get_node_text = vim.treesitter.get_node_text
 local ts_utils = require('nvim-treesitter.ts_utils')
 
@@ -77,7 +79,7 @@ end
 ---@param bufnr number
 ---@param line number
 ---@return TSNode|nil
-local function nearest_function_at_line(bufnr, line)
+M.nearest_function_at_line = function(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
   local tree = parser:parse()[1]
@@ -113,7 +115,7 @@ function Nearest_func_name()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
-  local func_node = nearest_function_at_line(bufnr, line)
+  local func_node = M.nearest_function_at_line(bufnr, line)
   assert(func_node, 'No function found')
   for child in func_node:iter_children() do
       if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
@@ -132,7 +134,7 @@ function Nearest_func_node()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
-  local func_node = nearest_function_at_line(bufnr, line)
+  local func_node = M.nearest_function_at_line(bufnr, line)
   assert(func_node, 'No function found')
   return func_node
 end
@@ -171,3 +173,4 @@ function Get_enclosing_test()
 end
 
 
+return M
