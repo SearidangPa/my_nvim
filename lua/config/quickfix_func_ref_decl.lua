@@ -1,5 +1,7 @@
 local M = {}
 M.qflist = {}
+M.processed_funcs = {} -- Track function declarations we've already added
+
 local util_find_func = require 'config.util_find_func'
 
 function M.add_to_quickfix(qflist, filename, location, text)
@@ -12,7 +14,7 @@ function M.add_to_quickfix(qflist, filename, location, text)
   return true
 end
 
-function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_funcs)
+function M.find_enclosing_function(uri, ref_line, ref_col)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
     return nil
@@ -44,18 +46,18 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
 
   local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
 
-  if processed_funcs[func_key] then
+  if M.processed_funcs[func_key] then
     return nil
   end
 
-  processed_funcs[func_key] = true
+  M.processed_funcs[func_key] = true
 
   local text = 'Function: ' .. func_name
   local location = {
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
     col = func_range.start_col + 1,
   }
-  M.add_to_quickfix(qflist, filename, location, text)
+  M.add_to_quickfix(M.qflist, filename, location, text)
 end
 
 function M.lsp_ref_func_decl(bufnr, line, col)
@@ -71,7 +73,6 @@ function M.lsp_ref_func_decl(bufnr, line, col)
   vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, _, _)
     assert(result, 'result is nil')
     assert(not err, 'err is not nil')
-    local processed_funcs = {} -- Track function declarations we've already added
     for _, ref in ipairs(result) do
       local uri = ref.uri or ref.targetUri
       assert(uri, 'URI is nil')
@@ -80,7 +81,7 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
       local ref_col = range.start.character
-      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, M.qflist, processed_funcs)
+      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
     end
     vim.fn.setqflist(M.qflist)
     if #M.qflist > 0 then
@@ -106,7 +107,6 @@ end
 vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { noremap = true, silent = true })
 
 local function load_one_more_layer(bufnr, line, col)
-  print 'Trying one more layer'
   for _, item in ipairs(M.qflist) do
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
