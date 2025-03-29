@@ -55,12 +55,9 @@ local function handle_choice(choice, perform_commit_func)
   commit_msg = choice
 
   if Contains(default_no_more_input, choice) then
-    print('Commit message: ' .. commit_msg)
     perform_commit_func(commit_msg)
     return
   end
-
-  print 'Now, please enter a commit message:'
 
   local nui_input_options = {
     prompt = '> ',

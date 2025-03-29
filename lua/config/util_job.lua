@@ -202,7 +202,6 @@ end
 function Contains(tbl, value)
   print(vim.inspect(tbl))
   for _, v in ipairs(tbl) do
-    print('Checking value: ' .. v)
     if v == value then
       return true
     end
