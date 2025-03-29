@@ -54,12 +54,6 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
     col = func_range.start_col + 1,
   }
   M.add_to_quickfix(qflist, filename, location, text)
-  return {
-    filename = filename,
-    lnum = location.line,
-    col = location.col,
-    text = text,
-  }
 end
 
 function M.lsp_ref_func_decl(bufnr, line, col)
@@ -83,7 +77,7 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
       local ref_col = range.start.character
-      M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_funcs)
+      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_funcs)
     end
     vim.fn.setqflist(qflist)
     vim.cmd 'copen' -- Open the quickfix window after everything is processed
