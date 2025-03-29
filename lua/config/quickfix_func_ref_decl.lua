@@ -57,10 +57,14 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
     col = func_range.start_col + 1,
   }
-  M.add_to_quickfix(M.qflist, filename, location, text)
+  return {
+    filename = filename,
+    location = location,
+    text = text,
+  }
 end
 
-function M.lsp_ref_func_decl(bufnr, line, col)
+function M.lsp_ref_func_decl(bufnr, line, col, open_qf)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -68,12 +72,13 @@ function M.lsp_ref_func_decl(bufnr, line, col)
     position = { line = line - 1, character = col - 1 },
     context = { includeDeclaration = false },
   }
-  print('Requesting references for', params.textDocument.uri, 'at', line, col)
 
   vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, _, _)
     assert(result, 'result is nil')
     assert(not err, 'err is not nil')
     for _, ref in ipairs(result) do
+      vim.notify('Found ' .. #result .. ' references. Loading their declarations', vim.log.levels.INFO)
+
       local uri = ref.uri or ref.targetUri
       assert(uri, 'URI is nil')
       local range = ref.range or ref.targetSelectionRange
@@ -82,10 +87,15 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       local ref_line = range.start.line
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
+      if func_ref_decl then
+        M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
+      end
     end
     vim.fn.setqflist(M.qflist)
     if #M.qflist > 0 then
-      vim.cmd 'copen' -- Open the quickfix window after everything is processed
+      if open_qf then
+        vim.cmd 'copen' -- Open the quickfix window after everything is processed
+      end
     end
   end)
   return M.qflist
@@ -101,7 +111,7 @@ local function load_func_ref_decls()
     end
   end
   local start_row, start_col = func_identifier:range()
-  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
+  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1, false)
 end
 
 vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
@@ -111,7 +121,7 @@ local function load_one_more_layer(bufnr, line, col)
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
-    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+    M.lsp_ref_func_decl(bufnr, item.lnum, item.col, true)
   end
 end
 
