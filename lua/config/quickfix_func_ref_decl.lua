@@ -32,14 +32,15 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
   local func_name = 'Unknown function'
   local func_range = { start_row = 0, end_row = 0, start_col = 0, end_col = 0 }
 
-  -- Look for an identifier child node to get the function name
+  local func_identifier
   for child in func_node:iter_children() do
     if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
-      func_name = vim.treesitter.get_node_text(child, bufnr)
-      func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_node:range()
+      func_identifier = child
       break
     end
   end
+  func_name = vim.treesitter.get_node_text(func_identifier, bufnr)
+  func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_identifier:range()
 
   local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
 
@@ -103,3 +104,14 @@ local function load_func_ref_decls()
 end
 
 vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { noremap = true, silent = true })
+
+local function load_one_more_layer(bufnr, line, col)
+  print 'Trying one more layer'
+  for _, item in ipairs(M.qflist) do
+    local filename = item.filename
+    local bufnr = vim.fn.bufadd(filename)
+    vim.fn.bufload(bufnr)
+    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+  end
+end
+vim.keymap.set('n', '<leader>lr', load_one_more_layer, { noremap = true, silent = true })
