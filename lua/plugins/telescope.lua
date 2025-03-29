@@ -88,19 +88,22 @@ return {
         help_tags = { theme = 'ivy' },
         find_files = { theme = 'ivy', hidden = true },
         live_grep = { theme = 'ivy' },
-        git_status = { theme = 'ivy' },
         oldfiles = { theme = 'ivy' },
         jumplist = { theme = 'ivy' },
-        treesitter = { theme = 'ivy' },
-        grep_string = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },
         lsp_document_symbols = { theme = 'ivy' },
         lsp_incoming_calls = { theme = 'ivy' },
+        grep_string = { theme = 'ivy' },
         git_bcommits = { theme = 'ivy' },
         git_commits = { theme = 'ivy' },
         git_bcommits_range = { theme = 'ivy' },
+        git_status = { theme = 'ivy' },
+
+        git_branches = {
+          theme = 'ivy',
+        },
       },
       defaults = {
         file_ignore_patterns = {
@@ -119,6 +122,7 @@ return {
         fzf = {},
       },
     }
+
     require('telescope').setup(opts)
     require('telescope').load_extension 'fzf'
     require('telescope').load_extension 'ui-select'
