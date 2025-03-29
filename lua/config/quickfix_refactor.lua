@@ -56,7 +56,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col, qflist, processed_fun
   M.add_to_quickfix(qflist, filename, location, text)
 end
 
-function M.lsp_ref_func_decl(line, col)
+function M.lsp_ref_func_decl(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -64,7 +64,7 @@ function M.lsp_ref_func_decl(line, col)
     position = { line = line - 1, character = col - 1 },
     context = { includeDeclaration = false },
   }
-  vim.lsp.buf_request(0, 'textDocument/references', params, function(err, result, _, _)
+  vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, _, _)
     assert(result, 'result is nil')
     assert(not err, 'err is not nil')
     local qflist = {}
@@ -97,7 +97,8 @@ function M.lsp_ref_func_decl__nearest_func()
   local start_row, start_col = func_identifier:range()
   assert(start_row, 'start_row is nil')
   assert(start_col, 'start_col is nil')
-  M.lsp_ref_func_decl(start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
+  local bufnr = vim.api.nvim_get_current_buf()
+  M.lsp_ref_func_decl(bufnr, start_row + 1, start_col + 1) -- Adjust from 0-indexed to 1-indexed positions.
 end
 
 vim.api.nvim_create_user_command('LoadFuncDeclRef', M.lsp_ref_func_decl__nearest_func, {})
