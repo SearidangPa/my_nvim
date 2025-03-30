@@ -129,7 +129,7 @@ map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
 -- === Visual select ===
-map('n', '<leader>va', function() vim.cmd 'normal! ggvG' end, { desc = 'Yank all lines' })
+map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all lines' })
 
 -- === Yank ===
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
@@ -271,5 +271,13 @@ vim.keymap.set('v', '<localleader>r', function()
   local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':%s/' .. selected_text .. '//gc<Left><Left><Left>', true, true, true), 'n', false)
 end, { desc = 'Substitute the visual selection' })
+
+--- === New Scratch Buffer ===
+local new_scratch_buf = function()
+  vim.cmd 'enew'
+  vim.cmd 'setlocal buftype=nofile bufhidden=hide noswapfile'
+  vim.cmd 'setlocal filetype=markdown'
+end
+vim.api.nvim_create_user_command('NewScratch', new_scratch_buf, { desc = 'Start a scratch buffer' })
 
 return {}
