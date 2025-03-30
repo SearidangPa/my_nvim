@@ -3,16 +3,21 @@ local async = require 'plenary.async'
 local Job = require 'plenary.job'
 
 -- Function to get git diff asynchronously
+--
 local function get_git_diff(branch_name, callback)
   Job:new({
     command = 'git',
-    args = { 'diff', branch_name, '--', ':!docs/*', ':!.github', ':!docs' },
+    args = { 'diff', branch_name },
     on_exit = function(j, return_val)
       if return_val == 0 then
-        callback(table.concat(j:result(), '\n'))
+        -- Schedule the callback to run in the main loop
+        vim.schedule(function() callback(table.concat(j:result(), '\n')) end)
       else
-        vim.notify('Error getting git diff: ' .. table.concat(j:stderr_result(), '\n'), vim.log.levels.ERROR)
-        callback ''
+        -- Schedule error notification to run in the main loop
+        vim.schedule(function()
+          vim.notify('Error getting git diff: ' .. table.concat(j:stderr_result(), '\n'), vim.log.levels.ERROR)
+          callback ''
+        end)
       end
     end,
   }):start()
@@ -80,5 +85,13 @@ end
 
 -- Public function to create new PR description buffer
 M.new_prompt_pr_desc = function(branch_name) M.ai_pr_desc(branch_name) end
+
+vim.api.nvim_create_user_command('PrDescPrompt', function(opts)
+  local branch_name = opts.args
+  if branch_name == '' then
+    branch_name = 'main'
+  end
+  M.ai_pr_desc(branch_name)
+end, { nargs = '?' })
 
 return M
