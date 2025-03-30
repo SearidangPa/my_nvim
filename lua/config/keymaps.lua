@@ -128,11 +128,16 @@ map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
+-- === Visual select ===
+map('n', '<leader>va', function() vim.cmd 'normal! ggvG' end, { desc = 'Yank all lines' })
+
 -- === Yank ===
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
+
 map('n', '<leader>ya', function()
+  local cur_pos = vim.fn.getpos '.'
   vim.cmd 'normal! ggyG'
-  vim.cmd '<C-or>'
+  vim.fn.setpos('.', cur_pos)
 end, { desc = 'Yank all lines' })
 
 -- === Remap ===
