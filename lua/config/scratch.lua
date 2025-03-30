@@ -46,7 +46,6 @@ M.pr_desc_prompt = function(branch_name)
   ]]
 
   local template = [[
-  # Brief description from AI and me:
   Below is the pr template that I want you to fill out. 
   ## What's the purpose of this change?
   ## Constraints and Mitigation
