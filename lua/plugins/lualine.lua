@@ -14,7 +14,7 @@ local function get_harpoon_filenames()
 
   local max_num_files_displayed = 5
   if vim.fn.has 'win32' == 1 then
-    max_num_files_displayed = 3
+    max_num_files_displayed = 4
   end
 
   for i = 1, math.min(length, max_num_files_displayed) do
