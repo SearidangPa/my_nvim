@@ -125,9 +125,15 @@ map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K
 
 -- =================== Navigation ===================
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
-map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
 map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
+
+-- === Yank ===
+map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
+map('n', '<leader>ya', function()
+  vim.cmd 'normal! ggyG'
+  vim.cmd '<C-or>'
+end, { desc = 'Yank all lines' })
 
 -- === Remap ===
 map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down

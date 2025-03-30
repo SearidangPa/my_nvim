@@ -12,7 +12,7 @@ return {
     diagram.setup {
       events = {
         render_buffer = { 'TextChanged' },
-        clear_buffer = { 'BufLeave', 'InsertEnter', 'FocusLost' },
+        clear_buffer = { 'BufLeave', 'InsertEnter' },
       },
       integrations = {
         require 'diagram.integrations.markdown',
@@ -21,8 +21,8 @@ return {
         mermaid = {
           theme = 'default', -- nil | "default" | "dark" | "forest" | "neutral"
           scale = 3, -- nil | 1 (default) | 2  | 3 | ...
-          width = 800, -- nil | 800 | 400 | ...
-          height = 600, -- nil | 600 | 300 | ...
+          width = 1000, -- nil | 800 | 400 | ...
+          height = 800, -- nil | 600 | 300 | ...
         },
       },
     }
