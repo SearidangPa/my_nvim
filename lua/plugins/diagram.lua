@@ -11,7 +11,7 @@ return {
     require('diagram').setup {
       events = {
         render_buffer = { 'TextChanged' },
-        clear_buffer = { 'BufLeave' },
+        clear_buffer = { 'BufLeave', 'InsertEnter' },
       },
       integrations = {
         require 'diagram.integrations.markdown',
