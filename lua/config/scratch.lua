@@ -24,7 +24,7 @@ local function get_git_diff(branch_name, callback)
 end
 
 -- Main PR description generator function
-M.ai_pr_desc = function(branch_name)
+M.pr_desc_prompt = function(branch_name)
   branch_name = branch_name or 'main'
 
   local test_section_prompt =
@@ -71,27 +71,31 @@ M.ai_pr_desc = function(branch_name)
     end
 
     -- Construct the full prompt
-    local full_prompt = diff_input .. '\n' .. task_desc .. '\n' .. template .. '\n' .. task_context .. test_section_prompt .. flow_section_prompt_ascii
+    local full_prompt = '```\n'
+      .. diff_input
+      .. '\n```\n\n'
+      .. task_desc
+      .. '\n'
+      .. template
+      .. '\n'
+      .. task_context
+      .. test_section_prompt
+      .. flow_section_prompt_ascii
 
     -- Update the buffer with the prompt
     vim.schedule(function()
       vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(full_prompt, '\n'))
-      -- Move cursor to the beginning of the buffer
-      vim.cmd 'normal! gg'
-      vim.notify('PR description template generated!', vim.log.levels.INFO)
+      vim.cmd [[normal! G]]
     end)
   end)
 end
 
--- Public function to create new PR description buffer
-M.new_prompt_pr_desc = function(branch_name) M.ai_pr_desc(branch_name) end
-
-vim.api.nvim_create_user_command('PrDescPrompt', function(opts)
+vim.api.nvim_create_user_command('NewPromptPrDesc', function(opts)
   local branch_name = opts.args
   if branch_name == '' then
     branch_name = 'main'
   end
-  M.ai_pr_desc(branch_name)
+  M.pr_desc_prompt(branch_name)
 end, { nargs = '?' })
 
 return M
