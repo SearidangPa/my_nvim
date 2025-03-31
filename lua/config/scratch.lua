@@ -79,7 +79,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 \<For each new test added. I want you to consider the test name, the test description, the setup and the expected outcome. 
 Explain in ascii flow diagram for the higher level flow of each test. 
 I want color highlight around the test name to be displayed in the github pr description. 
-I only want mermaid flow diagram and nothing else under each test name.\>
+\>
 ]]
 
 -- Main PR description generator function
