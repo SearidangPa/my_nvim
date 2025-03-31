@@ -117,8 +117,8 @@ M.pr_desc_prompt = function(branch_name)
         local full_prompt = string.format(
           '%s\n\n%s\n\n%s\n\n%s',
           diff_input,
-          title_prompt,
           template,
+          title_prompt,
           'Give the PR description to me in a markdown format in such a way that i can copy and paste into the PR description field.'
         )
         -- Update the buffer with the prompt
