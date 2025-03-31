@@ -381,3 +381,28 @@ ls.add_snippets('go', {
     )
   ),
 })
+
+ls.add_snippets('go', {
+  s(
+    'ho',
+    fmta(
+      [[
+        handle, err := cldapi.CfOpenFileWithOplock(<file>) // caution: open with read access
+        if err != nil {
+            return <funcName>
+        }
+        defer func() {
+            if err := cldapi.CfCloseHandle(); err != nil {
+                logEntry.WithError(err).Error("failed to close file")
+            }
+        }()
+        <finish>
+      ]],
+      {
+        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        file = i(2, 'file'),
+        finish = i(0),
+      }
+    )
+  ),
+})
