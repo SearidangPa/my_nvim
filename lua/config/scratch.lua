@@ -64,13 +64,16 @@ For the diff input above, please help me create a PR description as concise, ter
 For each sections, I want at most 3 bullet points. Do not include code snippets or dependencies packages or references 
 to specific filenames. I want real, specific and meaningful details about the changes. Use dead simple words.
 Below is the pr template that I want you to fill out. Everything inside the angle brackets are my instructions to you. 
+Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## What's the purpose of this change?
 ## Constraints and Mitigation
 \<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this: 
 <Constraints>
 ╰─ \<Mitigation strategy\> \>
 ## Flow Diagram
+```
 \<Mermaid diagram of how the program flow with relation to the changes.\>
+```
 ## Brief description of the changes
 ## Test Section
 \<For each new test added. I want you to consider the test name, the test description, the setup and the expected outcome. 
