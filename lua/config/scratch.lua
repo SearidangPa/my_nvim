@@ -80,6 +80,11 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 \>
 ]]
 
+local answer_format_prompt = [[
+Give me raw markdown inside a triple backticks escape so that i can copy all raw texts with formatting. 
+You should double check to ensure that everything inside that has tripple backticks escape has proper backslash escape.
+]]
+
 -- Main PR description generator function
 M.pr_desc_prompt = function(branch_name)
   branch_name = branch_name or 'main'
@@ -120,7 +125,7 @@ M.pr_desc_prompt = function(branch_name)
           diff_input,
           template,
           title_prompt,
-          "Give me raw markdown so that i can copy all raw texts with formatting"
+          answer_format_prompt
         )
         -- Update the buffer with the prompt
         vim.schedule(function()
