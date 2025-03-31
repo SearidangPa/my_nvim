@@ -127,5 +127,5 @@ vim.api.nvim_create_user_command('ResetFuncRefDecl', function()
   M.qflist = {}
   M.processed_funcs = {}
   vim.fn.setqflist {}
-  make_notify 'Reset func ref decl'
+  make_notify 'Reset func ref decl quickfix list'
 end, { desc = 'Reset func ref decl' })
