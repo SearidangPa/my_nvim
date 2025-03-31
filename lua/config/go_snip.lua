@@ -196,7 +196,10 @@ ls.add_snippets('go', {
 package cli
 
 import (
-    log "github.com/sirupsen/logrus"
+	"cloud-drive/logging"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 func init() {
@@ -207,12 +210,12 @@ func init() {
 		Short: "<short_desc>",
 	}
 	rootCmd.AddCommand(<cmd>Cmd)
-	logging.IniLog()
 
 	<cmd>Cmd.Flags().StringVarP(&path, pathKey, "p", "", "<flag_desc>")
 
 	markFlagsRequired(<cmd>Cmd, pathKey)
 	<cmd>Cmd.Run = func(_ *cobra.Command, _ []string) {
+		logging.InitLog(log.InfoLevel)
 		<cmd>CLI(path)
 	}
 }
@@ -376,6 +379,32 @@ ls.add_snippets('go', {
       {
         funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
         file = i(2, 'file'),
+        finish = i(0),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('go', {
+  s(
+    'ho',
+    fmta(
+      [[
+        handle, err := cldapi.CfOpenFileWithOplock(<file>, <flag>) 
+        if err != nil {
+            return <funcName>
+        }
+        defer func() {
+            if err := cldapi.CfCloseHandle(handle); err != nil {
+                logEntry.WithError(err).Error("failed to close file")
+            }
+        }()
+        <finish>
+      ]],
+      {
+        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        file = i(2, 'file'),
+        flag = i(3, 'flag'),
         finish = i(0),
       }
     )
