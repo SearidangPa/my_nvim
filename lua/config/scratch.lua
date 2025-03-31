@@ -78,7 +78,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## Brief description of the changes
 
 ## Test Section
-\<For each new test added. I want three bullet points: the test description, the setup and the expected outcome\>
+\<For each new test added. I want a bullet point for the test name inside a backtick with color for pretty formatting. Then I want three subbullet points: the test description, the setup and the expected outcome\>
 ]]
 
 local answer_format_prompt = [[
