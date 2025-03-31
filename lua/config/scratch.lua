@@ -72,7 +72,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 -> \<Mitigation strategy\> \>
 ## Brief description of the changes
 ## Test Section
-\<For each new test added. i want this format: the test name as a sub header, and then I want three bullet points: the test description, the setup and the expected outcome. Also supplement the explaination with a beautiful ascii flow diagram. 
+\<For each new test added. i want this format: the test name as a sub header, and then I want three bullet points: the test description, the setup and the expected outcome. Also supplement the explaination with an ascii flow diagram. 
 \>
 ## Flow Diagram
 \<Mermaid diagram of how the program flow with relation to the changes.\>
