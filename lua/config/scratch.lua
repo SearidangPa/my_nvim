@@ -76,9 +76,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 ```
 ## Brief description of the changes
 ## Test Section
-\<For each new test added. I want you to consider the test name, the test description, the setup and the expected outcome. 
-Explain in ascii flow diagram for the higher level flow of each test. 
-I want color highlight around the test name to be displayed in the github pr description. 
+\<For each new test added. i want this format: the test name as a sub header, and then I want three bullet points: the test description, the setup and the expected outcome. Also supplement the explaination with a beautiful ascii flow diagram. 
 \>
 ]]
 
