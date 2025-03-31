@@ -392,7 +392,7 @@ ls.add_snippets('go', {
             return <funcName>
         }
         defer func() {
-            if err := cldapi.CfCloseHandle(); err != nil {
+            if err := cldapi.CfCloseHandle(handle); err != nil {
                 logEntry.WithError(err).Error("failed to close file")
             }
         }()
