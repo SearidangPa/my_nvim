@@ -115,10 +115,11 @@ M.pr_desc_prompt = function(branch_name)
         local title_prompt = string.format('Take into consideration useful information from the PR Title: %s', pr_title)
         -- stylua: ignore
         local full_prompt = string.format(
-          '%s\n\n%s\n\n%s',
+          '%s\n\n%s\n\n%s\n\n%s',
           diff_input,
           template,
-          title_prompt
+          title_prompt,
+          "Give me raw markdown so that i can copy all raw texts with formatting"
         )
         -- Update the buffer with the prompt
         vim.schedule(function()
