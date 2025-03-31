@@ -387,7 +387,7 @@ ls.add_snippets('go', {
     'ho',
     fmta(
       [[
-        handle, err := cldapi.CfOpenFileWithOplock(<file>) // caution: open with read access
+        handle, err := cldapi.CfOpenFileWithOplock(<file>, <flag>) 
         if err != nil {
             return <funcName>
         }
@@ -401,6 +401,7 @@ ls.add_snippets('go', {
       {
         funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
         file = i(2, 'file'),
+        flag = i(3, 'flag'),
         finish = i(0),
       }
     )
