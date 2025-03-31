@@ -1,13 +1,31 @@
 local M = {}
+local util_find_func = require 'config.util_find_func'
 local mini_notify = require 'mini.notify'
 local make_notify = mini_notify.make_notify {}
+
+---@type QFList
 M.qflist = {}
+
 M.processed_funcs = {} -- Track function declarations we've already added
 
-local util_find_func = require 'config.util_find_func'
+---@type QFList
+M.new_func_decls = {} -- Track recent function declarations
+M.last_func_decls = {} -- Track last function declarations
+
+---@class QFList
+---@field filename string
+---@field lnum number
+---@field col number
+---@field text string
 
 function M.add_to_quickfix(qflist, filename, location, text)
   table.insert(qflist, {
+    filename = filename,
+    lnum = location.line,
+    col = location.col,
+    text = text,
+  })
+  table.insert(M.new_func_decls, {
     filename = filename,
     lnum = location.line,
     col = location.col,
@@ -110,15 +128,20 @@ local function load_func_ref_decls()
   M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
-vim.keymap.set('n', '<leader>ld', load_func_ref_decls, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
+vim.keymap.set('n', '<leader>ld', function()
+  load_func_ref_decls()
+  M.last_func_decls = M.new_func_decls
+end, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
 
 local function load_one_more_layer(bufnr, line, col)
-  for _, item in ipairs(M.qflist) do
+  M.new_func_decls = {} -- Reset recent function declarations
+  for _, item in ipairs(M.last_func_decls) do
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
     M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
   end
+  M.last_func_decls = M.new_func_decls
 end
 
 vim.keymap.set('n', '<leader>lr', load_one_more_layer, { desc = '[L]oad func ref [R]e', noremap = true, silent = true })
