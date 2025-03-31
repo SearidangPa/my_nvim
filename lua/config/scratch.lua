@@ -66,21 +66,24 @@ to specific filenames. I want real, specific and meaningful details about the ch
 Below is the pr template that I want you to fill out. Everything inside the angle brackets are my instructions to you. 
 Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## What's the purpose of this change?
+
 ## Constraints and Mitigation
 \<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this: 
 <Constraints>
 -> \<Mitigation strategy\> \>
+
+## Flows with relation to the changes
+\<Give me a brief description of the flow using right arrows. Each flow should contain at most 5 steps. \>
+
 ## Brief description of the changes
+
 ## Test Section
-\<For each new test added. i want this format: the test name as a sub header, and then I want three bullet points: the test description, the setup and the expected outcome. Also supplement the explaination with an ascii flow diagram. 
-\>
-## Flow Diagram
-\<Mermaid diagram of how the program flow with relation to the changes.\>
+\<For each new test added. I want three bullet points: the test description, the setup and the expected outcome\>
 ]]
 
 local answer_format_prompt = [[
 Give me raw markdown inside a triple backticks escape so that i can copy all raw texts with formatting. 
-You should double check to ensure that everything inside that has tripple backticks escape has proper backslash escape.
+You should also double check to ensure that everything inside your answer back to me that has tripple backticks escape has proper backslash escape.
 ]]
 
 -- Main PR description generator function
