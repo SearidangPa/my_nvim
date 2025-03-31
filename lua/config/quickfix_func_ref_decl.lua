@@ -122,3 +122,10 @@ local function load_one_more_layer(bufnr, line, col)
 end
 
 vim.keymap.set('n', '<leader>lr', load_one_more_layer, { desc = '[L]oad func ref [R]e', noremap = true, silent = true })
+
+vim.api.nvim_create_user_command('ResetFuncRefDecl', function()
+  M.qflist = {}
+  M.processed_funcs = {}
+  vim.fn.setqflist {}
+  mini_notify.notify 'Reset func ref decl'
+end, { desc = 'Reset func ref decl' })
