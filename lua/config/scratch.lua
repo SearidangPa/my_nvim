@@ -69,7 +69,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## Constraints and Mitigation
 \<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this: 
 <Constraints>
-╰─ \<Mitigation strategy\> \>
+-> \<Mitigation strategy\> \>
 ## Flow Diagram
 ```
 \<Mermaid diagram of how the program flow with relation to the changes.\>
