@@ -59,6 +59,26 @@ local function get_open_pr_title(branch_name, callback)
   }):start()
 end
 
+local template = [[
+For the diff input above, please help me create a PR description as concise, terse, shorter as possible. 
+For each sections, I want at most 3 bullet points. Do not include code snippets or dependencies packages or references 
+to specific filenames. I want real, specific and meaningful details about the changes. Use dead simple words.
+Below is the pr template that I want you to fill out. Everything inside the angle brackets are my instructions to you. 
+## What's the purpose of this change?
+## Constraints and Mitigation
+\<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this: 
+<Constraints>
+╰─ \<Mitigation strategy\> \>
+## Flow Diagram
+\<Mermaid diagram of how the program flow with relation to the changes.\>
+## Brief description of the changes
+## Test Section
+\<For each new test added. I want you to consider the test name, the test description, the setup and the expected outcome. 
+Explain in ascii flow diagram for the higher level flow of each test. 
+I want color highlight around the test name to be displayed in the github pr description. 
+I only want mermaid flow diagram and nothing else under each test name.\>
+]]
+
 -- Main PR description generator function
 M.pr_desc_prompt = function(branch_name)
   branch_name = branch_name or 'main'
@@ -92,30 +112,9 @@ M.pr_desc_prompt = function(branch_name)
           return
         end
 
-        local title_prompt = 'Take into consideration useful information from the PR Title: \n' .. pr_title .. '\n\n'
-        local template = [[
-        For the diff input above, please help me create a PR description as concise, terse, shorter as possible. 
-        For each sections, I want at most 3 bullet points. Do not include code snippets or dependencies packages or references 
-        to specific filenames. I want real, specific and meaningful details about the changes. Use dead simple words.
-        Below is the pr template that I want you to fill out. Everything inside the angle brackets are my instructions to you. 
-        ]] .. title_prompt .. [[
-        ## What's the purpose of this change?
-        ## Constraints and Mitigation
-        <Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this:
-        <Constraints>
-        ╰─ .. <Mitigation strategy>
-        ## Flow Diagram
-        <Mermaid diagram of how the program flow with relation to the changes.>
-        ## Brief description of the changes
-        ## Test Section
-          <For each new test added. I want you to consider the test name, the test description, the setup and the expected outcome. 
-          Explain in ascii flow diagram for the higher level flow of each test. 
-          I want color highlight around the test name to be displayed in the github pr description. 
-          I only want mermaid flow diagram and nothing else under each test name.>
-        ]]
-
+        local title_prompt = string.format('Take into consideration useful information from the PR Title: %s', pr_title)
         -- Construct the full prompt
-        local full_prompt = '```\n' .. diff_input .. '\n```\n\n' .. template
+        local full_prompt = template
         -- Update the buffer with the prompt
         vim.schedule(function()
           vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(full_prompt, '\n'))
