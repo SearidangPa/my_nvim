@@ -113,8 +113,14 @@ M.pr_desc_prompt = function(branch_name)
         end
 
         local title_prompt = string.format('Take into consideration useful information from the PR Title: %s', pr_title)
-        -- Construct the full prompt
-        local full_prompt = template
+        -- stylua: ignore
+        local full_prompt = string.format(
+          '%s\n\n%s\n\n%s\n\n%s',
+          diff_input,
+          title_prompt,
+          template,
+          'Give the PR description to me in a markdown format in such a way that i can copy and paste into the PR description field.'
+        )
         -- Update the buffer with the prompt
         vim.schedule(function()
           vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(full_prompt, '\n'))
