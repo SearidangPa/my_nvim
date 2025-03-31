@@ -390,7 +390,11 @@ ls.add_snippets('go', {
     'ho',
     fmta(
       [[
+<<<<<<< Updated upstream
         handle, err := cldapi.CfOpenFileWithOplock(<file>, <flag>) 
+=======
+        handle, err := cldapi.CfOpenFileWithOplock(<file>) // caution: open with read access
+>>>>>>> Stashed changes
         if err != nil {
             return <funcName>
         }
@@ -404,7 +408,10 @@ ls.add_snippets('go', {
       {
         funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
         file = i(2, 'file'),
+<<<<<<< Updated upstream
         flag = i(3, 'flag'),
+=======
+>>>>>>> Stashed changes
         finish = i(0),
       }
     )

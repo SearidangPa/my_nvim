@@ -86,6 +86,18 @@ local function getDirnameAndFilename()
   return modified_buffer() .. dirs .. '/' .. filename
 end
 
+local function is_go_test_file()
+  local current_file = vim.fn.expand '%:p'
+
+  -- Check if it's a Go file first
+  if not string.match(current_file, '%.go$') then
+    return false
+  end
+
+  -- Check if it follows the Go test file naming pattern (*_test.go)
+  return string.match(current_file, '_test%.go$') ~= nil
+end
+
 return {
   'nvim-lualine/lualine.nvim',
   dependencies = {
@@ -103,6 +115,9 @@ return {
     require 'config.util_find_func'
 
     local function nearest_func_name_if_exists()
+      if is_go_test_file() then
+        return ''
+      end
       local func_name = Nearest_func_name()
       if func_name then
         return '%#TabLineSelItalic#' .. func_name .. '%#TabLine#'
