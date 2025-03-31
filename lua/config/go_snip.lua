@@ -196,7 +196,10 @@ ls.add_snippets('go', {
 package cli
 
 import (
-    log "github.com/sirupsen/logrus"
+	"cloud-drive/logging"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 )
 
 func init() {
@@ -207,12 +210,12 @@ func init() {
 		Short: "<short_desc>",
 	}
 	rootCmd.AddCommand(<cmd>Cmd)
-	logging.IniLog()
 
 	<cmd>Cmd.Flags().StringVarP(&path, pathKey, "p", "", "<flag_desc>")
 
 	markFlagsRequired(<cmd>Cmd, pathKey)
 	<cmd>Cmd.Run = func(_ *cobra.Command, _ []string) {
+		logging.InitLog(log.InfoLevel)
 		<cmd>CLI(path)
 	}
 }
