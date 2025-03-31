@@ -118,7 +118,7 @@ M.pr_desc_prompt = function(branch_name)
           '%s\n\n%s\n\n%s',
           diff_input,
           template,
-          title_prompt,
+          title_prompt
         )
         -- Update the buffer with the prompt
         vim.schedule(function()
