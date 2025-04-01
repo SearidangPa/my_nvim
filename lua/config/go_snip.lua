@@ -397,7 +397,9 @@ ls.add_snippets('go', {
 local get_clipboard_content = function()
   local content = vim.fn.getreg '+' -- use the '+' register on Windows
   local trimmed = vim.trim(content)
-  return vim.split(trimmed, '\n')
+  local splits = vim.split(trimmed, '\n')
+  splits[1] = '\t' .. splits[1]
+  return splits
 end
 
 ls.add_snippets('go', {
