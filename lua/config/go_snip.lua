@@ -395,7 +395,9 @@ ls.add_snippets('go', {
 --- === snip func refactor ===
 
 local get_clipboard_content = function()
-  return vim.trim(vim.fn.getreg '+') -- use the '+' register on Windows
+  local content = vim.fn.getreg '+' -- use the '+' register on Windows
+  local trimmed = vim.trim(content)
+  return vim.split(trimmed, '\n')
 end
 
 ls.add_snippets('go', {
@@ -409,72 +411,7 @@ ls.add_snippets('go', {
       ]],
       {
         funcName = i(1),
-        clipboard_content = d(2, function(_, snip)
-          local content = get_clipboard_content()
-          if content == '' then
-            return sn(nil, t '')
-          end
-
-          -- Split the content by newlines and create a table of text nodes
-          local lines = vim.split(content, '\n', true)
-          local nodes = {}
-
-          for i, line in ipairs(lines) do
-            -- Add the text node for this line
-            table.insert(nodes, t(line))
-
-            -- Add a newline node if this isn't the last line
-            if i < #lines then
-              table.insert(nodes, t '\n            ') -- Keep indentation
-            end
-          end
-
-          return sn(nil, nodes)
-        end, {}),
-      }
-    )
-  ),
-})
-
-ls.add_snippets('go', {
-  s(
-    'fnm',
-    fmta(
-      [[
-        func <funcName>(<args>) <choiceNode> {
-            <clipboard_content>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        choiceNode = c(3, {
-          t 'error',
-          t ' ',
-          i(nil, 'returnType'),
-        }),
-        clipboard_content = d(4, function(_, snip)
-          local content = get_clipboard_content()
-          if content == '' then
-            return sn(nil, t '')
-          end
-
-          -- Split the content by newlines and create a table of text nodes
-          local lines = vim.split(content, '\n', true)
-          local nodes = {}
-
-          for i, line in ipairs(lines) do
-            -- Add the text node for this line
-            table.insert(nodes, t(line))
-
-            -- Add a newline node if this isn't the last line
-            if i < #lines then
-              table.insert(nodes, t '\n            ') -- Keep indentation
-            end
-          end
-
-          return sn(nil, nodes)
-        end, {}),
+        clipboard_content = f(function() return get_clipboard_content() end, {}),
       }
     )
   ),
