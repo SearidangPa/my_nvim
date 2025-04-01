@@ -5,6 +5,7 @@ local c = ls.choice_node
 local d = ls.dynamic_node
 local i = ls.insert_node
 local s = ls.snippet
+local sn = ls.snippet_node
 local f = ls.function_node
 local t = ls.text_node
 local extras = require 'luasnip.extras'
@@ -128,28 +129,6 @@ ls.add_snippets('go', {
 })
 
 --- === snip func ===
-ls.add_snippets('go', {
-  s(
-    'fn',
-    fmta(
-      [[
-        func <funcName>(<args>) <choiceNode> {
-              <finish>
-        }
-      ]],
-      {
-        funcName = i(1, 'funcName'),
-        args = i(2, 'args'),
-        choiceNode = c(3, {
-          t 'error',
-          t ' ',
-          i(nil, 'returnType'),
-        }),
-        finish = i(0),
-      }
-    )
-  ),
-})
 
 ls.add_snippets('go', {
   s(
@@ -360,6 +339,8 @@ ls.add_snippets('go', {
   ),
 })
 
+--- === snip open and close file ===
+
 ls.add_snippets('go', {
   s(
     'fo',
@@ -406,6 +387,31 @@ ls.add_snippets('go', {
         file = i(2, 'file'),
         flag = i(3, 'flag'),
         finish = i(0),
+      }
+    )
+  ),
+})
+
+--- === snip func refactor ===
+
+local get_clipboard_content = function()
+  local content = vim.fn.getreg '+' -- use the '+' register on Windows
+  local trimmed = vim.trim(content)
+  return vim.split(trimmed, '\n')
+end
+
+ls.add_snippets('go', {
+  s(
+    'fn',
+    fmta(
+      [[
+        func <funcName>
+            <clipboard_content>
+        }
+      ]],
+      {
+        funcName = i(1),
+        clipboard_content = f(function() return get_clipboard_content() end, {}),
       }
     )
   ),
