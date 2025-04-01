@@ -1,3 +1,5 @@
+local mini_notify = require 'mini.notify'
+local make_notify = mini_notify.make_notify {}
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
@@ -258,7 +260,7 @@ local function yank_fenced_code_block()
   start_row = start_row + 1
   end_row = end_row
   vim.cmd(start_row .. ',' .. end_row .. 'yank')
-  vim.notify('Yanked code block content from line ' .. start_row .. ' to ' .. end_row, vim.log.levels.INFO)
+  make_notify('Yanked code block content from line ' .. start_row .. ' to ' .. end_row, vim.log.levels.INFO)
 end
 
 vim.api.nvim_create_user_command('YankCodeBlock', yank_fenced_code_block, {
