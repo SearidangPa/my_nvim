@@ -7,8 +7,15 @@ return {
     },
     build = 'make tiktoken', -- Only on MacOS or Linux
     opts = {
-      -- See Configuration section for options
+      model = 'Claude 3.7 Sonnet (Preview) (copilot:claude-3.7-sonnet)',
+      prompts = {
+        MyCustomPrompt = {
+          prompt = 'Explain how it works.',
+          system_prompt = 'You are very good at explaining stuff',
+          mapping = '<leader>ccmc',
+          description = 'My custom prompt description',
+        },
+      },
     },
-    -- See Commands section for default commands if you want to lazy load on them
   },
 }
