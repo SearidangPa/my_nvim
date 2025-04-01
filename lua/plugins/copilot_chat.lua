@@ -10,10 +10,9 @@ return {
       model = 'Claude 3.7 Sonnet (Preview) (copilot:claude-3.7-sonnet)',
       prompts = {
         MyCustomPrompt = {
-          prompt = 'Explain how it works.',
-          system_prompt = 'You are very good at explaining stuff',
-          mapping = '<leader>ccmc',
-          description = 'My custom prompt description',
+          prompt = 'Generate a mermaid diagram for the following flow description',
+          system_prompt = [[You are a code-focused AI programming assistant that specializes in practical software engineering solutions.]],
+          description = 'Mermaid diagram',
         },
       },
     },
