@@ -206,6 +206,7 @@ local go_test_command = function(test_info)
           float_term_state.status = 'failed'
 
           make_notify(string.format('Test failed: %s', test_name))
+          vim.notify(string.format('Test failed: %s', test_name), vim.log.levels.ERROR, { title = 'Test Failure' })
           notification_sent = true
           return true
         elseif string.match(line, '--- PASS') then
