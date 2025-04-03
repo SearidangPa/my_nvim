@@ -320,19 +320,19 @@ ls.add_snippets('go', {
           logEntry = logEntry.WithFields(log.Fields{
             "<field1>": <field1_val>, 
             "<field2>": <field2_val>,
-            })
+            }).Info("<finish>")
         ]],
         {
           field1 = i(1),
           field1_val = rep(1),
           field2 = i(2),
           field2_val = rep(2),
+          finish = i(0),
         }
       ),
       fmta(
         [[
-          logEntry = logEntry.WithField("<field>", <field_val>)
-          <finish>
+          logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
         ]],
         {
           field = i(1),
@@ -344,6 +344,39 @@ ls.add_snippets('go', {
   ),
 })
 
+
+ls.add_snippets('go', {
+  s(
+    'tl',
+    c(1, {
+      fmta(
+        [[
+          tr.logEntry.WithFields(log.Fields{
+            "<field1>": <field1_val>, 
+            "<field2>": <field2_val>,
+            }).Info("<finish>")
+        ]],
+        {
+          field1 = i(1),
+          field1_val = rep(1),
+          field2 = i(2),
+          field2_val = rep(2),
+          finish = i(0),
+        }
+      ),
+      fmta(
+        [[
+          logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
+        ]],
+        {
+          field = i(1),
+          field_val = rep(1),
+          finish = i(0),
+        }
+      ),
+    })
+  ),
+})
 --- === snip open and close file ===
 
 ls.add_snippets('go', {
