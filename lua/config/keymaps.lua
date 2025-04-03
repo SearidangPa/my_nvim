@@ -175,16 +175,6 @@ map('n', '<leader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
 
---- === logging ===
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'go',
-  callback = function()
-    vim.keymap.set('n', '<leader>ll', 'olog.Printf("=====> %v\\n", ', {
-      desc = 'Insert logging line',
-    })
-  end,
-})
-
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
   vim.cmd [[normal! d]]
