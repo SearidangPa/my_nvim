@@ -323,10 +323,10 @@ ls.add_snippets('go', {
             }).Info("<finish>")
         ]],
         {
-          field1 = i(1),
-          field1_val = rep(1),
-          field2 = i(2),
-          field2_val = rep(2),
+          field1 = rep(1),
+          field1_val = i(1),
+          field2 = rep(2),
+          field2_val = i(2),
           finish = i(0),
         }
       ),
@@ -335,8 +335,8 @@ ls.add_snippets('go', {
           logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
         ]],
         {
-          field = i(1),
-          field_val = rep(1),
+          field = rep(1),
+          field_val = i(1),
           finish = i(0),
         }
       ),
@@ -357,10 +357,10 @@ ls.add_snippets('go', {
             }).Info("<finish>")
         ]],
         {
-          field1 = i(1),
-          field1_val = rep(1),
-          field2 = i(2),
-          field2_val = rep(2),
+          field1 = rep(1),
+          field1_val = i(1),
+          field2 = rep(2),
+          field2_val = i(2),
           finish = i(0),
         }
       ),
@@ -369,8 +369,8 @@ ls.add_snippets('go', {
           logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
         ]],
         {
-          field = i(1),
-          field_val = rep(1),
+          field = rep(1),
+          field_val = i(1),
           finish = i(0),
         }
       ),
