@@ -320,7 +320,7 @@ ls.add_snippets('go', {
           logEntry = logEntry.WithFields(log.Fields{
             "<field1>": <field1_val>, 
             "<field2>": <field2_val>,
-            }).Info("<finish>")
+            }).Info(<finish>
         ]],
         {
           field1 = rep(1),
@@ -332,7 +332,7 @@ ls.add_snippets('go', {
       ),
       fmta(
         [[
-          logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
+          logEntry = logEntry.WithField("<field>", <field_val>).Info(<finish>
         ]],
         {
           field = rep(1),
@@ -354,7 +354,7 @@ ls.add_snippets('go', {
           tr.logEntry.WithFields(log.Fields{
             "<field1>": <field1_val>, 
             "<field2>": <field2_val>,
-            }).Info("<finish>")
+            }).Info(<finish>
         ]],
         {
           field1 = rep(1),
@@ -366,7 +366,7 @@ ls.add_snippets('go', {
       ),
       fmta(
         [[
-          logEntry = logEntry.WithField("<field>", <field_val>).Info("<finish>")
+          logEntry = logEntry.WithField("<field>", <field_val>).Info(<finish>
         ]],
         {
           field = rep(1),
