@@ -314,7 +314,7 @@ local function drive_test_staging()
 end
 
 local function windows_test_buf()
-  local test_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
+  local test_format = 'gitBash -c "go test integration_tests/*.go -v -run %s"\r'
   test_buf(test_format)
 end
 
