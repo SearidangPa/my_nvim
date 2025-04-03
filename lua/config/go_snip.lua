@@ -318,8 +318,8 @@ ls.add_snippets('go', {
       fmta(
         [[
           logEntry = logEntry.WithFields(log.Fields{
-            <field1>: <field1_val>, 
-            <field2>: <field2_val>,
+            "<field1>": <field1_val>, 
+            "<field2>": <field2_val>,
             })
         ]],
         {
