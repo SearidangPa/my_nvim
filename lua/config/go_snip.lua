@@ -310,29 +310,34 @@ ls.add_snippets('go', {
 })
 
 --- === snip log ===
-
+---
 ls.add_snippets('go', {
   s(
     'lg',
     c(1, {
       fmta(
         [[
-          logEntry := logging.UserField(<userField>).WithFields(log.Fields{
-            "<fields>": <values>, <finish>}
+          logEntry = logEntry.WithFields(log.Fields{
+            <field1>: <field1_val>, 
+            <field2>: <field2_val>,
+            })
         ]],
         {
-          userField = i(1),
-          fields = f(GetLastFuncName, { 2 }),
-          values = i(2),
-          finish = i(0),
+          field1 = i(1),
+          field1_val = rep(1),
+          field2 = i(2),
+          field2_val = rep(2),
         }
       ),
       fmta(
         [[
-          logEntry := logging.UserField(<userField>)
+          logEntry = logEntry.WithField("<field>", <field_val>)
+          <finish>
         ]],
         {
-          userField = i(1),
+          field = i(1),
+          field_val = rep(1),
+          finish = i(0),
         }
       ),
     })
