@@ -366,7 +366,8 @@ ls.add_snippets('go', {
       ),
       fmta(
         [[
-          logEntry = logEntry.WithField("<field>", <field_val>).Info(<finish>
+          fmt.Printf("=== -------------- <field>: %v\n", <field_val>)
+          <finish>
         ]],
         {
           field = rep(1),
