@@ -310,35 +310,74 @@ ls.add_snippets('go', {
 })
 
 --- === snip log ===
-
+---
 ls.add_snippets('go', {
   s(
     'lg',
     c(1, {
       fmta(
         [[
-          logEntry := logging.UserField(<userField>).WithFields(log.Fields{
-            "<fields>": <values>, <finish>}
+          logEntry = logEntry.WithFields(log.Fields{
+            "<field1>": <field1_val>, 
+            "<field2>": <field2_val>,
+            }).Info(<finish>
         ]],
         {
-          userField = i(1),
-          fields = f(GetLastFuncName, { 2 }),
-          values = i(2),
+          field1 = rep(1),
+          field1_val = i(1),
+          field2 = rep(2),
+          field2_val = i(2),
           finish = i(0),
         }
       ),
       fmta(
         [[
-          logEntry := logging.UserField(<userField>)
+          logEntry = logEntry.WithField("<field>", <field_val>).Info(<finish>
         ]],
         {
-          userField = i(1),
+          field = rep(1),
+          field_val = i(1),
+          finish = i(0),
         }
       ),
     })
   ),
 })
 
+
+ls.add_snippets('go', {
+  s(
+    'tl',
+    c(1, {
+      fmta(
+        [[
+          tr.logEntry.WithFields(log.Fields{
+            "<field1>": <field1_val>, 
+            "<field2>": <field2_val>,
+            }).Info(<finish>
+        ]],
+        {
+          field1 = rep(1),
+          field1_val = i(1),
+          field2 = rep(2),
+          field2_val = i(2),
+          finish = i(0),
+        }
+      ),
+      fmta(
+        [[
+          fmt.Printf("=== -------------- <field>: %v\n", <field_val>)
+          <finish>
+        ]],
+        {
+          field = rep(1),
+          field_val = i(1),
+          finish = i(0),
+        }
+      ),
+    })
+  ),
+})
 --- === snip open and close file ===
 
 ls.add_snippets('go', {
