@@ -83,7 +83,6 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 
 local answer_format_prompt = [[
 Give me raw markdown inside a triple backticks escape so that i can copy all raw texts with formatting. 
-You should also double check to ensure that everything inside your answer back to me that has tripple backticks escape has proper backslash escape.
 ]]
 
 -- Main PR description generator function
