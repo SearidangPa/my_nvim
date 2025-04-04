@@ -95,6 +95,7 @@ return {
   config = function()
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
+<<<<<<< Updated upstream
     require('lspconfig').lua_ls.setup {
       capabilities = capabilities,
       settings = {
@@ -104,6 +105,21 @@ return {
           workspace = {
             library = vim.api.nvim_get_runtime_file('', true),
             checkThirdParty = false,
+=======
+    require('lspconfig').marksman.setup { capabilities = capabilities }
+
+    attach_auto_import()
+    lsp_attach_keybind()
+
+    local servers = {
+      gopls = {},
+      lua_ls = {
+        settings = {
+          Lua = {
+            completion = {
+              callSnippet = 'Replace',
+            },
+>>>>>>> Stashed changes
           },
           telemetry = { enable = false },
         },
