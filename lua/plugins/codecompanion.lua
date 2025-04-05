@@ -31,27 +31,29 @@ opts.adapters = {
 opts.prompt_library = {
   ['Document Selected Function'] = {
     strategy = 'inline',
-    description = 'Add documentation for a selected function including LSP references',
+    description = 'Add documentation for the selected function',
     opts = {
-      mapping = '<LocalLeader>dd', -- Key mapping to trigger the prompt
       modes = { 'v' }, -- Only available in visual mode
       short_name = 'docfn',
       auto_submit = true,
       stop_context_insertion = true,
+      placement = 'replace',
     },
     prompts = {
       {
         role = 'system',
-        content = function(context)
-          return 'You are an expert documentation writer. '
-            .. 'Using the provided code, add detailed documentation for the code. I want at most 4 bullet points, and i want you to focus on the higher level flows'
-        end,
+        content = function(context) return 'You are an expert documentation writer.' end,
       },
       {
         role = 'user',
         content = function(context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
-          return '#lsp Add document the following code :\n\n```' .. context.filetype .. '\n' .. code .. '\n```'
+          return 'I want at most 4 bullet points, and i want you to focus on the higher level flows. I want it inside the /**/ block.'
+            .. 'You should not return any more star. The first line should not be a bullet point. Add document the following code :\n\n```'
+            .. context.filetype
+            .. '\n'
+            .. code
+            .. '\n```'
         end,
         opts = {
           contains_code = true,
@@ -82,6 +84,21 @@ return {
         inline = { adapter = 'copilot' },
       },
     }
-    vim.keymap.set('v', '<leader>ad', function() require('codecompanion').prompt 'docfn' end, { noremap = true, silent = true })
+
+    local function visual_function()
+      local func_node = Nearest_func_node()
+      local start_row, start_col, end_row, end_col = func_node:range()
+      vim.cmd 'normal! v'
+      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+      vim.cmd 'normal! o'
+      vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
+    end
+
+    vim.keymap.set({ 'v', 'n' }, '<leader>ad', function()
+      visual_function()
+      require('codecompanion').prompt 'docfn'
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+      vim.cmd [[wa]]
+    end, { noremap = true, silent = true })
   end,
 }

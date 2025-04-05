@@ -93,6 +93,9 @@ return {
   },
 
   config = function()
+    attach_auto_import()
+    lsp_attach_keybind()
+
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
     require('lspconfig').marksman.setup { capabilities = capabilities }
@@ -110,7 +113,5 @@ return {
         },
       },
     }
-    attach_auto_import()
-    lsp_attach_keybind()
   end,
 }
