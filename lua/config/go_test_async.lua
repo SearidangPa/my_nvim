@@ -35,8 +35,9 @@ end
 local add_golang_test = function(test_state, entry)
   test_state.tests[make_key(entry)] = {
     name = entry.Test,
-    output = {},
+    -- output = {},
     fail_at_line = 0,
+    success = false,
   }
 end
 
@@ -44,7 +45,9 @@ local add_golang_output = function(test_state, entry)
   assert(test_state.tests, vim.inspect(test_state))
   local trimmed_output = vim.trim(entry.Output)
   local file, line = string.match(trimmed_output, '([%w_]+%.go):(%d+):')
-  table.insert(test_state.tests[make_key(entry)].output, vim.trim(entry.Output))
+
+  -- table.insert(test_state.tests[make_key(entry)].output, vim.trim(entry.Output))
+  --
   if file and line then
     test_state.tests[make_key(entry)].fail_at_line = tonumber(line)
   end
@@ -61,7 +64,6 @@ end
 M.run_test_all = function(command)
   local test_state = {
     tests = {},
-    all_output = {},
   }
 
   local extmark_ids = {}
@@ -80,7 +82,6 @@ M.run_test_all = function(command)
         end
         local decoded = vim.json.decode(line)
         assert(decoded, 'Failed to decode: ' .. line)
-        table.insert(test_state.all_output, decoded)
 
         if ignored_actions[decoded.Action] then
           goto continue
@@ -117,7 +118,7 @@ M.run_test_all = function(command)
       end
     end,
 
-    on_exit = function() make_notify 'Job exited' end,
+    on_exit = function() print(vim.inspect(test_state)) end,
   })
 end
 
