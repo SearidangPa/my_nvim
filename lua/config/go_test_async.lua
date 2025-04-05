@@ -121,11 +121,9 @@ M.run_test_all = function(command)
   })
 end
 
-local attach_all_go_test_in_buf = function()
+vim.api.nvim_create_user_command('GoTestAll', function()
   local command = { 'go', 'test', './...', '-json', '-v' }
   M.run_test_all(command)
-end
-
-vim.api.nvim_create_user_command('GoTestT', attach_all_go_test_in_buf, {})
+end, {})
 
 return M
