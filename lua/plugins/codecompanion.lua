@@ -48,8 +48,9 @@ opts.prompt_library = {
         role = 'user',
         content = function(context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
-          return 'I want at most 4 bullet points, and i want you to focus on the higher level flows. I want it inside the /**/ block.'
-            .. 'You should not return any more star. The first line should not be a bullet point. Add document the following code :\n\n```'
+          return 'I want at most 4 bullet points, and i want you to focus on the higher level flows and its purpose. I want it inside the /*  block.'
+            .. 'I do not want any empty new line after the first line.'
+            .. 'You should not return any more star. The first line should not be a bullet point. Add document above the following code :\n\n```'
             .. context.filetype
             .. '\n'
             .. code
