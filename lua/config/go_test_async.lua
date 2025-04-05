@@ -1,12 +1,10 @@
-require 'config.util_find_func'
 local M = {}
+require 'config.util_find_func'
+local make_notify = require('mini.notify').make_notify {}
 
-local mini_notify = require 'mini.notify'
-local make_notify = mini_notify.make_notify {}
-
-function Clean_up_prev_job(job_id)
+M.clean_up_prev_job = function(job_id)
   if job_id ~= -1 then
-    make_notify(string.format('Stopping job: %d', job_id))
+    make_notify(string.format('stopping job: %d', job_id))
     vim.fn.jobstop(job_id)
     vim.diagnostic.reset()
   end
@@ -114,7 +112,7 @@ local attach_to_buffer = function(bufnr, command)
     group = attach_instace.group,
     pattern = '*.go',
     callback = function()
-      Clean_up_prev_job(attach_instace.job_id)
+      M.clean_up_prev_job(attach_instace.job_id)
 
       attach_instace.job_id = vim.fn.jobstart(command, {
         stdout_buffered = true,
