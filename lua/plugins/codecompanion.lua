@@ -22,8 +22,8 @@ return {
       },
       -- 1. Specify which adapter to use for each strategy (chat vs inline):
       strategies = {
-        chat = { adapter = 'copilot', opts = {} },
-        inline = { adapter = 'ollama', opts = {} },
+        chat = { adapter = 'copilot' },
+        inline = { adapter = 'ollama' },
       },
       -- 2. Configure the Ollama adapter to use the Qwen-2.5 Coder 14B model by default:
       adapters = {
