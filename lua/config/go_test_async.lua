@@ -58,36 +58,6 @@ local mark_outcome = function(test_state, entry)
   test.success = entry.Action == 'pass'
 end
 
-local on_exit_fn = function(test_state, bufnr)
-  attach_instace.job_id = -1
-  local failed = {}
-  for _, test in pairs(test_state.tests) do
-    if not test.line or test.success then
-      goto continue
-    end
-
-    table.insert(failed, {
-      bufnr = bufnr,
-      lnum = test.line,
-      col = 0,
-      severity = vim.diagnostic.severity.ERROR,
-      source = 'go-test',
-      message = 'Test Failed',
-      user_data = {},
-    })
-
-    ::continue::
-  end
-
-  if #failed == 0 then
-    make_notify 'Test passed'
-  else
-    make_notify 'Test failed'
-  end
-
-  vim.diagnostic.set(attach_instace.ns, bufnr, failed, {})
-end
-
 M.run_test_all = function(command)
   local test_state = {
     tests = {},
@@ -135,21 +105,19 @@ M.run_test_all = function(command)
 
         if decoded.Action == 'pass' then
           mark_outcome(test_state, decoded)
-          make_notify(string.format('Test %s passed', test.name))
-          vim.notify(string.format('Test %s passed\n%s', test.name, table.concat(test.output, '\n')), vim.log.levels.INFO, { title = 'Go Test' })
+          make_notify(string.format('%s passed', test.name))
         end
 
         if decoded.Action == 'fail' then
           mark_outcome(test_state, decoded)
-          make_notify(string.format('Test %s failed', test.name))
-          vim.notify(string.format('Test %s failed\n%s', test.name, table.concat(test.output, '\n')), vim.log.levels.ERROR, { title = 'Go Test' })
+          make_notify(string.format('%s failed', test.name))
         end
 
         ::continue::
       end
     end,
 
-    on_exit = function() on_exit_fn(test_state, bufnr) end,
+    on_exit = function() make_notify 'Job exited' end,
   })
 end
 
