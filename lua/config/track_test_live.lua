@@ -211,24 +211,24 @@ local function update_tracker_buffer()
     vim.api.nvim_buf_clear_namespace(tracker_state.tracker_buf, ns, 0, -1)
 
     -- Highlight title
-    vim.hl.range(tracker_state.tracker_buf, ns, 'Title', 0, 0, -1)
+    vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, 0, 0, { hl_group = 'Title', hl_eol = true })
 
     -- Highlight package names
     for i, line in ipairs(lines) do
       if line:match '^📦' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Directory', hl_eol = true })
       elseif line:match '^  ✅' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'DiagnosticOk', hl_eol = true })
       elseif line:match '^  ❌' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'DiagnosticError', hl_eol = true })
       elseif line:match '^  🔄' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'SpecialChar', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'SpecialChar', hl_eol = true })
       elseif line:match '^  ⏸️' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'Type', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Type', hl_eol = true })
       elseif line:match '^  ▶️' or line:match '^  🏁' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'Function', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Function', hl_eol = true })
       elseif line:match '^    ↳' then
-        vim.hl.range(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
+        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Comment', hl_eol = true })
       end
     end
   end
