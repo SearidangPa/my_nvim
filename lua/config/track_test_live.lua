@@ -10,6 +10,7 @@ local make_notify = require('mini.notify').make_notify {}
 ---@field tests table<string, gotest.TestInfo>
 ---@field job_id number
 ---@field ns number
+---@field last_update number
 local tracker_state = {
   tracker_win = -1,
   tracker_buf = -1,
@@ -18,6 +19,7 @@ local tracker_state = {
   tests = {},
   job_id = -1,
   ns = -1,
+  last_update = 0,
 }
 
 ---@class gotest.TestInfo
@@ -26,7 +28,7 @@ local tracker_state = {
 ---@field full_name string
 ---@field fail_at_line number
 ---@field output string[]
----@field status string "running"|"pass"|"fail"
+---@field status string "running"|"pass"|"fail"|"paused"|"cont"|"start"
 ---@field file string
 ---@field duration number
 
@@ -38,10 +40,8 @@ M.clean_up_prev_job = function(job_id)
   end
 end
 
+-- Only ignore skip action
 local ignored_actions = {
-  pause = true,
-  cont = true,
-  start = true,
   skip = true,
 }
 
@@ -99,6 +99,17 @@ local mark_outcome = function(test_state, entry)
   if entry.Action == 'pass' then
     test.duration = entry.Elapsed
   end
+
+  -- For "paused", "cont", or "start" actions, keep the status updated
+  if entry.Action == 'pause' or entry.Action == 'cont' or entry.Action == 'start' then
+    test.status = entry.Action
+  end
+end
+
+-- Calculate running time for in-progress tests
+local function get_running_time(start_time)
+  local elapsed = os.time() - start_time
+  return elapsed
 end
 
 ---@return string[]
@@ -131,18 +142,21 @@ local function parse_test_state_to_lines()
     table.insert(lines, '📦 ' .. pkg)
 
     local tests = package_tests[pkg]
-    -- Sort tests by status priority (running → fail → pass) and then by name
+    -- Sort tests by status priority and then by name
     table.sort(tests, function(a, b)
       -- If status is the same, sort by name
       if a.status == b.status then
         return a.name < b.name
       end
 
-      -- Define priority: running (1), fail (2), pass (3)
+      -- Define priority: running (1), paused (2), cont (3), start (4), fail (5), pass (6)
       local priority = {
         running = 1,
-        fail = 2,
-        pass = 3,
+        paused = 2,
+        cont = 3,
+        start = 4,
+        fail = 5,
+        pass = 6,
       }
 
       return priority[a.status] < priority[b.status]
@@ -154,11 +168,21 @@ local function parse_test_state_to_lines()
         status_icon = '✅'
       elseif test.status == 'fail' then
         status_icon = '❌'
+      elseif test.status == 'paused' then
+        status_icon = '⏸️'
+      elseif test.status == 'cont' then
+        status_icon = '▶️'
+      elseif test.status == 'start' then
+        status_icon = '🏁'
       end
 
       local duration_str = ''
       if test.duration > 0 then
         duration_str = string.format(' (%.2fs)', test.duration)
+      elseif test.status == 'running' or test.status == 'paused' or test.status == 'cont' then
+        -- Show running time for tests in progress
+        local running_time = get_running_time(test.start_time)
+        duration_str = string.format(' (running: %ds)', running_time)
       end
 
       table.insert(lines, string.format('  %s %s%s', status_icon, test.name, duration_str))
@@ -187,18 +211,24 @@ local function update_tracker_buffer()
     vim.api.nvim_buf_clear_namespace(tracker_state.tracker_buf, ns, 0, -1)
 
     -- Highlight title
-    vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Title', 0, 0, -1)
+    vim.hl.range(tracker_state.tracker_buf, ns, 'Title', 0, 0, -1)
 
     -- Highlight package names
     for i, line in ipairs(lines) do
       if line:match '^📦' then
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
+        vim.hl.range(tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
       elseif line:match '^  ✅' then
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
+        vim.hl.range(tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
       elseif line:match '^  ❌' then
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
+        vim.hl.range(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
+      elseif line:match '^  🔄' then
+        vim.hl.range(tracker_state.tracker_buf, ns, 'SpecialChar', i - 1, 0, -1)
+      elseif line:match '^  ⏸️' then
+        vim.hl.range(tracker_state.tracker_buf, ns, 'Type', i - 1, 0, -1)
+      elseif line:match '^  ▶️' or line:match '^  🏁' then
+        vim.hl.range(tracker_state.tracker_buf, ns, 'Function', i - 1, 0, -1)
       elseif line:match '^    ↳' then
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
+        vim.hl.range(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
       end
     end
   end
@@ -316,6 +346,7 @@ M.run_test_all = function(command)
         if not success or not decoded then
           goto continue
         end
+        print(vim.inspect(decoded))
 
         if ignored_actions[decoded.Action] then
           goto continue
@@ -335,6 +366,27 @@ M.run_test_all = function(command)
           if decoded.Test or decoded.Package then
             add_golang_output(tracker_state, decoded)
           end
+          goto continue
+        end
+
+        -- Handle pause, cont, and start actions
+        if decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' then
+          mark_outcome(tracker_state, decoded)
+          vim.schedule(function()
+            if decoded.Test then
+              local action_icons = {
+                pause = '⏸️',
+                cont = '▶️',
+                start = '🏁',
+              }
+              local message = string.format('%s %s', action_icons[decoded.Action], decoded.Test)
+              make_notify(message)
+            end
+
+            vim.bo[tracker_state.tracker_buf].modifiable = true
+            update_tracker_buffer()
+            vim.bo[tracker_state.tracker_buf].modifiable = false
+          end)
           goto continue
         end
 
