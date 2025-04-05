@@ -19,7 +19,6 @@ local tracker_state = {
   tests = {},
   job_id = -1,
   ns = -1,
-  last_update = 0,
 }
 
 ---@class gotest.TestInfo
@@ -106,12 +105,6 @@ local mark_outcome = function(test_state, entry)
   end
 end
 
--- Calculate running time for in-progress tests
-local function get_running_time(start_time)
-  local elapsed = os.time() - start_time
-  return elapsed
-end
-
 ---@return string[]
 local function parse_test_state_to_lines()
   local lines = {}
@@ -159,6 +152,16 @@ local function parse_test_state_to_lines()
         pass = 6,
       }
 
+      if not priority[a.status] and priority[b.status] then
+        return true
+      end
+      if priority[a.status] and not priority[b.status] then
+        return false
+      end
+
+      if not priority[a.status] and not priority[b.status] then
+        return a.name < b.name
+      end
       return priority[a.status] < priority[b.status]
     end)
 
@@ -176,16 +179,8 @@ local function parse_test_state_to_lines()
         status_icon = '🏁'
       end
 
-      local duration_str = ''
-      if test.duration > 0 then
-        duration_str = string.format(' (%.2fs)', test.duration)
-      elseif test.status == 'running' or test.status == 'paused' or test.status == 'cont' then
-        -- Show running time for tests in progress
-        local running_time = get_running_time(test.start_time)
-        duration_str = string.format(' (running: %ds)', running_time)
-      end
-
-      table.insert(lines, string.format('  %s %s%s', status_icon, test.name, duration_str))
+      -- Add the test line with icon
+      table.insert(lines, string.format('  %s %s', status_icon, test.name))
 
       -- If test failed, show the first failure line
       if test.status == 'fail' and test.file ~= '' then
@@ -210,25 +205,20 @@ local function update_tracker_buffer()
     local ns = tracker_state.ns
     vim.api.nvim_buf_clear_namespace(tracker_state.tracker_buf, ns, 0, -1)
 
-    -- Highlight title
-    vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, 0, 0, { hl_group = 'Title', hl_eol = true })
-
     -- Highlight package names
     for i, line in ipairs(lines) do
       if line:match '^📦' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Directory', hl_eol = true })
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
       elseif line:match '^  ✅' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'DiagnosticOk', hl_eol = true })
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
       elseif line:match '^  ❌' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'DiagnosticError', hl_eol = true })
-      elseif line:match '^  🔄' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'SpecialChar', hl_eol = true })
-      elseif line:match '^  ⏸️' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Type', hl_eol = true })
-      elseif line:match '^  ▶️' or line:match '^  🏁' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Function', hl_eol = true })
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
       elseif line:match '^    ↳' then
-        vim.api.nvim_buf_set_extmark(tracker_state.tracker_buf, ns, i - 1, 0, { hl_group = 'Comment', hl_eol = true })
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
       end
     end
   end
@@ -331,7 +321,7 @@ M.run_test_all = function(command)
   M.clean_up_prev_job(tracker_state.job_id)
 
   tracker_state.job_id = vim.fn.jobstart(command, {
-    stdout_buffered = true,
+    stdout_buffered = false,
     on_stdout = function(_, data)
       if not data then
         return
@@ -346,7 +336,6 @@ M.run_test_all = function(command)
         if not success or not decoded then
           goto continue
         end
-        print(vim.inspect(decoded))
 
         if ignored_actions[decoded.Action] then
           goto continue
@@ -380,7 +369,6 @@ M.run_test_all = function(command)
                 start = '🏁',
               }
               local message = string.format('%s %s', action_icons[decoded.Action], decoded.Test)
-              make_notify(message)
             end
 
             vim.bo[tracker_state.tracker_buf].modifiable = true
@@ -396,7 +384,6 @@ M.run_test_all = function(command)
           vim.schedule(function()
             if decoded.Test then
               local message = string.format('%s %s', decoded.Action == 'pass' and '✅' or '❌', decoded.Test)
-              make_notify(message)
             end
 
             vim.bo[tracker_state.tracker_buf].modifiable = true
