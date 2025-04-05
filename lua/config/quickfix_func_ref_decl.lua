@@ -72,7 +72,13 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
 
   M.processed_funcs[func_key] = true
 
-  local text = func_name
+  -- Get the complete function signature from the line
+  local lines = vim.api.nvim_buf_get_lines(bufnr, func_range.start_row, func_range.start_row + 1, false)
+  local signature = lines[1]
+
+  -- Include both function name and full signature in text
+  local text = signature:gsub('^%s+', '') -- Remove leading whitespace
+
   local location = {
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
     col = func_range.start_col + 1,
@@ -128,23 +134,29 @@ local function load_func_ref_decls()
   M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
-vim.keymap.set('n', '<leader>ld', function()
-  load_func_ref_decls()
-  M.last_func_decls = M.new_func_decls
-end, { desc = '[L]oad func ref [D]ecl', noremap = true, silent = true })
-
-local function load_one_more_layer(bufnr, line, col)
-  M.new_func_decls = {} -- Reset recent function declarations
-  for _, item in ipairs(M.last_func_decls) do
-    local filename = item.filename
-    local bufnr = vim.fn.bufadd(filename)
-    vim.fn.bufload(bufnr)
-    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+-- Combined function to handle both initial loading and additional layers
+local function load_func_refs()
+  -- Check if quickfix list is empty
+  if vim.fn.getqflist({ size = 0 }).size == 0 then
+    -- If empty, run the initial load (equivalent to <leader>ld)
+    load_func_ref_decls()
+    M.last_func_decls = M.new_func_decls
+  else
+    -- If not empty, load the next layer (original <leader>lr functionality)
+    M.new_func_decls = {} -- Reset recent function declarations
+    for _, item in ipairs(M.last_func_decls) do
+      local filename = item.filename
+      local bufnr = vim.fn.bufadd(filename)
+      vim.fn.bufload(bufnr)
+      M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+    end
+    M.last_func_decls = M.new_func_decls
+    make_notify 'Additional function references loaded'
   end
-  M.last_func_decls = M.new_func_decls
 end
 
-vim.keymap.set('n', '<leader>lr', load_one_more_layer, { desc = '[L]oad func ref [R]e', noremap = true, silent = true })
+-- Single keymap that combines both functionalities
+vim.keymap.set('n', '<leader>lr', load_func_refs, { desc = '[L]oad function [R]eferences', noremap = true, silent = true })
 
 vim.api.nvim_create_user_command('ResetFuncRefDecl', function()
   M.qflist = {}
@@ -152,3 +164,5 @@ vim.api.nvim_create_user_command('ResetFuncRefDecl', function()
   vim.fn.setqflist {}
   make_notify 'Reset func ref decl quickfix list'
 end, { desc = 'Reset func ref decl' })
+
+return M
