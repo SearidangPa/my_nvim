@@ -103,7 +103,7 @@ end
 
 ---@return string[]
 local function parse_test_state_to_lines()
-  local lines = { 'Go Test Status', '' }
+  local lines = {}
   local packages = {}
   local package_tests = {}
 
@@ -358,7 +358,6 @@ M.run_test_all = function(command)
     end,
     on_exit = function()
       vim.schedule(function()
-        make_notify('Test run completed', 'info')
         vim.bo[tracker_state.tracker_buf].modifiable = true
         update_tracker_buffer()
         vim.bo[tracker_state.tracker_buf].modifiable = false
