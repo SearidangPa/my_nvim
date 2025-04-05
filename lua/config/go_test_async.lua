@@ -35,7 +35,6 @@ end
 local add_golang_test = function(test_state, entry)
   test_state.tests[make_key(entry)] = {
     name = entry.Test,
-    -- output = {},
     fail_at_line = 0,
     success = false,
   }
@@ -46,8 +45,6 @@ local add_golang_output = function(test_state, entry)
   local trimmed_output = vim.trim(entry.Output)
   local file, line = string.match(trimmed_output, '([%w_]+%.go):(%d+):')
 
-  -- table.insert(test_state.tests[make_key(entry)].output, vim.trim(entry.Output))
-  --
   if file and line then
     test_state.tests[make_key(entry)].fail_at_line = tonumber(line)
   end
