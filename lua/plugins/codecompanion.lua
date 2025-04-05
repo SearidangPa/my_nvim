@@ -15,9 +15,6 @@ return {
   config = function()
     require('codecompanion').setup {
       display = {
-        windows = {
-          layout = 'float',
-        },
         diff = {
           enable = true,
           provider = 'mini_diff', -- default|mini_diff
@@ -25,8 +22,8 @@ return {
       },
       -- 1. Specify which adapter to use for each strategy (chat vs inline):
       strategies = {
-        chat = { adapter = 'copilot' }, -- use Ollama for the chat interface
-        inline = { adapter = 'ollama' }, -- use GitHub Copilot for inline suggestions
+        chat = { adapter = 'copilot', opts = {} },
+        inline = { adapter = 'ollama', opts = {} },
       },
       -- 2. Configure the Ollama adapter to use the Qwen-2.5 Coder 14B model by default:
       adapters = {
