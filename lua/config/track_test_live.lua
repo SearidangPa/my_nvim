@@ -180,12 +180,10 @@ local function parse_test_state_to_lines()
         status_icon = '🏁'
       end
 
-      -- Add the test line with icon
-      table.insert(lines, string.format('  %s %s', status_icon, test.name))
-
-      -- If test failed, show the first failure line
       if test.status == 'fail' and test.file ~= '' then
-        table.insert(lines, string.format('    ↳ %s:%d', test.file, test.fail_at_line))
+        table.insert(lines, string.format('  %s %s -> %s:%d', status_icon, test.name, test.file, test.fail_at_line))
+      else
+        table.insert(lines, string.format('  %s %s', status_icon, test.name))
       end
     end
 
@@ -255,7 +253,7 @@ local function setup_tracker_buffer()
     vim.cmd 'vsplit'
     tracker_state.tracker_win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(tracker_state.tracker_win, tracker_state.tracker_buf)
-    vim.api.nvim_win_set_width(tracker_state.tracker_win, math.floor(vim.o.columns / 4))
+    vim.api.nvim_win_set_width(tracker_state.tracker_win, math.floor(vim.o.columns / 3))
     vim.wo[tracker_state.tracker_win].number = false
     vim.wo[tracker_state.tracker_win].relativenumber = false
     vim.wo[tracker_state.tracker_win].wrap = false
@@ -294,8 +292,8 @@ M.jump_to_test_location = function()
   local line_nr = cursor[1]
   local line = vim.api.nvim_buf_get_lines(tracker_state.tracker_buf, line_nr - 1, line_nr, false)[1]
 
-  -- Check if line contains a file location
-  local file, line_num = line:match '↳%s+([%w_%-]+%.go):(%d+)'
+  local file, line_num = line:match '->%s+([%w_%-]+%.go):(%d+)'
+
   if file and line_num then
     -- Switch to original window
     vim.api.nvim_set_current_win(tracker_state.original_win)
