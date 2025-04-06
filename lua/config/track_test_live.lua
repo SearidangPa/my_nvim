@@ -385,6 +385,47 @@ vim.api.nvim_create_user_command('GoTestTrackerToggle', function()
   end
 end, {})
 
---- === on demand: load fail and stuck test into quickfix ===
+--- === on demand: load all tests that have not passed into a single quickfix
 
+M.load_non_passing_tests_to_quickfix = function()
+  local qf_entries = {}
+
+  for _, test in pairs(tracker_state.tests) do
+    -- Skip tests that have passed
+    if test.status == 'pass' then
+      goto continue
+    end
+
+    -- Skip tests without file information
+    if test.file == '' or test.fail_at_line == 0 then
+      goto continue
+    end
+
+    -- Find the file in the project
+    local cmd = string.format("find . -name '%s' | head -n 1", test.file)
+    local filepath = vim.fn.system(cmd):gsub('\n', '')
+
+    if filepath ~= '' then
+      table.insert(qf_entries, {
+        filename = filepath,
+        lnum = test.fail_at_line,
+        text = string.format('%s: %s', test.package, test.name),
+      })
+    end
+
+    ::continue::
+  end
+
+  if #qf_entries == 0 then
+    make_notify 'No failing tests with location information found'
+    return
+  end
+
+  vim.fn.setqflist(qf_entries, 'r')
+  make_notify(string.format('Loaded %d failing tests to quickfix list', #qf_entries))
+  vim.cmd 'copen'
+end
+
+-- Create a command to load non-passing tests to quickfix
+vim.api.nvim_create_user_command('GoTestQuickfix', function() M.load_non_passing_tests_to_quickfix() end, {})
 return M
