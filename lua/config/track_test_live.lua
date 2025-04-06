@@ -428,7 +428,7 @@ local function resolve_test_locations(tests_to_resolve, qf_entries, on_complete)
           filename = filename,
           lnum = start.line + 1,
           col = start.character + 1,
-          text = string.format('%s: %s', test.package, test.name),
+          text = string.format('%s', test.name),
         })
       end
 
