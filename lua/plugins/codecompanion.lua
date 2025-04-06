@@ -25,7 +25,7 @@ opts.prompt_library = {
     description = 'Add documentation above the selected function',
     opts = {
       modes = { 'v' }, -- Only available in visual mode
-      short_name = 'docfn_ollama',
+      short_name = 'docfn',
       auto_submit = true,
       stop_context_insertion = true,
       placement = 'replace',
@@ -82,7 +82,7 @@ return {
       local util_find_func = require 'config.util_find_func'
       util_find_func.visual_function()
       vim.cmd [[normal! o]]
-      require('codecompanion').prompt 'docfn_ollama'
+      require('codecompanion').prompt 'docfn'
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
     end, { noremap = true, silent = true })
   end,
