@@ -11,7 +11,7 @@ local make_notify = require('mini.notify').make_notify {}
 ---@field job_id number
 ---@field ns number
 ---@field last_update number
-local tracker_state = {
+M.tracker_state = {
   tracker_win = -1,
   tracker_buf = -1,
   original_win = -1,
@@ -113,7 +113,7 @@ local function parse_test_state_to_lines()
   local package_tests = {}
 
   -- Group tests by package
-  for key, test in pairs(tracker_state.tests) do
+  for key, test in pairs(M.tracker_state.tests) do
     if not packages[test.package] then
       packages[test.package] = true
       package_tests[test.package] = {}
@@ -197,33 +197,33 @@ local function update_tracker_buffer()
   local lines = parse_test_state_to_lines()
 
   -- Only update if the buffer is valid
-  if vim.api.nvim_buf_is_valid(tracker_state.tracker_buf) then
-    vim.api.nvim_buf_set_lines(tracker_state.tracker_buf, 0, -1, false, lines)
+  if vim.api.nvim_buf_is_valid(M.tracker_state.tracker_buf) then
+    vim.api.nvim_buf_set_lines(M.tracker_state.tracker_buf, 0, -1, false, lines)
 
     -- Apply highlights
-    local ns = tracker_state.ns
-    vim.api.nvim_buf_clear_namespace(tracker_state.tracker_buf, ns, 0, -1)
+    local ns = M.tracker_state.ns
+    vim.api.nvim_buf_clear_namespace(M.tracker_state.tracker_buf, ns, 0, -1)
 
     -- Highlight package names
     for i, line in ipairs(lines) do
       if line:match '^📦' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'Directory', i - 1, 0, -1)
       elseif line:match '^  ✅' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'DiagnosticOk', i - 1, 0, -1)
       elseif line:match '^  ❌' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
       elseif line:match '^  ⏸️' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticWarn', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'DiagnosticWarn', i - 1, 0, -1)
       elseif line:match '^  ▶️' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticInfo', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'DiagnosticInfo', i - 1, 0, -1)
       elseif line:match '^    ↳' then
         ---@diagnostic disable-next-line: deprecated
-        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
+        vim.api.nvim_buf_add_highlight(M.tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
       end
     end
   end
@@ -231,58 +231,58 @@ end
 
 local function setup_tracker_buffer()
   -- Create the namespace for highlights if it doesn't exist
-  if tracker_state.ns == -1 then
-    tracker_state.ns = vim.api.nvim_create_namespace 'go_test_tracker'
+  if M.tracker_state.ns == -1 then
+    M.tracker_state.ns = vim.api.nvim_create_namespace 'go_test_tracker'
   end
 
   -- Save current window and buffer
-  tracker_state.original_win = vim.api.nvim_get_current_win()
-  tracker_state.original_buf = vim.api.nvim_get_current_buf()
+  M.tracker_state.original_win = vim.api.nvim_get_current_win()
+  M.tracker_state.original_buf = vim.api.nvim_get_current_buf()
 
   -- Create a new buffer if needed
-  if not vim.api.nvim_buf_is_valid(tracker_state.tracker_buf) then
-    tracker_state.tracker_buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(tracker_state.tracker_buf, 'GoTestTracker')
-    vim.bo[tracker_state.tracker_buf].bufhidden = 'hide'
-    vim.bo[tracker_state.tracker_buf].buftype = 'nofile'
-    vim.bo[tracker_state.tracker_buf].swapfile = false
+  if not vim.api.nvim_buf_is_valid(M.tracker_state.tracker_buf) then
+    M.tracker_state.tracker_buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_name(M.tracker_state.tracker_buf, 'GoTestTracker')
+    vim.bo[M.tracker_state.tracker_buf].bufhidden = 'hide'
+    vim.bo[M.tracker_state.tracker_buf].buftype = 'nofile'
+    vim.bo[M.tracker_state.tracker_buf].swapfile = false
   end
 
   -- Create a new window if needed
-  if not vim.api.nvim_win_is_valid(tracker_state.tracker_win) then
+  if not vim.api.nvim_win_is_valid(M.tracker_state.tracker_win) then
     vim.cmd 'vsplit'
-    tracker_state.tracker_win = vim.api.nvim_get_current_win()
-    vim.api.nvim_win_set_buf(tracker_state.tracker_win, tracker_state.tracker_buf)
-    vim.api.nvim_win_set_width(tracker_state.tracker_win, math.floor(vim.o.columns / 3))
-    vim.wo[tracker_state.tracker_win].number = false
-    vim.wo[tracker_state.tracker_win].relativenumber = false
-    vim.wo[tracker_state.tracker_win].wrap = false
-    vim.wo[tracker_state.tracker_win].signcolumn = 'no'
-    vim.wo[tracker_state.tracker_win].foldenable = false
+    M.tracker_state.tracker_win = vim.api.nvim_get_current_win()
+    vim.api.nvim_win_set_buf(M.tracker_state.tracker_win, M.tracker_state.tracker_buf)
+    vim.api.nvim_win_set_width(M.tracker_state.tracker_win, math.floor(vim.o.columns / 3))
+    vim.wo[M.tracker_state.tracker_win].number = false
+    vim.wo[M.tracker_state.tracker_win].relativenumber = false
+    vim.wo[M.tracker_state.tracker_win].wrap = false
+    vim.wo[M.tracker_state.tracker_win].signcolumn = 'no'
+    vim.wo[M.tracker_state.tracker_win].foldenable = false
   end
 
   -- Update the buffer with initial content
   update_tracker_buffer()
 
   -- Return to original window
-  vim.api.nvim_set_current_win(tracker_state.original_win)
+  vim.api.nvim_set_current_win(M.tracker_state.original_win)
 
   -- Set up keymaps in the tracker buffer
   local setup_keymaps = function()
     -- Close tracker with q
-    vim.keymap.set('n', 'q', function() M.close_tracker() end, { buffer = tracker_state.tracker_buf, noremap = true, silent = true })
+    vim.keymap.set('n', 'q', function() M.close_tracker() end, { buffer = M.tracker_state.tracker_buf, noremap = true, silent = true })
 
     -- Jump to test file location with <CR>
-    vim.keymap.set('n', '<CR>', function() M.jump_to_test_location() end, { buffer = tracker_state.tracker_buf, noremap = true, silent = true })
+    vim.keymap.set('n', '<CR>', function() M.jump_to_test_location() end, { buffer = M.tracker_state.tracker_buf, noremap = true, silent = true })
   end
 
   setup_keymaps()
 end
 
 M.close_tracker = function()
-  if vim.api.nvim_win_is_valid(tracker_state.tracker_win) then
-    vim.api.nvim_win_close(tracker_state.tracker_win, true)
-    tracker_state.tracker_win = -1
+  if vim.api.nvim_win_is_valid(M.tracker_state.tracker_win) then
+    vim.api.nvim_win_close(M.tracker_state.tracker_win, true)
+    M.tracker_state.tracker_win = -1
   end
 end
 
@@ -290,13 +290,13 @@ M.jump_to_test_location = function()
   -- Get current line
   local cursor = vim.api.nvim_win_get_cursor(0)
   local line_nr = cursor[1]
-  local line = vim.api.nvim_buf_get_lines(tracker_state.tracker_buf, line_nr - 1, line_nr, false)[1]
+  local line = vim.api.nvim_buf_get_lines(M.tracker_state.tracker_buf, line_nr - 1, line_nr, false)[1]
 
   local file, line_num = line:match '->%s+([%w_%-]+%.go):(%d+)'
 
   if file and line_num then
     -- Switch to original window
-    vim.api.nvim_set_current_win(tracker_state.original_win)
+    vim.api.nvim_set_current_win(M.tracker_state.original_win)
 
     -- Find the file in the project
     local cmd = string.format("find . -name '%s' | head -n 1", file)
@@ -314,15 +314,15 @@ end
 
 M.run_test_all = function(command)
   -- Reset test state
-  tracker_state.tests = {}
+  M.tracker_state.tests = {}
 
   -- Set up tracker buffer
   setup_tracker_buffer()
 
   -- Clean up previous job
-  M.clean_up_prev_job(tracker_state.job_id)
+  M.clean_up_prev_job(M.tracker_state.job_id)
 
-  tracker_state.job_id = vim.fn.jobstart(command, {
+  M.tracker_state.job_id = vim.fn.jobstart(command, {
     stdout_buffered = false,
     on_stdout = function(_, data)
       if not data then
@@ -344,21 +344,21 @@ M.run_test_all = function(command)
         end
 
         if decoded.Action == 'run' then
-          add_golang_test(tracker_state, decoded)
+          add_golang_test(M.tracker_state, decoded)
           vim.schedule(function() update_tracker_buffer() end)
           goto continue
         end
 
         if decoded.Action == 'output' then
           if decoded.Test or decoded.Package then
-            add_golang_output(tracker_state, decoded)
+            add_golang_output(M.tracker_state, decoded)
           end
           goto continue
         end
 
         -- Handle pause, cont, and start actions
         if action_state[decoded.Action] then
-          mark_outcome(tracker_state, decoded)
+          mark_outcome(M.tracker_state, decoded)
           vim.schedule(function() update_tracker_buffer() end)
           goto continue
         end
@@ -378,7 +378,7 @@ vim.api.nvim_create_user_command('GoTestAll', function()
 end, {})
 
 vim.api.nvim_create_user_command('GoTestTrackerToggle', function()
-  if vim.api.nvim_win_is_valid(tracker_state.tracker_win) then
+  if vim.api.nvim_win_is_valid(M.tracker_state.tracker_win) then
     M.close_tracker()
   else
     setup_tracker_buffer()
@@ -387,37 +387,91 @@ end, {})
 
 --- === on demand: load all tests that have not passed into a single quickfix
 
+local function add_direct_file_entries(test, qf_entries)
+  assert(test.file, 'File not found for test: ' .. test.name)
+  -- Find the file in the project
+  local cmd = string.format("find . -name '%s' | head -n 1", test.file)
+  local filepath = vim.fn.system(cmd):gsub('\n', '')
+
+  if filepath ~= '' then
+    table.insert(qf_entries, {
+      filename = filepath,
+      lnum = test.fail_at_line,
+      text = string.format('%s: %s', test.package, test.name),
+    })
+  end
+
+  return qf_entries
+end
+
+-- Helper function to resolve test locations via LSP
+local function resolve_test_locations(tests_to_resolve, qf_entries, on_complete)
+  local resolved_count = 0
+  local total_to_resolve = #tests_to_resolve
+
+  -- If no tests to resolve, call completion callback immediately
+  if total_to_resolve == 0 then
+    on_complete(qf_entries)
+    return
+  end
+
+  for _, test in ipairs(tests_to_resolve) do
+    vim.lsp.buf_request(0, 'workspace/symbol', { query = test.name }, function(err, res)
+      if err or not res or #res == 0 then
+        vim.notify('No definition found for test: ' .. test.name, vim.log.levels.WARN)
+      else
+        local result = res[1] -- Take the first result
+        local filename = vim.uri_to_fname(result.location.uri)
+        local start = result.location.range.start
+
+        table.insert(qf_entries, {
+          filename = filename,
+          lnum = start.line + 1,
+          col = start.character + 1,
+          text = string.format('%s: %s', test.package, test.name),
+        })
+      end
+
+      resolved_count = resolved_count + 1
+
+      -- When all tests are resolved, call the completion callback
+      if resolved_count == total_to_resolve then
+        on_complete(qf_entries)
+      end
+    end)
+  end
+end
+
+local function populate_quickfix_list(qf_entries)
+  if #qf_entries > 0 then
+    vim.fn.setqflist(qf_entries, 'r')
+    vim.cmd 'copen'
+    vim.notify('Loaded ' .. #qf_entries .. ' failing tests to quickfix list', vim.log.levels.INFO)
+  else
+    vim.notify('No failing tests found', vim.log.levels.INFO)
+  end
+end
+
 M.load_non_passing_tests_to_quickfix = function()
   local qf_entries = {}
-  local symbol_requests = {}
   local tests_to_resolve = {}
 
-  for _, test in pairs(tracker_state.tests) do
-    -- Skip tests that have passed
+  for _, test in pairs(M.tracker_state.tests) do
     if test.status == 'pass' then
       goto continue
     end
 
-    -- If we have a failure line, use it directly
     if test.fail_at_line ~= 0 then
-      assert(test.file, 'File not found for test: ' .. test.name)
-      -- Find the file in the project
-      local cmd = string.format("find . -name '%s' | head -n 1", test.file)
-      local filepath = vim.fn.system(cmd):gsub('\n', '')
-      if filepath ~= '' then
-        table.insert(qf_entries, {
-          filename = filepath,
-          lnum = test.fail_at_line,
-          text = string.format('%s: %s', test.package, test.name),
-        })
-      end
+      qf_entries = add_direct_file_entries(test, qf_entries)
     else
-      -- If we don't have a failure line, we need to resolve the symbol
-      print('Resolving symbol for test: ' .. test.name)
+      table.insert(tests_to_resolve, test)
     end
-
     ::continue::
   end
+
+  resolve_test_locations(tests_to_resolve, qf_entries, populate_quickfix_list)
+  M.close_tracker()
+  return qf_entries
 end
 
 -- Create a command to load non-passing tests to quickfix
