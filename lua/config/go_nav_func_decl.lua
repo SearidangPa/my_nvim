@@ -207,6 +207,8 @@ local function move_to_prev_func_decl_end()
   end
 end
 
+local map = vim.keymap.set
+
 vim.keymap.set('n', ']m', move_to_next_func_decl_start, { desc = 'Next Func Declaraion start' })
 vim.keymap.set('n', '[m', move_to_prev_func_decl_start, { desc = 'Prev Func Declaraion start' })
 

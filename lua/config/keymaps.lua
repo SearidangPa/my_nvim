@@ -29,20 +29,6 @@ local function yank_function()
   end
 end
 
-local function visual_function()
-  local func_node = Nearest_func_node()
-  local start_row, start_col, end_row, end_col = func_node:range()
-  vim.cmd 'normal! v'
-  vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-  vim.cmd 'normal! o'
-  vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
-end
-
-local function delete_function()
-  visual_function()
-  vim.cmd 'normal! d'
-end
-
 -- =================== Copilot ===================
 local function accept_word()
   local accept_word = vim.fn['copilot#AcceptWord']
@@ -127,8 +113,6 @@ map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K
 
 -- =================== Navigation ===================
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
-map('n', '<leader>vf', visual_function, { desc = 'Visual nearest function' })
-map('n', '<leader>df', delete_function, { desc = 'Delete nearest function' })
 
 -- === Visual select ===
 map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all lines' })

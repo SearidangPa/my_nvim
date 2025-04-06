@@ -57,7 +57,7 @@ opts.prompt_library = {
         role = 'user',
         content = function(context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
-          return 'I want from 2-4 bullet points.'
+          return 'I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
             .. 'I want it inside the /*  block above the function.'
             .. 'There should be nothing after the first /*.'
             .. 'The first nonempty line should start with the function name and its purpose.'
@@ -99,20 +99,12 @@ return {
       },
     }
 
-    local function visual_function()
-      local func_node = Nearest_func_node()
-      local start_row, start_col, end_row, end_col = func_node:range()
-      vim.cmd 'normal! v'
-      vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
-      vim.cmd 'normal! o'
-      vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
-    end
-
     vim.keymap.set({ 'v', 'n' }, '<leader>ad', function()
-      visual_function()
+      local util_find_func = require 'config.util_find_func'
+      util_find_func.visual_function()
+      vim.cmd [[normal! o]]
       require('codecompanion').prompt 'docfn'
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
-      vim.cmd [[wa]]
     end, { noremap = true, silent = true })
   end,
 }

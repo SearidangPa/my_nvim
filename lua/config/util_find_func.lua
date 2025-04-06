@@ -82,7 +82,6 @@ end
 M.nearest_function_at_line = function(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
-  assert(parser, 'parser is nil')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(tree, 'tree is nil')
@@ -123,8 +122,6 @@ function Nearest_func_name()
           return vim.treesitter.get_node_text(child, bufnr)
       end
       if child:type() == 'dot_index_expression' then
-          local field = child:field('field')[1]
-          return vim.treesitter.get_node_text(field, bufnr)
       end
   end
 end
@@ -178,4 +175,24 @@ function Get_enclosing_test()
 end
 
 
+local map = vim.keymap.set
+
+M.visual_function = function()
+  local func_node = Nearest_func_node()
+  local start_row, start_col, end_row, end_col = func_node:range()
+  vim.cmd 'normal! v'
+  vim.api.nvim_win_set_cursor(0, { start_row + 1, start_col })
+  vim.cmd 'normal! o'
+  vim.api.nvim_win_set_cursor(0, { end_row + 1, end_col })
+end
+
+M.delete_function = function()
+  M.visual_function()
+  vim.cmd 'normal! d'
+end
+
+map('n', '<leader>vf', M.visual_function, { desc = 'Visual nearest function' })
+map('n', '<leader>df', M.delete_function, { desc = 'Delete nearest function' })
+
 return M
+
