@@ -10,27 +10,10 @@ opts.displays = {
 }
 opts.adapters = {
   copilot = function() return require('codecompanion.adapters').extend('copilot', {}) end,
-
-  ollama7b = function()
-    return require('codecompanion.adapters').extend('ollama', {
-      schema = {
-        model = { default = 'qwen2.5-coder:7b' },
-      },
-    })
-  end,
-
-  ollama14b = function()
+  ollama = function()
     return require('codecompanion.adapters').extend('ollama', {
       schema = {
         model = { default = 'qwen2.5-coder:14b' },
-      },
-    })
-  end,
-
-  ollama14b_q6 = function()
-    return require('codecompanion.adapters').extend('ollama', {
-      schema = {
-        model = { default = 'qwen2.5-coder:14b-instruct-q6_K' },
       },
     })
   end,
@@ -42,22 +25,18 @@ opts.prompt_library = {
     description = 'Add documentation above the selected function',
     opts = {
       modes = { 'v' }, -- Only available in visual mode
-      short_name = 'docfn',
+      short_name = 'docfn_ollama',
       auto_submit = true,
       stop_context_insertion = true,
       placement = 'replace',
+      ignore_system_prompt = true,
     },
     prompts = {
-      {
-        role = 'system',
-        content = function(context) return 'You are an expert documentation writer.' end,
-      },
-
       {
         role = 'user',
         content = function(context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
-          return 'I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
+          return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
             .. 'I want it inside the /*  block above the function.'
             .. 'There should be nothing after the first /*.'
             .. 'The first nonempty line should start with the function name and its purpose.'
@@ -103,7 +82,7 @@ return {
       local util_find_func = require 'config.util_find_func'
       util_find_func.visual_function()
       vim.cmd [[normal! o]]
-      require('codecompanion').prompt 'docfn'
+      require('codecompanion').prompt 'docfn_ollama'
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
     end, { noremap = true, silent = true })
   end,
