@@ -387,4 +387,6 @@ vim.api.nvim_create_user_command('GoTestTrackerToggle', function()
   end
 end, {})
 
+--- === on demand: load fail and stuck test into quickfix ===
+
 return M
