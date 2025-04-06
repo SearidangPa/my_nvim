@@ -340,6 +340,7 @@ M.run_test_all = function(command)
         if ignored_actions[decoded.Action] then
           goto continue
         end
+        -- I want progress here
 
         if decoded.Action == 'run' then
           add_golang_test(tracker_state, decoded)
