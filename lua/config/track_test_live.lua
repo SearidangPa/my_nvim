@@ -397,7 +397,7 @@ local function add_direct_file_entries(test, qf_entries)
     table.insert(qf_entries, {
       filename = filepath,
       lnum = test.fail_at_line,
-      text = string.format('%s: %s', test.package, test.name),
+      text = string.format('%s', test.name),
     })
   end
 
