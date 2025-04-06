@@ -60,8 +60,8 @@ opts.prompt_library = {
           return 'I want from 2-4 bullet points.'
             .. 'I want it inside the /*  block above the function.'
             .. 'There should be nothing after the first /*.'
-            .. 'The first line should start with the function name and its purpose.'
-            .. 'I do not want any empty new line after the first line.'
+            .. 'The first nonempty line should start with the function name and its purpose.'
+            .. 'I do not want any empty line'
             .. 'You should not return any more star. The first line should not be a bullet point. \n\n```'
             .. context.filetype
             .. '\n'
