@@ -69,7 +69,6 @@ local add_golang_test = function(test_state, entry)
     output = {},
     status = 'running',
     file = '',
-    duration = 0,
   }
 end
 
