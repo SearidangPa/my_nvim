@@ -29,7 +29,6 @@ local tracker_state = {
 ---@field output string[]
 ---@field status string "running"|"pass"|"fail"|"paused"|"cont"|"start"
 ---@field file string
----@field duration number
 
 M.clean_up_prev_job = function(job_id)
   if job_id ~= -1 then
@@ -39,9 +38,16 @@ M.clean_up_prev_job = function(job_id)
   end
 end
 
--- Only ignore skip action
 local ignored_actions = {
   skip = true,
+}
+
+local action_state = {
+  pause = true,
+  cont = true,
+  start = true,
+  fail = true,
+  pass = true,
 }
 
 local make_key = function(entry)
@@ -84,6 +90,11 @@ local add_golang_output = function(test_state, entry)
     test.fail_at_line = tonumber(line)
     test.file = file
   end
+
+  -- If the output indicates a failure, update the status
+  if trimmed_output:match '^--- FAIL:' then
+    test.status = 'fail'
+  end
 end
 
 local mark_outcome = function(test_state, entry)
@@ -93,16 +104,8 @@ local mark_outcome = function(test_state, entry)
   if not test then
     return
   end
-
+  -- Explicitly set the status based on the Action
   test.status = entry.Action
-  if entry.Action == 'pass' then
-    test.duration = entry.Elapsed
-  end
-
-  -- For "paused", "cont", or "start" actions, keep the status updated
-  if entry.Action == 'pause' or entry.Action == 'cont' or entry.Action == 'start' then
-    test.status = entry.Action
-  end
 end
 
 ---@return string[]
@@ -216,6 +219,12 @@ local function update_tracker_buffer()
       elseif line:match '^  ❌' then
         ---@diagnostic disable-next-line: deprecated
         vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticError', i - 1, 0, -1)
+      elseif line:match '^  ⏸️' then
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticWarn', i - 1, 0, -1)
+      elseif line:match '^  ▶️' then
+        ---@diagnostic disable-next-line: deprecated
+        vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'DiagnosticInfo', i - 1, 0, -1)
       elseif line:match '^    ↳' then
         ---@diagnostic disable-next-line: deprecated
         vim.api.nvim_buf_add_highlight(tracker_state.tracker_buf, ns, 'Comment', i - 1, 0, -1)
@@ -241,7 +250,6 @@ local function setup_tracker_buffer()
     vim.bo[tracker_state.tracker_buf].bufhidden = 'hide'
     vim.bo[tracker_state.tracker_buf].buftype = 'nofile'
     vim.bo[tracker_state.tracker_buf].swapfile = false
-    vim.bo[tracker_state.tracker_buf].modifiable = false
   end
 
   -- Create a new window if needed
@@ -258,9 +266,7 @@ local function setup_tracker_buffer()
   end
 
   -- Update the buffer with initial content
-  vim.bo[tracker_state.tracker_buf].modifiable = true
   update_tracker_buffer()
-  vim.bo[tracker_state.tracker_buf].modifiable = false
 
   -- Return to original window
   vim.api.nvim_set_current_win(tracker_state.original_win)
@@ -340,15 +346,10 @@ M.run_test_all = function(command)
         if ignored_actions[decoded.Action] then
           goto continue
         end
-        -- I want progress here
 
         if decoded.Action == 'run' then
           add_golang_test(tracker_state, decoded)
-          vim.schedule(function()
-            vim.bo[tracker_state.tracker_buf].modifiable = true
-            update_tracker_buffer()
-            vim.bo[tracker_state.tracker_buf].modifiable = false
-          end)
+          vim.schedule(function() update_tracker_buffer() end)
           goto continue
         end
 
@@ -360,48 +361,17 @@ M.run_test_all = function(command)
         end
 
         -- Handle pause, cont, and start actions
-        if decoded.Action == 'pause' or decoded.Action == 'cont' or decoded.Action == 'start' then
+        if action_state[decoded.Action] then
           mark_outcome(tracker_state, decoded)
-          vim.schedule(function()
-            if decoded.Test then
-              local action_icons = {
-                pause = '⏸️',
-                cont = '▶️',
-                start = '🏁',
-              }
-              local message = string.format('%s %s', action_icons[decoded.Action], decoded.Test)
-            end
-
-            vim.bo[tracker_state.tracker_buf].modifiable = true
-            update_tracker_buffer()
-            vim.bo[tracker_state.tracker_buf].modifiable = false
-          end)
+          vim.schedule(function() update_tracker_buffer() end)
           goto continue
-        end
-
-        if decoded.Action == 'pass' or decoded.Action == 'fail' then
-          mark_outcome(tracker_state, decoded)
-
-          vim.schedule(function()
-            if decoded.Test then
-              local message = string.format('%s %s', decoded.Action == 'pass' and '✅' or '❌', decoded.Test)
-            end
-
-            vim.bo[tracker_state.tracker_buf].modifiable = true
-            update_tracker_buffer()
-            vim.bo[tracker_state.tracker_buf].modifiable = false
-          end)
         end
 
         ::continue::
       end
     end,
     on_exit = function()
-      vim.schedule(function()
-        vim.bo[tracker_state.tracker_buf].modifiable = true
-        update_tracker_buffer()
-        vim.bo[tracker_state.tracker_buf].modifiable = false
-      end)
+      vim.schedule(function() update_tracker_buffer() end)
     end,
   })
 end
