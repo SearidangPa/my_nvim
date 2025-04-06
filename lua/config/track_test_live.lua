@@ -91,7 +91,6 @@ local add_golang_output = function(test_state, entry)
     test.file = file
   end
 
-  -- If the output indicates a failure, update the status
   if trimmed_output:match '^--- FAIL:' then
     test.status = 'fail'
   end
