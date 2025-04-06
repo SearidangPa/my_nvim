@@ -26,12 +26,20 @@ opts.adapters = {
       },
     })
   end,
+
+  ollama14b_q6 = function()
+    return require('codecompanion.adapters').extend('ollama', {
+      schema = {
+        model = { default = 'qwen2.5-coder:14b-instruct-q6_K' },
+      },
+    })
+  end,
 }
 
 opts.prompt_library = {
   ['Document Selected Function'] = {
     strategy = 'inline',
-    description = 'Add documentation for the selected function',
+    description = 'Add documentation above the selected function',
     opts = {
       modes = { 'v' }, -- Only available in visual mode
       short_name = 'docfn',
@@ -44,18 +52,23 @@ opts.prompt_library = {
         role = 'system',
         content = function(context) return 'You are an expert documentation writer.' end,
       },
+
       {
         role = 'user',
         content = function(context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
-          return 'I want at most 4 bullet points, and i want you to focus on the higher level flows and its purpose. I want it inside the /*  block.'
+          return 'I want from 2-4 bullet points.'
+            .. 'I want it inside the /*  block above the function.'
+            .. 'There should be nothing after the first /*.'
+            .. 'The first line should start with the function name and its purpose.'
             .. 'I do not want any empty new line after the first line.'
-            .. 'You should not return any more star. The first line should not be a bullet point. Add document above the following code :\n\n```'
+            .. 'You should not return any more star. The first line should not be a bullet point. \n\n```'
             .. context.filetype
             .. '\n'
             .. code
             .. '\n```'
         end,
+
         opts = {
           contains_code = true,
         },
