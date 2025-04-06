@@ -389,6 +389,8 @@ end, {})
 
 M.load_non_passing_tests_to_quickfix = function()
   local qf_entries = {}
+  local symbol_requests = {}
+  local tests_to_resolve = {}
 
   for _, test in pairs(tracker_state.tests) do
     -- Skip tests that have passed
@@ -397,33 +399,130 @@ M.load_non_passing_tests_to_quickfix = function()
     end
 
     -- Skip tests without file information
-    if test.file == '' or test.fail_at_line == 0 then
+    if test.file == '' then
       goto continue
     end
 
-    -- Find the file in the project
-    local cmd = string.format("find . -name '%s' | head -n 1", test.file)
-    local filepath = vim.fn.system(cmd):gsub('\n', '')
+    -- If we have a failure line, use it directly
+    if test.fail_at_line ~= 0 then
+      -- Find the file in the project
+      local cmd = string.format("find . -name '%s' | head -n 1", test.file)
+      local filepath = vim.fn.system(cmd):gsub('\n', '')
+      if filepath ~= '' then
+        table.insert(qf_entries, {
+          filename = filepath,
+          lnum = test.fail_at_line,
+          text = string.format('%s: %s', test.package, test.name),
+        })
+      end
+    else
+      -- Store tests that need to be resolved via LSP
+      table.insert(tests_to_resolve, test)
+      -- Queue LSP request to find the test definition location
+      table.insert(symbol_requests, function(callback)
+        -- Use workspace/symbol with all clients instead of buf_request
+        local params = { query = test.name }
+        local results = {}
+        local pending_clients = 0
 
-    if filepath ~= '' then
-      table.insert(qf_entries, {
-        filename = filepath,
-        lnum = test.fail_at_line,
-        text = string.format('%s: %s', test.package, test.name),
-      })
+        -- Get all active clients
+        local clients = vim.lsp.get_active_clients()
+        if #clients == 0 then
+          callback(nil)
+          return
+        end
+
+        pending_clients = #clients
+
+        -- Request from all clients
+        for _, client in ipairs(clients) do
+          client.request('workspace/symbol', params, function(err, res)
+            if err or not res or #res == 0 then
+              -- If we can't find the definition, fall back to file only
+              if test.file ~= '' then
+                local cmd = string.format("find . -name '%s' | head -n 1", test.file)
+                local filepath = vim.fn.system(cmd):gsub('\n', '')
+                if filepath ~= '' then
+                  callback {
+                    filename = filepath,
+                    lnum = 1, -- Default to line 1 since we don't know the exact line
+                    text = string.format('%s: %s (definition not found)', test.package, test.name),
+                  }
+                  return
+                end
+              end
+              callback(nil)
+              return
+            end
+
+            local result = res[1] -- Take the first result
+            local filename = vim.uri_to_fname(result.location.uri)
+            local start = result.location.range.start
+            if res and #res > 0 then
+              for _, item in ipairs(res) do
+                table.insert(results, {
+                  filename = vim.uri_to_fname(item.location.uri),
+                  lnum = item.location.range.start.line + 1,
+                  col = item.location.range.start.character + 1,
+                  text = string.format('%s: %s (definition)', test.package, test.name),
+                })
+              end
+            end
+
+            pending_clients = pending_clients - 1
+
+            -- When all clients have responded, process the results
+            if pending_clients == 0 then
+              if #results > 0 then
+                -- Use the first result
+                callback(results[1])
+              else
+                callback(nil)
+              end
+            end
+          end, nil, client.id)
+        end
+      end)
     end
-
     ::continue::
   end
 
-  if #qf_entries == 0 then
-    make_notify 'No failing tests with location information found'
+  -- If we have no LSP requests, just set the quickfix list with what we have
+  if #symbol_requests == 0 then
+    if #qf_entries == 0 then
+      make_notify 'No failing tests with location information found'
+      return
+    end
+    vim.fn.setqflist(qf_entries, 'r')
+    make_notify(string.format('Loaded %d failing tests to quickfix list', #qf_entries))
+    vim.cmd 'copen'
     return
   end
 
-  vim.fn.setqflist(qf_entries, 'r')
-  make_notify(string.format('Loaded %d failing tests to quickfix list', #qf_entries))
-  vim.cmd 'copen'
+  -- Execute all LSP requests and collect results
+  local pending = #symbol_requests
+  local function on_resolved(entry)
+    if entry then
+      table.insert(qf_entries, entry)
+    end
+    pending = pending - 1
+
+    -- When all requests are done, set the quickfix list
+    if pending == 0 then
+      if #qf_entries == 0 then
+        make_notify 'No failing tests with location information found'
+        return
+      end
+      vim.fn.setqflist(qf_entries, 'r')
+      make_notify(string.format('Loaded %d failing tests to quickfix list', #qf_entries))
+      vim.cmd 'copen'
+    end
+  end
+
+  -- Start all the LSP requests
+  for _, request_fn in ipairs(symbol_requests) do
+    request_fn(on_resolved)
+  end
 end
 
 -- Create a command to load non-passing tests to quickfix
