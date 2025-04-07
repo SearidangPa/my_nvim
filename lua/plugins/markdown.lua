@@ -12,6 +12,10 @@ return {
             'RenderMarkdownH2Bg',
           },
         },
+        completions = { blink = { enabled = true } },
+        code = {
+          enabled = false,
+        },
       }
     end,
   },
