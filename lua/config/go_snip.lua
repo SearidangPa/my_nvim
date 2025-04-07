@@ -344,7 +344,6 @@ ls.add_snippets('go', {
   ),
 })
 
-
 ls.add_snippets('go', {
   s(
     'tl',
@@ -452,6 +451,22 @@ ls.add_snippets('go', {
       ]],
       {
         funcName = i(1),
+        clipboard_content = f(function() return get_clipboard_content() end, {}),
+      }
+    )
+  ),
+})
+
+ls.add_snippets('markdown', {
+  s(
+    'mer',
+    fmta(
+      [[
+        ```mermaid
+            <clipboard_content>
+        ```
+      ]],
+      {
         clipboard_content = f(function() return get_clipboard_content() end, {}),
       }
     )
