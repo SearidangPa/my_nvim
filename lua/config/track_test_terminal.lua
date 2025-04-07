@@ -3,8 +3,7 @@ local M = {}
 local tt = require 'config.terminals_test'
 local make_notify = require('mini.notify').make_notify {}
 local map = vim.keymap.set
-local terminals_test = tt.terminals_test
-
+local terminals_tests = tt.terminals_tests
 M.test_tracker = {}
 
 M.view_tests_tracked = function()
@@ -98,14 +97,14 @@ local function toggle_tracked_test_by_index(index)
     index = #M.test_tracker
   end
   local target_test = M.test_tracker[index].test_name
-  terminals_test:toggle_float_terminal(target_test)
+  terminals_tests:toggle_float_terminal(target_test)
 end
 
 for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
   map('n', string.format('<localleader>v%d', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
 end
 
-M.test_track = function()
+M.test_track_list = function()
   for _, test_info in ipairs(M.test_tracker) do
     make_notify(string.format('Running test: %s', test_info.test_name))
     tt.go_test_command(test_info)
