@@ -1,11 +1,17 @@
 local M = {}
 require 'config.util_find_func'
 local make_notify = require('mini.notify').make_notify {}
+local map = vim.keymap.set
 local ns = vim.api.nvim_create_namespace 'GoTestError'
 local terminal_multiplexer = require 'config.terminal_multiplexer'
-M.terminals_tests = terminal_multiplexer.new() ---@type TerminalMultiplexer
+M.terminals_tests = terminal_multiplexer.new()
 
-local map = vim.keymap.set
+---@class testInfo
+---@field test_name string
+---@field test_line number
+---@field test_bufnr number
+---@field test_command string
+---@field status string
 
 local function toggle_view_enclosing_test()
   local needs_open = true
@@ -212,62 +218,30 @@ local function test_normal_buf()
   test_buf(test_format)
 end
 
-local function test_normal_tracked()
-  local test_format = 'go test ./... -v -run %s'
-  for _, test_info in ipairs(M.test_tracker) do
-    test_info.test_command = string.format(test_format, test_info.test_name)
-    M.go_test_command(test_info)
-  end
-end
-
-vim.api.nvim_create_user_command('GoTestNormalTracked', test_normal_tracked, {})
-
---- === Test List ===
-
-local function delete_test_terminal()
-  local test_name, _ = Get_enclosing_test()
+local function toggle_last_test()
+  local test_name = M.terminals_tests.last_terminal_name
   if not test_name then
-    make_notify 'No test found'
+    make_notify 'No last test found'
     return
   end
-  for index, test_info in ipairs(M.test_tracker) do
-    if test_info.test_name == test_name then
-      table.remove(M.test_tracker, index)
-      break
-    end
-  end
-  M.terminals_tests:delete_terminal(test_name)
-  make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
+  M.terminals_tests:toggle_float_terminal(test_name)
 end
 
+vim.api.nvim_create_user_command('GoTestSearch', function() M.terminals_tests:search_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestDelete', function() M.terminals_tests:select_delete_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
+vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
+vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
+vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
 vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
 vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
-vim.api.nvim_create_user_command('GoTestDriveDev', drive_test_dev, {})
-vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
-
 vim.api.nvim_create_user_command('GoTestIntegration', go_integration_test, {})
-vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
-vim.api.nvim_create_user_command('GoTestReset', function() M.reset_test() end, {})
-vim.api.nvim_create_user_command('GoTestSearch', function() M.terminals_tests:search_terminal() end, {})
-vim.api.nvim_create_user_command('GoTestDelete', function() M.terminals_tests:select_delete_terminal() end, {})
 
-vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
-vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
-
+vim.keymap.set('n', '<leader>G', go_integration_test, { desc = 'Go integration test' })
 vim.keymap.set('n', '<leader>st', function() M.terminals_tests:search_terminal() end, { desc = 'Select test terminal' })
 vim.keymap.set('n', '<leader>tf', function() M.terminals_tests:search_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
-
-vim.keymap.set(
-  'n',
-  '<leader>tl',
-  function() M.terminals_tests:toggle_float_terminal(M.terminals_tests.last_terminal_name) end,
-  { desc = 'Toggle last go test terminal' }
-)
-
-vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
-
-vim.keymap.set('n', '<leader>G', go_integration_test, { desc = 'Go integration test' })
+vim.keymap.set('n', '<leader>tl', toggle_last_test, { desc = 'Toggle last go test terminal' })
 
 return M
