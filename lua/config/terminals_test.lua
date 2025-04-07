@@ -43,53 +43,6 @@ function M.delete_tracked_test()
   vim.ui.select(all_tracked_test_names, opts, function(choice) handle_choice(choice) end)
 end
 
-local function quickfix_load_tracked_tests(test_names)
-  local results = {}
-  local pending = #test_names
-
-  for _, test in ipairs(test_names) do
-    vim.lsp.buf_request(0, 'workspace/symbol', { query = test }, function(err, res)
-      pending = pending - 1
-      if not err and res then
-        vim.list_extend(results, res)
-      end
-
-      if pending == 0 then
-        if vim.tbl_isempty(results) then
-          print 'No test definitions found'
-        else
-          local qf_items = {}
-          for _, symbol in ipairs(results) do
-            local filename = vim.uri_to_fname(symbol.location.uri)
-            local start = symbol.location.range.start
-            table.insert(qf_items, {
-              filename = filename,
-              lnum = start.line + 1,
-              col = start.character + 1,
-              text = symbol.name,
-            })
-          end
-          vim.fn.setqflist(qf_items)
-          vim.notify('Loaded tracked test in quickfix', vim.log.levels.INFO, { title = 'Tracked Test in Quickfix' })
-        end
-      end
-    end)
-  end
-end
-
-vim.api.nvim_create_user_command('QuickfixLoadTrackedTest', function()
-  local test_names = {}
-  for _, test_info in ipairs(M.test_tracker) do
-    table.insert(test_names, test_info.test_name)
-  end
-  quickfix_load_tracked_tests(test_names)
-end, {})
-
--- Optional: Map a key sequence to start the command (you'll need to type the test name after the command)
-vim.api.nvim_set_keymap('n', '<localleader>g', ':GoToTest ', { noremap = true, silent = false })
-
-M.view_tracker = -1
-
 local function toggle_view_enclosing_test()
   local needs_open = true
   for test_name, _ in pairs(M.terminals_tests.all_terminals) do
