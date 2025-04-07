@@ -3,45 +3,9 @@ require 'config.util_find_func'
 local make_notify = require('mini.notify').make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
 local terminal_multiplexer = require 'config.terminal_multiplexer'
-M.terminals_tests = terminal_multiplexer.new()
+M.terminals_tests = terminal_multiplexer.new() ---@type TerminalMultiplexer
 
 local map = vim.keymap.set
-
----Reset all test terminals
----@return nil
-M.reset_test = function()
-  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
-    M.terminals_tests:delete_terminal(test_name)
-  end
-
-  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
-  M.test_tracker = {}
-end
-
-function M.delete_tracked_test()
-  local opts = {
-    prompt = 'Select tracked test to delete',
-    format_item = function(item) return item end,
-  }
-
-  local all_tracked_test_names = {}
-  for _, testInfo in ipairs(M.test_tracker) do
-    table.insert(all_tracked_test_names, testInfo.test_name)
-  end
-
-  local handle_choice = function(tracked_test_name)
-    for index, testInfo in ipairs(M.test_tracker) do
-      if testInfo.test_name == tracked_test_name then
-        M.terminals_tests:delete_terminal(tracked_test_name)
-        table.remove(M.test_tracker, index)
-        make_notify(string.format('Deleted test terminal from tracker: %s', tracked_test_name))
-        break
-      end
-    end
-  end
-
-  vim.ui.select(all_tracked_test_names, opts, function(choice) handle_choice(choice) end)
-end
 
 local function toggle_view_enclosing_test()
   local needs_open = true

@@ -8,6 +8,13 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field terminal_order string[] Order of terminal creation
 ---@field last_terminal_name string|nil Name of the last accessed terminal
 ---@field augroup number Vim autogroup ID
+---@field toggle_float_terminal fun(self: TerminalMultiplexer, terminal_name: string, do_not_open_win: boolean|nil): Float_Term_State|nil
+---@field create_float_window fun(self: TerminalMultiplexer, float_terminal_state: Float_Term_State, terminal_name: string, do_not_open_win: boolean|nil): nil
+---@field navigate_terminal fun(self: TerminalMultiplexer, direction: number): nil
+---@field search_terminal fun(self: TerminalMultiplexer, filter_pass: boolean): nil
+---@field list fun(self: TerminalMultiplexer): string[] List of all terminal names
+---@field delete_terminal fun(self: TerminalMultiplexer, terminal_name: string): nil
+---@field select_delete_terminal fun(self: TerminalMultiplexer): nil
 
 ---@class Float_Term_State
 ---@field buf number Buffer ID

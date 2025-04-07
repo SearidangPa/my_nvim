@@ -119,4 +119,39 @@ M.test_track = function()
   end
 end
 
+function M.delete_tracked_test()
+  local opts = {
+    prompt = 'Select tracked test to delete',
+    format_item = function(item) return item end,
+  }
+
+  local all_tracked_test_names = {}
+  for _, testInfo in ipairs(M.test_tracker) do
+    table.insert(all_tracked_test_names, testInfo.test_name)
+  end
+
+  local handle_choice = function(tracked_test_name)
+    for index, testInfo in ipairs(M.test_tracker) do
+      if testInfo.test_name == tracked_test_name then
+        M.terminals_tests:delete_terminal(tracked_test_name)
+        table.remove(M.test_tracker, index)
+        make_notify(string.format('Deleted test terminal from tracker: %s', tracked_test_name))
+        break
+      end
+    end
+  end
+
+  vim.ui.select(all_tracked_test_names, opts, function(choice) handle_choice(choice) end)
+end
+
+---Reset all test terminals
+---@return nil
+M.reset_test = function()
+  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
+    terminals_tests:delete_terminal(test_name)
+  end
+
+  vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
+  M.test_tracker = {}
+end
 return M
