@@ -14,35 +14,21 @@ M.terminals_tests = terminal_multiplexer.new()
 ---@field status string
 
 local function toggle_view_enclosing_test()
-  local needs_open = true
-  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
-    local current_floating_term_state = M.terminals_tests.all_terminals[test_name]
-    if current_floating_term_state then
-      if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
-        vim.api.nvim_win_hide(current_floating_term_state.win)
-        vim.api.nvim_win_hide(current_floating_term_state.footer_win)
-        needs_open = false
-      end
+  local test_name = Get_enclosing_test()
+  assert(test_name, 'No test found')
+  local float_terminal_state = M.terminals_tests:toggle_float_terminal(test_name)
+  assert(float_terminal_state, 'Failed to create floating terminal')
+
+  -- Need this duplication. Otherwise, the keymap is bind to the buffer for for some reason
+  local close_term = function()
+    if vim.api.nvim_win_is_valid(float_terminal_state.footer_win) then
+      vim.api.nvim_win_hide(float_terminal_state.footer_win)
+    end
+    if vim.api.nvim_win_is_valid(float_terminal_state.win) then
+      vim.api.nvim_win_hide(float_terminal_state.win)
     end
   end
-
-  if needs_open then
-    local test_name = Get_enclosing_test()
-    assert(test_name, 'No test found')
-    local float_terminal_state = M.terminals_tests:toggle_float_terminal(test_name)
-    assert(float_terminal_state, 'Failed to create floating terminal')
-
-    -- Need this duplication. Otherwise, the keymap is bind to the buffer for for some reason
-    local close_term = function()
-      if vim.api.nvim_win_is_valid(float_terminal_state.footer_win) then
-        vim.api.nvim_win_hide(float_terminal_state.footer_win)
-      end
-      if vim.api.nvim_win_is_valid(float_terminal_state.win) then
-        vim.api.nvim_win_hide(float_terminal_state.win)
-      end
-    end
-    vim.keymap.set('n', 'q', close_term, { buffer = float_terminal_state.buf })
-  end
+  vim.keymap.set('n', 'q', close_term, { buffer = float_terminal_state.buf })
 end
 
 ---@param test_info testInfo
