@@ -2,23 +2,16 @@ local M = {}
 require 'config.util_find_func'
 local make_notify = require('mini.notify').make_notify {}
 local ns = vim.api.nvim_create_namespace 'GoTestError'
-local TerminalMultiplexer = require 'config.terminal_multiplexer'
-local terminal_multiplexer = TerminalMultiplexer.new()
+local terminal_multiplexer = require 'config.terminal_multiplexer'
+M.terminals_tests = terminal_multiplexer.new()
+
 local map = vim.keymap.set
 
----@class testInfo
----@field test_name string
----@field test_line number
----@field test_bufnr number
----@field test_command string
----@field status string
-
----@type testInfo[]
-M.test_tracker = {}
-
+---Reset all test terminals
+---@return nil
 M.reset_test = function()
-  for test_name, _ in pairs(terminal_multiplexer.all_terminals) do
-    terminal_multiplexer:delete_terminal(test_name)
+  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
+    M.terminals_tests:delete_terminal(test_name)
   end
 
   vim.api.nvim_buf_clear_namespace(0, -1, 0, -1)
@@ -39,7 +32,7 @@ function M.delete_tracked_test()
   local handle_choice = function(tracked_test_name)
     for index, testInfo in ipairs(M.test_tracker) do
       if testInfo.test_name == tracked_test_name then
-        terminal_multiplexer:delete_terminal(tracked_test_name)
+        M.terminals_tests:delete_terminal(tracked_test_name)
         table.remove(M.test_tracker, index)
         make_notify(string.format('Deleted test terminal from tracker: %s', tracked_test_name))
         break
@@ -48,50 +41,6 @@ function M.delete_tracked_test()
   end
 
   vim.ui.select(all_tracked_test_names, opts, function(choice) handle_choice(choice) end)
-end
-
--- Function to jump to a specific tracked test by index
-local function jump_to_tracked_test_by_index(index)
-  if index > #M.test_tracker then
-    index = #M.test_tracker
-  end
-  if index < 1 then
-    vim.notify(string.format('Invalid index: %d', index), vim.log.levels.ERROR)
-    return
-  end
-
-  local target_test = M.test_tracker[index].test_name
-
-  vim.lsp.buf_request(0, 'workspace/symbol', { query = target_test }, function(err, res)
-    if err or not res or #res == 0 then
-      vim.notify('No definition found for test: ' .. target_test, vim.log.levels.ERROR)
-      return
-    end
-
-    local result = res[1] -- Take the first result
-    local filename = vim.uri_to_fname(result.location.uri)
-    local start = result.location.range.start
-
-    vim.cmd('edit ' .. filename)
-    vim.api.nvim_win_set_cursor(0, { start.line + 1, start.character })
-    vim.cmd [[normal! zz]]
-  end)
-end
-
-local function toggle_tracked_test_by_index(index)
-  if index > #M.test_tracker then
-    index = #M.test_tracker
-  end
-  local target_test = M.test_tracker[index].test_name
-  terminal_multiplexer:toggle_float_terminal(target_test)
-end
-
-for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-  map('n', string.format('<leader>%d', idx), function() jump_to_tracked_test_by_index(idx) end, { desc = string.format('Jump to tracked test %d', idx) })
-end
-
-for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-  map('n', string.format('<localleader>v%d', idx), function() toggle_tracked_test_by_index(idx) end, { desc = string.format('Toggle tracked test %d', idx) })
 end
 
 local function quickfix_load_tracked_tests(test_names)
@@ -143,8 +92,8 @@ M.view_tracker = -1
 
 local function toggle_view_enclosing_test()
   local needs_open = true
-  for test_name, _ in pairs(terminal_multiplexer.all_terminals) do
-    local current_floating_term_state = terminal_multiplexer.all_terminals[test_name]
+  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
+    local current_floating_term_state = M.terminals_tests.all_terminals[test_name]
     if current_floating_term_state then
       if vim.api.nvim_win_is_valid(current_floating_term_state.win) then
         vim.api.nvim_win_hide(current_floating_term_state.win)
@@ -157,7 +106,7 @@ local function toggle_view_enclosing_test()
   if needs_open then
     local test_name = Get_enclosing_test()
     assert(test_name, 'No test found')
-    local float_terminal_state = terminal_multiplexer:toggle_float_terminal(test_name)
+    local float_terminal_state = M.terminals_tests:toggle_float_terminal(test_name)
     assert(float_terminal_state, 'Failed to create floating terminal')
 
     -- Need this duplication. Otherwise, the keymap is bind to the buffer for for some reason
@@ -174,7 +123,7 @@ local function toggle_view_enclosing_test()
 end
 
 ---@param test_info testInfo
-local go_test_command = function(test_info)
+M.go_test_command = function(test_info)
   assert(test_info.test_name, 'No test found')
   assert(test_info.test_bufnr, 'No test buffer found')
   assert(test_info.test_line, 'No test line found')
@@ -184,8 +133,8 @@ local go_test_command = function(test_info)
   local test_line = test_info.test_line
   local test_command = test_info.test_command
   local source_bufnr = test_info.test_bufnr
-  terminal_multiplexer:toggle_float_terminal(test_name)
-  local float_term_state = terminal_multiplexer:toggle_float_terminal(test_name)
+  M.terminals_tests:toggle_float_terminal(test_name)
+  local float_term_state = M.terminals_tests:toggle_float_terminal(test_name)
   assert(float_term_state, 'Failed to create floating terminal')
   vim.api.nvim_chan_send(float_term_state.chan, test_command .. '\n')
 
@@ -261,7 +210,7 @@ local function test_buf(test_format)
   local source_bufnr = vim.api.nvim_get_current_buf()
   local testsInCurrBuf = Find_all_tests(source_bufnr)
   for test_name, test_line in pairs(testsInCurrBuf) do
-    terminal_multiplexer:delete_terminal(test_name)
+    M.terminals_tests:delete_terminal(test_name)
     local test_command = string.format(test_format, test_name)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
     make_notify(string.format('Running test: %s', test_name))
@@ -270,11 +219,11 @@ local function test_buf(test_format)
         M.test_tracker[index] = test_info
       end
     end
-    go_test_command(test_info)
+    M.go_test_command(test_info)
   end
 end
 
-local function get_test_info_enclosing_test()
+M.get_test_info_enclosing_test = function()
   local test_name, test_line = Get_enclosing_test()
   if not test_name then
     make_notify 'No test found'
@@ -294,12 +243,12 @@ end
 
 ---@return  testInfo | nil
 local function go_integration_test()
-  local test_info = get_test_info_enclosing_test()
+  local test_info = M.get_test_info_enclosing_test()
   if not test_info then
     return nil
   end
-  terminal_multiplexer:delete_terminal(test_info.test_name)
-  go_test_command(test_info)
+  M.terminals_tests:delete_terminal(test_info.test_name)
+  M.go_test_command(test_info)
   make_notify(string.format('Running test: %s', test_info.test_name))
   return test_info
 end
@@ -334,11 +283,11 @@ end
 local go_normal_test = function()
   local source_bufnr = vim.api.nvim_get_current_buf()
   local test_name, test_line = Get_enclosing_test()
-  terminal_multiplexer:delete_terminal(test_name)
+  M.terminals_tests:delete_terminal(test_name)
   assert(test_name, 'No test found')
   local test_command = string.format('go test ./... -v -run %s\r\n', test_name)
   local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
-  go_test_command(test_info)
+  M.go_test_command(test_info)
 end
 
 local function test_normal_buf()
@@ -350,20 +299,13 @@ local function test_normal_tracked()
   local test_format = 'go test ./... -v -run %s'
   for _, test_info in ipairs(M.test_tracker) do
     test_info.test_command = string.format(test_format, test_info.test_name)
-    go_test_command(test_info)
+    M.go_test_command(test_info)
   end
 end
 
 vim.api.nvim_create_user_command('GoTestNormalTracked', test_normal_tracked, {})
 
 --- === Test List ===
-
-M.test_track = function()
-  for _, test_info in ipairs(M.test_tracker) do
-    make_notify(string.format('Running test: %s', test_info.test_name))
-    go_test_command(test_info)
-  end
-end
 
 local function delete_test_terminal()
   local test_name, _ = Get_enclosing_test()
@@ -377,64 +319,10 @@ local function delete_test_terminal()
       break
     end
   end
-  terminal_multiplexer:delete_terminal(test_name)
+  M.terminals_tests:delete_terminal(test_name)
   make_notify(string.format('Deleted test terminal from tracker: %s', test_name))
 end
 
-local function add_test_to_tracker()
-  local test_info = get_test_info_enclosing_test()
-  if not test_info then
-    return nil
-  end
-  for _, existing_test_info in ipairs(M.test_tracker) do
-    if existing_test_info.test_name == test_info.test_name then
-      make_notify(string.format('Test already in tracker: %s', test_info.test_name))
-      return
-    end
-  end
-  table.insert(M.test_tracker, test_info)
-end
-
-local function view_tests_tracked()
-  if vim.api.nvim_win_is_valid(M.view_tracker) then
-    vim.api.nvim_win_close(M.view_tracker, true)
-    return
-  end
-
-  local all_tracked_tests = { '', '' }
-
-  for _, test_info in ipairs(M.test_tracker) do
-    if test_info.status == 'failed' then
-      table.insert(all_tracked_tests, '\t' .. '❌' .. '  ' .. test_info.test_name)
-    elseif test_info.status == 'passed' then
-      table.insert(all_tracked_tests, '\t' .. '✅' .. '  ' .. test_info.test_name)
-    else
-      table.insert(all_tracked_tests, '\t' .. '⏳' .. '  ' .. test_info.test_name)
-    end
-  end
-
-  local width = math.floor(vim.o.columns * 0.5)
-  local height = math.floor(vim.o.lines * 0.3)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
-
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, all_tracked_tests)
-  M.view_tracker = vim.api.nvim_open_win(buf, true, {
-    relative = 'editor',
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = 'minimal',
-    border = 'rounded',
-    title = 'Go Test Tracker',
-    title_pos = 'center',
-  })
-  vim.keymap.set('n', 'q', function() vim.api.nvim_win_close(M.view_tracker, true) end, { buffer = buf })
-end
-
-vim.api.nvim_create_user_command('GoTestViewTracked', view_tests_tracked, {})
 vim.api.nvim_create_user_command('GoTestDriveStagingBuf', drive_test_staging_buf, {})
 vim.api.nvim_create_user_command('GoTestDriveDevBuf', drive_test_dev_buf, {})
 vim.api.nvim_create_user_command('GoTestWindowsBuf', windows_test_buf, {})
@@ -444,24 +332,23 @@ vim.api.nvim_create_user_command('GoTestDriveStaging', drive_test_staging, {})
 vim.api.nvim_create_user_command('GoTestIntegration', go_integration_test, {})
 vim.api.nvim_create_user_command('GoTestTrack', M.test_track, {})
 vim.api.nvim_create_user_command('GoTestReset', function() M.reset_test() end, {})
-vim.api.nvim_create_user_command('GoTestSearch', function() terminal_multiplexer:search_terminal() end, {})
-vim.api.nvim_create_user_command('GoTestDelete', function() terminal_multiplexer:select_delete_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestSearch', function() M.terminals_tests:search_terminal() end, {})
+vim.api.nvim_create_user_command('GoTestDelete', function() M.terminals_tests:select_delete_terminal() end, {})
 
 vim.api.nvim_create_user_command('GoTestNormalBuf', test_normal_buf, {})
 vim.api.nvim_create_user_command('GoTestNormal', go_normal_test, {})
 
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = 'Select test terminal' })
-vim.keymap.set('n', '<leader>tf', function() terminal_multiplexer:search_terminal(true) end, { desc = 'Select test terminal with pass filter' })
+vim.keymap.set('n', '<leader>st', function() M.terminals_tests:search_terminal() end, { desc = 'Select test terminal' })
+vim.keymap.set('n', '<leader>tf', function() M.terminals_tests:search_terminal(true) end, { desc = 'Select test terminal with pass filter' })
 vim.keymap.set('n', '<leader>tg', toggle_view_enclosing_test, { desc = 'Toggle go test terminal' })
 
 vim.keymap.set(
   'n',
   '<leader>tl',
-  function() terminal_multiplexer:toggle_float_terminal(terminal_multiplexer.last_terminal_name) end,
+  function() M.terminals_tests:toggle_float_terminal(M.terminals_tests.last_terminal_name) end,
   { desc = 'Toggle last go test terminal' }
 )
 
-vim.keymap.set('n', '<leader>at', add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
 vim.keymap.set('n', '<leader>dt', delete_test_terminal, { desc = '[D]elete [T]est terminal' })
 
 vim.keymap.set('n', '<leader>G', go_integration_test, { desc = 'Go integration test' })

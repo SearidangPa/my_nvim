@@ -4,20 +4,23 @@ TerminalMultiplexer.__index = TerminalMultiplexer
 vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 
 ---@class TerminalMultiplexer
----@field all_terminals table<string, Float_Term_State>
----@field terminal_order string[]
+---@field all_terminals table<string, Float_Term_State> Dictionary of all terminals by name
+---@field terminal_order string[] Order of terminal creation
+---@field last_terminal_name string|nil Name of the last accessed terminal
+---@field augroup number Vim autogroup ID
 
 ---@class Float_Term_State
----@field buf number
----@field win number @field chan number
----@field footer_buf number
----@field footer_win number
----@field chan number
----@field status string
+---@field buf number Buffer ID
+---@field win number Window ID
+---@field footer_buf number Footer buffer ID
+---@field footer_win number Footer window ID
+---@field chan number Terminal channel ID
+---@field status string Status of the terminal (e.g., 'running', 'passed', 'failed')
 
---- === Create, Search, Delete, Navigate between terminals ===;
+--- === Create, Search, Delete, Navigate between terminals ===
 
--- @return TerminalMultiplexer
+---Creates a new terminal multiplexer instance
+---@return TerminalMultiplexer new terminal multiplexer instance
 function TerminalMultiplexer.new()
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {} --- @type table<string, Float_Term_State>
@@ -27,6 +30,8 @@ function TerminalMultiplexer.new()
   return self
 end
 
+---Lists all terminal names
+---@return string[] list of all terminal names
 function TerminalMultiplexer:list()
   local terminal_names = {}
   for terminal_name, _ in pairs(self.all_terminals) do
@@ -35,6 +40,9 @@ function TerminalMultiplexer:list()
   return terminal_names
 end
 
+---Open terminal selector UI
+---@param filter_pass boolean Whether to filter out passed tests
+---@return nil
 function TerminalMultiplexer:search_terminal(filter_pass)
   local opts = {
     prompt = 'Select terminal:',
@@ -64,8 +72,9 @@ function TerminalMultiplexer:search_terminal(filter_pass)
   vim.ui.select(all_terminal_names, opts, function(choice) handle_choice(choice) end)
 end
 
---- === Navigate between terminals ===;
+--- Navigate between terminals
 ---@param direction number 1 for next, -1 for previous
+---@return nil
 function TerminalMultiplexer:navigate_terminal(direction)
   if #self.terminal_order == 0 then
     vim.notify('No terminals available', vim.log.levels.INFO)
@@ -119,7 +128,11 @@ function TerminalMultiplexer:navigate_terminal(direction)
   self:toggle_float_terminal(next_terminal_name)
 end
 
----@param float_terminal_state Float_Term_State
+---Create the floating window for a terminal
+---@param float_terminal_state Float_Term_State State of the terminal to create window for
+---@param terminal_name string Name of the terminal
+---@param do_not_open_win boolean|nil If true, don't actually open the window
+---@return nil
 function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_name, do_not_open_win)
   local width = math.floor(vim.o.columns)
   local height = math.floor(vim.o.lines)
@@ -134,7 +147,9 @@ function TerminalMultiplexer:create_float_window(float_terminal_state, terminal_
   local padding = string.rep(' ', width - #terminal_name - 1)
   local footer_text = padding .. terminal_name
   vim.api.nvim_buf_set_lines(float_terminal_state.footer_buf, 0, -1, false, { footer_text })
+  ---@diagnostic disable-next-line: deprecated
   vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'Title', 0, 0, -1)
+  ---@diagnostic disable-next-line: deprecated
   vim.api.nvim_buf_add_highlight(float_terminal_state.footer_buf, -1, 'TerminalNameUnderline', 0, #padding, -1)
 
   if not do_not_open_win then
@@ -180,8 +195,10 @@ end
 
 --- === Toggle terminal ===
 
----@param terminal_name string
----@return Float_Term_State | nil
+---Toggle a terminal window's visibility
+---@param terminal_name string Name of the terminal to toggle
+---@param do_not_open_win boolean|nil If true, prepare but don't display the window
+---@return Float_Term_State|nil The terminal state or nil if terminal name is nil
 function TerminalMultiplexer:toggle_float_terminal(terminal_name, do_not_open_win)
   if not terminal_name then
     return nil
@@ -225,6 +242,9 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, do_not_open_wi
   return self.all_terminals[terminal_name]
 end
 
+---Delete a terminal by name
+---@param terminal_name string Name of the terminal to delete
+---@return nil
 function TerminalMultiplexer:delete_terminal(terminal_name)
   local float_terminal = self.all_terminals[terminal_name]
   if not float_terminal then
@@ -243,6 +263,8 @@ function TerminalMultiplexer:delete_terminal(terminal_name)
   end
 end
 
+---Open UI to select and delete a terminal
+---@return nil
 function TerminalMultiplexer:select_delete_terminal()
   local opts = {
     prompt = 'Select terminal:',
