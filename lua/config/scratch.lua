@@ -72,7 +72,6 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 <Constraints>
     * \<🛡️: fill in here\> \>
 
-
 ## Brief description of the changes
 
 ## Test Section
