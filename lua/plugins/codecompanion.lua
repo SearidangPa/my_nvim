@@ -66,7 +66,6 @@ return {
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',
     'echasnovski/mini.diff',
-    'copilot.lua',
     'j-hui/fidget.nvim',
   },
   init = function() require('config.fidget_spinner_for_ai'):init() end,
