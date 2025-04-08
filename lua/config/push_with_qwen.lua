@@ -17,7 +17,11 @@ local function push_with_qwen()
   local async_make_job = require 'config.async_make_job'
   async_make_job.make_lint()
   async_make_job.make_all()
+
+  terminal_multiplexer:delete_terminal(pq_term_name)
+  terminal_multiplexer:toggle_float_terminal(pq_term_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
+
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local commit_info_prev = get_commit_message_and_time()
   local command_str = 'gaa && pg_14\r'
