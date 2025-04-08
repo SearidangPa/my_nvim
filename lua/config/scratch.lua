@@ -72,6 +72,12 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 <Constraints>
     * \<🛡️: fill in here\> \>
 
+
+## Brief description of the changes
+
+## Test Section
+\<For each new test added. I want a bullet point for the test name inside a backtick with color for pretty formatting. Then I want three subbullet points: the test description, the setup and the expected outcome\>
+
 ## Flows with relation to the changes
 \<Think about a brief description of the flow using right arrows. Each flow should contain at most 5 steps. \>
 \<Then, I want you to create a mermaid diagram that illustrates the flow. Try to minimize the number of components and arrows as much as possible while still capturing the important essence of the flow. If the depth of the graph is bigger than 5, i want you to separate the flow into multiple smaller graphs.
@@ -86,11 +92,6 @@ Here is an example of a simple flow:
         D -- \"No: Retry/Log Error\" --> C
     ``` 
 \>
-
-## Brief description of the changes
-
-## Test Section
-\<For each new test added. I want a bullet point for the test name inside a backtick with color for pretty formatting. Then I want three subbullet points: the test description, the setup and the expected outcome\>
 ]]
 
 local answer_format_prompt = [[
