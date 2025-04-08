@@ -128,8 +128,8 @@ local function push_all()
     git_push()
     async_make_job.make_lint()
     async_make_job.make_all()
-    local test_tracker = require 'config.track_test_terminal'
-    test_tracker.test_track_list()
+    local test_t = require 'test-t'
+    test_t.test_track_list()
   end
   git_add_all(function() select_commit_message_prompt(cb) end)
 end
