@@ -42,7 +42,7 @@ opts.prompt_library = {
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
           return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
             .. 'I want it inside the /*  block above the function.'
-            .. 'There should be no text after the first /* symbols.'
+            .. 'There should be in this format /*\n<your input\n*/'
             .. 'The first nonempty line should start with the function name and its purpose.'
             .. 'I do not want any empty line'
             .. 'You should not return any more star. The first line should not be a bullet point. \n\n```'
