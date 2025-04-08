@@ -99,19 +99,6 @@ return {
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
     require('lspconfig').marksman.setup { capabilities = capabilities }
-    require('lspconfig').lua_ls.setup {
-      capabilities = capabilities,
-      settings = {
-        Lua = {
-          runtime = { version = 'LuaJIT' },
-          diagnostics = { globals = { 'vim' } },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file('', true),
-            checkThirdParty = false,
-          },
-          telemetry = { enable = false },
-        },
-      },
-    }
+    require('lspconfig').lua_ls.setup { capabilities = capabilities }
   end,
 }

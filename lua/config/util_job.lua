@@ -185,8 +185,6 @@ M.start_job = function(opts)
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
   end
-
-  return job_id, output, errors
 end
 
 function Contains(tbl, value)
