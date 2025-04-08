@@ -48,13 +48,8 @@ return {
         return ls.jumpable(-1) and ls.jump(-1)
       end
 
-      vim.keymap.set({ 'i', 's' }, '<c-k>', function()
-        return vim.snippet.active { direction = 1 } and vim.snippet.jump(1)
-      end, { silent = true })
-
-      vim.keymap.set({ 'i', 's' }, '<c-j>', function()
-        return vim.snippet.active { direction = -1 } and vim.snippet.jump(-1)
-      end, { silent = true })
+      vim.keymap.set({ 'i', 's' }, '<c-k>', function() return vim.snippet.active { direction = 1 } and vim.snippet.jump(1) end, { silent = true })
+      vim.keymap.set({ 'i', 's' }, '<c-j>', function() return vim.snippet.active { direction = -1 } and vim.snippet.jump(-1) end, { silent = true })
 
       vim.keymap.set({ 'i', 's' }, '<C-]>', function()
         if ls.choice_active() then
