@@ -1,54 +1,44 @@
 local M = {}
 local make_notify = require('mini.notify').make_notify {}
 
-local function create_diagnostic(file, row, col, message)
-  local file_bufnr = vim.fn.bufnr(file)
-  if not vim.api.nvim_buf_is_valid(file_bufnr) then
-    file_bufnr = vim.fn.bufadd(file)
-    vim.fn.bufload(file_bufnr)
-  end
-
-  return {
-    bufnr = file_bufnr,
-    col = tonumber(col) - 1, -- Column number (0-indexed)
-    severity = vim.diagnostic.severity.ERROR,
-    source = 'golangci-lint',
-    user_data = {},
-  },
-    file_bufnr
-end
-
-local function add_diagnostic_to_map(diagnostics_map, diagnostic, file_bufnr)
-  if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
-    diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
-  end
-  table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
-end
-
-local function parse_diagnostic_line(line)
-  local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
-  if file and row and col and message then
-    file = file:gsub('\\', '/')
-    return file, row, col, message
-  end
-  return nil
-end
-
-local function parse_windows_output(output_str)
+local function get_diagnostic_map_windows(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
-
+  local output_str = type(output) == 'table' and table.concat(output, '\n') or output
   for log_line in output_str:gmatch '([^\r\n]+)' do
     local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
+
     if error_msg then
       error_msg = error_msg:gsub('\\n', '\n')
+
       for diag_line in error_msg:gmatch '([^\r\n]+)' do
         if not diag_line:match '^# ' then
-          local file, row, col, message = parse_diagnostic_line(diag_line)
-          if file then
-            local diagnostic, file_bufnr = create_diagnostic(file, row, col, message)
-            add_diagnostic_to_map(diagnostics_map, diagnostic, file_bufnr)
+          local file, row, col, message = diag_line:match '([^:]+):(%d+):(%d+): (.+)'
+
+          if file and row and col and message then
+            file = file:gsub('\\', '/')
+
+            local file_bufnr = vim.fn.bufnr(file)
+            if not vim.api.nvim_buf_is_valid(file_bufnr) then
+              file_bufnr = vim.fn.bufadd(file)
+              vim.fn.bufload(file_bufnr)
+            end
+
+            local diagnostic = {
+              bufnr = file_bufnr,
+              lnum = tonumber(row) - 1,
+              col = tonumber(col) - 1,
+              message = message,
+              severity = vim.diagnostic.severity.ERROR,
+              source = 'golangci-lint',
+              user_data = {},
+            }
+
+            if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+              diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+            end
+            table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
           end
         end
       end
@@ -58,34 +48,52 @@ local function parse_windows_output(output_str)
   return diagnostics_map
 end
 
-local function parse_unix_output(output_lines)
+local function get_diagnostic_map_unix(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
 
-  for _, line in ipairs(output_lines) do
-    local file, row, col, message = parse_diagnostic_line(line)
-    if file then
-      local diagnostic, file_bufnr = create_diagnostic(file, row, col, message)
-      add_diagnostic_to_map(diagnostics_map, diagnostic, file_bufnr)
+  for _, line in ipairs(output) do
+    local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
+    local file_bufnr = -1
+
+    if file and row and col and message then
+      file_bufnr = vim.fn.bufnr(file)
+
+      if not vim.api.nvim_buf_is_valid(file_bufnr) then
+        file_bufnr = vim.fn.bufadd(file)
+        vim.fn.bufload(file_bufnr)
+      end
+
+      local diagnostic = {
+        bufnr = file_bufnr,
+        lnum = tonumber(row) - 1, -- Line number (0-indexed)
+        col = tonumber(col) - 1, -- Column number (0-indexed)
+        message = message, -- The diagnostic message
+        severity = vim.diagnostic.severity.ERROR, -- Set severity to ERROR
+        source = 'golangci-lint',
+        user_data = {},
+      }
+
+      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+      end
+      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
     end
   end
-
   return diagnostics_map
-end
-
-local function get_diagnostic_map(output)
-  if type(output) == 'table' then
-    return parse_unix_output(output)
-  else
-    return parse_windows_output(output)
-  end
 end
 
 local function set_diagnostics_and_quickfix(output, ns)
   vim.diagnostic.reset(ns)
 
-  local diagnostics_map = get_diagnostic_map(output)
+  local diagnostics_map
+  if vim.fn.has 'win32' == 1 then
+    diagnostics_map = get_diagnostic_map_windows(output)
+  else
+    diagnostics_map = get_diagnostic_map_unix(output)
+  end
+
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     vim.diagnostic.set(ns, bufnr, diagnostics, {})
   end
