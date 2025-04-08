@@ -1,15 +1,11 @@
 local M = {}
-
-local mini_notify = require 'mini.notify'
-local make_notify = mini_notify.make_notify {}
+local make_notify = require('mini.notify').make_notify {}
 
 local function get_diagnostic_map_windows(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
-
   local output_str = type(output) == 'table' and table.concat(output, '\n') or output
-
   for log_line in output_str:gmatch '([^\r\n]+)' do
     local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
 
