@@ -4,7 +4,9 @@ return {
     'github/copilot.vim',
   },
   config = function()
-    vim.keymap.set('i', '<M-s>', require('hopcopilot').hop_copilot, { silent = true, desc = 'hop copilot' })
-    vim.keymap.set('i', '<D-s>', require('hopcopilot').hop_copilot, { silent = true, desc = 'hop copilot' })
+    local hopcopilot = require 'hopcopilot'
+    hopcopilot.setup()
+    vim.keymap.set('i', '<M-s>', hopcopilot.hop_copilot, { silent = true, desc = 'hop copilot' })
+    vim.keymap.set('i', '<D-s>', hopcopilot.hop_copilot, { silent = true, desc = 'hop copilot' })
   end,
 }
