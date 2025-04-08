@@ -73,7 +73,19 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 -> \<Mitigation strategy\> \>
 
 ## Flows with relation to the changes
-\<Give me a brief description of the flow using right arrows. Each flow should contain at most 5 steps. \>
+\<Think about a brief description of the flow using right arrows. Each flow should contain at most 5 steps. \>
+\<Then, I want you to create a mermaid diagram that illustrates the flow. Try to minimize the number of components and arrows as much as possible while still capturing the important essence of the flow. If the depth of the graph is bigger than 5, i want you to separate the flow into multiple smaller graphs.
+Here is an example of a simple flow:
+    \`\`\`mermaid 
+    graph TD
+        A[Local Write Event] --> B{Priority Queue}
+        B --> C[Update File Request]
+        C --> D{On Complete}
+        D -- Yes --> E[Update Notification from Drive]
+        E --> F[Mark in Sync]
+        D -- \"No: Retry/Log Error\" --> C
+    \`\`\` 
+\>
 
 ## Brief description of the changes
 
