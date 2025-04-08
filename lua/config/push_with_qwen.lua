@@ -1,5 +1,5 @@
 -- === Git Push with Qwen14b ===
-local terminal_name = 'git_push_with_qwen14b'
+local pq_term_name = 'git_push_with_qwen14b'
 local make_notify = require('mini.notify').make_notify {}
 local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
 
@@ -17,12 +17,7 @@ local function push_with_qwen()
   local async_make_job = require 'config.async_make_job'
   async_make_job.make_lint()
   async_make_job.make_all()
-  local terminals_test = require 'config.terminals_test'
-
-  terminal_multiplexer:delete_terminal(terminal_name)
-  terminal_multiplexer:toggle_float_terminal(terminal_name)
-  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(terminal_name)
-
+  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local commit_info_prev = get_commit_message_and_time()
   local command_str = 'gaa && pg_14\r'
@@ -50,7 +45,7 @@ end
 
 vim.api.nvim_create_user_command('GitPushWithQwen14b', push_with_qwen, {})
 vim.keymap.set('n', '<leader>pq', push_with_qwen, { silent = true, desc = '[P]ush with [Q]wen14b' })
-vim.api.nvim_create_user_command('QwenTermToggle', function() terminal_multiplexer:toggle_float_terminal(terminal_name) end, {})
+vim.api.nvim_create_user_command('QwenTermToggle', function() terminal_multiplexer:toggle_float_terminal(pq_term_name) end, {})
 
 vim.api.nvim_create_user_command('LastCommitMessage', function()
   local commit_info = get_commit_message_and_time()
