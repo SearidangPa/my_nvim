@@ -123,11 +123,6 @@ local function test_buf(test_format)
     local test_command = string.format(test_format, test_name)
     local test_info = { test_name = test_name, test_line = test_line, test_bufnr = source_bufnr, test_command = test_command }
     make_notify(string.format('Running test: %s', test_name))
-    for index, existing_test_info in ipairs(M.test_tracker) do
-      if existing_test_info.test_name == test_info.test_name then
-        M.test_tracker[index] = test_info
-      end
-    end
     M.go_test_command(test_info)
   end
 end
