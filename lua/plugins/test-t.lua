@@ -3,5 +3,5 @@ return {
   dependencies = {
     'echasnovski/mini.nvim',
   },
-  config = function() end,
+  config = function() require('test-t').setup() end,
 }
