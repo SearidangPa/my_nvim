@@ -32,24 +32,22 @@ M.make_lint = function()
   _, output, errors = start_job { cmd = cmd, ns = linter_ns }
 end
 
-local user_command = vim.api.nvim_create_user_command
-
-user_command('ClearQuickFix', function()
+vim.api.nvim_create_user_command('ClearQuickFix', function()
   vim.fn.setqflist({}, 'r')
   vim.diagnostic.reset(linter_ns)
 end, {})
 
-user_command('GoModTidy', function()
+vim.api.nvim_create_user_command('GoModTidy', function()
   _, output, errors = start_job { cmd = 'go mod tidy' }
 end, {})
 
-user_command('PrintJobOut', function()
+vim.api.nvim_create_user_command('PrintJobOut', function()
   print(vim.inspect(output))
   print(vim.inspect(errors))
 end, {})
 
-user_command('MakeAll', M.make_all, {})
-user_command('MakeLint', M.make_lint, {})
+vim.api.nvim_create_user_command('MakeAll', M.make_all, {})
+vim.api.nvim_create_user_command('MakeLint', M.make_lint, {})
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 

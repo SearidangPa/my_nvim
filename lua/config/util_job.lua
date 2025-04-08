@@ -8,26 +8,19 @@ local function get_diagnostic_map_windows(output)
     diagnostics_list_per_bufnr = {},
   }
 
-  -- Convert output to a single string if it's a table
   local output_str = type(output) == 'table' and table.concat(output, '\n') or output
 
-  -- Find error messages in the Windows golangci-lint output format
   for log_line in output_str:gmatch '([^\r\n]+)' do
-    -- Look for error log lines
     local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
 
     if error_msg then
-      -- Unescape newlines and process each diagnostic line
       error_msg = error_msg:gsub('\\n', '\n')
 
       for diag_line in error_msg:gmatch '([^\r\n]+)' do
-        -- Skip header lines
         if not diag_line:match '^# ' then
-          -- Try to match Windows format (file.go:line:col: message)
           local file, row, col, message = diag_line:match '([^:]+):(%d+):(%d+): (.+)'
 
           if file and row and col and message then
-            -- Convert Windows path separators to Unix style
             file = file:gsub('\\', '/')
 
             local file_bufnr = vim.fn.bufnr(file)
