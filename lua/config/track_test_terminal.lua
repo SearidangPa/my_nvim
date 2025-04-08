@@ -125,7 +125,7 @@ function M.delete_tracked_test()
   local handle_choice = function(tracked_test_name)
     for index, testInfo in ipairs(M.test_tracker) do
       if testInfo.test_name == tracked_test_name then
-        M.terminals_tests:delete_terminal(tracked_test_name)
+        terminals_tests.delete_terminal(tracked_test_name)
         table.remove(M.test_tracker, index)
         make_notify(string.format('Deleted test terminal from tracker: %s', tracked_test_name))
         break
@@ -139,7 +139,7 @@ end
 ---Reset all test terminals
 ---@return nil
 M.reset_test = function()
-  for test_name, _ in pairs(M.terminals_tests.all_terminals) do
+  for test_name, _ in pairs(terminals_tests.all_terminals) do
     terminals_tests:delete_terminal(test_name)
   end
 
