@@ -10,7 +10,7 @@ local terminal_test_set_up = function()
     go_test_tt.test_buf_in_terminals(test_command_format)
   end, {})
 
-  vim.api.nvim_create_user_command('TerminalTestIntegration', function()
+  vim.api.nvim_create_user_command('TestIntegration', function()
     local test_command_format
     if vim.fn.has 'win32' == 1 then
       test_command_format = 'gitBash -c "go test integration_tests/*.go -v -run %s"\r'
@@ -18,6 +18,16 @@ local terminal_test_set_up = function()
       test_command_format = 'go test integration_tests/*.go -v -run %s'
     end
     go_test_tt.test_nearest_in_terminal(test_command_format)
+  end, {})
+
+  vim.api.nvim_create_user_command('TestIntegrationBuf', function()
+    local test_command_format
+    if vim.fn.has 'win32' == 1 then
+      test_command_format = 'gitBash -c "go test integration_tests/*.go -v -run %s"\r'
+    else
+      test_command_format = 'go test integration_tests/*.go -v -run %s'
+    end
+    go_test_tt.test_buf_in_terminals(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TerminalTestSetModeStaging', function()
