@@ -1,11 +1,11 @@
 local terminal_test_set_up = function()
   local go_test_tt = require 'go-test-tt'
-  vim.api.nvim_create_user_command('TerimanlTest', function()
+  vim.api.nvim_create_user_command('TerminalTest', function()
     local test_command_format = 'go test ./... -v -run %s'
     go_test_tt.test_nearest_in_terminal(test_command_format)
   end, {})
 
-  vim.api.nvim_create_user_command('TerimanlTestBuf', function()
+  vim.api.nvim_create_user_command('TerminalTestBuf', function()
     local test_command_format = 'go test ./... -v -run %s'
     go_test_tt.test_buf_in_terminals(test_command_format)
   end, {})
