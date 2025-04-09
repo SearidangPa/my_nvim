@@ -128,7 +128,7 @@ local function push_all()
     git_push()
     async_make_job.make_lint()
     async_make_job.make_all()
-    local test_t = require 'test-t'
+    local test_t = require 'go-test-tt'
     test_t.test_track_list()
   end
   git_add_all(function() select_commit_message_prompt(cb) end)
