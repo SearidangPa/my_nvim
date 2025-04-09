@@ -3,5 +3,23 @@ return {
   dependencies = {
     'echasnovski/mini.nvim',
   },
-  config = function() require('go-test-tt').setup() end,
+  config = function()
+    local go_test_tt = require 'go-test-tt'
+    go_test_tt.setup()
+
+    vim.api.nvim_create_user_command('TerimanlTestNormalBuf', function()
+      local test_command_format = 'go test ./... -v -run %s'
+      go_test_tt.test_buf_in_terminals(test_command_format)
+    end, {})
+
+    vim.api.nvim_create_user_command('TerminalTestIntegration', function()
+      local test_command_format
+      if vim.fn.has 'win32' == 1 then
+        test_command_format = 'gitBash -c "go test integration_tests/*.go -v -race -run %s"\r'
+      else
+        test_command_format = 'go test integration_tests/*.go -v -run %s'
+      end
+      go_test_tt.test_nearest_in_terminal(test_command_format)
+    end, {})
+  end,
 }
