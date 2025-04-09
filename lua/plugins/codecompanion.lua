@@ -82,11 +82,16 @@ return {
     }
 
     vim.keymap.set({ 'v', 'n' }, '<leader>ad', function()
+      require('codecompanion').prompt 'docfn'
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+    end, { noremap = true, silent = true })
+
+    vim.keymap.set({ 'v', 'n' }, '<leader>af', function()
       local util_find_func = require 'config.util_find_func'
       util_find_func.visual_function()
       vim.cmd [[normal! o]]
       require('codecompanion').prompt 'docfn'
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
-    end, { noremap = true, silent = true })
+    end, { noremap = true, silent = true, desc = '[A]dd [D]oc to function' })
   end,
 }

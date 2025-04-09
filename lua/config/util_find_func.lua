@@ -52,6 +52,7 @@ local function_query = [[
 function Find_all_tests (go_bufnr)
   local query = vim.treesitter.query.parse('go', function_query)
   local parser = vim.treesitter.get_parser(go_bufnr, 'go', {})
+  assert(parser, 'parser is nil')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(root, 'root is nil')
