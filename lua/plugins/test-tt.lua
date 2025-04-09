@@ -1,13 +1,13 @@
 local terminal_test_set_up = function()
-  local go_test_tt = require 'go-test-tt'
+  local terminal_test = require 'terminal_test.terminal_test'
   vim.api.nvim_create_user_command('TerminalTest', function()
     local test_command_format = 'go test ./... -v -run %s'
-    go_test_tt.test_nearest_in_terminal(test_command_format)
+    terminal_test.test_nearest_in_terminal(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TerminalTestBuf', function()
     local test_command_format = 'go test ./... -v -run %s'
-    go_test_tt.test_buf_in_terminals(test_command_format)
+    terminal_test.test_buf_in_terminals(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TestIntegration', function()
@@ -17,7 +17,7 @@ local terminal_test_set_up = function()
     else
       test_command_format = 'go test integration_tests/*.go -v -run %s'
     end
-    go_test_tt.test_nearest_in_terminal(test_command_format)
+    terminal_test.test_nearest_in_terminal(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TestIntegrationBuf', function()
@@ -27,7 +27,7 @@ local terminal_test_set_up = function()
     else
       test_command_format = 'go test integration_tests/*.go -v -run %s'
     end
-    go_test_tt.test_buf_in_terminals(test_command_format)
+    terminal_test.test_buf_in_terminals(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TerminalTestSetModeStaging', function()
