@@ -41,7 +41,8 @@ end
 
 local function keybind_tracker()
   local map = vim.keymap.set
-  local tracker = require 'go-test-tt.terminal_test.tracker'
+  ---@type Tracker
+  local tracker = require 'terminal_test.tracker'
   for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
     map(
       'n',
@@ -55,7 +56,7 @@ local function keybind_tracker()
     map(
       'n',
       string.format('<localleader>v%d', idx),
-      function() tracker.toggle_tracked_test_by_index(idx) end,
+      function() tracker.toggle_tracked_terminal_by_index(idx) end,
       { desc = string.format('Toggle tracked test %d', idx) }
     )
   end
