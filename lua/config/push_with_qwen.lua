@@ -23,7 +23,6 @@ local function push_with_qwen()
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
 
   assert(float_terminal_state, 'Failed to toggle float terminal')
-  local commit_info_prev = get_commit_message_and_time()
   local command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, command_str .. '\n')
   make_notify 'Sent request to push with Qwen14b'
@@ -35,10 +34,8 @@ local function push_with_qwen()
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
           local commit_info_now = get_commit_message_and_time()
-          if commit_info_now.message ~= commit_info_prev.message then
-            make_notify(commit_info_now.message)
-            return true
-          end
+          make_notify(commit_info_now.message)
+          return true
         end
       end
 
