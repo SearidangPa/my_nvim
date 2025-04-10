@@ -127,6 +127,7 @@ return {
     require('telescope').load_extension 'ui-select'
     require('telescope').load_extension 'harpoon'
     require('telescope').load_extension 'dap'
+    require('telescope').load_extension 'fidget'
     require('config.telescope_multigrep').setup()
   end,
 }
