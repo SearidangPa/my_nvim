@@ -39,6 +39,28 @@ local terminal_test_set_up = function()
   end, {})
 end
 
+local function keybind_tracker()
+  local map = vim.keymap.set
+  local tracker = require 'go-test-tt.terminal_test.tracker'
+  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    map(
+      'n',
+      string.format('<leader>%d', idx),
+      function() tracker.jump_to_tracked_test_by_index(idx) end,
+      { desc = string.format('Jump to tracked test %d', idx) }
+    )
+  end
+
+  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    map(
+      'n',
+      string.format('<localleader>v%d', idx),
+      function() tracker.toggle_tracked_test_by_index(idx) end,
+      { desc = string.format('Toggle tracked test %d', idx) }
+    )
+  end
+end
+
 return {
   'SearidangPa/go-test-tt.nvim',
   dependencies = {
@@ -48,5 +70,6 @@ return {
     local go_test_tt = require 'go-test-tt'
     go_test_tt.setup()
     terminal_test_set_up()
+    keybind_tracker()
   end,
 }

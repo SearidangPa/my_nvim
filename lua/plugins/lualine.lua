@@ -37,22 +37,6 @@ local function get_harpoon_filenames()
   return table.concat(result)
 end
 
-local function tracked_tests_first_half()
-  local terminal_tests = require 'config.terminals_test'
-  local test_tracker = terminal_tests.test_tracker
-  local list_tests_names = ''
-  local index = 1
-  for _, test_info in ipairs(test_tracker) do
-    list_tests_names = list_tests_names .. ' | ' .. test_info.test_name
-    index = index + 1
-    if index > 3 then
-      break
-    end
-  end
-  list_tests_names = list_tests_names:sub(4)
-  return '%#TabLineSelItalic#' .. list_tests_names .. '%#TabLine#'
-end
-
 local function modified_buffer()
   if vim.bo.modified then
     return '● ' -- Indicator for unsaved changes
@@ -147,7 +131,7 @@ return {
       },
       tabline = {
         lualine_a = {},
-        lualine_b = { tracked_tests_first_half },
+        lualine_b = {},
         lualine_c = {},
         lualine_x = { nearest_func_name_if_exists },
         lualine_y = { getDirnameAndFilename },
