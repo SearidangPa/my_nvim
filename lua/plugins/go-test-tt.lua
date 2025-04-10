@@ -62,7 +62,7 @@ local function keybind_tracker()
   end
 
   vim.keymap.set('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
-  vim.keymap.set('n', '<leader>at', tracker.add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
+  vim.keymap.set('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
 end
 
 return {
