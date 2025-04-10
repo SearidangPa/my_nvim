@@ -60,6 +60,9 @@ local function keybind_tracker()
       { desc = string.format('Toggle tracked test %d', idx) }
     )
   end
+
+  vim.keymap.set('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
+  vim.keymap.set('n', '<leader>at', tracker.add_test_to_tracker, { desc = '[A]dd [T]est to tracker' })
 end
 
 return {
