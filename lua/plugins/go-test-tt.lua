@@ -65,6 +65,45 @@ local function keybind_tracker()
   vim.keymap.set('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
 end
 
+vim.api.nvim_create_user_command('ReloadTestT', function()
+  local modules = {
+    'display',
+    'go-test-tt',
+    'util_find_test',
+    'util_status_icon',
+    'terminal_test.terminal_multiplexer',
+    'terminal_test.terminal_test',
+    'terminal_test.tracker',
+    'async_job.go_test',
+    'async_job.util_quickfix',
+  }
+
+  -- Remove existing commands
+  for _, cmd in ipairs {
+    'TerminalTest',
+    'TerminalTestBuf',
+    'TerminalTestIntegration',
+    'TerminalTestIntegrationBuf',
+    'TerminalTestSetModeStaging',
+    'TerminalTestSetModeDev',
+  } do
+    if vim.fn.exists(':' .. cmd) > 0 then
+      vim.cmd('delcommand ' .. cmd)
+    end
+  end
+
+  -- Unload modules
+  for _, module in ipairs(modules) do
+    package.loaded[module] = nil
+  end
+
+  -- Re-run your setup functions
+  terminal_test_set_up()
+  keybind_tracker()
+
+  vim.notify('Terminal test plugin reloaded', vim.log.levels.INFO)
+end, {})
+
 return {
   'SearidangPa/go-test-tt.nvim',
   dependencies = {
