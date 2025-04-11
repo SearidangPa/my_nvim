@@ -12,7 +12,18 @@ async_job.make_all = function()
   else
     cmd = { 'make', '-j', 'all' }
   end
-  require('config.util_job').start_job { cmd = cmd }
+
+  local fidget = require 'fidget'
+
+  local fidget_handle = fidget.progress.handle.create {
+    title = table.concat(cmd, ' '),
+    lsp_client = {
+      name = 'build',
+    },
+  }
+  local make_all_ns = vim.api.nvim_create_namespace 'make_all'
+
+  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = make_all_ns }
 end
 
 async_job.make_lint = function()

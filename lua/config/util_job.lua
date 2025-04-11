@@ -122,12 +122,17 @@ end
 ---@field cmd string|table
 ---@field ns number
 ---@field on_success_cb function
+---@field fidget_handle ProgressHandle
 
 ---@param opts opts
 function M.start_job(opts)
+  assert(opts.cmd, 'cmd is required')
+  assert(opts.fidget_handle, 'fidget_handle is required')
+  assert(opts.ns, 'ns is required')
   local fidget = require 'fidget'
   local cmd = opts.cmd
-  local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
+  local fidget_handle = opts.fidget_handle
+  local ns = opts.ns
   local output = {}
   local errors = {}
 
@@ -138,13 +143,6 @@ function M.start_job(opts)
   else
     invokeStr = cmd
   end
-
-  local fidget_handle = fidget.progress.handle.create {
-    title = invokeStr,
-    lsp_client = {
-      name = 'build',
-    },
-  }
 
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = false,
