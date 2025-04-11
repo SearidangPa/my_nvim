@@ -1,48 +1,5 @@
 local util_job = {}
 
-local function get_diagnostic_map_windows_linter(output)
-  local diagnostics_map = {
-    diagnostics_list_per_bufnr = {},
-  }
-
-  local output_str = type(output) == 'table' and table.concat(output, '\n') or output
-
-  for line in output_str:gmatch '([^\r\n]+)' do
-    local file, row, col, message = line:match 'level=error msg="[^"]+ typechecking error: .+: # .+\n([^:]+)\\(.+):(%d+):(%d+): (.+)'
-
-    if not file then
-      file, row, col, message = line:match 'level=error msg="[^"]+ typechecking error: ([^:]+):(%d+):(%d+): (.+)"'
-    end
-
-    if file and row and col and message then
-      file = file:gsub('\\', '/')
-
-      local file_bufnr = vim.fn.bufnr(file)
-      if not vim.api.nvim_buf_is_valid(file_bufnr) then
-        file_bufnr = vim.fn.bufadd(file)
-        vim.fn.bufload(file_bufnr)
-      end
-
-      local diagnostic = {
-        bufnr = file_bufnr,
-        lnum = tonumber(row) - 1,
-        col = tonumber(col) - 1,
-        message = message,
-        severity = vim.diagnostic.severity.ERROR,
-        source = 'golangci-lint',
-        user_data = {},
-      }
-
-      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
-        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
-      end
-      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
-    end
-  end
-
-  return diagnostics_map
-end
-
 local function get_diagnostic_map_windows_make_all(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
@@ -118,24 +75,22 @@ local function get_diagnostic_map_unix(output)
   return diagnostics_map
 end
 
-local function get_diagnostic_map_windows(cmd, output)
-  if cmd:match 'lint' then
-    return get_diagnostic_map_windows_linter(output)
-  else
-    return get_diagnostic_map_windows_make_all(output)
-  end
-end
-
 local function set_diagnostics_and_quickfix(cmd, output, ns)
   vim.diagnostic.reset(ns)
 
   local diagnostics_map
   if vim.fn.has 'win32' == 1 then
-    diagnostics_map = get_diagnostic_map_windows(cmd, output)
+    if cmd:match 'lint' then
+      print 'Open trouble diagnostics to fix linter errors with: <leader><leader>'
+      return
+    else
+      diagnostics_map = get_diagnostic_map_windows_make_all(output)
+    end
   else
     diagnostics_map = get_diagnostic_map_unix(output)
   end
 
+  assert(diagnostics_map, 'diagnostics_map is required')
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     vim.diagnostic.set(ns, bufnr, diagnostics, {})
   end
