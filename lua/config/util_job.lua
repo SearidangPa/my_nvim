@@ -126,6 +126,7 @@ end
 
 ---@param opts opts
 function M.start_job(opts)
+  local fidget = require 'fidget'
   local cmd = opts.cmd
   local silent = opts.silent
   local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
@@ -133,39 +134,46 @@ function M.start_job(opts)
   local errors = {}
 
   local invokeStr
+
   if type(cmd) == 'table' then
     invokeStr = table.concat(cmd, ' ')
   else
     invokeStr = cmd
   end
 
+  local fidget_handle = fidget.progress.handle.create {
+    title = invokeStr,
+    lsp_client = {
+      name = 'build',
+    },
+  }
+
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = true,
     stderr_buffered = true,
-
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
         table.insert(output, line)
       end
+      fidget_handle:report { message = #output .. ' lines' }
     end,
-
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
         table.insert(errors, line)
       end
+      if #errors > 0 then
+        fidget_handle:report { message = #errors .. ' errors' }
+      end
     end,
-
     on_exit = function(_, code)
       if code ~= 0 then
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
         vim.list_extend(output, errors)
-
         set_diagnostics_and_quickfix(output, ns)
-
         if #errors > 0 then
           print('Error:' .. table.concat(errors, '\n'))
         end
-
+        fidget_handle:finish()
         return
       end
 
@@ -176,6 +184,8 @@ function M.start_job(opts)
         make_notify(notif, vim.log.levels.INFO)
       end
 
+      fidget_handle:finish()
+
       if opts.on_success_cb then
         opts.on_success_cb()
       end
@@ -184,9 +194,9 @@ function M.start_job(opts)
 
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
+    fidget_handle:cancel()
   end
 end
-
 function Contains(tbl, value)
   for _, v in ipairs(tbl) do
     if v == value then
