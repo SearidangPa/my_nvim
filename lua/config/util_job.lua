@@ -4,43 +4,35 @@ local function get_diagnostic_map_windows(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
+
   local output_str = type(output) == 'table' and table.concat(output, '\n') or output
-  for log_line in output_str:gmatch '([^\r\n]+)' do
-    local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
 
-    if error_msg then
-      error_msg = error_msg:gsub('\\n', '\n')
+  for line in output_str:gmatch '([^\r\n]+)' do
+    local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
 
-      for diag_line in error_msg:gmatch '([^\r\n]+)' do
-        if not diag_line:match '^# ' then
-          local file, row, col, message = diag_line:match '([^:]+):(%d+):(%d+): (.+)'
+    if file and row and col and message then
+      file = file:gsub('\\', '/')
 
-          if file and row and col and message then
-            file = file:gsub('\\', '/')
-
-            local file_bufnr = vim.fn.bufnr(file)
-            if not vim.api.nvim_buf_is_valid(file_bufnr) then
-              file_bufnr = vim.fn.bufadd(file)
-              vim.fn.bufload(file_bufnr)
-            end
-
-            local diagnostic = {
-              bufnr = file_bufnr,
-              lnum = tonumber(row) - 1,
-              col = tonumber(col) - 1,
-              message = message,
-              severity = vim.diagnostic.severity.ERROR,
-              source = 'golangci-lint',
-              user_data = {},
-            }
-
-            if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
-              diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
-            end
-            table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
-          end
-        end
+      local file_bufnr = vim.fn.bufnr(file)
+      if not vim.api.nvim_buf_is_valid(file_bufnr) then
+        file_bufnr = vim.fn.bufadd(file)
+        vim.fn.bufload(file_bufnr)
       end
+
+      local diagnostic = {
+        bufnr = file_bufnr,
+        lnum = tonumber(row) - 1,
+        col = tonumber(col) - 1,
+        message = message,
+        severity = vim.diagnostic.severity.ERROR,
+        source = 'golangci-lint',
+        user_data = {},
+      }
+
+      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+      end
+      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
     end
   end
 
@@ -66,10 +58,10 @@ local function get_diagnostic_map_unix(output)
 
       local diagnostic = {
         bufnr = file_bufnr,
-        lnum = tonumber(row) - 1, -- Line number (0-indexed)
-        col = tonumber(col) - 1, -- Column number (0-indexed)
-        message = message, -- The diagnostic message
-        severity = vim.diagnostic.severity.ERROR, -- Set severity to ERROR
+        lnum = tonumber(row) - 1,
+        col = tonumber(col) - 1,
+        message = message,
+        severity = vim.diagnostic.severity.ERROR,
         source = 'golangci-lint',
         user_data = {},
       }
@@ -102,10 +94,10 @@ local function set_diagnostics_and_quickfix(output, ns)
     for _, diag in ipairs(diagnostics) do
       table.insert(quickfix_list, {
         bufnr = bufnr,
-        lnum = diag.lnum + 1, -- Convert back to 1-indexed for quickfix
+        lnum = diag.lnum + 1,
         col = diag.col + 1,
         text = diag.message,
-        type = 'E', -- Error type for quickfix
+        type = 'E',
       })
     end
   end
@@ -149,6 +141,7 @@ function util_job.start_job(opts)
         line = vim.trim(line)
         if line ~= '' then
           table.insert(output, line)
+          vim.notify(string.format('stdout: %s', line), vim.log.levels.INFO)
         end
         if opts.fidget_handle then
           opts.fidget_handle:report { string.format('output: %d line', #output) }
@@ -160,6 +153,7 @@ function util_job.start_job(opts)
       for _, line in ipairs(data) do
         if vim.trim(line) ~= '' then
           table.insert(errors, line)
+          vim.notify(string.format('stderr: %s', line), vim.log.levels.ERROR)
         end
       end
     end,

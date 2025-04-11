@@ -21,24 +21,14 @@ local function create_fidget_handle(cmd, fidget_name)
 end
 
 async_job.make_all = function()
-  local cmd
-  if vim.fn.has 'win32' == 1 then
-    cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
-  else
-    cmd = 'make -j all'
-  end
+  local cmd = 'make -j all'
   local make_all_ns = vim.api.nvim_create_namespace 'make_all'
   local fidget_handle = create_fidget_handle(cmd, 'make_all')
   require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = make_all_ns }
 end
 
 async_job.make_lint = function()
-  local cmd
-  if vim.fn.has 'win32' == 1 then
-    cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j lint' }
-  else
-    cmd = 'make -j lint'
-  end
+  local cmd = 'make -j lint'
   local linter_ns = vim.api.nvim_create_namespace 'linter'
   local fidget_handle = create_fidget_handle(cmd, 'linter')
   require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = linter_ns }
