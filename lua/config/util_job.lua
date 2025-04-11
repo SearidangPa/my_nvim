@@ -1,21 +1,21 @@
 local util_job = {}
 
 local function get_diagnostic_map_windows_linter(output)
-  print 'get_diagnostic_map_windows_linter'
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
+
   local output_str = type(output) == 'table' and table.concat(output, '\n') or output
+
   for line in output_str:gmatch '([^\r\n]+)' do
-    local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
+    local file, row, col, message = line:match 'level=error msg="[^"]+ typechecking error: .+: # .+\n([^:]+)\\(.+):(%d+):(%d+): (.+)'
+
+    if not file then
+      file, row, col, message = line:match 'level=error msg="[^"]+ typechecking error: ([^:]+):(%d+):(%d+): (.+)"'
+    end
 
     if file and row and col and message then
-      file = file:gsub('\\\\', '/')
       file = file:gsub('\\', '/')
-
-      if not file:match '^%a:' and file:match '^drive_interface' then
-        file = 'C:/Users/dangs/Documents/windows/' .. file
-      end
 
       local file_bufnr = vim.fn.bufnr(file)
       if not vim.api.nvim_buf_is_valid(file_bufnr) then
@@ -174,7 +174,6 @@ function util_job.start_job(opts)
   local ns = opts.ns
   local output = {}
   local errors = {}
-  local invokeStr
 
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = false,
@@ -207,7 +206,7 @@ function util_job.start_job(opts)
         if opts.fidget_handle then
           opts.fidget_handle:cancel()
         end
-        make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
+        make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
