@@ -30,12 +30,12 @@ M = {
 M._terminal_test_set_up = function(integration_test_command_format)
   local terminal_test = require 'terminal_test.terminal_test'
   vim.api.nvim_create_user_command('TerminalTest', function()
-    local test_command_format = 'go test ./... -v -run %s'
+    local test_command_format = 'go test ./... -v -run %s\r'
     terminal_test.test_nearest_in_terminal(test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TerminalTestBuf', function()
-    local test_command_format = 'go test ./... -v -run %s'
+    local test_command_format = 'go test ./... -v -run %s\r'
     terminal_test.test_buf_in_terminals(test_command_format)
   end, {})
 
