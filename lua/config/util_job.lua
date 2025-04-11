@@ -155,8 +155,8 @@ function M.start_job(opts)
         line = vim.trim(line)
         if line ~= '' then
           table.insert(output, line)
-          fidget_handle:report { message = string.format('%s: %s', invokeStr, line) }
         end
+        fidget_handle:report { string.format('output: %d line', #output) }
       end
     end,
 
@@ -164,7 +164,7 @@ function M.start_job(opts)
       for _, line in ipairs(data) do
         if vim.trim(line) ~= '' then
           table.insert(errors, line)
-          fidget_handle:report { message = string.format('%s: %s', invokeStr, line) }
+          fidget.notify(string.format('%s: failed', invokeStr), vim.log.levels.ERROR)
         end
       end
     end,
@@ -173,10 +173,7 @@ function M.start_job(opts)
       if code ~= 0 then
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(output, ns)
-        if #errors > 0 then
-          print('Error:' .. table.concat(errors, '\n'))
-        end
-        fidget.notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
+        make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
         fidget_handle:finish()
       else
         vim.diagnostic.reset(ns)
