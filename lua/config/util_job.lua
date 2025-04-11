@@ -1,4 +1,4 @@
-local M = {}
+local util_job = {}
 
 local function get_diagnostic_map_windows(output)
   local diagnostics_map = {
@@ -119,17 +119,15 @@ end
 ---@class Job.opts
 ---@field cmd string|table
 ---@field ns number
----@field fidget_handle ProgressHandle
+---@field fidget_handle? ProgressHandle
+---@field on_success_cb? fun()
 
 ---@param opts Job.opts
-function M.start_job(opts)
+function util_job.start_job(opts)
   assert(opts.cmd, 'cmd is required')
-  assert(opts.fidget_handle, 'fidget_handle is required')
   assert(opts.ns, 'ns is required')
   local make_notify = require('mini.notify').make_notify {}
-  local fidget = require 'fidget'
   local cmd = opts.cmd
-  local fidget_handle = opts.fidget_handle
   local ns = opts.ns
   local output = {}
   local errors = {}
@@ -152,7 +150,9 @@ function M.start_job(opts)
         if line ~= '' then
           table.insert(output, line)
         end
-        fidget_handle:report { string.format('output: %d line', #output) }
+        if opts.fidget_handle then
+          opts.fidget_handle:report { string.format('output: %d line', #output) }
+        end
       end
     end,
 
@@ -168,20 +168,29 @@ function M.start_job(opts)
       if code ~= 0 then
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(output, ns)
+        if opts.fidget_handle then
+          opts.fidget_handle:cancel()
+        end
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
-        fidget_handle:finish()
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
-        fidget_handle:finish()
+        if opts.fidget_handle then
+          opts.fidget_handle:finish()
+        end
+        if opts.on_success_cb then
+          opts.on_success_cb()
+        end
       end
     end,
   })
 
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
-    fidget_handle:cancel()
+    if opts.fidget_handle then
+      opts.fidget_handle:cancel()
+    end
   end
 end
 
-return M
+return util_job

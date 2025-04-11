@@ -5,9 +5,15 @@ local async_job = {}
 local function create_fidget_handle(cmd, fidget_name)
   assert(cmd, 'cmd is required')
   assert(fidget_name, 'fidget_name is required')
+  local fidget_title
+  if type(cmd) == 'table' then
+    fidget_title = table.concat(cmd, ' ')
+  else
+    fidget_title = cmd
+  end
   local fidget = require 'fidget'
   return fidget.progress.handle.create {
-    title = cmd,
+    title = fidget_title,
     lsp_client = {
       name = fidget_name,
     },
