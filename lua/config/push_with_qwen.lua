@@ -1,9 +1,13 @@
--- === Git Push with Qwen14b ===
-local pq_term_name = 'git_push_with_qwen14b'
-local make_notify = require('mini.notify').make_notify {}
-local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
+if vim.fn.has 'win32' == 1 then
+  return {}
+end
 
-local function get_commit_message_and_time()
+-- === Git Push with Qwen14b ===
+local M = {}
+
+local pq_term_name = 'git_push_with_qwen14b'
+
+M._get_commit_message_and_time = function()
   local message = vim.fn.system 'git log -1 --pretty=%B'
   local time = vim.fn.system "git log -1 --pretty=%ad --date=format:'%Y-%m-%d %H:%M:%S'"
 
@@ -13,7 +17,8 @@ local function get_commit_message_and_time()
   }
 end
 
-local function push_with_qwen()
+M.push_with_qwen = function()
+  local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
   local async_make_job = require 'config.async_make_job'
   async_make_job.make_lint()
   async_make_job.make_all()
@@ -25,6 +30,7 @@ local function push_with_qwen()
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, command_str .. '\n')
+  local make_notify = require('mini.notify').make_notify {}
   make_notify 'Sent request to push with Qwen14b'
 
   vim.api.nvim_buf_attach(float_terminal_state.buf, false, {
@@ -33,7 +39,7 @@ local function push_with_qwen()
 
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          local commit_info_now = get_commit_message_and_time()
+          local commit_info_now = M._get_commit_message_and_time()
           make_notify(commit_info_now.message)
           return true
         end
@@ -44,12 +50,7 @@ local function push_with_qwen()
   })
 end
 
-vim.api.nvim_create_user_command('GitPushWithQwen14b', push_with_qwen, {})
-vim.keymap.set('n', '<leader>pq', push_with_qwen, { silent = true, desc = '[P]ush with [Q]wen14b' })
-vim.api.nvim_create_user_command('QwenTermToggle', function() terminal_multiplexer:toggle_float_terminal(pq_term_name) end, {})
+vim.api.nvim_create_user_command('GitPushWithQwen14b', M.push_with_qwen, {})
+vim.keymap.set('n', '<leader>pq', M.push_with_qwen, { silent = true, desc = '[P]ush with [Q]wen14b' })
 
-vim.api.nvim_create_user_command('LastCommitMessage', function()
-  local commit_info = get_commit_message_and_time()
-  print(string.format('Last commit message: %s', commit_info.message))
-  print(string.format('Time: %s', commit_info.time))
-end, {})
+return M
