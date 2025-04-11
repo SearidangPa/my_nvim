@@ -1,59 +1,51 @@
 local async_job = {}
-local map = vim.keymap.set
-local linter_ns = vim.api.nvim_create_namespace 'linter'
+local function create_fidget_handle(cmd, fidget_name)
+  local fidget = require 'fidget'
+  return fidget.progress.handle.create {
+    title = table.concat(cmd, ' '),
+    lsp_client = {
+      name = fidget_name,
+    },
+  }
+end
 
 async_job.make_all = function()
-  if vim.bo.filetype ~= 'go' then
-    return
-  end
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j all' }
   else
     cmd = { 'make', '-j', 'all' }
   end
-
-  local fidget = require 'fidget'
-
-  local fidget_handle = fidget.progress.handle.create {
-    title = table.concat(cmd, ' '),
-    lsp_client = {
-      name = 'build',
-    },
-  }
   local make_all_ns = vim.api.nvim_create_namespace 'make_all'
-
+  local fidget_handle = create_fidget_handle(cmd, 'make_all')
   require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = make_all_ns }
 end
 
 async_job.make_lint = function()
-  local start_job = require('config.util_job').start_job
-  if vim.bo.filetype ~= 'go' then
-    return
-  end
   local cmd
   if vim.fn.has 'win32' == 1 then
     cmd = { 'C:\\Program Files\\Git\\bin\\bash.exe', '-c', 'make -j lint' }
   else
     cmd = { 'make', '-j', 'lint' }
   end
-  start_job { cmd = cmd, ns = linter_ns }
+  local linter_ns = vim.api.nvim_create_namespace 'linter'
+  local fidget_handle = create_fidget_handle(cmd, 'linter')
+  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = linter_ns }
 end
 
-vim.api.nvim_create_user_command('ClearQuickFix', function()
-  vim.fn.setqflist({}, 'r')
-  vim.diagnostic.reset(linter_ns)
-end, {})
+async_job.go_mod_tidy = function()
+  local cmd = { 'go', 'mod', 'tidy' }
+  local go_mod_tidy_ns = vim.api.nvim_create_namespace 'go_mod_tidy'
+  local fidget_handle = create_fidget_handle(cmd, 'go_mod_tidy')
+  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = go_mod_tidy_ns }
+end
 
-vim.api.nvim_create_user_command('GoModTidy', function() require('config.util_job').start_job { cmd = 'go mod tidy' } end, {})
-
--- vim.api.nvim_create_user_command('MakeAll', async_job.make_all, {})
-vim.api.nvim_create_user_command('MakeAll', function()
-  package['config.util_job'] = nil
-  async_job.make_all()
-end, {})
-
+vim.api.nvim_create_user_command('GoModTidy', async_job.go_mod_tidy, {})
+vim.api.nvim_create_user_command('MakeAll', async_job.make_all, {})
 vim.api.nvim_create_user_command('MakeLint', async_job.make_lint, {})
+vim.api.nvim_create_user_command('QuickfixClear', function() vim.fn.setqflist({}, 'r') end, {})
+
+local map = vim.keymap.set
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
