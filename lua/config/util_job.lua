@@ -125,7 +125,7 @@ end
 ---@field on_success_cb function
 
 ---@param opts opts
-M.start_job = function(opts)
+function M.start_job(opts)
   local cmd = opts.cmd
   local silent = opts.silent
   local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
