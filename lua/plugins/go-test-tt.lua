@@ -42,13 +42,14 @@ M._terminal_test_set_up = function(integration_test_command_format)
   end, {})
 
   vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
-  map('n', '<leader>G', ':TerminalIntegrationTest<CR>', { desc = '[G]o test in terminal' })
-  map('n', '<leader>T', ':TerminalTestToggleView<CR>', { desc = '[G]o test in terminal' })
 
   vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
   vim.api.nvim_create_user_command('GoTestSetModeDev', function()
     vim.env.MODE, vim.env.UKS = 'dev', 'others'
   end, {})
+
+  map('n', '<leader>G', ':TerminalIntegrationTest<CR>', { desc = '[G]o test in terminal' })
+  map('n', '<leader>T', ':TerminalTestToggleView<CR>', { desc = '[G]o test in terminal' })
 end
 
 vim.api.nvim_create_user_command('ReloadTestT', function()
