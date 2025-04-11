@@ -1,7 +1,6 @@
 local async_job = {}
 local map = vim.keymap.set
 local linter_ns = vim.api.nvim_create_namespace 'linter'
-local start_job = require('config.util_job').start_job
 
 async_job.make_all = function()
   if vim.bo.filetype ~= 'go' then
@@ -13,10 +12,11 @@ async_job.make_all = function()
   else
     cmd = { 'make', '-j', 'all' }
   end
-  start_job { cmd = cmd }
+  require('config.util_job').start_job { cmd = cmd }
 end
 
 async_job.make_lint = function()
+  local start_job = require('config.util_job').start_job
   if vim.bo.filetype ~= 'go' then
     return
   end
@@ -34,9 +34,14 @@ vim.api.nvim_create_user_command('ClearQuickFix', function()
   vim.diagnostic.reset(linter_ns)
 end, {})
 
-vim.api.nvim_create_user_command('GoModTidy', function() start_job { cmd = 'go mod tidy' } end, {})
+vim.api.nvim_create_user_command('GoModTidy', function() require('config.util_job').start_job { cmd = 'go mod tidy' } end, {})
 
-vim.api.nvim_create_user_command('MakeAll', async_job.make_all, {})
+-- vim.api.nvim_create_user_command('MakeAll', async_job.make_all, {})
+vim.api.nvim_create_user_command('MakeAll', function()
+  package['config.util_job'] = nil
+  async_job.make_all()
+end, {})
+
 vim.api.nvim_create_user_command('MakeLint', async_job.make_lint, {})
 map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
 map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })

@@ -54,7 +54,8 @@ local function handle_choice(choice, perform_commit_func)
 
   commit_msg = choice
 
-  if Contains(default_no_more_input, choice) then
+  local util_contains = require 'config.util_contains'
+  if util_contains.contains(default_no_more_input, choice) then
     perform_commit_func(commit_msg)
     return
   end

@@ -120,7 +120,6 @@ end
 
 ---@class opts
 ---@field cmd string|table
----@field silent boolean
 ---@field ns number
 ---@field on_success_cb function
 
@@ -128,7 +127,6 @@ end
 function M.start_job(opts)
   local fidget = require 'fidget'
   local cmd = opts.cmd
-  local silent = opts.silent
   local ns = opts.ns or vim.api.nvim_create_namespace 'start-job'
   local output = {}
   local errors = {}
@@ -149,22 +147,30 @@ function M.start_job(opts)
   }
 
   local job_id = vim.fn.jobstart(cmd, {
-    stdout_buffered = true,
-    stderr_buffered = true,
+    stdout_buffered = false,
+    stderr_buffered = false,
+
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
         table.insert(output, line)
       end
       fidget_handle:report { message = #output .. ' lines' }
     end,
+
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
-        table.insert(errors, line)
+        if vim.trim(line) ~= '' then
+          print(string.format('stderr: %s', line))
+          table.insert(errors, line)
+        end
       end
       if #errors > 0 then
+        print(vim.inspect(errors))
+        print('Error:' .. table.concat(errors, '\n'))
         fidget_handle:report { message = #errors .. ' errors' }
       end
     end,
+
     on_exit = function(_, code)
       if code ~= 0 then
         make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
@@ -177,13 +183,8 @@ function M.start_job(opts)
         return
       end
 
-      if not silent then
-        vim.diagnostic.reset(ns)
-        vim.fn.setqflist({}, 'r')
-        local notif = string.format('%s completed successfully', invokeStr)
-        make_notify(notif, vim.log.levels.INFO)
-      end
-
+      vim.diagnostic.reset(ns)
+      vim.fn.setqflist({}, 'r')
       fidget_handle:finish()
 
       if opts.on_success_cb then
@@ -196,14 +197,6 @@ function M.start_job(opts)
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
     fidget_handle:cancel()
   end
-end
-function Contains(tbl, value)
-  for _, v in ipairs(tbl) do
-    if v == value then
-      return true
-    end
-  end
-  return false
 end
 
 return M
