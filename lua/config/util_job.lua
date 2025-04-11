@@ -1,7 +1,5 @@
 local M = {}
 
-local make_notify = require('mini.notify').make_notify {}
-
 local function get_diagnostic_map_windows(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
@@ -118,17 +116,17 @@ local function set_diagnostics_and_quickfix(output, ns)
   end
 end
 
----@class opts
+---@class Job.opts
 ---@field cmd string|table
 ---@field ns number
----@field on_success_cb function
 ---@field fidget_handle ProgressHandle
 
----@param opts opts
+---@param opts Job.opts
 function M.start_job(opts)
   assert(opts.cmd, 'cmd is required')
   assert(opts.fidget_handle, 'fidget_handle is required')
   assert(opts.ns, 'ns is required')
+  local make_notify = require('mini.notify').make_notify {}
   local fidget = require 'fidget'
   local cmd = opts.cmd
   local fidget_handle = opts.fidget_handle
@@ -176,10 +174,6 @@ function M.start_job(opts)
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
         fidget_handle:finish()
-      end
-
-      if opts.on_success_cb then
-        opts.on_success_cb()
       end
     end,
   })
