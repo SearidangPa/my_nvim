@@ -86,6 +86,7 @@ function Fold_captured_nodes_recursively(query)
   local bufnr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(bufnr, lang, {})
+  assert(parser, 'Parser not found')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(root, 'Tree root is nil')
@@ -146,6 +147,7 @@ local function fold_err()
   ]]
   )
   local parser = vim.treesitter.get_parser(bufnr, 'go', {})
+  assert(parser, 'Parser not found')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(root, 'Tree root is nil')
