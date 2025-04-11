@@ -1,3 +1,7 @@
+if vim.fn.has 'win32' == 1 then
+  return {}
+end
+
 local M = {}
 local async = require 'plenary.async'
 local Job = require 'plenary.job'
