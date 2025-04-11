@@ -13,7 +13,7 @@ local terminal_test_set_up = function()
   vim.api.nvim_create_user_command('TerminalTestIntegration', function()
     local test_command_format
     if vim.fn.has 'win32' == 1 then
-      test_command_format = 'gitBash -c "go test integration_tests/*.go -v -run %s"\r'
+      test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
     else
       test_command_format = 'go test integration_tests/*.go -v -run %s'
     end
@@ -23,7 +23,7 @@ local terminal_test_set_up = function()
   vim.api.nvim_create_user_command('TerminalTestIntegrationBuf', function()
     local test_command_format
     if vim.fn.has 'win32' == 1 then
-      test_command_format = 'gitBash -c "go test integration_tests/*.go -v -run %s"\r'
+      test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
     else
       test_command_format = 'go test integration_tests/*.go -v -run %s'
     end
@@ -78,7 +78,6 @@ vim.api.nvim_create_user_command('ReloadTestT', function()
     'async_job.util_quickfix',
   }
 
-  -- Remove existing commands
   for _, cmd in ipairs {
     'TerminalTest',
     'TerminalTestBuf',
@@ -92,7 +91,6 @@ vim.api.nvim_create_user_command('ReloadTestT', function()
     end
   end
 
-  -- Unload modules
   for _, module in ipairs(modules) do
     package.loaded[module] = nil
   end
@@ -103,7 +101,6 @@ vim.api.nvim_create_user_command('ReloadTestT', function()
 
   vim.notify('Terminal test plugin reloaded', vim.log.levels.INFO)
 end, {})
-
 return {
   'SearidangPa/go-test-tt.nvim',
   dependencies = {
