@@ -113,9 +113,11 @@ end
 local function async_push_all()
   local on_success_cb = function(commit_msg)
     vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
-    local async_job = require 'config.async_job'
-    async_job.make_lint()
-    async_job.make_all()
+    if vim.bo.filetype == 'go' then
+      local async_job = require 'config.async_job'
+      async_job.make_lint()
+      async_job.make_all()
+    end
     async_git_push()
   end
   git_add_all(function() select_commit_message_prompt(on_success_cb) end)
