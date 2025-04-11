@@ -141,7 +141,6 @@ function util_job.start_job(opts)
         line = vim.trim(line)
         if line ~= '' then
           table.insert(output, line)
-          vim.notify(string.format('stdout: %s', line), vim.log.levels.INFO)
         end
         if opts.fidget_handle then
           opts.fidget_handle:report { string.format('output: %d line', #output) }
@@ -153,7 +152,6 @@ function util_job.start_job(opts)
       for _, line in ipairs(data) do
         if vim.trim(line) ~= '' then
           table.insert(errors, line)
-          vim.notify(string.format('stderr: %s', line), vim.log.levels.ERROR)
         end
       end
     end,
