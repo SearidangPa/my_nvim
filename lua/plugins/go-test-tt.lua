@@ -1,3 +1,4 @@
+local map = vim.keymap.set
 M = {
   'SearidangPa/go-test-tt.nvim',
   dependencies = {
@@ -18,12 +19,12 @@ M = {
     M._terminal_test_set_up(integration_test_command_format)
 
     local terminal_test = require 'terminal_test.terminal_test'
-    vim.keymap.set('n', '<localleader>st', function() terminal_test.terminals:search_terminal() end, { desc = '[S]earch Test [T]erminal' })
+    map('n', '<localleader>st', function() terminal_test.terminals:search_terminal() end, { desc = '[S]earch Test [T]erminal' })
 
     ---@type Tracker
     local tracker = require 'terminal_test.tracker'
-    vim.keymap.set('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
-    vim.keymap.set('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
+    map('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
+    map('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
   end,
 }
 
@@ -39,8 +40,9 @@ M._terminal_test_set_up = function(integration_test_command_format)
     terminal_test.test_buf_in_terminals(test_command_format)
   end, {})
 
-  vim.api.nvim_create_user_command('TerminalTestIntegration', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
-  vim.api.nvim_create_user_command('TerminalTestIntegrationBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
+  vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
+
+  vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
   vim.api.nvim_create_user_command('GoTestSetModeDev', function()
     vim.env.MODE, vim.env.UKS = 'dev', 'others'
   end, {})
