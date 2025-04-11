@@ -152,40 +152,37 @@ function M.start_job(opts)
 
     on_stdout = function(_, data)
       for _, line in ipairs(data) do
-        table.insert(output, line)
+        line = vim.trim(line)
+        if line ~= '' then
+          table.insert(output, line)
+          fidget_handle:report { message = string.format('%s: %s', invokeStr, line) }
+        end
       end
-      fidget_handle:report { message = #output .. ' lines' }
     end,
 
     on_stderr = function(_, data)
       for _, line in ipairs(data) do
         if vim.trim(line) ~= '' then
-          print(string.format('stderr: %s', line))
           table.insert(errors, line)
+          fidget_handle:report { message = string.format('%s: %s', invokeStr, line) }
         end
-      end
-      if #errors > 0 then
-        print(vim.inspect(errors))
-        print('Error:' .. table.concat(errors, '\n'))
-        fidget_handle:report { message = #errors .. ' errors' }
       end
     end,
 
     on_exit = function(_, code)
       if code ~= 0 then
-        make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(output, ns)
         if #errors > 0 then
           print('Error:' .. table.concat(errors, '\n'))
         end
+        fidget.notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
         fidget_handle:finish()
-        return
+      else
+        vim.diagnostic.reset(ns)
+        vim.fn.setqflist({}, 'r')
+        fidget_handle:finish()
       end
-
-      vim.diagnostic.reset(ns)
-      vim.fn.setqflist({}, 'r')
-      fidget_handle:finish()
 
       if opts.on_success_cb then
         opts.on_success_cb()
