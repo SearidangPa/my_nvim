@@ -1,7 +1,7 @@
 local map = vim.keymap.set
 
 M = {
-  'SearidangPa/go-test-tt.nvim',
+  'SearidangPa/go-test-t.nvim',
   dependencies = {
     'echasnovski/mini.nvim',
   },
@@ -15,7 +15,7 @@ M = {
       integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
     end
 
-    local go_test_tt = require 'go-test-tt'
+    local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
     M._terminal_test_set_up(integration_test_command_format)
 
@@ -55,7 +55,7 @@ end
 vim.api.nvim_create_user_command('ReloadTestT', function()
   local modules = {
     'display',
-    'go-test-tt',
+    'go-test-t',
     'util_find_test',
     'util_status_icon',
     'terminal_test.terminal_multiplexer',
