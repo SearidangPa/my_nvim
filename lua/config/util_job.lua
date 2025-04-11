@@ -162,7 +162,6 @@ function M.start_job(opts)
       for _, line in ipairs(data) do
         if vim.trim(line) ~= '' then
           table.insert(errors, line)
-          fidget.notify(string.format('%s: failed', invokeStr), vim.log.levels.ERROR)
         end
       end
     end,
