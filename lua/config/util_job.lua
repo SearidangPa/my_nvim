@@ -1,46 +1,38 @@
-local M = {}
+local util_job = {}
 
-local function get_diagnostic_map_windows(output)
+local function get_diagnostic_map_windows_make_all(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
+
   local output_str = type(output) == 'table' and table.concat(output, '\n') or output
-  for log_line in output_str:gmatch '([^\r\n]+)' do
-    local error_msg = log_line:match 'level=error msg="[^"]*typechecking error: :(.-)"'
 
-    if error_msg then
-      error_msg = error_msg:gsub('\\n', '\n')
+  for line in output_str:gmatch '([^\r\n]+)' do
+    local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
 
-      for diag_line in error_msg:gmatch '([^\r\n]+)' do
-        if not diag_line:match '^# ' then
-          local file, row, col, message = diag_line:match '([^:]+):(%d+):(%d+): (.+)'
+    if file and row and col and message then
+      file = file:gsub('\\', '/')
 
-          if file and row and col and message then
-            file = file:gsub('\\', '/')
-
-            local file_bufnr = vim.fn.bufnr(file)
-            if not vim.api.nvim_buf_is_valid(file_bufnr) then
-              file_bufnr = vim.fn.bufadd(file)
-              vim.fn.bufload(file_bufnr)
-            end
-
-            local diagnostic = {
-              bufnr = file_bufnr,
-              lnum = tonumber(row) - 1,
-              col = tonumber(col) - 1,
-              message = message,
-              severity = vim.diagnostic.severity.ERROR,
-              source = 'golangci-lint',
-              user_data = {},
-            }
-
-            if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
-              diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
-            end
-            table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
-          end
-        end
+      local file_bufnr = vim.fn.bufnr(file)
+      if not vim.api.nvim_buf_is_valid(file_bufnr) then
+        file_bufnr = vim.fn.bufadd(file)
+        vim.fn.bufload(file_bufnr)
       end
+
+      local diagnostic = {
+        bufnr = file_bufnr,
+        lnum = tonumber(row) - 1,
+        col = tonumber(col) - 1,
+        message = message,
+        severity = vim.diagnostic.severity.ERROR,
+        source = 'golangci-lint',
+        user_data = {},
+      }
+
+      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+      end
+      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
     end
   end
 
@@ -66,10 +58,10 @@ local function get_diagnostic_map_unix(output)
 
       local diagnostic = {
         bufnr = file_bufnr,
-        lnum = tonumber(row) - 1, -- Line number (0-indexed)
-        col = tonumber(col) - 1, -- Column number (0-indexed)
-        message = message, -- The diagnostic message
-        severity = vim.diagnostic.severity.ERROR, -- Set severity to ERROR
+        lnum = tonumber(row) - 1,
+        col = tonumber(col) - 1,
+        message = message,
+        severity = vim.diagnostic.severity.ERROR,
         source = 'golangci-lint',
         user_data = {},
       }
@@ -83,16 +75,22 @@ local function get_diagnostic_map_unix(output)
   return diagnostics_map
 end
 
-local function set_diagnostics_and_quickfix(output, ns)
+local function set_diagnostics_and_quickfix(cmd, output, ns)
   vim.diagnostic.reset(ns)
 
   local diagnostics_map
   if vim.fn.has 'win32' == 1 then
-    diagnostics_map = get_diagnostic_map_windows(output)
+    if cmd:match 'lint' then
+      print 'Open trouble diagnostics to fix linter errors with: <leader><leader>'
+      return
+    else
+      diagnostics_map = get_diagnostic_map_windows_make_all(output)
+    end
   else
     diagnostics_map = get_diagnostic_map_unix(output)
   end
 
+  assert(diagnostics_map, 'diagnostics_map is required')
   for bufnr, diagnostics in pairs(diagnostics_map.diagnostics_list_per_bufnr) do
     vim.diagnostic.set(ns, bufnr, diagnostics, {})
   end
@@ -102,10 +100,10 @@ local function set_diagnostics_and_quickfix(output, ns)
     for _, diag in ipairs(diagnostics) do
       table.insert(quickfix_list, {
         bufnr = bufnr,
-        lnum = diag.lnum + 1, -- Convert back to 1-indexed for quickfix
+        lnum = diag.lnum + 1,
         col = diag.col + 1,
         text = diag.message,
-        type = 'E', -- Error type for quickfix
+        type = 'E',
       })
     end
   end
@@ -119,28 +117,18 @@ end
 ---@class Job.opts
 ---@field cmd string|table
 ---@field ns number
----@field fidget_handle ProgressHandle
+---@field fidget_handle? ProgressHandle
+---@field on_success_cb? fun()
 
 ---@param opts Job.opts
-function M.start_job(opts)
+function util_job.start_job(opts)
   assert(opts.cmd, 'cmd is required')
-  assert(opts.fidget_handle, 'fidget_handle is required')
   assert(opts.ns, 'ns is required')
   local make_notify = require('mini.notify').make_notify {}
-  local fidget = require 'fidget'
   local cmd = opts.cmd
-  local fidget_handle = opts.fidget_handle
   local ns = opts.ns
   local output = {}
   local errors = {}
-
-  local invokeStr
-
-  if type(cmd) == 'table' then
-    invokeStr = table.concat(cmd, ' ')
-  else
-    invokeStr = cmd
-  end
 
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = false,
@@ -152,7 +140,9 @@ function M.start_job(opts)
         if line ~= '' then
           table.insert(output, line)
         end
-        fidget_handle:report { string.format('output: %d line', #output) }
+        if opts.fidget_handle then
+          opts.fidget_handle:report { string.format('output: %d line', #output) }
+        end
       end
     end,
 
@@ -167,21 +157,30 @@ function M.start_job(opts)
     on_exit = function(_, code)
       if code ~= 0 then
         vim.list_extend(output, errors)
-        set_diagnostics_and_quickfix(output, ns)
-        make_notify(string.format('%s failed', invokeStr), vim.log.levels.ERROR)
-        fidget_handle:finish()
+        set_diagnostics_and_quickfix(cmd, output, ns)
+        if opts.fidget_handle then
+          opts.fidget_handle:cancel()
+        end
+        make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
-        fidget_handle:finish()
+        if opts.fidget_handle then
+          opts.fidget_handle:finish()
+        end
+        if opts.on_success_cb then
+          opts.on_success_cb()
+        end
       end
     end,
   })
 
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
-    fidget_handle:cancel()
+    if opts.fidget_handle then
+      opts.fidget_handle:cancel()
+    end
   end
 end
 
-return M
+return util_job
