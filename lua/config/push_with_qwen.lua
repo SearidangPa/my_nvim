@@ -19,9 +19,11 @@ end
 
 M.push_with_qwen = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
-  local async_make_job = require 'config.async_make_job'
-  async_make_job.make_lint()
-  async_make_job.make_all()
+  if vim.bo.filetype == 'go' then
+    local async_make_job = require 'config.async_make_job'
+    async_make_job.make_lint()
+    async_make_job.make_all()
+  end
 
   terminal_multiplexer:delete_terminal(pq_term_name)
   terminal_multiplexer:toggle_float_terminal(pq_term_name)
