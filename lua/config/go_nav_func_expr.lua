@@ -18,6 +18,7 @@ local function get_root_node()
   local buf_nr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(buf_nr, lang)
+  assert(parser, 'No parser found for this buffer')
   local tree = parser:parse()[1]
   local root = tree:root()
   return root
