@@ -17,6 +17,9 @@ M = {
     go_test_tt.setup()
     M._terminal_test_set_up(integration_test_command_format)
 
+    local terminal_test = require 'terminal_test.terminal_test'
+    vim.keymap.set('n', '<localleader>st', function() terminal_test.terminals:search_terminal() end, { desc = '[S]earch Test [T]erminal' })
+
     ---@type Tracker
     local tracker = require 'terminal_test.tracker'
     vim.keymap.set('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
