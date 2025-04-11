@@ -1,6 +1,49 @@
 local util_job = {}
 
-local function get_diagnostic_map_windows(output)
+local function get_diagnostic_map_windows_linter(output)
+  print 'get_diagnostic_map_windows_linter'
+  local diagnostics_map = {
+    diagnostics_list_per_bufnr = {},
+  }
+  local output_str = type(output) == 'table' and table.concat(output, '\n') or output
+  for line in output_str:gmatch '([^\r\n]+)' do
+    local file, row, col, message = line:match '([^:]+):(%d+):(%d+): (.+)'
+
+    if file and row and col and message then
+      file = file:gsub('\\\\', '/')
+      file = file:gsub('\\', '/')
+
+      if not file:match '^%a:' and file:match '^drive_interface' then
+        file = 'C:/Users/dangs/Documents/windows/' .. file
+      end
+
+      local file_bufnr = vim.fn.bufnr(file)
+      if not vim.api.nvim_buf_is_valid(file_bufnr) then
+        file_bufnr = vim.fn.bufadd(file)
+        vim.fn.bufload(file_bufnr)
+      end
+
+      local diagnostic = {
+        bufnr = file_bufnr,
+        lnum = tonumber(row) - 1,
+        col = tonumber(col) - 1,
+        message = message,
+        severity = vim.diagnostic.severity.ERROR,
+        source = 'golangci-lint',
+        user_data = {},
+      }
+
+      if not diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] then
+        diagnostics_map.diagnostics_list_per_bufnr[file_bufnr] = {}
+      end
+      table.insert(diagnostics_map.diagnostics_list_per_bufnr[file_bufnr], diagnostic)
+    end
+  end
+
+  return diagnostics_map
+end
+
+local function get_diagnostic_map_windows_make_all(output)
   local diagnostics_map = {
     diagnostics_list_per_bufnr = {},
   }
@@ -75,12 +118,20 @@ local function get_diagnostic_map_unix(output)
   return diagnostics_map
 end
 
-local function set_diagnostics_and_quickfix(output, ns)
+local function get_diagnostic_map_windows(cmd, output)
+  if cmd:match 'lint' then
+    return get_diagnostic_map_windows_linter(output)
+  else
+    return get_diagnostic_map_windows_make_all(output)
+  end
+end
+
+local function set_diagnostics_and_quickfix(cmd, output, ns)
   vim.diagnostic.reset(ns)
 
   local diagnostics_map
   if vim.fn.has 'win32' == 1 then
-    diagnostics_map = get_diagnostic_map_windows(output)
+    diagnostics_map = get_diagnostic_map_windows(cmd, output)
   else
     diagnostics_map = get_diagnostic_map_unix(output)
   end
@@ -123,14 +174,7 @@ function util_job.start_job(opts)
   local ns = opts.ns
   local output = {}
   local errors = {}
-
   local invokeStr
-
-  if type(cmd) == 'table' then
-    invokeStr = table.concat(cmd, ' ')
-  else
-    invokeStr = cmd
-  end
 
   local job_id = vim.fn.jobstart(cmd, {
     stdout_buffered = false,
@@ -159,7 +203,7 @@ function util_job.start_job(opts)
     on_exit = function(_, code)
       if code ~= 0 then
         vim.list_extend(output, errors)
-        set_diagnostics_and_quickfix(output, ns)
+        set_diagnostics_and_quickfix(cmd, output, ns)
         if opts.fidget_handle then
           opts.fidget_handle:cancel()
         end
