@@ -74,12 +74,10 @@ end
 local function is_go_test_file()
   local current_file = vim.fn.expand '%:p'
 
-  -- Check if it's a Go file first
   if not string.match(current_file, '%.go$') then
     return false
   end
 
-  -- Check if it follows the Go test file naming pattern (*_test.go)
   return string.match(current_file, '_test%.go$') ~= nil
 end
 
