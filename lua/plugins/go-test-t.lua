@@ -1,4 +1,12 @@
 local map = vim.keymap.set
+
+local integration_test_command_format
+if vim.fn.has 'win32' == 1 then
+  integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
+else
+  integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
+end
+
 local terminal_test_set_up = function(integration_test_command_format)
   local terminal_test = require 'terminal_test.terminal_test'
   vim.api.nvim_create_user_command('TerminalTest', function()
@@ -53,7 +61,7 @@ vim.api.nvim_create_user_command('ReloadTestT', function()
   end
 
   -- Re-run your setup functions
-  terminal_test_set_up()
+  terminal_test_set_up(integration_test_command_format)
 
   vim.notify('Terminal test plugin reloaded', vim.log.levels.INFO)
 end, {})
@@ -65,13 +73,6 @@ M = {
   },
   config = function()
     vim.env.MODE, vim.env.UKS = 'staging', 'others'
-
-    local integration_test_command_format
-    if vim.fn.has 'win32' == 1 then
-      integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
-    else
-      integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
-    end
 
     local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
