@@ -125,8 +125,8 @@ return {
         },
         lualine_b = { 'branch', 'diagnostics' },
         lualine_c = {},
-        lualine_x = {},
-        lualine_y = { get_harpoon_filenames },
+        lualine_x = { get_harpoon_filenames },
+        lualine_y = {},
         lualine_z = {},
       },
       tabline = {
