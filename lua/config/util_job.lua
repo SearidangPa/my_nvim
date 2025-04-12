@@ -162,7 +162,6 @@ function util_job.start_job(opts)
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(cmd, output, ns)
         make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
-        require('fidget').notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
