@@ -43,7 +43,7 @@ end
 
 local function set_diagnostics_and_quickfix(cmd, output, ns)
   local diagnostics_map
-  if vim.fn.has 'win32' == 1 and cmd:match 'lint' then
+  if cmd:match 'lint' then
     print 'Open trouble diagnostics to fix linter errors with: <leader><leader>'
     return
   end
