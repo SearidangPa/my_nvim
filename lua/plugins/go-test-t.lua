@@ -1,35 +1,5 @@
 local map = vim.keymap.set
-
-M = {
-  'SearidangPa/go-test-t.nvim',
-  dependencies = {
-    'echasnovski/mini.nvim',
-  },
-  config = function()
-    vim.env.MODE, vim.env.UKS = 'staging', 'others'
-
-    local integration_test_command_format
-    if vim.fn.has 'win32' == 1 then
-      integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
-    else
-      integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
-    end
-
-    local go_test_tt = require 'go-test-t'
-    go_test_tt.setup()
-    M._terminal_test_set_up(integration_test_command_format)
-
-    local terminal_test = require 'terminal_test.terminal_test'
-    map('n', '<localleader>st', function() terminal_test.terminals:search_terminal() end, { desc = '[S]earch Test [T]erminal' })
-
-    ---@type Tracker
-    local tracker = require 'terminal_test.tracker'
-    map('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
-    map('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
-  end,
-}
-
-M._terminal_test_set_up = function(integration_test_command_format)
+local terminal_test_set_up = function(integration_test_command_format)
   local terminal_test = require 'terminal_test.terminal_test'
   vim.api.nvim_create_user_command('TerminalTest', function()
     local test_command_format = 'go test ./... -v -run %s\r'
@@ -83,10 +53,38 @@ vim.api.nvim_create_user_command('ReloadTestT', function()
   end
 
   -- Re-run your setup functions
-  M._terminal_test_set_up()
-  M._keybind_tracker()
+  terminal_test_set_up()
 
   vim.notify('Terminal test plugin reloaded', vim.log.levels.INFO)
 end, {})
+
+M = {
+  'SearidangPa/go-test-t.nvim',
+  dependencies = {
+    'echasnovski/mini.nvim',
+  },
+  config = function()
+    vim.env.MODE, vim.env.UKS = 'staging', 'others'
+
+    local integration_test_command_format
+    if vim.fn.has 'win32' == 1 then
+      integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
+    else
+      integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
+    end
+
+    local go_test_tt = require 'go-test-t'
+    go_test_tt.setup()
+    terminal_test_set_up(integration_test_command_format)
+
+    local terminal_test = require 'terminal_test.terminal_test'
+    map('n', '<localleader>st', function() terminal_test.terminals:search_terminal() end, { desc = '[S]earch Test [T]erminal' })
+
+    ---@type Tracker
+    local tracker = require 'terminal_test.tracker'
+    map('n', '<leader>tr', tracker.toggle_tracker_window, { desc = '[A]dd [T]est to tracker' })
+    map('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
+  end,
+}
 
 return M
