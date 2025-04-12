@@ -35,7 +35,6 @@ local function get_harpoon_filenames()
     end
   end
 
-  table.insert(result, '%#Normal#')
   return table.concat(result)
 end
 
