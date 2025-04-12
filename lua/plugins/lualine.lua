@@ -17,6 +17,7 @@ local function get_harpoon_filenames()
     max_num_files_displayed = 4
   end
 
+  table.insert(result, '%#HarpoonFilename#')
   for i = 1, math.min(length, max_num_files_displayed) do
     local path = harpoonList:get(i).value
     local filename = vim.fn.fnamemodify(path, ':t')
@@ -34,6 +35,7 @@ local function get_harpoon_filenames()
     end
   end
 
+  table.insert(result, '%#Normal#')
   return table.concat(result)
 end
 
@@ -110,6 +112,7 @@ return {
     end
 
     vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
+    vim.api.nvim_set_hl(0, 'HarpoonFilename', { fg = '#5097A4' })
 
     ll.setup {
       options = {
