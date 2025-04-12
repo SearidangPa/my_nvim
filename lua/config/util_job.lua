@@ -155,19 +155,16 @@ function util_job.start_job(opts)
     end,
 
     on_exit = function(_, code)
+      if opts.fidget_handle then
+        opts.fidget_handle:finish()
+      end
       if code ~= 0 then
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(cmd, output, ns)
-        if opts.fidget_handle then
-          opts.fidget_handle:cancel()
-        end
         make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
-        if opts.fidget_handle then
-          opts.fidget_handle:finish()
-        end
         if opts.on_success_cb then
           opts.on_success_cb()
         end
