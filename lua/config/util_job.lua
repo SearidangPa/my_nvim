@@ -174,9 +174,6 @@ function util_job.start_job(opts)
 
   if job_id <= 0 then
     make_notify('Failed to start the Make command', vim.log.levels.ERROR)
-    if opts.fidget_handle then
-      opts.fidget_handle:cancel()
-    end
   end
 end
 
