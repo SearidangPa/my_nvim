@@ -20,7 +20,7 @@ end
 M.push_with_qwen = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
   if vim.bo.filetype == 'go' then
-    local async_make_job = require 'config.async_make_job'
+    local async_make_job = require 'config.async_job'
     async_make_job.make_lint()
     async_make_job.make_all()
   end
