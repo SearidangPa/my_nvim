@@ -31,14 +31,7 @@ function M._setup_user_commands(go_tester, user_command_prefix)
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermViewLast', function() term_tester:view_last_test_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermToggleDisplay', function() term_tester.displayer:toggle_display() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'ToggleDisplay', function() go_tester:toggle_display() end, {})
-  vim.api.nvim_create_user_command(user_command_prefix .. 'LoadQuackTest', function() go_tester:load_quack_tests() end, {})
-
-  local util_quickfix = require 'util_go_test_quickfix'
-  vim.api.nvim_create_user_command(
-    user_command_prefix .. 'QuickfixLoadQuackTest',
-    function() util_quickfix.load_non_passing_tests_to_quickfix(go_tester.tests_info) end,
-    {}
-  )
+  vim.api.nvim_create_user_command(user_command_prefix .. 'LoadQuackTestQuickfix', function() go_tester:load_quack_tests() end, {})
 end
 
 function M._integration_test_set_up()
