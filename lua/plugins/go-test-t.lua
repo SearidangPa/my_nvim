@@ -6,22 +6,7 @@ M = {
   config = function()
     local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
-
-    local integration_test_command_format
-    if vim.fn.has 'win32' == 1 then
-      integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
-    else
-      integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
-    end
-
-    local terminal_test = require 'terminal_test.terminal_test'
-    vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
-    vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
-
-    vim.env.MODE, vim.env.UKS = 'staging', 'others'
-    vim.api.nvim_create_user_command('GoTestSetModeDev', function()
-      vim.env.MODE, vim.env.UKS = 'dev', 'others'
-    end, {})
+    M._integration_test_command()
 
     ---@type TerminalTestTracker
     local tracker = require 'terminal_test.tracker'
@@ -30,5 +15,25 @@ M = {
     map('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
   end,
 }
+
+function M._integration_test_command()
+  local integration_test_command_format
+  if vim.fn.has 'win32' == 1 then
+    integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
+  else
+    integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
+  end
+
+  local terminal_test = require 'terminal_test.terminal_test'
+  vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
+  vim.keymap.set('n', '<leader>G', ':TerminalIntegrationTest<CR>', { desc = '[G]o test in terminal' })
+
+  vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
+
+  vim.env.MODE, vim.env.UKS = 'staging', 'others'
+  vim.api.nvim_create_user_command('GoTestSetModeDev', function()
+    vim.env.MODE, vim.env.UKS = 'dev', 'others'
+  end, {})
+end
 
 return M
