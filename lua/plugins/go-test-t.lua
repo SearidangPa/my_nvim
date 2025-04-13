@@ -2,6 +2,7 @@ M = {
   'SearidangPa/go-test-t.nvim',
   dependencies = {
     'echasnovski/mini.nvim',
+    'j-hui/fidget.nvim',
   },
   config = function()
     local go_test_tt = require 'go-test-t'
