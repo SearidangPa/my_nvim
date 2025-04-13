@@ -7,6 +7,7 @@ M = {
   config = function()
     local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
+    M._default_term_test_set_up()
     M._integration_test_set_up()
 
     ---@type TerminalTestTracker
@@ -16,6 +17,13 @@ M = {
     map('n', '<leader>at', function() tracker.add_test_to_tracker 'go test ./... -v -run %s' end, { desc = '[A]dd [T]est to tracker' })
   end,
 }
+
+function M._default_term_test_set_up()
+  local terminal_test = require 'terminal_test.terminal_test'
+  local term_test = terminal_test.new {}
+  vim.api.nvim_create_user_command('TermTest', function() term_test:test_nearest_in_terminal() end, {})
+  vim.api.nvim_create_user_command('TermTestBuf', function() term_test:test_buf_in_terminals() end, {})
+end
 
 function M._integration_test_set_up()
   local terminal_test = require 'terminal_test.terminal_test'
