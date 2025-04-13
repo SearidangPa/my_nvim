@@ -7,7 +7,7 @@ M = {
   config = function()
     local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
-    M._integration_test_command()
+    M._integration_test_set_up()
 
     ---@type TerminalTestTracker
     local tracker = require 'terminal_test.tracker'
@@ -17,24 +17,28 @@ M = {
   end,
 }
 
-function M._integration_test_command()
-  local integration_test_command_format
-  if vim.fn.has 'win32' == 1 then
-    integration_test_command_format = 'go test .\\integration_tests\\ -v -run %s\r'
-  else
-    integration_test_command_format = 'go test ./integration_tests/ -v -run %s'
-  end
-
+function M._integration_test_set_up()
   local terminal_test = require 'terminal_test.terminal_test'
-  vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
-  vim.keymap.set('n', '<leader>G', ':TerminalIntegrationTest<CR>', { desc = '[G]o test in terminal' })
 
-  vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
+  local terminal_test_instance = terminal_test.new {
+    test_command_format = M._integration_test_command_format(),
+  }
+  local map = vim.keymap.set
+  map('n', '<leader>G', function() terminal_test_instance:test_nearest_in_terminal() end, { desc = '[G]o test in terminal' })
+  map('n', '<leader>T', function() terminal_test_instance:view_enclosing_test_terminal() end, { desc = 'view test [T]erminal' })
 
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
   vim.api.nvim_create_user_command('GoTestSetModeDev', function()
     vim.env.MODE, vim.env.UKS = 'dev', 'others'
   end, {})
+end
+
+function M._get_integration_test_command_format()
+  if vim.fn.has 'win32' == 1 then
+    return 'go test .\\integration_tests\\ -v -run %s\r'
+  else
+    return 'go test ./integration_tests/ -v -run %s'
+  end
 end
 
 return M
