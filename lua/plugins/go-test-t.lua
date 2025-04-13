@@ -44,20 +44,19 @@ end
 
 vim.api.nvim_create_user_command('ReloadTestT', function()
   local modules = {
-    'display',
+    'go-test-display',
     'go-test-t',
+    'util_annotation',
     'util_find_test',
+    'util_lsp',
+    'util_quickfix',
     'util_status_icon',
     'terminal_test.terminal_multiplexer',
     'terminal_test.terminal_test',
     'terminal_test.tracker',
-    'util_quickfix',
   }
 
-  for _, cmd in ipairs {
-    'TerminalTest',
-    'TerminalTestBuf',
-  } do
+  for _, cmd in ipairs { 'TerminalTest', 'TerminalTestBuf' } do
     if vim.fn.exists(':' .. cmd) > 0 then
       vim.cmd('delcommand ' .. cmd)
     end
