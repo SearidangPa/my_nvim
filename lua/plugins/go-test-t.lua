@@ -28,11 +28,6 @@ local terminal_test_set_up = function(integration_test_command_format)
 
   map('n', '<leader>G', ':TerminalIntegrationTest<CR>', { desc = '[G]o test in terminal' })
   map('n', '<leader>T', ':TerminalTestToggleView<CR>', { desc = '[G]o test in terminal' })
-
-  local tracker = require 'terminal_test.tracker'
-  for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-    map('n', '<localleader>g' .. idx, function() tracker.jump_to_tracked_test_by_index(idx) end, { desc = 'Jump to tracked test index ' .. idx })
-  end
 end
 
 vim.api.nvim_create_user_command('ReloadTestT', function()
