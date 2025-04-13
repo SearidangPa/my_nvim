@@ -19,16 +19,11 @@ M = {
 
 function M._integration_test_set_up()
   local terminal_test = require 'terminal_test.terminal_test'
-
-  local terminal_test_instance = terminal_test.new {
-    test_command_format = M._integration_test_command_format(),
-  }
-  local map = vim.keymap.set
-  map('n', '<leader>G', function() terminal_test_instance:test_nearest_in_terminal() end, { desc = '[G]o test in terminal' })
-  map('n', '<leader>T', function() terminal_test_instance:view_enclosing_test_terminal() end, { desc = 'view test [T]erminal' })
-
+  local term_test = terminal_test.new { test_command_format = M._get_integration_test_command_format() }
+  vim.api.nvim_create_user_command('TermIntegrationTest', function() term_test:test_nearest_in_terminal() end, {})
+  vim.api.nvim_create_user_command('TermIntegrationTestBuf', function() term_test:test_buf_in_terminals() end, {})
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  vim.api.nvim_create_user_command('GoTestSetModeDev', function()
+  vim.api.nvim_create_user_command('SetModeDev', function()
     vim.env.MODE, vim.env.UKS = 'dev', 'others'
   end, {})
 end
