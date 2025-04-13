@@ -8,6 +8,7 @@ M = {
     ---@type GoTestT
     local go_test_t = require 'go-test-t'
     local go_tester = go_test_t.new {}
+    M._setup_test_commands(go_tester, 'GoTest')
 
     M._integration_test_set_up()
 
@@ -19,7 +20,24 @@ M = {
   end,
 }
 
-function M._default_set_up() end
+---@param go_tester GoTestT
+---@param user_command_prefix string
+function M._setup_test_commands(go_tester, user_command_prefix)
+  local term_tester = go_tester.term_tester
+  vim.api.nvim_create_user_command(user_command_prefix .. 'Term', function() term_tester:test_nearest_in_terminal() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'TermBuf', function() term_tester:test_buf_in_terminals() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'TermView', function() term_tester:view_enclosing_test_terminal() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'TermSearch', function() term_tester.terminals:search_terminal() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'TermViewLast', function() term_tester:view_last_test_terminal() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'TermToggleDisplay', function() term_tester.displayer:toggle_display() end, {})
+
+  local util_quickfix = require 'util_go_test_quickfix'
+  vim.api.nvim_create_user_command(
+    user_command_prefix .. 'QuickfixLoadQuackTest',
+    function() util_quickfix.load_non_passing_tests_to_quickfix(go_tester.tests_info) end,
+    {}
+  )
+end
 
 function M._integration_test_set_up()
   local terminal_test = require 'terminal_test.terminal_test'
@@ -41,32 +59,5 @@ function M._integration_test_set_up()
     vim.env.MODE, vim.env.UKS = 'dev', 'others'
   end, {})
 end
-
-vim.api.nvim_create_user_command('ReloadTestT', function()
-  local modules = {
-    'go-test-display',
-    'go-test-t',
-    'util_annotation',
-    'util_find_test',
-    'util_lsp',
-    'util_quickfix',
-    'util_status_icon',
-    'terminal_test.terminal_multiplexer',
-    'terminal_test.terminal_test',
-    'terminal_test.tracker',
-  }
-
-  for _, cmd in ipairs { 'TerminalTest', 'TerminalTestBuf' } do
-    if vim.fn.exists(':' .. cmd) > 0 then
-      vim.cmd('delcommand ' .. cmd)
-    end
-  end
-
-  for _, module in ipairs(modules) do
-    package.loaded[module] = nil
-  end
-
-  vim.notify('Terminal test plugin reloaded', vim.log.levels.INFO)
-end, {})
 
 return M
