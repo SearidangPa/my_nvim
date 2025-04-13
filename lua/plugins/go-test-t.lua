@@ -8,7 +8,7 @@ M = {
     ---@type GoTestT
     local go_test_t = require 'go-test-t'
     local go_tester = go_test_t.new {}
-    M._setup_test_commands(go_tester, 'GoTest')
+    M._setup_user_commands(go_tester, 'GoTest')
 
     M._integration_test_set_up()
 
@@ -22,7 +22,7 @@ M = {
 
 ---@param go_tester GoTestT
 ---@param user_command_prefix string
-function M._setup_test_commands(go_tester, user_command_prefix)
+function M._setup_user_commands(go_tester, user_command_prefix)
   local term_tester = go_tester.term_tester
   vim.api.nvim_create_user_command(user_command_prefix .. 'Term', function() term_tester:test_nearest_in_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermBuf', function() term_tester:test_buf_in_terminals() end, {})
@@ -30,6 +30,8 @@ function M._setup_test_commands(go_tester, user_command_prefix)
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermSearch', function() term_tester.terminals:search_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermViewLast', function() term_tester:view_last_test_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermToggleDisplay', function() term_tester.displayer:toggle_display() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'ToggleDisplay', function() go_tester:toggle_display() end, {})
+  vim.api.nvim_create_user_command(user_command_prefix .. 'LoadQuackTest', function() go_tester:load_quack_tests() end, {})
 
   local util_quickfix = require 'util_go_test_quickfix'
   vim.api.nvim_create_user_command(
