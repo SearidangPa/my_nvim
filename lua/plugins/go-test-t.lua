@@ -4,8 +4,6 @@ M = {
     'echasnovski/mini.nvim',
   },
   config = function()
-    vim.env.MODE, vim.env.UKS = 'staging', 'others'
-
     local go_test_tt = require 'go-test-t'
     go_test_tt.setup()
 
@@ -20,6 +18,7 @@ M = {
     vim.api.nvim_create_user_command('TerminalIntegrationTest', function() terminal_test.test_nearest_in_terminal(integration_test_command_format) end, {})
     vim.api.nvim_create_user_command('TerminalIntegrationTestBuf', function() terminal_test.test_buf_in_terminals(integration_test_command_format) end, {})
 
+    vim.env.MODE, vim.env.UKS = 'staging', 'others'
     vim.api.nvim_create_user_command('GoTestSetModeDev', function()
       vim.env.MODE, vim.env.UKS = 'dev', 'others'
     end, {})
