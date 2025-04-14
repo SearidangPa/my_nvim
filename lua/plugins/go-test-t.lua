@@ -19,17 +19,17 @@ M = {
 function M._integration_test_set_up()
   local function term_test_command_format()
     if vim.fn.has 'win32' == 1 then
-      return 'go test .\\integration_tests\\ -v -run %s\r'
+      return 'MODE=UKS UKS=others go test .\\integration_tests\\ -v -run %s\r'
     else
-      return 'go test ./integration_tests/ -v -run %s\r'
+      return 'MODE=UKS UKS=others go test ./integration_tests/ -v -run %s\r'
     end
   end
 
   local function test_command()
     if vim.fn.has 'win32' == 1 then
-      return 'go test .\\integration_tests\\ -v \r'
+      return 'MODE=UKS UKS=others go test .\\integration_tests\\ -v \r'
     else
-      return 'go test ./integration_tests/ -v \r'
+      return 'MODE=UKS UKS=others go test ./integration_tests/ -v \r'
     end
   end
 
@@ -38,11 +38,6 @@ function M._integration_test_set_up()
     term_test_command_format = term_test_command_format(),
     user_command_prefix = 'Integration',
   }
-
-  vim.env.MODE, vim.env.UKS = 'staging', 'others'
-  vim.api.nvim_create_user_command('SetModeDev', function()
-    vim.env.MODE, vim.env.UKS = 'dev', 'others'
-  end, {})
 end
 
 return M
