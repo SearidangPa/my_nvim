@@ -33,6 +33,7 @@ function M._integration_test_set_up()
   require('go-test-t').new {
     test_command_format_json = test_command_format_json(),
     term_test_command_format = term_test_command_format(),
+    user_command_prefix = 'Integration',
   }
 
   vim.env.MODE, vim.env.UKS = 'staging', 'others'
