@@ -24,6 +24,7 @@ M = {
 ---@param user_command_prefix string
 function M._setup_user_commands(go_tester, user_command_prefix)
   local term_tester = go_tester.term_tester
+  vim.api.nvim_create_user_command(user_command_prefix .. 'All', function() term_tester:test_nearest_in_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'Term', function() term_tester:test_nearest_in_terminal() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermBuf', function() term_tester:test_buf_in_terminals() end, {})
   vim.api.nvim_create_user_command(user_command_prefix .. 'TermView', function() term_tester:view_enclosing_test_terminal() end, {})
