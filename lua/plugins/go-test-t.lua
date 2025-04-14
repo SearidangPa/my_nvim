@@ -30,6 +30,10 @@ return {
       user_command_prefix = 'Go',
     }
 
+    require('go-test-t').new {
+      user_command_prefix = 'Play',
+    }
+
     vim.keymap.set('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
