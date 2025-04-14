@@ -16,17 +16,17 @@ return {
       end
     end
 
-    local function test_command()
+    local function test_command_json()
       if vim.fn.has 'win32' == 1 then
-        return 'go test .\\integration_tests\\ -v \r'
+        return 'go test .\\integration_tests\\ -v --json \r'
       else
-        return 'go test integration_tests/*.go -v \r'
+        return 'go test integration_tests/*.go -v --json \r'
       end
     end
 
     require('go-test-t').new {
-      test_command = test_command(),
       term_test_command_format = term_test_command_format(),
+      test_command_format_json = test_command_json(),
       user_command_prefix = 'Go',
     }
 
