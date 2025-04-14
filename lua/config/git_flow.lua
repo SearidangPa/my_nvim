@@ -1,6 +1,5 @@
 require 'config.util_job'
-local mini_notify = require 'mini.notify'
-local make_notify = mini_notify.make_notify {}
+local make_notify = require('mini.notify').make_notify {}
 local nui_input = require 'nui.input'
 local event = require('nui.utils.autocmd').event
 

@@ -472,3 +472,7 @@ ls.add_snippets('markdown', {
     )
   ),
 })
+
+--- === snip lua debugging ===
+-- local tests_info_print = vim.inspect(tests_info)
+-- print(string.format('Tests info: %s', tests_info_print))
