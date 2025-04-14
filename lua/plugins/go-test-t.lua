@@ -8,6 +8,8 @@ M = {
     ---@type GoTestT
     local go_test_t = require 'go-test-t'
     local go_tester = go_test_t.new {}
+
+    M._integration_test_set_up()
   end,
 }
 
