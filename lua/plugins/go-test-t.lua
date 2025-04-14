@@ -1,6 +1,4 @@
-local map = vim.keymap.set
-
-M = {
+return {
   'SearidangPa/go-test-t.nvim',
   dependencies = {
     'echasnovski/mini.nvim',
@@ -32,8 +30,6 @@ M = {
       user_command_prefix = 'Go',
     }
 
-    map('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
+    vim.keymap.set('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
-
-return M
