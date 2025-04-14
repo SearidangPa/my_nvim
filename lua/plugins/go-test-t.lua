@@ -6,10 +6,12 @@ M = {
   },
   config = function()
     ---@type GoTestT
-    local go_test_t = require 'go-test-t'
-    local go_tester = go_test_t.new {}
+    local go_tester = require 'go-test-t'
+    go_tester.new {}
+    local map = vim.keymap.set
+    map('n', '<leader>T', ':TestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
 
-    M._integration_test_set_up()
+    -- M._integration_test_set_up()
   end,
 }
 
