@@ -5,6 +5,7 @@ return {
     'j-hui/fidget.nvim',
   },
   config = function()
+    local function term_test_command_format()
       if vim.fn.has 'win32' == 1 then
         return 'go test .\\integration_tests\\ -v -run %s\r'
       else
