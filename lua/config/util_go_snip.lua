@@ -68,8 +68,8 @@ local function transform(text, info)
     if info then
       info.index = info.index + 1
       return c(info.index, {
-        t('err'),
         t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
+        t('err'),
         sn(
           nil,
           fmta(
