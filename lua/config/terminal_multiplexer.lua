@@ -8,11 +8,10 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field terminal_order string[] Order of terminal creation
 ---@field last_terminal_name string|nil Name of the last accessed terminal
 ---@field augroup number Vim autogroup ID
----@field toggle_float_terminal fun(self: TerminalMultiplexer, terminal_name: string, do_not_open_win: boolean|nil): Float_Term_State|nil
+---@field toggle_float_terminal fun(self: TerminalMultiplexer, terminal_name: string, do_not_open_win: boolean|nil): Float_Term_State?
 ---@field create_float_window fun(self: TerminalMultiplexer, float_terminal_state: Float_Term_State, terminal_name: string, do_not_open_win: boolean|nil): nil
 ---@field navigate_terminal fun(self: TerminalMultiplexer, direction: number): nil
 ---@field search_terminal fun(self: TerminalMultiplexer, filter_pass: boolean): nil
----@field list fun(self: TerminalMultiplexer): string[] List of all terminal names
 ---@field delete_terminal fun(self: TerminalMultiplexer, terminal_name: string): nil
 ---@field select_delete_terminal fun(self: TerminalMultiplexer): nil
 
@@ -21,18 +20,21 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@field win number Window ID
 ---@field footer_buf number Footer buffer ID
 ---@field footer_win number Footer window ID
----@field chan number Terminal channel ID
+---@field chan number 
 ---@field status string Status of the terminal (e.g., 'running', 'passed', 'failed')
 
---- === Create, Search, Delete, Navigate between terminals ===
+---@class TerminalMultiplexer.Options
+---@field powershell boolean 
 
----Creates a new terminal multiplexer instance
----@return TerminalMultiplexer new terminal multiplexer instance
-function TerminalMultiplexer.new()
+---@param opts TerminalMultiplexer.Options 
+---@return TerminalMultiplexer 
+function TerminalMultiplexer.new(opts)
+  local opts = opts or {}
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {} --- @type table<string, Float_Term_State>
   self.terminal_order = {} --- @type string[]
   self.last_terminal_name = nil
+  self.powershell = opts.powershell or false
   self.augroup = vim.api.nvim_create_augroup('TerminalMultiplexer', { clear = true }) --- @type number
   return self
 end
@@ -238,8 +240,11 @@ function TerminalMultiplexer:toggle_float_terminal(terminal_name, do_not_open_wi
   self:create_float_window(current_float_term_state, terminal_name, do_not_open_win)
   if vim.bo[current_float_term_state.buf].buftype ~= 'terminal' then
     if vim.fn.has 'win32' == 1 then
-      -- vim.cmd.term 'powershell.exe'
-      vim.cmd.term 'cmd.exe'
+      if self.powershell then
+        vim.cmd.term 'powershell.exe'
+      else
+        vim.cmd.term 'cmd.exe'
+      end
     else
       vim.cmd.term()
     end
