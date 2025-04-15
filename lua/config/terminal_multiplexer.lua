@@ -29,6 +29,7 @@ vim.cmd [[highlight TerminalNameUnderline gui=underline]]
 ---@param opts TerminalMultiplexer.Options 
 ---@return TerminalMultiplexer 
 function TerminalMultiplexer.new(opts)
+  local opts = opts or {}
   local self = setmetatable({}, TerminalMultiplexer)
   self.all_terminals = {} --- @type table<string, Float_Term_State>
   self.terminal_order = {} --- @type string[]
