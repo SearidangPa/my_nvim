@@ -1,4 +1,4 @@
 return {
-  'SearidangPa/terminal_multiplexer.nvim',
+  'SearidangPa/terminal-multiplexer.nvim',
   config = function() end,
 }
