@@ -1,6 +1,8 @@
 local M = {}
 local make_notify = require('mini.notify').make_notify {}
-local terminal_multiplexer = require('config.terminal_multiplexer').new()
+local terminal_multiplexer = require('config.terminal_multiplexer').new{
+  powershell = true,
+}
 M.terminal_multiplexer = terminal_multiplexer
 
 M.exec_command = function(command, title)
@@ -28,12 +30,7 @@ end
 local run_cloud_drive_command = 'm; std\r'
 local cloud_drive_terminal_name = 'cloud drive'
 local function run_cloud_drive()
-  local all_terminal_list = M.terminal_multiplexer:list()
-
-  local util_contains = require 'config.util_contains'
-  if util_contains.contains(all_terminal_list, cloud_drive_terminal_name) then
-    terminal_multiplexer:delete_terminal(cloud_drive_terminal_name)
-  end
+  terminal_multiplexer:delete_terminal(cloud_drive_terminal_name)
   M.exec_command(run_cloud_drive_command, cloud_drive_terminal_name)
 end
 
