@@ -92,8 +92,10 @@ map('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 
 -- =================== LSP diagnostic ===================
-map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
-map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
+-- map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
+-- map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
+map('n', ']g',  vim.diagnostic.goto_next, map_opt 'Next diagnostic')
+map('n', '[g',  vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')

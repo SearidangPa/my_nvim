@@ -67,24 +67,24 @@ local function transform(text, info)
   elseif text == 'error' then
     if info then
       info.index = info.index + 1
-      return t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } }))
-      -- return c(info.index, {
-      --   t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
-      --   sn(
-      --     nil,
-      --     fmta(
-      --       [[
-      --         eris.Wrapf(err, "failed to <funcName>, <moreInfo>
-      --       ]],
-      --       {
-      --         funcName = f(function()
-      --           return GetLastFuncName { { info.func_name } }
-      --         end, {}),
-      --         moreInfo = i(1, ''), -- Insert node for user input
-      --       }
-      --     )
-      --   ),
-      -- })
+      return c(info.index, {
+        t('err'),
+        t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
+        sn(
+          nil,
+          fmta(
+            [[
+              eris.Wrapf(err, "failed to <funcName>, <moreInfo>
+            ]],
+            {
+              funcName = f(function()
+                return GetLastFuncName { { info.func_name } }
+              end, {}),
+              moreInfo = i(1, ''), -- Insert node for user input
+            }
+          )
+        ),
+      })
     end
   elseif text == 'bool' then
     return t 'false'
