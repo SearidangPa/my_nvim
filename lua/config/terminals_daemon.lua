@@ -1,6 +1,6 @@
 local M = {}
 local make_notify = require('mini.notify').make_notify {}
-local terminal_multiplexer = require('config.terminal_multiplexer').new{
+local terminal_multiplexer = require('terminal_multiplexer').new {
   powershell = true,
 }
 M.terminal_multiplexer = terminal_multiplexer
