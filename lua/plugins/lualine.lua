@@ -109,7 +109,7 @@ return {
     end
 
     vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
-    -- vim.api.nvim_set_hl(0, 'HarpoonFilename', { fg = '#5097A4' })
+    vim.api.nvim_set_hl(0, 'HarpoonFilename', { fg = '#5097A4' })
 
     ll.setup {
       options = {
