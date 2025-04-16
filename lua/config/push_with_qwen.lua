@@ -4,6 +4,8 @@ end
 
 local push_with_qwen = {}
 local qwen_terminal_name = 'git_push_with_qwen14b'
+local push_command_str = 'gaa && pg_14\r'
+local start_ollama_command_str = 'start_ollama\r'
 
 push_with_qwen._get_commit_message_and_time = function()
   local message = vim.fn.system 'git log -1 --pretty=%B'
@@ -24,7 +26,6 @@ push_with_qwen.push_with_qwen = function()
 
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
-  local push_command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, push_command_str .. '\n')
 
   local make_notify = require('mini.notify').make_notify {}
@@ -56,7 +57,6 @@ push_with_qwen.start_ollama = function()
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
 
   assert(float_terminal_state, 'Failed to toggle float terminal')
-  local start_ollama_command_str = 'start_ollama\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, start_ollama_command_str .. '\n')
   vim.defer_fn(function()
     local output = vim.api.nvim_buf_get_lines(float_terminal_state.buf, 0, -1, false)
