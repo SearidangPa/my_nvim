@@ -24,7 +24,6 @@ push_with_qwen.push_with_qwen = function()
     async_make_job.make_all()
   end
 
-  -- terminal_multiplexer:delete_terminal(pq_term_name)
   terminal_multiplexer:toggle_float_terminal(pq_term_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
 
