@@ -57,7 +57,6 @@ end
 
 push_with_qwen.start_ollama = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
-  -- terminal_multiplexer:delete_terminal(pq_term_name)
   terminal_multiplexer:toggle_float_terminal(pq_term_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
 
