@@ -459,10 +459,12 @@ ls.add_snippets('go', {
 
 ls.add_snippets('lua', {
   s(
-    'fn',
+    'f',
     fmta(
       [[
-        function() <clipboard_content> end
+        function() 
+          <clipboard_content> 
+        end
       ]],
       {
         clipboard_content = f(function() return get_clipboard_content() end, {}),
