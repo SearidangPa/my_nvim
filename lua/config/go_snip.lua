@@ -473,6 +473,16 @@ ls.add_snippets('lua', {
   ),
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'lua',
+  callback = function()
+    vim.keymap.set('n', '<leader>fn', function()
+      local snip = ls.get_snippets(vim.bo.ft)[1]
+      ls.snip_expand(snip)
+    end, { buffer = true, desc = 'Expand Lua function snippet' })
+  end,
+})
+
 ls.add_snippets('markdown', {
   s(
     'mer',
