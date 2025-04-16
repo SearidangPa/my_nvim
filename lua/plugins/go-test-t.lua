@@ -3,6 +3,7 @@ return {
   dependencies = {
     'echasnovski/mini.nvim',
     'j-hui/fidget.nvim',
+    'SearidangPa/terminal-multiplexer.nvim',
   },
   config = function()
     local function term_test_command_format()
