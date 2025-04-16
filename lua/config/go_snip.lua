@@ -479,6 +479,7 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.keymap.set('n', '<leader>fn', function()
       local snip = ls.get_snippets(vim.bo.ft)[1]
       ls.snip_expand(snip)
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
     end, { buffer = true, desc = 'Expand Lua function snippet' })
   end,
 })
