@@ -457,6 +457,20 @@ ls.add_snippets('go', {
   ),
 })
 
+ls.add_snippets('lua', {
+  s(
+    'fn',
+    fmta(
+      [[
+        function() <clipboard_content> end
+      ]],
+      {
+        clipboard_content = f(function() return get_clipboard_content() end, {}),
+      }
+    )
+  ),
+})
+
 ls.add_snippets('markdown', {
   s(
     'mer',
@@ -476,5 +490,4 @@ ls.add_snippets('markdown', {
 --- === snip lua debugging ===
 -- local tests_info_print = vim.inspect(tests_info)
 -- print(string.format('Tests info: %s', tests_info_print))
-		-- logEntry.Info("=== ==> ==> ==> ==> ==> checking entry")
-
+-- logEntry.Info("=== ==> ==> ==> ==> ==> checking entry")
