@@ -19,7 +19,7 @@ end
 push_with_qwen.push_with_qwen = function()
   local make_notify = require('mini.notify').make_notify {}
   if not push_with_qwen._check_ollama_running() then
-    make_notify { content = 'Error: Ollama is not running', level = 'ERROR' }
+    make_notify('Error: Ollama is not running', vim.log.levels.ERROR)
     return
   end
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
@@ -56,10 +56,15 @@ push_with_qwen.push_with_qwen = function()
 end
 
 push_with_qwen._check_ollama_running = function()
-  local handle = io.popen "curl -s -o /dev/null -w '%{http_code}' http://localhost:11434/api/health"
-  assert(handle, 'Failed to check if Ollama is running')
+  local exit_code = os.execute 'pgrep -f ollama >/dev/null 2>&1'
+  if exit_code == 0 then
+    return true
+  end
+  local handle = io.popen "curl -s -m 2 -o /dev/null -w '%{http_code}' http://localhost:11434/api/health 2>/dev/null || echo 'failed'"
+  assert(handle, 'Failed to run curl command')
   local result = handle:read '*a'
   handle:close()
+
   return result == '200'
 end
 
