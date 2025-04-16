@@ -2,12 +2,11 @@ if vim.fn.has 'win32' == 1 then
   return {}
 end
 
--- === Git Push with Qwen14b ===
-local M = {}
+local push_with_qwen = {}
 
 local pq_term_name = 'git_push_with_qwen14b'
 
-M._get_commit_message_and_time = function()
+push_with_qwen._get_commit_message_and_time = function()
   local message = vim.fn.system 'git log -1 --pretty=%B'
   local time = vim.fn.system "git log -1 --pretty=%ad --date=format:'%Y-%m-%d %H:%M:%S'"
 
@@ -17,7 +16,7 @@ M._get_commit_message_and_time = function()
   }
 end
 
-M.push_with_qwen = function()
+push_with_qwen.push_with_qwen = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
   if vim.bo.filetype == 'go' then
     local async_make_job = require 'config.async_job'
@@ -41,7 +40,7 @@ M.push_with_qwen = function()
 
       for _, line in ipairs(lines) do
         if string.match(line, 'To github.com:') then
-          local commit_info_now = M._get_commit_message_and_time()
+          local commit_info_now = push_with_qwen._get_commit_message_and_time()
           make_notify(commit_info_now.message)
           return true
         end
@@ -52,7 +51,7 @@ M.push_with_qwen = function()
   })
 end
 
-vim.api.nvim_create_user_command('GitPushWithQwen14b', M.push_with_qwen, {})
-vim.keymap.set('n', '<leader>pq', M.push_with_qwen, { silent = true, desc = '[P]ush with [Q]wen14b' })
+vim.api.nvim_create_user_command('GitPushWithQwen14b', push_with_qwen.push_with_qwen, {})
+vim.keymap.set('n', '<leader>pq', push_with_qwen.push_with_qwen, { silent = true, desc = '[P]ush with [Q]wen14b' })
 
-return M
+return push_with_qwen
