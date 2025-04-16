@@ -3,13 +3,11 @@ if vim.fn.has 'win32' == 1 then
 end
 
 local push_with_qwen = {}
-
 local qwen_terminal_name = 'git_push_with_qwen14b'
 
 push_with_qwen._get_commit_message_and_time = function()
   local message = vim.fn.system 'git log -1 --pretty=%B'
   local time = vim.fn.system "git log -1 --pretty=%ad --date=format:'%Y-%m-%d %H:%M:%S'"
-
   return {
     message = vim.fn.trim(message),
     time = vim.fn.trim(time),
