@@ -459,7 +459,7 @@ ls.add_snippets('go', {
 
 ls.add_snippets('lua', {
   s(
-    'f',
+    'fn',
     fmta(
       [[
         function() 
