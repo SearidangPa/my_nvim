@@ -13,7 +13,6 @@ return {
 
     map('n', '<M-[>', function() harpoon:list():next() end, { desc = 'harpoon next' })
     map('n', '<M-]>', function() harpoon:list():prev() end, { desc = 'harpoon prev' })
-    map('n', '<M-;>', function() harpoon:list():select(1) end, { desc = 'harpoon select 1' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       map('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
