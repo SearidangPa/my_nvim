@@ -4,7 +4,7 @@ end
 
 local push_with_qwen = {}
 
-local pq_term_name = 'git_push_with_qwen14b'
+local qwen_terminal_name = 'git_push_with_qwen14b'
 
 push_with_qwen._get_commit_message_and_time = function()
   local message = vim.fn.system 'git log -1 --pretty=%B'
@@ -24,8 +24,8 @@ push_with_qwen.push_with_qwen = function()
     async_make_job.make_all()
   end
 
-  terminal_multiplexer:toggle_float_terminal(pq_term_name)
-  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
+  terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
+  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
 
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local push_command_str = 'gaa && pg_14\r'
@@ -56,8 +56,8 @@ end
 
 push_with_qwen.start_ollama = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
-  terminal_multiplexer:toggle_float_terminal(pq_term_name)
-  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(pq_term_name)
+  terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
+  local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
 
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local start_ollama_command_str = 'start_ollama\r'
