@@ -24,8 +24,6 @@ push_with_qwen.push_with_qwen = function()
 
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
-
-  assert(float_terminal_state, 'Failed to toggle float terminal')
   local push_command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, push_command_str .. '\n')
 
