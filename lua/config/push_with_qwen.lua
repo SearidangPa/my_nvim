@@ -17,6 +17,11 @@ push_with_qwen._get_commit_message_and_time = function()
 end
 
 push_with_qwen.push_with_qwen = function()
+  local make_notify = require('mini.notify').make_notify {}
+  if not push_with_qwen._check_ollama_running() then
+    make_notify { content = 'Error: Ollama is not running', level = 'ERROR' }
+    return
+  end
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
   if vim.bo.filetype == 'go' then
     local async_make_job = require 'config.async_job'
@@ -31,7 +36,6 @@ push_with_qwen.push_with_qwen = function()
   assert(float_terminal_state, 'Failed to toggle float terminal')
   local command_str = 'gaa && pg_14\r'
   vim.api.nvim_chan_send(float_terminal_state.chan, command_str .. '\n')
-  local make_notify = require('mini.notify').make_notify {}
   make_notify 'Sent request to push with Qwen14b'
 
   vim.api.nvim_buf_attach(float_terminal_state.buf, false, {
@@ -49,6 +53,14 @@ push_with_qwen.push_with_qwen = function()
       return false
     end,
   })
+end
+
+push_with_qwen._check_ollama_running = function()
+  local handle = io.popen "curl -s -o /dev/null -w '%{http_code}' http://localhost:11434/api/health"
+  assert(handle, 'Failed to check if Ollama is running')
+  local result = handle:read '*a'
+  handle:close()
+  return result == '200'
 end
 
 vim.api.nvim_create_user_command('GitPushWithQwen14b', push_with_qwen.push_with_qwen, {})
