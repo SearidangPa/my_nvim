@@ -2,7 +2,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 vim.g.copilot_no_tab_map = true -- copilot plugin config
 vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
-require 'init_opt'
+require 'vim_opt'
 require 'init_lazy' -- must be before leader mappings
 require 'init_config'
 vim.cmd.colorscheme 'rose-pine-moon'
