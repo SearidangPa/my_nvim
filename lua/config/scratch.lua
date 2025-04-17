@@ -9,10 +9,8 @@ local function get_git_diff(branch_name, callback)
     args = { 'diff', branch_name },
     on_exit = function(j, return_val)
       if return_val == 0 then
-        -- Schedule the callback to run in the main loop
         vim.schedule(function() callback(table.concat(j:result(), '\n')) end)
       else
-        -- Schedule error notification to run in the main loop
         vim.schedule(function()
           vim.notify('Error getting git diff: ' .. table.concat(j:stderr_result(), '\n'), vim.log.levels.ERROR)
           callback ''
