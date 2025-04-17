@@ -2,10 +2,10 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 vim.g.copilot_no_tab_map = true -- copilot plugin config
 vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
-vim.cmd.colorscheme 'rose-pine-moon'
 require 'init_opt'
 require 'init_lazy' -- must be before leader mappings
 require 'init_config'
+vim.cmd.colorscheme 'rose-pine-moon'
 
 vim.treesitter.language.register('bash', 'zsh') -- ducktape solution because there is no treesitter support for zsh
 
