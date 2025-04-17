@@ -92,7 +92,8 @@ Here is an example of a simple flow:
 ]]
 
 local answer_format_prompt = [[
-Give me raw markdown inside a triple backticks escape so that i can copy all raw texts with formatting. 
+Give me raw markdown inside a triple backticks escape so I can copy paste it directly into my PR description. Double check your answer
+to make sure that it is as concise, terse and shorter as possible. No redundant information.
 ]]
 
 -- Main PR description generator function
