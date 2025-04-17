@@ -24,7 +24,6 @@ require('lazy').setup {
     {
       import = 'plugins',
     },
-    'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
   },
   rocks = {
     hererocks = hererocks_enabled,
