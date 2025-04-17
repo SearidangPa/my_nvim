@@ -80,7 +80,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 \<Then, I want you to create a mermaid diagram that illustrates the flow. Try to minimize the number of components and arrows as much as possible while still capturing the important essence of the flow. If the depth of the graph is bigger than 5, i want you to separate the flow into multiple smaller graphs. I want colors filled for the main components.
 Here is an example of a simple flow:
     ```mermaid 
-    graph TD
+    graph LR
         A[Local Write Event] --> B{Priority Queue}
         B --> C[Update File Request]
         C --> D{On Complete}
