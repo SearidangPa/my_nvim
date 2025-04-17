@@ -25,16 +25,6 @@ require('lazy').setup {
       import = 'plugins',
     },
     'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-    'tpope/vim-rhubarb', -- Fugitive-companion to interact with github
-    'mbbill/undotree', -- Visualize the undo tree
-    'MTDL9/vim-log-highlighting',
-    'MunifTanjim/nui.nvim',
-    {
-      'grapp-dev/nui-components.nvim',
-      dependencies = {
-        'MunifTanjim/nui.nvim',
-      },
-    },
   },
   rocks = {
     hererocks = hererocks_enabled,
