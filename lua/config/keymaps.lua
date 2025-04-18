@@ -94,8 +94,8 @@ map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 -- =================== LSP diagnostic ===================
 -- map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
 -- map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
-map('n', ']g',  vim.diagnostic.goto_next, map_opt 'Next diagnostic')
-map('n', '[g',  vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
+map('n', ']g', vim.diagnostic.goto_next, map_opt 'Next diagnostic')
+map('n', '[g', vim.diagnostic.goto_prev, map_opt 'Previous diagnostic')
 
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
@@ -104,7 +104,7 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 -- ================== local leader===================
 map('n', '<localleader>w', function() vim.cmd [[:wa]] end, map_opt '[W]rite all')
 
-map({ 'n', 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
+map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 map('n', '<localleader>q', function() vim.cmd [[q]] end, map_opt '[Q]uit')
 
