@@ -45,7 +45,7 @@ local function lsp_references_filtered_test_files()
     pickers.new(opts):find()
   end)
 end
-vim.keymap.set('n', '<leader>gr', lsp_references_filtered_test_files, { desc = 'Go to references (excluding test files)' })
+vim.keymap.set('n', '<leader>rx', lsp_references_filtered_test_files, { desc = 'Go to references (excluding test files)' })
 
 local construct_args_glob_no_test_files = function(prompt)
   if not prompt or prompt == '' then
@@ -74,9 +74,7 @@ local builtin = require 'telescope.builtin'
 
 vim.keymap.set('n', '<leader>sx', function()
   builtin.grep_string {
-    additional_args = function(opts)
-      return { '--glob', '!*test*' }
-    end,
+    additional_args = function(opts) return { '--glob', '!*test*' } end,
     prompt_title = 'find word (excluding test files)',
   }
 end, { desc = '[S]earch current word e[x]cluding tests' })
