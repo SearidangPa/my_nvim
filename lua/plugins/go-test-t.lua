@@ -33,6 +33,6 @@ return {
     }
 
     vim.keymap.set('n', '<localleader>tt', ':PlayTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
-    vim.keymap.set('n', '<localleader>tr', ':PlayTestTerm<CR>', { desc = 'Test: View enclosing test terminal' })
+    vim.keymap.set('n', '<leader>T', ':PlayTestTerm<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
