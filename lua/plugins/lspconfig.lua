@@ -33,7 +33,7 @@ local function lsp_attach_keybind()
         })
       end
       map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-      map('<leader>gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+      map('<localleader>r', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
       map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
       map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
       map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
