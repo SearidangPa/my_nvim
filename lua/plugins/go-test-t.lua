@@ -32,6 +32,6 @@ return {
       user_command_prefix = 'Play',
     }
 
-    vim.keymap.set('n', '<leader>T', ':PlayTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
+    vim.keymap.set('n', '<leader>tt', ':PlayTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
