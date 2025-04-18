@@ -27,10 +27,11 @@ return {
       test_command_format_json = test_command_json(),
       user_command_prefix = 'Go',
     }
-    vim.keymap.set('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
 
     require('go-test-t').new {
       user_command_prefix = 'Play',
     }
+
+    vim.keymap.set('n', '<leader>T', ':PlayTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
