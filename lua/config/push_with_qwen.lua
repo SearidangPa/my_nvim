@@ -17,7 +17,7 @@ push_with_qwen._get_commit_message_and_time = function()
   }
 end
 
-push_with_qwen.push_with_qwen = function(push_cmd_str)
+push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
 
   if vim.bo.filetype == 'go' then
@@ -32,7 +32,7 @@ push_with_qwen.push_with_qwen = function(push_cmd_str)
   vim.api.nvim_chan_send(float_terminal_state.chan, push_cmd_str .. '\n')
 
   local make_notify = require('mini.notify').make_notify {}
-  make_notify 'Sent request to Ollama'
+  make_notify('Sent request to ' .. model_name)
 
   vim.api.nvim_buf_attach(float_terminal_state.buf, false, {
     on_lines = function(_, buf, _, first_line, last_line)
@@ -68,9 +68,9 @@ push_with_qwen.start_ollama = function()
   end, 1000)
 end
 
-local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b) end
+local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, 'qwen14b') end
 
-local function push_with_7b() push_with_qwen.push_with_qwen(push_cmd_str_7b) end
+local function push_with_7b() push_with_qwen.push_with_qwen(push_cmd_str_7b, 'qwen7b') end
 
 vim.api.nvim_create_user_command('StartOllama', push_with_qwen.start_ollama, {})
 vim.keymap.set('n', '<leader>ps', push_with_7b, { silent = true, desc = '[P]ush with [Q]wen14b' })
