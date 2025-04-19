@@ -15,7 +15,7 @@ return {
     map('n', '<M-]>', function() harpoon:list():prev() end, { desc = 'harpoon prev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-      map('n', string.format('<localleader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
+      map('n', string.format('<leader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
     end
 
     local function delete_at_index(fileIndex)
@@ -27,7 +27,7 @@ return {
       vim.cmd 'w'
     end
 
-    for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    for _, idx in ipairs { 1, 2, 3, 4, 5 } do
       map('n', string.format('<localleader>hd%d', idx), function() delete_at_index(idx) end, { desc = string.format('harpoon delete %d', idx) })
     end
 
@@ -70,7 +70,7 @@ return {
       vim.cmd 'w'
     end
 
-    for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
+    for _, idx in ipairs { 1, 2, 3, 4, 5 } do
       map('n', string.format('<localleader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
     end
 
