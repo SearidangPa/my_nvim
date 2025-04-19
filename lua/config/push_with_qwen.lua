@@ -73,10 +73,7 @@ end
 
 local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, 'qwen14b') end
 
-local function push_with_7b() push_with_qwen.push_with_qwen(push_cmd_str_7b, 'qwen7b') end
-
 vim.api.nvim_create_user_command('StartOllama', push_with_qwen.start_ollama, {})
-vim.keymap.set('n', '<leader>ps', push_with_7b, { silent = true, desc = '[P]ush with [Q]wen7b' })
 vim.keymap.set('n', '<leader>pq', push_with_14b, { silent = true, desc = '[P]ush with [Q]wen14b' })
 
 return push_with_qwen
