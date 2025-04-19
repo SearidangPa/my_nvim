@@ -28,13 +28,15 @@ push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
 
   terminal_multiplexer:delete_terminal(qwen_terminal_name)
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
+
+  ---@type FloatTermState
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   vim.api.nvim_chan_send(float_terminal_state.chan, push_cmd_str .. '\n')
 
   local make_notify = require('mini.notify').make_notify {}
   make_notify('Sent request to ' .. model_name)
 
-  vim.api.nvim_buf_attach(float_terminal_state.buf, false, {
+  vim.api.nvim_buf_attach(float_terminal_state.bufnr, false, {
     on_lines = function(_, buf, _, first_line, last_line)
       local lines = vim.api.nvim_buf_get_lines(buf, first_line, last_line, false)
 
