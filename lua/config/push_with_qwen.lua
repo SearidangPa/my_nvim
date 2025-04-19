@@ -19,13 +19,14 @@ end
 
 push_with_qwen.push_with_qwen = function(push_cmd_str)
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
+
   if vim.bo.filetype == 'go' then
     local async_make_job = require 'config.async_job'
     async_make_job.make_lint()
     async_make_job.make_all()
   end
 
-  terminal_multiplexer.delete_terminal(qwen_terminal_name)
+  terminal_multiplexer:delete_terminal(qwen_terminal_name)
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   vim.api.nvim_chan_send(float_terminal_state.chan, push_cmd_str .. '\n')
