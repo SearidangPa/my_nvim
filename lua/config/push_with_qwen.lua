@@ -18,6 +18,7 @@ push_with_qwen._get_commit_message_and_time = function()
 end
 
 push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
+  require 'terminal-multiplexer'
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
 
   if vim.bo.filetype == 'go' then
@@ -64,7 +65,7 @@ push_with_qwen.start_ollama = function()
   assert(float_terminal_state, 'Failed to toggle float terminal')
   vim.api.nvim_chan_send(float_terminal_state.chan, start_ollama_command_str .. '\n')
   vim.defer_fn(function()
-    local output = vim.api.nvim_buf_get_lines(float_terminal_state.buf, 0, -1, false)
+    local output = vim.api.nvim_buf_get_lines(float_terminal_state.bufnr, 0, -1, false)
     local make_notify = require('mini.notify').make_notify {}
     make_notify(string.format('output:\n%s', table.concat(output, '\n')))
   end, 1000)
