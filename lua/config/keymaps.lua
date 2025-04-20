@@ -30,34 +30,16 @@ local function yank_function()
 end
 
 -- =================== Copilot ===================
-local function accept_word()
-  local accept_word = vim.fn['copilot#AcceptWord']
-  assert(accept_word, 'copilot#AcceptWord not found')
-  local res = accept_word()
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
-local function accept_line()
-  local accept_line = vim.fn['copilot#AcceptLine']
-  assert(accept_line, 'copilot#AcceptLine not found')
-  local res = accept_line()
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
-local function accept_line_with_indent()
-  local accept_line = vim.fn['copilot#AcceptLine']
-  assert(accept_line, 'copilot#AcceptLine not found')
-  local res = accept_line()
-  res = res .. '\r\t'
-  vim.api.nvim_feedkeys(res, 'n', false)
-end
-
 local function accept()
   local accept = vim.fn['copilot#Accept']
   assert(accept, 'copilot#Accept not found')
   local res = accept()
-  vim.api.nvim_feedkeys(res, 'n', false)
+  vim.api.nvim_feedkeys(res .. '\n', 'n', false)
 end
+
+map('i', '<Tab>', accept, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
@@ -73,14 +55,6 @@ vim.keymap.set('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr 
 
 -- Make U opposite to u.
 vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
-
-map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-map('i', '<M-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
-map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
-map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 -- =================== Extmarks ===================
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
