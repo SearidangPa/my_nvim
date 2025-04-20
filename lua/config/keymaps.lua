@@ -45,6 +45,7 @@ map(
 )
 
 map('i', '<Tab>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+map('i', '<C-l>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<D-y>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 
