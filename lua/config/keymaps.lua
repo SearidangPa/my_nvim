@@ -71,6 +71,9 @@ end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 vim.keymap.set('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
 vim.keymap.set('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
+-- Make U opposite to u.
+vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
+
 map('i', '<C-l>', accept_line, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<M-l>', accept_line_with_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-f>', accept_word, { expr = true, silent = true, desc = 'Accept Copilot Word' })
