@@ -86,7 +86,7 @@ return {
         current_buffer_fuzzy_find = { theme = 'ivy' },
         help_tags = { theme = 'ivy' },
         find_files = { theme = 'ivy', hidden = true },
-        live_grep = { theme = 'ivy' },
+        live_grep = { theme = 'ivy', hidden = true },
         oldfiles = { theme = 'ivy' },
         jumplist = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
