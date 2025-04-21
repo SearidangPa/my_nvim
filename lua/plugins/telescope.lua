@@ -87,6 +87,7 @@ return {
         live_grep = { theme = 'ivy', hidden = true },
         oldfiles = { theme = 'ivy' },
         jumplist = { theme = 'ivy' },
+        keymaps = { theme = 'ivy' },
         diagnostics = { theme = 'ivy' },
         lsp_references = { theme = 'ivy', file_ignore_patterns = { '%.pb.go' } },
         lsp_dynamic_workspace_symbols = { theme = 'ivy' },

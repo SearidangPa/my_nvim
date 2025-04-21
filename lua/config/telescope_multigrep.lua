@@ -82,27 +82,29 @@ Live_search = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set('n', '<leader>sm', function()
-    Live_search {
-      args_constructor = construct_args_multigrep,
-      prompt_title = 'multi grep',
-    }
-  end, { desc = '[S]earch [M]ulti grep' })
+  vim.keymap.set(
+    'n',
+    '<localleader>sm',
+    function()
+      Live_search {
+        args_constructor = construct_args_multigrep,
+        prompt_title = 'multi grep',
+      }
+    end,
+    { desc = '[S]earch [M]ulti grep' }
+  )
 
-  vim.keymap.set('n', '<leader>sF', function()
-    Live_search {
-      args_constructor = construct_args_no_regex,
-      prompt_title = 'no regex',
-    }
-  end, { desc = '[S]earch [N]o regex' })
-
-  vim.keymap.set('n', '<localleader>sm', function()
-    Live_search {
-      args_constructor = construct_args_multigrep,
-      prompt_title = 'multi grep in plugins',
-      cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
-    }
-  end, { desc = '[S]earch [M]ulti grep in plugins' })
+  vim.keymap.set(
+    'n',
+    '<leader>sn',
+    function()
+      Live_search {
+        args_constructor = construct_args_no_regex,
+        prompt_title = 'no regex',
+      }
+    end,
+    { desc = '[S]earch [N]o regex' }
+  )
 end
 
 return M
