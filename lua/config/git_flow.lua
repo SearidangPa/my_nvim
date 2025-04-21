@@ -125,7 +125,6 @@ end
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 map('n', '<leader>gp', async_push_all, map_opt '[G]it [C]ommit and push')
-map('n', '<leader>gw', ':Gwrite<CR>', map_opt '[G]it [W]rite')
 map('n', '<leader>pc', function()
   local commit_func_push = function(commit_msg)
     vim.schedule(function()
