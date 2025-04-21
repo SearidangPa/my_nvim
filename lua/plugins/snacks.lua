@@ -5,7 +5,16 @@ return {
   opts = {
     bigfile = { enabled = true },
     indent = { enabled = true },
-    picker = { enabled = true, layout = 'ivy' },
+    picker = {
+      enabled = true,
+      layout = {
+        preset = 'ivy',
+        layout = {
+          width = 0,
+          height = 0.7,
+        },
+      },
+    },
     quickfile = { enabled = true },
   },
 
