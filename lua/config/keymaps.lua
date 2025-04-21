@@ -34,7 +34,16 @@ local function accept_and_indent()
   local accept = vim.fn['copilot#Accept']
   assert(accept, 'copilot#Accept not found')
   local res = accept()
-  vim.api.nvim_feedkeys(res .. '\n', 'n', false)
+  local cursor_pos = vim.api.nvim_win_get_cursor(0)
+  local next_line = cursor_pos[1]
+  local next_line_content = vim.api.nvim_buf_get_lines(0, next_line, next_line + 1, false)
+  local is_next_line_empty = next_line_content[1] and next_line_content[1]:match '^%s*$'
+
+  if is_next_line_empty then
+    vim.api.nvim_feedkeys(res .. '\n', 'n', false)
+  else
+    vim.api.nvim_feedkeys(res, 'n', false)
+  end
 end
 
 map(

@@ -1,22 +1,19 @@
 local function generate_keymap()
   local keymap = {}
-  keymap.preset = 'none' -- Explicit assignment to avoid conflicts
-
-  keymap['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' }
+  keymap.preset = 'none'
   keymap['<C-y>'] = { 'select_and_accept' }
   keymap['<C-p>'] = { 'select_prev', 'fallback' }
   keymap['<C-n>'] = { 'select_next', 'fallback' }
+
+  keymap['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' }
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
+
   keymap['<C-e>'] = { 'hide' }
 
   keymap['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end }
   keymap['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end }
   keymap['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end }
-  keymap['<F1>'] = { function(cmp) cmp.accept { index = 1 } end }
-  keymap['<F2>'] = { function(cmp) cmp.accept { index = 2 } end }
-  keymap['<F3>'] = { function(cmp) cmp.accept { index = 3 } end }
-
   keymap['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end }
   keymap['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end }
   keymap['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end }
@@ -24,6 +21,17 @@ local function generate_keymap()
   keymap['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end }
   keymap['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end }
   keymap['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end }
+
+  keymap['<C-1>'] = { function(cmp) cmp.accept { index = 1 } end }
+  keymap['<C-2>'] = { function(cmp) cmp.accept { index = 2 } end }
+  keymap['<C-3>'] = { function(cmp) cmp.accept { index = 3 } end }
+  keymap['<C-4>'] = { function(cmp) cmp.accept { index = 4 } end }
+  keymap['<C-5>'] = { function(cmp) cmp.accept { index = 5 } end }
+  keymap['<C-6>'] = { function(cmp) cmp.accept { index = 6 } end }
+  keymap['<C-7>'] = { function(cmp) cmp.accept { index = 7 } end }
+  keymap['<C-8>'] = { function(cmp) cmp.accept { index = 8 } end }
+  keymap['<C-9>'] = { function(cmp) cmp.accept { index = 9 } end }
+  keymap['<C-0>'] = { function(cmp) cmp.accept { index = 10 } end }
   return keymap
 end
 
