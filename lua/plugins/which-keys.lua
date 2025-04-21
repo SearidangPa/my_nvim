@@ -15,6 +15,7 @@ return {
       { '<leader>g', group = '[G]o, [G]it, [G]rep' },
       { '<leader>r', group = '[R]ename' },
       { '<leader>s', group = '[S]earch' },
+      { '<leader>p', group = '[P]ush'}
       { '<leader>q', group = '[Q]uickfix' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       { '<leader>m', group = '[M]ake' },
