@@ -30,7 +30,6 @@ return {
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
     { '<leader>sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-    { '<leader>sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
     { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
