@@ -33,14 +33,6 @@ local function lsp_attach_keybind()
         })
       end
 
-      -- map('gd', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-      -- map('<localleader>r', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-      -- map('<localleader>d', require('telescope.builtin').lsp_definitions, '[G]oto [D]eclaration')
-      --
-      -- map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-      -- map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-      -- map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
         local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })

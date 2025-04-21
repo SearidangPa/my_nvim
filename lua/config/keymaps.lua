@@ -30,10 +30,17 @@ local function yank_function()
 end
 
 -- =================== Copilot ===================
-local function accept_and_indent()
+---@param with_indent boolean
+local function accept(with_indent)
   local accept = vim.fn['copilot#Accept']
   assert(accept, 'copilot#Accept not found')
   local res = accept()
+
+  if not with_indent then
+    vim.api.nvim_feedkeys(res, 'n', false)
+    return
+  end
+
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local next_line = cursor_pos[1]
   local next_line_content = vim.api.nvim_buf_get_lines(0, next_line, next_line + 1, false)
@@ -53,10 +60,8 @@ map(
   { silent = true, desc = 'Accept Copilot Line' }
 )
 
-map('i', '<Tab>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot Line' })
-map('i', '<C-l>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<M-y>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-y>', accept_and_indent, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<Tab>', function() accept(true) end, { expr = true, silent = true, desc = 'Accept Copilot Line' })
+map('i', '<C-l>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
