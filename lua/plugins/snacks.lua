@@ -57,7 +57,7 @@ return {
         vim.print = _G.dd -- Override print to use snacks for `:=` command
 
         Snacks.toggle.inlay_hints():map '<leader>uh'
-        Snacks.toggle.dim():map '<leader>uD'
+        Snacks.toggle.dim():map '<leader>ud'
       end,
     })
   end,
