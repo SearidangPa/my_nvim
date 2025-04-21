@@ -1,14 +1,17 @@
 return {
   {
     'rebelot/kanagawa.nvim',
+    event = 'VeryLazy',
   },
   {
     'catppuccin/nvim',
     name = 'catppuccin',
+    event = 'VeryLazy',
   },
   {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
+    event = 'VeryLazy',
   },
   {
     'rose-pine/neovim',
