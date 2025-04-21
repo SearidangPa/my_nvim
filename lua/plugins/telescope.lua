@@ -64,7 +64,6 @@ return {
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
     -- === LSP ===
-    map(map_modes, '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
 
     local opts = {
       pickers = {
