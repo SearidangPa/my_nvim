@@ -51,7 +51,6 @@ return {
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
     -- === jumping around ===
-    map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 

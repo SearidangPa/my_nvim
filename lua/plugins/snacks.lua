@@ -11,7 +11,7 @@ return {
         preset = 'ivy',
         layout = {
           width = 0,
-          height = 0.4,
+          height = 0.5,
         },
       },
     },
@@ -20,6 +20,7 @@ return {
 
   keys = {
     { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
+    { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
 
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
@@ -46,6 +47,7 @@ return {
 
     -- LSP
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
+    { '<leader>sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
   },
 
   init = function()
