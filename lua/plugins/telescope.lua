@@ -35,11 +35,6 @@ return {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end
-    local function find_files_drive()
-      find_files {
-        cwd = '~/Documents/drive/',
-      }
-    end
     local function grep_plugins()
       builtin.live_grep {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
@@ -47,16 +42,13 @@ return {
     end
     local function search_this_word() builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' } end
 
-    -- custom
-    map(map_modes, '<leader>ed', find_files_drive, { desc = '[E]dit [P]lugins' })
-
     -- ci/cd haha
     map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
     map(map_modes, '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
     map(map_modes, '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
 
     -- help
-    map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+    -- map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
@@ -66,7 +58,6 @@ return {
     map(map_modes, '<leader>si', builtin.command_history, { desc = '[S]earch [I]nteractive command history' })
     map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
 
-    map(map_modes, '<leader>s/', builtin.current_buffer_fuzzy_find, { desc = '[/] Fuzzily search in current buffer' })
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
