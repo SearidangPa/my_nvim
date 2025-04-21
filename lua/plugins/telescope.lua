@@ -64,9 +64,9 @@ return {
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
+    -- === LSP ===
     map(map_modes, '<localleader>r', require('telescope.builtin').lsp_references, { desc = 'Go to [R]eferences' })
     map(map_modes, '<localleader>d', require('telescope.builtin').lsp_definitions, { desc = 'Go to [D]efinitions' })
-
     map(map_modes, '<leader>D', require('telescope.builtin').lsp_type_definitions, { desc = 'Go to [D]efinitions' })
     map(map_modes, 'gI', require('telescope.builtin').lsp_implementations, { desc = 'Go to [I]mplementations' })
     map(map_modes, '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
