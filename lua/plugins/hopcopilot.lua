@@ -1,5 +1,6 @@
 return {
   'SearidangPa/hopcopilot.nvim',
+  event = 'VeryLazy',
   dependencies = {
     'github/copilot.vim',
   },
