@@ -39,9 +39,6 @@ return {
 
     -- LSP
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
-    { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
-    { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
-    { 'gy', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
   },
 
   init = function()
