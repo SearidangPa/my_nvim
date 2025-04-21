@@ -1,5 +1,6 @@
 return {
   'aaronik/treewalker.nvim',
+  event = 'VeryLazy',
   opts = {
     highlight = false,
     highlight_group = 'CursorLine',
