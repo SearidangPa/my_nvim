@@ -21,6 +21,11 @@ return {
         variant = 'moon',
         disable_italics = true,
       }
+      if vim.fn.has 'win32' == 1 then
+        vim.cmd.colorscheme 'rose-pine-moon'
+        return
+      end
+
       local handle = io.popen 'defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light"'
       assert(handle, 'Failed to run command')
       local result = handle:read '*a'

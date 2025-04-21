@@ -79,16 +79,17 @@ return {
           { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
         },
       },
+      config = true,
     },
   },
 
   config = function()
     attach_auto_import()
     lsp_attach_keybind()
-
     local capabilities = require('blink.cmp').get_lsp_capabilities()
     require('lspconfig').gopls.setup { capabilities = capabilities }
     require('lspconfig').marksman.setup { capabilities = capabilities }
-    require('lspconfig').lua_ls.setup { capabilities = capabilities }
+
+    vim.lsp.enable 'lua_ls'
   end,
 }

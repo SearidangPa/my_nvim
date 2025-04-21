@@ -51,7 +51,6 @@ return {
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
     -- === jumping around ===
-    map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
     map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
@@ -65,10 +64,6 @@ return {
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
     -- === LSP ===
-    map(map_modes, '<localleader>r', require('telescope.builtin').lsp_references, { desc = 'Go to [R]eferences' })
-    map(map_modes, '<localleader>d', require('telescope.builtin').lsp_definitions, { desc = 'Go to [D]efinitions' })
-    map(map_modes, '<leader>D', require('telescope.builtin').lsp_type_definitions, { desc = 'Go to [D]efinitions' })
-    map(map_modes, 'gI', require('telescope.builtin').lsp_implementations, { desc = 'Go to [I]mplementations' })
     map(map_modes, '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
 
     local opts = {
