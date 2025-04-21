@@ -19,7 +19,7 @@ return {
     { '<leader>gg', function() Snacks.lazygit() end, desc = 'Lazygit' },
     { '<leader>gB', function() Snacks.gitbrowse() end, desc = 'Git Browse', mode = { 'n', 'v' } },
 
-    -- buffer
+    -- search in buffers
     { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<leader>sR', function() Snacks.picker.resume() end, desc = 'Resume' },
@@ -30,9 +30,7 @@ return {
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
     { '<leader>sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>sC', function() Snacks.picker.commands() end, desc = 'Commands' },
-    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-    { '<leader>sD', function() Snacks.picker.diagnostics_buffer() end, desc = 'Buffer Diagnostics' },
-    { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Jumps' },
+    { '<leader>sD', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sp', function() Snacks.picker.lazy() end, desc = 'Search for Plugin Spec' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
