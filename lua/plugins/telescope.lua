@@ -44,33 +44,30 @@ return {
     -- ci/cd haha
     map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
     map(map_modes, '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
-    map(map_modes, '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
 
     -- help
+    map(map_modes, '<leader>sG', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
     map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-    map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
     -- === jumping around ===
     map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-    map(map_modes, '<leader>si', builtin.command_history, { desc = '[S]earch [I]nteractive command history' })
     map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
+    map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
     -- === git ===
     map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
+    map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
     map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
-    -- trying out
-    map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-    map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
-
     map(map_modes, '<localleader>r', require('telescope.builtin').lsp_references, { desc = 'Go to [R]eferences' })
     map(map_modes, '<localleader>d', require('telescope.builtin').lsp_definitions, { desc = 'Go to [D]efinitions' })
+
     map(map_modes, '<leader>D', require('telescope.builtin').lsp_type_definitions, { desc = 'Go to [D]efinitions' })
     map(map_modes, 'gI', require('telescope.builtin').lsp_implementations, { desc = 'Go to [I]mplementations' })
     map(map_modes, '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
