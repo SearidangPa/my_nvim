@@ -53,7 +53,6 @@ return {
     -- === jumping around ===
     map(map_modes, '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
     map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-    -- map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
     map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
 
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
