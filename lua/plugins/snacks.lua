@@ -41,7 +41,7 @@ return {
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
-    { '<leader>uC', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+    { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 
     -- LSP
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
