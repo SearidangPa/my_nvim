@@ -40,7 +40,6 @@ return {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
       }
     end
-    local function search_this_word() builtin.current_buffer_fuzzy_find { default_text = vim.fn.expand '<cword>' } end
 
     -- ci/cd haha
     map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
@@ -59,7 +58,6 @@ return {
     map(map_modes, '<leader>sj', builtin.jumplist, { desc = '[S]earch [J]umplist' })
 
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
-    map(map_modes, '<leader>st', search_this_word, { desc = '[S]earch [T]his word in the current buffer' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
     -- === git ===
