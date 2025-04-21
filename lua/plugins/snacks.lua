@@ -39,13 +39,12 @@ return {
     -- === search registers, autocmds, command_history, marks, qflist ===
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
-    { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
-    { '<leader>ds', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
     { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+    { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
 
     -- LSP
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
