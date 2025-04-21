@@ -5,7 +5,7 @@ return {
   opts = {
     bigfile = { enabled = true },
     indent = { enabled = true },
-    picker = { enabled = true },
+    picker = { enabled = true, layout = 'ivy' },
     quickfile = { enabled = true },
   },
 
