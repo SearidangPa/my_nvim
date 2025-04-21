@@ -10,7 +10,6 @@ return {
   },
 
   keys = {
-    { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
 
     -- === git ===
@@ -28,6 +27,7 @@ return {
     -- === search registers, autocmds, command_history, marks, qflist ===
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+    { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
