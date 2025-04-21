@@ -25,7 +25,7 @@ return {
     { '<leader>sR', function() Snacks.picker.resume() end, desc = 'Resume' },
     { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 
-    -- search
+    -- === search registers, autocmds, command_history, marks, qflist
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
     { '<leader>sc', function() Snacks.picker.command_history() end, desc = 'Command History' },
