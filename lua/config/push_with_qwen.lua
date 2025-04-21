@@ -56,6 +56,10 @@ push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   })
 end
 
+local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, 'qwen14b') end
+
+vim.keymap.set('n', '<leader>pq', push_with_14b, { silent = true, desc = '[P]ush with [Q]wen14b' })
+
 push_with_qwen.start_ollama = function()
   local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
@@ -69,10 +73,5 @@ push_with_qwen.start_ollama = function()
     make_notify(string.format('output:\n%s', table.concat(output, '\n')))
   end, 1000)
 end
-
-local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, 'qwen14b') end
-
 vim.api.nvim_create_user_command('StartOllama', push_with_qwen.start_ollama, {})
-vim.keymap.set('n', '<leader>pq', push_with_14b, { silent = true, desc = '[P]ush with [Q]wen14b' })
-
 return push_with_qwen
