@@ -62,6 +62,7 @@ map(
 
 map('i', '<Tab>', function() accept(true) end, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<C-l>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<M-l>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
