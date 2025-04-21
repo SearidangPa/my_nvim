@@ -12,10 +12,10 @@ return {
       { '<leader>c', group = '[C]olorscheme, [C]lear, [C]urrent, [C]opy', mode = 'n', expr = false, noremap = true },
       { '<leader>d', group = '[D]ocument, [D]elete, [D]ap' },
       { '<leader>e', group = '[E]dit' },
-      { '<leader>g', group = '[G]o, [G]it, [G]rep' },
+      { '<leader>g', group = ' [G]it' },
       { '<leader>r', group = '[R]ename' },
       { '<leader>s', group = '[S]earch' },
-      { '<leader>p', group = '[P]ush'}
+      { '<leader>p', group = '[P]ush' },
       { '<leader>q', group = '[Q]uickfix' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       { '<leader>m', group = '[M]ake' },
