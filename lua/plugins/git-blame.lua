@@ -1,5 +1,6 @@
 return {
   'f-person/git-blame.nvim',
+  event = 'VeryLazy',
   opts = {
     enabled = false, -- if you want to enable the plugin
     message_template = ' <summary> • <date> • <author> • <<sha>>', -- template for the blame message, check the Message template section for more options
