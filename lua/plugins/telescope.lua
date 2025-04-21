@@ -69,7 +69,6 @@ return {
     map(map_modes, '<localleader>d', require('telescope.builtin').lsp_definitions, { desc = 'Go to [D]efinitions' })
     map(map_modes, '<leader>D', require('telescope.builtin').lsp_type_definitions, { desc = 'Go to [D]efinitions' })
     map(map_modes, 'gI', require('telescope.builtin').lsp_implementations, { desc = 'Go to [I]mplementations' })
-    map(map_modes, '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
     map(map_modes, '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
 
     local opts = {
