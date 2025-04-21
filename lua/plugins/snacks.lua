@@ -41,6 +41,7 @@ return {
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
+    { '<leader>ss', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
     { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 
     -- LSP
