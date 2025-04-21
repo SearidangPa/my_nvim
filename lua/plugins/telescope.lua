@@ -48,7 +48,7 @@ return {
     map(map_modes, '<localleader>sg', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
 
     -- help
-    -- map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
+    map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
     map(map_modes, '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
 
