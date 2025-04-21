@@ -22,7 +22,7 @@ return {
       desc = '[x] current [b]uffer',
     },
     {
-      '<leader><leader>',
+      '<leader>xx',
       '<cmd>Trouble diagnostics toggle<cr>',
       desc = '[x] Diagnostics',
     },
