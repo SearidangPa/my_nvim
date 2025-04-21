@@ -2,6 +2,8 @@ return {
   'folke/snacks.nvim',
   priority = 1000,
   lazy = false,
+
+  ---@type snacks.Config
   opts = {
     bigfile = { enabled = true },
     indent = { enabled = true },
@@ -47,7 +49,12 @@ return {
 
     -- LSP
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
-    { '<leader>sS', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+    { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
+    { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
+    { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
+    { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
+    { '<leader>ds', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+    { '<leader>ws', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
   },
 
   init = function()
