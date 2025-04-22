@@ -23,6 +23,8 @@ return {
   keys = {
     { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
     { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
+    { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
+    { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
@@ -34,7 +36,6 @@ return {
     { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<leader>sR', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 
     -- === search registers, autocmds, command_history, marks, qflist ===
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
