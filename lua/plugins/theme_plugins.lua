@@ -21,22 +21,28 @@ return {
         variant = 'moon',
         disable_italics = true,
       }
-      if vim.fn.has 'win32' == 1 then
-        vim.cmd.colorscheme 'rose-pine-moon'
-        return
+      local function get_os_mode()
+        local is_light = true
+
+        if vim.fn.has 'win32' == 1 then
+          local result = vim.fn.system 'reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" /v AppsUseLightTheme'
+          is_light = not result:match '0x0'
+        else
+          local result = vim.fn.system 'defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light"'
+          is_light = not result:match 'Dark'
+        end
+
+        return is_light
       end
 
-      local handle = io.popen 'defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light"'
-      assert(handle, 'Failed to run command')
-      local result = handle:read '*a'
-      handle:close()
+      local is_light_mode = get_os_mode()
 
-      if result:match 'Dark' then
-        vim.o.background = 'dark'
-        vim.cmd.colorscheme 'rose-pine-moon'
-      else
+      if is_light_mode then
         vim.o.background = 'light'
         vim.cmd.colorscheme 'github_light_default'
+      else
+        vim.o.background = 'dark'
+        vim.cmd.colorscheme 'rose-pine-moon'
       end
     end,
   },
