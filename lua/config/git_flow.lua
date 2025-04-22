@@ -9,6 +9,7 @@ local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
   'Pushing to remote',
+  'Debugging',
   'Done with what I set out to do',
   'Beautifully crafted',
 }
