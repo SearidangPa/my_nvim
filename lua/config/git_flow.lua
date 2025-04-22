@@ -9,6 +9,7 @@ local col = math.floor((vim.o.columns / 5))
 
 local default_no_more_input = {
   'Pushing to remote',
+  'Debugging',
   'Done with what I set out to do',
   'Beautifully crafted',
 }
@@ -37,7 +38,7 @@ local popup_option = {
   border = {
     style = 'rounded',
     text = {
-      top = '[My Lovely Commit Message]',
+      top = '[Commit Message]',
       top_align = 'center',
     },
   },
