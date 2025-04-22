@@ -37,7 +37,7 @@ local popup_option = {
   border = {
     style = 'rounded',
     text = {
-      top = '[My Lovely Commit Message]',
+      top = '[Commit Message]',
       top_align = 'center',
     },
   },

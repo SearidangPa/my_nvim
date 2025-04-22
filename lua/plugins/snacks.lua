@@ -22,6 +22,7 @@ return {
 
   keys = {
     { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
+    { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
     { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
