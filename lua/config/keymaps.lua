@@ -111,6 +111,8 @@ map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
 map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
 
+map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
+
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
