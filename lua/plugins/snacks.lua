@@ -24,8 +24,8 @@ return {
     { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
     { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
     { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
-    { '<leader>/', function() Snacks.picker.grep() end, desc = 'Grep' },
-    { '<leader>sB', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+    { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
+    { '<leader>so', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
 
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },

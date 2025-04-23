@@ -50,10 +50,6 @@ return {
     map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
     map(map_modes, '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
 
-    -- === jumping around ===
-    map(map_modes, '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
-    map(map_modes, '<leader>so', builtin.buffers, { desc = '[S]earch [O]pen Buffers' })
-
     map(map_modes, '<leader>sw', builtin.grep_string, { desc = '[S]earch [C]urrent word' })
     map(map_modes, '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 
