@@ -57,13 +57,6 @@ local function accept(with_indent, only_one_line)
   end
 end
 
-map(
-  'i',
-  '<S-Tab>',
-  function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', false) end,
-  { silent = true, desc = 'Accept Copilot Line' }
-)
-
 map('i', '<C-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-l>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
