@@ -1,6 +1,5 @@
 return {
   'SearidangPa/go-test-t.nvim',
-  event = 'VeryLazy',
   dependencies = {
     'echasnovski/mini.nvim',
     'j-hui/fidget.nvim',
