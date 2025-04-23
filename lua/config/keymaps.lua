@@ -133,6 +133,7 @@ map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- === Visual select ===
 map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all lines' })
+map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
