@@ -57,14 +57,6 @@ local function accept(with_indent, only_one_line)
   end
 end
 
-map(
-  'i',
-  '<S-Tab>',
-  function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', false) end,
-  { silent = true, desc = 'Accept Copilot Line' }
-)
-
-map('i', '<Tab>', function() accept(true) end, { expr = true, silent = true, desc = 'Accept Copilot Line' })
 map('i', '<C-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-l>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
@@ -74,7 +66,6 @@ vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
     require('luasnip').unlink_current()
   end
-  vim.cmd 'noh'
   return '<esc>'
 end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
@@ -112,6 +103,8 @@ map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
 map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
 
+map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
+
 -- ================== LSP Rename the first letter
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
@@ -133,6 +126,7 @@ map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- === Visual select ===
 map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all lines' })
+map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })

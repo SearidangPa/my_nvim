@@ -1,6 +1,5 @@
 return {
   'SearidangPa/go-test-t.nvim',
-  event = 'VeryLazy',
   dependencies = {
     'echasnovski/mini.nvim',
     'j-hui/fidget.nvim',
@@ -17,7 +16,7 @@ return {
       go_test_prefix = go_test_prefix,
       user_command_prefix = 'Go',
     }
-    vim.keymap.set('n', '<localleader>tt', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
-    vim.keymap.set('n', '<leader>T', ':GoTestTerm<CR>', { desc = 'Test: View enclosing test terminal' })
+    vim.keymap.set('n', '<leader>G', ':GoTestTerm<CR>', { desc = 'Test: View enclosing test terminal' })
+    vim.keymap.set('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'Test: View enclosing test terminal' })
   end,
 }
