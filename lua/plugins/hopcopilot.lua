@@ -5,7 +5,6 @@ return {
     'github/copilot.vim',
   },
   config = function()
-    vim.cmd [[Copilot signin]]
     local hopcopilot = require 'hopcopilot'
     hopcopilot.setup()
     vim.keymap.set('i', '<M-s>', hopcopilot.hop_copilot, { silent = true, desc = 'hop copilot' })
