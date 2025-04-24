@@ -18,23 +18,6 @@ return {
     local builtin = require 'telescope.builtin'
     local map = vim.keymap.set
     local map_modes = { 'n', 'v' }
-
-    local function find_files(opts)
-      builtin.find_files {
-        cwd = opts.cwd,
-      }
-    end
-    local function find_files_neovim_config()
-      find_files {
-        cwd = vim.fn.stdpath 'config',
-      }
-    end
-
-    local function find_files_plugins()
-      find_files {
-        cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
-      }
-    end
     local function grep_plugins()
       builtin.live_grep {
         cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
