@@ -7,6 +7,19 @@ return {
     bigfile = { enabled = true },
     indent = { enabled = true },
     picker = {
+      previewers = {
+        -- diff hunk preview: use delta instead of builtin
+        diff = {
+          builtin = false, -- disable Neovim buffer diff
+          cmd = { 'delta' }, -- external diff command
+        },
+        -- git status preview: run 'git diff HEAD' through delta
+        git = {
+          builtin = false, -- disable Neovim buffer preview
+          args = { '-c', 'core.pager=delta' }, -- instruct git to use delta as pager
+        },
+      },
+
       enabled = true,
       layout = {
         preset = 'ivy',
