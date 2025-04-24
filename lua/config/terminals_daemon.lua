@@ -13,7 +13,7 @@ M.exec_command = function(command, title)
   make_notify(string.format('running %s daemon', title))
 
   vim.defer_fn(function()
-    local output = vim.api.nvim_buf_get_lines(current_float_term_state.buf, 0, -1, false)
+    local output = vim.api.nvim_buf_get_lines(current_float_term_state.bufnr, 0, -1, false)
     make_notify(string.format('output:\n%s', table.concat(output, '\n')))
   end, 3000)
 end
