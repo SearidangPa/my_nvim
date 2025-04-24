@@ -1,5 +1,6 @@
 return {
   'f-person/git-blame.nvim',
+  lazy = true,
   event = 'VeryLazy',
   opts = {
     enabled = false, -- if you want to enable the plugin

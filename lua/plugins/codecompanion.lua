@@ -63,6 +63,7 @@ opts.prompt_library = {
 return {
   'olimorris/codecompanion.nvim',
   event = 'VeryLazy',
+  lazy = true,
   dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-treesitter/nvim-treesitter',

@@ -67,7 +67,6 @@ return {
     { '<leader>so', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
     { '<leader>sO', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-    { '<leader>se', function() Snacks.picker.git_status() end, desc = 'Git Stash' },
     { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
     -- === git ===

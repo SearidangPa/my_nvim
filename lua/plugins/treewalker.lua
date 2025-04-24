@@ -1,5 +1,6 @@
 return {
   'aaronik/treewalker.nvim',
+  lazy = true,
   event = 'VeryLazy',
   opts = {
     highlight = false,

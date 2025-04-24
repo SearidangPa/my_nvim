@@ -1,12 +1,11 @@
 return {
   'kevinhwang91/nvim-bqf',
+  lazy = true,
   ft = 'qf',
   dependencies = {
     {
       'junegunn/fzf',
-      run = function()
-        vim.fn['fzf#install']()
-      end,
+      run = function() vim.fn['fzf#install']() end,
     },
     {
       'nvim-treesitter/nvim-treesitter',
