@@ -3,7 +3,7 @@ return {
   lazy = true,
   event = 'VeryLazy',
   dependencies = {
-    'github/copilot.vim',
+    { 'github/copilot.vim', version = '*' },
   },
   config = function()
     local hopcopilot = require 'hopcopilot'
