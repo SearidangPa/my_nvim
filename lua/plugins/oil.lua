@@ -1,6 +1,7 @@
 return {
   'stevearc/oil.nvim',
   lazy = true,
+  event = 'BufEnter',
   config = function()
     require('oil').setup {
       view_options = {
