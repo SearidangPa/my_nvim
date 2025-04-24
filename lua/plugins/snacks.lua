@@ -12,7 +12,7 @@ return {
         preset = 'ivy',
         layout = {
           width = 0,
-          height = 0.5,
+          height = 0.65,
         },
       },
     },
@@ -43,6 +43,8 @@ return {
     { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<leader>so', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+    { '<leader>se', function() Snacks.picker.git_status() end, desc = 'Git Stash' },
 
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },

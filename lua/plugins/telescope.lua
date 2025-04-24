@@ -41,10 +41,6 @@ return {
       }
     end
 
-    -- ci/cd haha
-    map(map_modes, '<leader>en', find_files_neovim_config, { desc = '[E]dit [N]vim config' })
-    map(map_modes, '<leader>ep', find_files_plugins, { desc = '[E]dit [P]lugins' })
-
     -- help
     map(map_modes, '<leader>sG', grep_plugins, { desc = '[S]earch Plugin by [G]rep' })
     map(map_modes, '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
@@ -58,8 +54,6 @@ return {
 
     -- === git ===
     map(map_modes, '<leader>sc', builtin.git_commits, { desc = '[S]earch [C]ommits' })
-    map(map_modes, '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
-    map(map_modes, '<leader>se', builtin.git_status, { desc = '[S]earch [E]dit (unstaged files)' })
     map(map_modes, '<leader>sl', builtin.git_bcommits_range, { desc = '[S]earch last commits on this [L]ine' })
 
     -- === LSP ===
