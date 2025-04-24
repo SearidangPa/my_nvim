@@ -57,9 +57,10 @@ local function accept(with_indent, only_one_line)
   end
 end
 
+map('i', '<C-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<D-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
+map('i', '<D-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
 --- === Powerful Esc. Copied from Maria SolOs ===

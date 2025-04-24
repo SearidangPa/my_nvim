@@ -2,6 +2,7 @@ return {
   {
     'rebelot/kanagawa.nvim',
     event = 'VeryLazy',
+    la,
   },
   {
     'catppuccin/nvim',
