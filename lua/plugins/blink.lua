@@ -111,31 +111,30 @@ local completion = {
 }
 
 return {
-  {
-    'saghen/blink.cmp',
-    dependencies = {
-      { 'L3MON4D3/LuaSnip', version = 'v2.*' },
-    },
-    version = '*',
-    opts = {
-      appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
-      signature = { enabled = true },
-      sources = {
-        default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
-        providers = {
-          lazydev = {
-            name = 'LazyDev',
-            module = 'lazydev.integrations.blink',
-            -- make lazydev completions top priority (see `:h blink.cmp`)
-            score_offset = 100,
-          },
+  'saghen/blink.cmp',
+  lazy = true,
+  dependencies = {
+    { 'L3MON4D3/LuaSnip', version = 'v2.*' },
+  },
+  version = '*',
+  opts = {
+    appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
+    signature = { enabled = true },
+    sources = {
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          -- make lazydev completions top priority (see `:h blink.cmp`)
+          score_offset = 100,
         },
       },
-      snippets = snippets,
-      completion = completion,
-      keymap = generate_keymap(),
-      fuzzy = { implementation = 'lua' },
-      cmdline = cmdline_opt,
     },
+    snippets = snippets,
+    completion = completion,
+    keymap = generate_keymap(),
+    fuzzy = { implementation = 'lua' },
+    cmdline = cmdline_opt,
   },
 }
