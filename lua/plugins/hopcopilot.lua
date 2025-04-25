@@ -37,6 +37,7 @@ return {
     end
 
     -- ctrl-l does not work on windows terminal for some reason
+    local map = vim.keymap.set
     map('i', '<C-l>', function() accept { only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-l>', function() accept { only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
