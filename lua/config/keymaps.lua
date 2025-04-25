@@ -29,40 +29,6 @@ local function yank_function()
   end
 end
 
--- =================== Copilot ===================
----@param with_indent boolean
-local function accept(with_indent, only_one_line)
-  only_one_line = only_one_line or false
-  local accept
-  if only_one_line then
-    accept = vim.fn['copilot#AcceptLine']
-  else
-    accept = vim.fn['copilot#Accept']
-  end
-  assert(accept, 'copilot accept or accept line not found')
-  local res = accept()
-  if not with_indent then
-    vim.api.nvim_feedkeys(res, 'n', false)
-    return
-  end
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local next_line = cursor_pos[1]
-  local next_line_content = vim.api.nvim_buf_get_lines(0, next_line, next_line + 1, false)
-  local is_next_line_empty = next_line_content[1] and next_line_content[1]:match '^%s*$'
-
-  if is_next_line_empty then
-    vim.api.nvim_feedkeys(res .. '\n', 'n', false)
-  else
-    vim.api.nvim_feedkeys(res, 'n', false)
-  end
-end
-
-map('i', '<C-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<M-l>', function() accept(false, true) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<D-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-map('i', '<M-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
