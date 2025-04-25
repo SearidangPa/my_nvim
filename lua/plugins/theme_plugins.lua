@@ -46,7 +46,7 @@ return {
         vim.o.background = 'dark'
         vim.cmd.colorscheme 'rose-pine-moon'
       end
-      vim.api.nvim_set_hl(0, 'Comment', { italic = true })
+      vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
     end,
   },
 }

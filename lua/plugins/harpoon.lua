@@ -13,8 +13,10 @@ return {
     map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
 
-    map('n', '<M-[>', function() harpoon:list():next() end, { desc = 'harpoon next' })
-    map('n', '<M-]>', function() harpoon:list():prev() end, { desc = 'harpoon prev' })
+    map('n', '<D-[>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
+    map('n', '<M-[>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
+    map('n', '<M-]>', function() harpoon:list():next() end, { desc = 'harpoon prev' })
+    map('n', '<D-]>', function() harpoon:list():next() end, { desc = 'harpoon prev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       map('n', string.format('<leader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
