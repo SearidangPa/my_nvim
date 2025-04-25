@@ -15,6 +15,7 @@ vim.opt.undofile = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
+vim.opt.numberwidth = 1
 
 --- === Live Preview ===
 vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!

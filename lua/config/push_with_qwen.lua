@@ -29,7 +29,7 @@ push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   terminal_multiplexer:delete_terminal(qwen_terminal_name)
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
 
-  ---@type FloatTermState
+  ---@type TerminalMultiplexer.FloatTermState
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   vim.api.nvim_chan_send(float_terminal_state.chan, push_cmd_str .. '\n')
 
