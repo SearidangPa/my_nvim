@@ -21,7 +21,7 @@ return {
     config = function()
       require('rose-pine').setup {
         variant = 'moon',
-        disable_italics = true,
+        -- disable_italics = true,
       }
       local function get_os_mode()
         local is_light = true
