@@ -13,9 +13,11 @@ return {
 
     ---@class copilot_accept_opts
     ---@field only_one_line boolean
+    ---@field no_indentation boolean
 
     ---@param opts copilot_accept_opts
     local function accept(opts)
+      local no_indentation = opts.no_indentation or false
       local only_one_line = opts.only_one_line or false
       local accept
       if only_one_line then
@@ -29,7 +31,7 @@ return {
       local next_line = cursor_pos[1]
       local next_line_content = vim.api.nvim_buf_get_lines(0, next_line, next_line + 1, false)
       local is_next_line_empty = next_line_content[1] and next_line_content[1]:match '^%s*$'
-      if is_next_line_empty then
+      if is_next_line_empty and not no_indentation then
         res = res .. '\n'
       end
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(res, true, false, true), 'n', false)
@@ -37,10 +39,10 @@ return {
 
     -- ctrl-l does not work on windows terminal for some reason
     local map = vim.keymap.set
-    map('i', '<C-l>', function() accept { only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
-    map('i', '<M-l>', function() accept { only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<M-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
-    map('i', '<D-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
-    map('i', '<M-y>', function() accept(false) end, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<D-y>', function() accept {} end, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<M-y>', function() accept {} end, { expr = true, silent = true, desc = 'Accept Copilot' })
   end,
 }
