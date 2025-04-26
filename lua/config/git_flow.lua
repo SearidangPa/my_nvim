@@ -74,9 +74,9 @@ local function handle_choice(choice, perform_commit_func)
   end)
 
   -- local input = nui_input(popup_option, nui_input_options)
-  input:mount()
-
-  input:on(event.BufLeave, function() input:unmount() end)
+  -- input:mount()
+  --
+  -- input:on(event.BufLeave, function() input:unmount() end)
 end
 
 local function select_commit_message_prompt(cb)
