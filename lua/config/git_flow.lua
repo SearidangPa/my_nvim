@@ -68,7 +68,12 @@ local function handle_choice(choice, perform_commit_func)
     end,
   }
 
-  local input = nui_input(popup_option, nui_input_options)
+  Snacks.input.input(opts, function(value)
+    commit_msg = value
+    perform_commit_func(commit_msg)
+  end)
+
+  -- local input = nui_input(popup_option, nui_input_options)
   input:mount()
 
   input:on(event.BufLeave, function() input:unmount() end)
