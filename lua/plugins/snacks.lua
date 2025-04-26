@@ -5,8 +5,17 @@ return {
 
   ---@type snacks.Config
   opts = {
+    ---@type table<string, snacks.win.Config>
+    styles = {
+      input = {
+        row = 10,
+        b = {
+          completion = true,
+        },
+      },
+    },
     input = {
-      rows = 10,
+      enabled = true,
     },
     bigfile = { enabled = true },
     indent = { enabled = true },

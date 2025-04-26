@@ -32,19 +32,6 @@ end
 local choice_options = vim.list_extend(copy_list(default_no_more_input), item_options)
 local commit_msg = ''
 
-local popup_option = {
-  position = { row = row, col = col },
-  size = { width = 100 },
-  border = {
-    style = 'rounded',
-    text = {
-      top = '[Commit Message]',
-      top_align = 'center',
-    },
-  },
-  win_options = { winhighlight = 'Normal:Normal,FloatBorder:Normal' },
-}
-
 local function handle_choice(choice, perform_commit_func)
   if not choice then
     make_notify 'Commit aborted: no message selected.'
@@ -55,22 +42,15 @@ local function handle_choice(choice, perform_commit_func)
 
   local util_contains = require 'config.util_contains'
   if util_contains.contains(default_no_more_input, choice) then
-    perform_commit_func(commit_msg)
+    perform_commit_func(choice)
     return
   end
 
-  local nui_input_options = {
-    prompt = '> ',
-    default_value = string.format('%s: ', commit_msg),
-    on_submit = function(value)
-      commit_msg = value
-      perform_commit_func(commit_msg)
-    end,
-  }
-
   local opts = {
     prompt = 'Commit message:',
+    default = string.format('%s ', commit_msg),
   }
+  require 'snacks.input'
   Snacks.input.input(opts, function(value)
     commit_msg = value
     if not value then
@@ -79,11 +59,6 @@ local function handle_choice(choice, perform_commit_func)
     end
     perform_commit_func(commit_msg)
   end)
-
-  -- local input = nui_input(popup_option, nui_input_options)
-  -- input:mount()
-  --
-  -- input:on(event.BufLeave, function() input:unmount() end)
 end
 
 local function select_commit_message_prompt(cb)
