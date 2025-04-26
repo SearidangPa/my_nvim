@@ -39,6 +39,7 @@ local function handle_choice(choice, perform_commit_func)
   end
 
   commit_msg = choice
+  Snacks.debug.backtrace('choice', choice)
 
   local util_contains = require 'config.util_contains'
   if util_contains.contains(default_no_more_input, choice) then

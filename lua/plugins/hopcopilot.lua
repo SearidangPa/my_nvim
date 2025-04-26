@@ -39,7 +39,7 @@ return {
 
     -- ctrl-l does not work on windows terminal for some reason
     local map = vim.keymap.set
-    map('i', '<C-l>', function() accept { no_indentation = false, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
+    map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
     map('i', '<M-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
 
     map('i', '<D-y>', function() accept {} end, { expr = true, silent = true, desc = 'Accept Copilot' })
