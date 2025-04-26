@@ -225,6 +225,7 @@ vim.keymap.set('n', '<localleader>y', ':YankCodeBlock<CR>', { noremap = true, si
 vim.keymap.set('v', '<localleader>r', function()
   vim.cmd 'normal! y'
   local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
+  selected_text = vim.trim(selected_text)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':%s/' .. selected_text .. '//gc<Left><Left><Left>', true, true, true), 'n', false)
 end, { desc = 'Substitute the visual selection' })
 
