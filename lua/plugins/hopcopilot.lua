@@ -34,7 +34,7 @@ return {
       if is_next_line_empty and not no_indentation then
         res = res .. '\n'
       end
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(res, true, false, true), 'n', false)
+      vim.api.nvim_feedkeys(res, 'n', false)
     end
 
     -- ctrl-l does not work on windows terminal for some reason
