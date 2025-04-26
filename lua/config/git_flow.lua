@@ -68,8 +68,15 @@ local function handle_choice(choice, perform_commit_func)
     end,
   }
 
+  local opts = {
+    prompt = 'Commit message:',
+  }
   Snacks.input.input(opts, function(value)
     commit_msg = value
+    if not value then
+      vim.print 'Commit aborted: no message selected.'
+      return
+    end
     perform_commit_func(commit_msg)
   end)
 
