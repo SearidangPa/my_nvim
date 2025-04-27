@@ -1,9 +1,6 @@
 return {
   'folke/trouble.nvim',
   lazy = true,
-  dependencies = {
-    'nvim-telescope/telescope.nvim',
-  },
   opts = {},
   cmd = 'Trouble',
   keys = {

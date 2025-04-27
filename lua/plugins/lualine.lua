@@ -83,6 +83,8 @@ end
 
 return {
   'nvim-lualine/lualine.nvim',
+  lazy = true,
+  event = 'BufEnter',
   options = {
     theme = 'gruvbox',
     section_separators = { left = '', right = '' },

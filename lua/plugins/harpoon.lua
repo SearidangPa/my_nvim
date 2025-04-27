@@ -1,6 +1,7 @@
 return {
 	'ThePrimeagen/harpoon',
 	lazy = true,
+	event = 'BufEnter',
 	branch = 'harpoon2',
 	config = function()
 		local harpoon = require 'harpoon'
@@ -91,7 +92,6 @@ return {
 				file_paths,
 				{
 					prompt = 'Harpoon',
-					-- show only the filename in the list (optional)
 					format_item = function(item)
 						return vim.fn.fnamemodify(item, ':t')
 					end,

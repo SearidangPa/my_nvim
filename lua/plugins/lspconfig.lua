@@ -59,31 +59,20 @@ local function lsp_attach_keybind()
       end
 
       if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-        map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+        map('<leader>th',
+          function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end,
+          '[T]oggle Inlay [H]ints')
       end
     end,
   })
 end
 
 return {
-  { 'williamboman/mason.nvim', config = true, lazy = true }, -- NOTE: Must be loaded before dependants
-  { 'williamboman/mason-lspconfig.nvim', lazy = true },
+  { 'williamboman/mason.nvim',                   config = true, lazy = true }, -- NOTE: Must be loaded before dependants
+  { 'williamboman/mason-lspconfig.nvim',         lazy = true },
   { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true },
   {
     'neovim/nvim-lspconfig',
-    dependencies = {
-      {
-        'folke/lazydev.nvim',
-        ft = 'lua', -- only load for lua files
-        opts = {
-          library = {
-            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
-          },
-        },
-        config = true,
-      },
-    },
-
     config = function()
       attach_auto_import()
       lsp_attach_keybind()
