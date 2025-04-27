@@ -66,30 +66,32 @@ local function lsp_attach_keybind()
 end
 
 return {
-  'neovim/nvim-lspconfig',
-  dependencies = {
-    { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
-    'williamboman/mason-lspconfig.nvim',
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-    {
-      'folke/lazydev.nvim',
-      ft = 'lua', -- only load for lua files
-      opts = {
-        library = {
-          { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+  { 'williamboman/mason.nvim', config = true, lazy = true }, -- NOTE: Must be loaded before dependants
+  { 'williamboman/mason-lspconfig.nvim', lazy = true },
+  { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true },
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      {
+        'folke/lazydev.nvim',
+        ft = 'lua', -- only load for lua files
+        opts = {
+          library = {
+            { path = '${3rd}/luv/library', words = { 'vim%.uv' } },
+          },
         },
+        config = true,
       },
-      config = true,
     },
+
+    config = function()
+      attach_auto_import()
+      lsp_attach_keybind()
+      local capabilities = require('blink.cmp').get_lsp_capabilities()
+      require('lspconfig').gopls.setup { capabilities = capabilities }
+      require('lspconfig').marksman.setup { capabilities = capabilities }
+
+      vim.lsp.enable 'lua_ls'
+    end,
   },
-
-  config = function()
-    attach_auto_import()
-    lsp_attach_keybind()
-    local capabilities = require('blink.cmp').get_lsp_capabilities()
-    require('lspconfig').gopls.setup { capabilities = capabilities }
-    require('lspconfig').marksman.setup { capabilities = capabilities }
-
-    vim.lsp.enable 'lua_ls'
-  end,
 }

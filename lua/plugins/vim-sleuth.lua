@@ -1,4 +1,5 @@
 return {
   'tpope/vim-sleuth',
-  lazy = false,
+  lazy = true,
+  event = 'InsertEnter',
 }

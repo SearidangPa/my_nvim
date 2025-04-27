@@ -113,9 +113,6 @@ local completion = {
 return {
   'saghen/blink.cmp',
   lazy = true,
-  dependencies = {
-    { 'L3MON4D3/LuaSnip', version = 'v2.*' },
-  },
   version = '*',
   opts = {
     appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },

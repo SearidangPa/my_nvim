@@ -18,7 +18,7 @@ end
 
 push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   require 'terminal-multiplexer'
-  local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
+  local terminal_multiplexer = require('custom.terminals_daemon').terminal_multiplexer
 
   if vim.bo.filetype == 'go' then
     local async_make_job = require 'config.async_job'
@@ -61,7 +61,7 @@ local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, '
 vim.keymap.set('n', '<leader>pq', push_with_14b, { silent = true, desc = '[P]ush with [Q]wen14b' })
 
 push_with_qwen.start_ollama = function()
-  local terminal_multiplexer = require('config.terminals_daemon').terminal_multiplexer
+  local terminal_multiplexer = require('custom.terminals_daemon').terminal_multiplexer
   terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
   local float_terminal_state = terminal_multiplexer:toggle_float_terminal(qwen_terminal_name)
 

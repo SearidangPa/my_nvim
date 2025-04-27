@@ -64,14 +64,12 @@ return {
   'olimorris/codecompanion.nvim',
   lazy = true,
   dependencies = {
-    { 'nvim-lua/plenary.nvim', lazy = true },
     { 'nvim-treesitter/nvim-treesitter', lazy = true },
     { 'echasnovski/mini.diff', lazy = true },
     { 'j-hui/fidget.nvim', lazy = true },
   },
-  init = function() require('config.fidget_spinner_for_ai'):init() end,
-
   config = function()
+    require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {
       display = opts.displays,
       adapters = opts.adapters,

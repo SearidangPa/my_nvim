@@ -28,4 +28,5 @@ return {
       desc = '[x] Diagnostics',
     },
   },
+  config = function() require 'custom.trouble_config' end,
 }

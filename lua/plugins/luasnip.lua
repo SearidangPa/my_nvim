@@ -1,6 +1,7 @@
 return {
   'L3MON4D3/LuaSnip',
   lazy = true,
+  event = 'InsertEnter',
   version = 'v2.*',
   config = function()
     local ls = require 'luasnip'
@@ -56,5 +57,7 @@ return {
         ls.change_choice(1)
       end
     end, { silent = true })
+
+    require 'custom.go_snip'
   end,
 }
