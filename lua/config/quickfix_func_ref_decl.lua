@@ -122,7 +122,8 @@ function M.lsp_ref_func_decl(bufnr, line, col)
 end
 
 local function load_func_ref_decls()
-  local func_node = Nearest_func_node()
+  local util_find_func = require 'config.util_find_func'
+  local func_node = util_find_func.nearest_func_node()
   assert(func_node, 'No function found')
   local func_identifier
   for child in func_node:iter_children() do

@@ -17,7 +17,8 @@ end
 
 local function yank_function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local func_node = Nearest_func_node()
+  local util_find_func = require 'config.util_find_func'
+  local func_node = util_find_func.nearest_func_node()
   local func_text = vim.treesitter.get_node_text(func_node, bufnr)
   vim.fn.setreg('*', func_text)
   for child in func_node:iter_children() do

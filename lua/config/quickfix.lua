@@ -42,7 +42,8 @@ end
 
 function M.lsp_references_nearest_function()
   require 'config.util_find_func'
-  local func_node = Nearest_func_node()
+  local util_find_func = require 'config.util_find_func'
+  local func_node = util_find_func.nearest_func_node()
   assert(func_node, 'No function found')
 
   local func_identifier
