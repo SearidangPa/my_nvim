@@ -83,10 +83,6 @@ end
 
 return {
   'nvim-lualine/lualine.nvim',
-  dependencies = {
-    'nvim-tree/nvim-web-devicons',
-    require 'plugins.harpoon',
-  },
   options = {
     theme = 'gruvbox',
     section_separators = { left = '', right = '' },

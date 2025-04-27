@@ -1,7 +1,7 @@
 return {
   'folke/todo-comments.nvim',
   lazy = true,
-  event = 'BufEnter',
+  event = 'WinEnter',
   opts = {
     signs = false,
     keywords = {
