@@ -1,6 +1,5 @@
 return {
   'mfussenegger/nvim-dap',
-  event = 'VeryLazy',
   lazy = true,
   dependencies = {
     'leoluz/nvim-dap-go',

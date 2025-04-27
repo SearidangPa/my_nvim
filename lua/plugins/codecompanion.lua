@@ -62,13 +62,12 @@ opts.prompt_library = {
 
 return {
   'olimorris/codecompanion.nvim',
-  event = 'VeryLazy',
   lazy = true,
   dependencies = {
-    'nvim-lua/plenary.nvim',
-    'nvim-treesitter/nvim-treesitter',
-    'echasnovski/mini.diff',
-    'j-hui/fidget.nvim',
+    { 'nvim-lua/plenary.nvim', lazy = true },
+    { 'nvim-treesitter/nvim-treesitter', lazy = true },
+    { 'echasnovski/mini.diff', lazy = true },
+    { 'j-hui/fidget.nvim', lazy = true },
   },
   init = function() require('config.fidget_spinner_for_ai'):init() end,
 

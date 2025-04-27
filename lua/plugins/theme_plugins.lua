@@ -2,7 +2,7 @@ return {
   {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
-    event = 'VeryLazy',
+    lazy = true,
   },
   {
     'rose-pine/neovim',
