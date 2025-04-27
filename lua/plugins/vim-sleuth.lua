@@ -1,5 +1,5 @@
 return {
-  'tpope/vim-sleuth',
-  lazy = true,
-  event = 'WinEnter',
+	'tpope/vim-sleuth',
+	lazy = true,
+	event = 'InsertEnter',
 }
