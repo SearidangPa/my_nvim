@@ -1,7 +1,5 @@
 require 'config.util_job'
 local make_notify = require('mini.notify').make_notify {}
-local nui_input = require 'nui.input'
-local event = require('nui.utils.autocmd').event
 
 local height = math.floor(vim.o.lines * 0.25)
 local row = math.floor((vim.o.lines - height) / 2)
