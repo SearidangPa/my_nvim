@@ -18,7 +18,10 @@ return {
     map('n', '<D-]>', function() harpoon:list():next() end, { desc = 'harpoon prev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-      map('n', string.format('<leader>%d', idx), function() harpoon:list():select(idx) end, { desc = string.format('harpoon select %d', idx) })
+      map('n', string.format('<leader>%d', idx), function()
+        local item = harpoon:list():get(idx)
+        vim.cmd('edit ' .. item.value)
+      end, { desc = string.format('harpoon select %d', idx) })
     end
 
     local function delete_at_index(fileIndex)
@@ -87,7 +90,7 @@ return {
         prompt = 'Harpoon',
         format_item = function(item) return vim.fn.fnamemodify(item, ':t') end,
         kind = 'Harpoon',
-      }, function(choice, idx)
+      }, function(choice, _)
         if choice then
           vim.cmd('edit ' .. choice)
         end

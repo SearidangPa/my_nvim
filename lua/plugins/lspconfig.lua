@@ -66,12 +66,13 @@ local function lsp_attach_keybind()
 end
 
 return {
-  { 'williamboman/mason.nvim', config = true, lazy = true, event = 'LspAttach' }, -- NOTE: Must be loaded before dependants
-  { 'williamboman/mason-lspconfig.nvim', lazy = true, event = 'LspAttach' },
-  { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true, event = 'LspAttach' },
+  { 'williamboman/mason.nvim', config = true, lazy = true, event = 'VeryLazy' }, -- NOTE: Must be loaded before dependants
+  { 'williamboman/mason-lspconfig.nvim', lazy = true, event = 'VeryLazy' },
+  { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true, event = 'VeryLazy' },
   {
     'folke/lazydev.nvim',
     lazy = true,
+    event = 'VeryLazy',
     ft = 'lua', -- only load for lua files
     opts = {
       library = {
