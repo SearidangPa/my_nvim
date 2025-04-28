@@ -63,11 +63,7 @@ opts.prompt_library = {
 return {
   'olimorris/codecompanion.nvim',
   lazy = true,
-  dependencies = {
-    { 'nvim-treesitter/nvim-treesitter', lazy = true },
-    { 'echasnovski/mini.diff', lazy = true },
-    { 'j-hui/fidget.nvim', lazy = true },
-  },
+  event = 'VeryLazy',
   config = function()
     require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {

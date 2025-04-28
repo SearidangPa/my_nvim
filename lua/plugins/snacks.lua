@@ -1,3 +1,11 @@
+local function get_command_owl_ascii()
+  if vim.fn.has 'win32' == 1 then
+    return [[echo ,_, & echo  (O,O) & echo  (   ) & echo --^"^-^"^-- & echo 🔥🔥🔥🔥]]
+  else
+    return [[echo "   ,_," && echo "  (O,O)" && echo  "  (   )" && echo " --\"-\"--" && echo "🔥🔥🔥🔥"]]
+  end
+end
+
 return {
   'folke/snacks.nvim',
   event = 'VeryLazy',
@@ -18,13 +26,15 @@ return {
       enabled = true,
       sections = {
         { section = 'header' },
+
         {
           pane = 2,
           section = 'terminal',
-          cmd = [[echo   ,_, & echo  (O,O) & echo  (   ) & echo --^"^-^"^-- & echo 🔥🔥🔥🔥]],
+          cmd = get_command_owl_ascii(),
           height = 5,
           padding = 1,
         },
+
         { section = 'keys', gap = 1, padding = 1 },
         { pane = 2, icon = ' ', title = 'Recent Files', section = 'recent_files', indent = 2, padding = 1 },
         { pane = 2, icon = ' ', title = 'Projects', section = 'projects', indent = 2, padding = 1 },
