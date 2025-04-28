@@ -39,8 +39,6 @@ vim.opt.signcolumn = 'yes'
 vim.opt.cursorline = true
 vim.opt.breakindent = true
 
--- === luarocks ===
-
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
