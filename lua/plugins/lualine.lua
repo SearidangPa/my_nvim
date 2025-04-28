@@ -84,7 +84,7 @@ end
 return {
   'nvim-lualine/lualine.nvim',
   lazy = true,
-  event = 'BufReadPost',
+  event = 'VeryLazy',
   options = {},
   config = function()
     local ll = require 'lualine'
