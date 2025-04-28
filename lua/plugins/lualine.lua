@@ -83,13 +83,8 @@ end
 
 return {
   'nvim-lualine/lualine.nvim',
-  event = 'BufReadPost',
-  options = {
-    theme = 'gruvbox',
-    section_separators = { left = '', right = '' },
-    component_separators = { left = '', right = '' },
-  },
-
+  event = 'VeryLazy',
+  options = {},
   config = function()
     local ll = require 'lualine'
     require 'config.util_find_func'
