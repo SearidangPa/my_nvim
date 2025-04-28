@@ -21,7 +21,7 @@ return {
         {
           pane = 2,
           section = 'terminal',
-          cmd = [[cmd.exe /c "echo  ,_, & echo (O,O) & echo (   ) & echo -^"^-^"^" & echo 🔥🔥🔥]],
+          cmd = [[echo  ,_, & echo (O,O) & echo (   ) & echo -^"^-^"^ & echo 🔥🔥🔥]],
           height = 5,
           padding = 1,
         },
