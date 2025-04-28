@@ -45,7 +45,7 @@ local function modified_buffer()
   return ''
 end
 
-local function getDirnameAndFilename()
+local function get_dir_and_filename()
   local path = vim.fn.expand '%:p'
   local filename = vim.fn.fnamemodify(path, ':t')
   local full_dir = vim.fn.fnamemodify(path, ':h')
@@ -71,16 +71,6 @@ local function getDirnameAndFilename()
   return modified_buffer() .. dirs .. '/' .. filename
 end
 
-local function is_go_test_file()
-  local current_file = vim.fn.expand '%:p'
-
-  if not string.match(current_file, '%.go$') then
-    return false
-  end
-
-  return string.match(current_file, '_test%.go$') ~= nil
-end
-
 return {
   'nvim-lualine/lualine.nvim',
   lazy = true,
@@ -88,12 +78,9 @@ return {
   options = {},
   config = function()
     local ll = require 'lualine'
-    require 'config.util_find_func'
 
     local function nearest_func_name_if_exists()
-      if is_go_test_file() then
-        return ''
-      end
+      local util_find_func = require 'config.util_find_func'
       local func_name = Nearest_func_name()
       if func_name then
         return '%#TabLineSelItalic#' .. func_name .. '%#TabLine#'
@@ -127,7 +114,7 @@ return {
         lualine_b = {},
         lualine_c = {},
         lualine_x = { nearest_func_name_if_exists },
-        lualine_y = { getDirnameAndFilename },
+        lualine_y = { get_dir_and_filename },
         lualine_z = {},
       },
     }
