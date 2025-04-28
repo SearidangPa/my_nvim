@@ -2,7 +2,7 @@ return {
   {
     'github/copilot.vim',
     lazy = true,
-    event = 'InsertCharPre',
+    event = 'VeryLazy',
   },
   {
     'SearidangPa/hopcopilot.nvim',
