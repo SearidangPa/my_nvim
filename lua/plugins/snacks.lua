@@ -7,6 +7,7 @@ return {
     ---@type table<string, snacks.win.Config>
     styles = {
       input = {
+        relative = 'editor',
         row = 10,
         b = {
           completion = true,
