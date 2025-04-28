@@ -1,6 +1,6 @@
 local function get_command_owl_ascii()
   if vim.fn.has 'win32' == 1 then
-    return [[echo ,_, & echo  (O,O) & echo  (   ) & echo --^"^-^"^-- & echo 🔥🔥🔥🔥]]
+    return [[echo ,_, & echo  (O,O) & echo  (   ) & echo --^"^-^"^-- & echo 🔥🔥🔥🔥🔥]]
   else
     return [[echo "   ,_," && echo "  (O,O)" && echo  "  (   )" && echo " --\"-\"--" && echo "🔥🔥🔥🔥🔥"]]
   end

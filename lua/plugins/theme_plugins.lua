@@ -13,6 +13,7 @@ return {
         variant = 'moon',
       }
       local cache_file = vim.fn.stdpath 'cache' .. '/theme_preference.txt'
+      vim.print('Cache file path: ' .. cache_file)
 
       local function get_os_mode()
         local is_light = true
