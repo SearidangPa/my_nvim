@@ -89,7 +89,10 @@ local function async_git_push()
   }
   require('config.util_job').start_job {
     cmd = 'git push',
-    on_success_cb = function() make_notify(string.format(commit_format_notification, commit_msg)) end,
+    on_success_cb = function()
+      local make_notify = require('mini.notify').make_notify {}
+      make_notify(string.format(commit_format_notification, commit_msg))
+    end,
     silent = true,
     ns = vim.api.nvim_create_namespace 'git_push',
     fidget_handle = fidget_handle,
