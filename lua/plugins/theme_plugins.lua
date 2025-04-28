@@ -45,22 +45,26 @@ return {
       end
 
       local function set_theme(is_light_mode)
-        if is_light_mode and vim.o.background == 'dark' then
+        if is_light_mode then
           vim.cmd.colorscheme 'github_light_default'
-          vim.o.background = 'light'
-        elseif not is_light_mode and vim.o.background == 'light' then
+        else
           vim.cmd.colorscheme 'rose-pine-moon'
-          vim.o.background = 'dark'
         end
       end
 
-      local is_light_mode = load_prev_theme_preference()
-      set_theme(is_light_mode)
+      if not vim.g.colors_name then
+        local is_light_mode = load_prev_theme_preference()
+        set_theme(is_light_mode)
+      end
 
       vim.schedule(function()
-        local is_light = get_os_mode()
-        set_theme(is_light)
-        save_theme_preference(is_light)
+        local is_light_mode_from_os = get_os_mode()
+        if is_light_mode_from_os and vim.g.colors_name ~= 'github_light_default' then
+          vim.cmd.colorscheme 'github_light_default'
+        elseif not is_light_mode_from_os and not string.find(vim.g.colors_name, 'rose-pine') then
+          vim.cmd.colorscheme 'rose-pine-moon'
+        end
+        save_theme_preference(is_light_mode_from_os)
         vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
       end)
     end,
