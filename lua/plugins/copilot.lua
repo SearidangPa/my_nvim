@@ -1,5 +1,5 @@
 return {
-	'github/copilot.vim',
-	lazy = true,
-	event = 'InsertCharPre',
+  'github/copilot.vim',
+  lazy = true,
+  event = 'InsertCharPre',
 }
