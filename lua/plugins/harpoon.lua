@@ -90,7 +90,7 @@ return {
         prompt = 'Harpoon',
         format_item = function(item) return vim.fn.fnamemodify(item, ':t') end,
         kind = 'Harpoon',
-      }, function(choice, idx)
+      }, function(choice, _)
         if choice then
           vim.cmd('edit ' .. choice)
         end
