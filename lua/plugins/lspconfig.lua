@@ -87,15 +87,20 @@ return {
 	{
 		'neovim/nvim-lspconfig',
 		lazy = true,
-		event = "BufEnter",
+		event = "BufRead",
 		config = function()
 			attach_auto_import()
 			lsp_attach_keybind()
-			local capabilities = require('blink.cmp').get_lsp_capabilities()
-			require('lspconfig').gopls.setup { capabilities = capabilities }
-			require('lspconfig').marksman.setup { capabilities = capabilities }
+			-- local capabilities = require('blink.cmp').get_lsp_capabilities()
+			-- require('lspconfig').gopls.setup { capabilities = capabilities }
+			-- require('lspconfig').marksman.setup { capabilities = capabilities }
 
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			vim.lsp.config('*', {
+				capabilities = capabilities,
+			})
 			vim.lsp.enable 'lua_ls'
+			vim.lsp.enable 'gopls'
 		end,
 	},
 }

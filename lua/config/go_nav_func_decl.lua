@@ -4,6 +4,7 @@ local function get_root_node(opts)
   local bufnr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(bufnr, lang, {})
+  assert(parser, 'Parser is nil')
   local tree = parser:parse()[1]
   local root = tree:root()
   assert(root, 'Tree root is nil')
@@ -18,7 +19,7 @@ local function get_root_node(opts)
         [[
       (function_declaration
         name: (identifier) @func_decl_start
-      ) 
+      )
     ]]
       )
       return root, query
@@ -41,10 +42,10 @@ local function get_root_node(opts)
       [[
       (function_declaration
         name: (identifier) @func_decl_start
-      ) 
+      )
       (method_declaration
       name: (field_identifier) @func_decl_start
-      ) 
+      )
     ]]
     )
   else

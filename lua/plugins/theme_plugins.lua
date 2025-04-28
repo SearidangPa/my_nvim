@@ -7,34 +7,37 @@ return {
   {
     'rose-pine/neovim',
     name = 'rose-pine',
+    lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+    priority = 1000, -- make sure to load this before all the other start plugins
     config = function()
       require('rose-pine').setup {
         variant = 'moon',
       }
-      local function get_os_mode()
-        local is_light = true
+      vim.cmd.colorscheme 'rose-pine-moon'
 
-        if vim.fn.has 'win32' == 1 then
-          local result = vim.fn.system 'reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" /v AppsUseLightTheme'
-          is_light = not result:match '0x0'
-        else
-          local result = vim.fn.system 'defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light"'
-          is_light = not result:match 'Dark'
+      vim.defer_fn(function()
+        local function get_os_mode()
+          local is_light = true
+
+          if vim.fn.has 'win32' == 1 then
+            local result = vim.fn.system 'reg query "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize" /v AppsUseLightTheme'
+            is_light = not result:match '0x0'
+          else
+            local result = vim.fn.system 'defaults read -g AppleInterfaceStyle 2>/dev/null || echo "Light"'
+            is_light = not result:match 'Dark'
+          end
+
+          return is_light
         end
 
-        return is_light
-      end
+        local is_light_mode = get_os_mode()
 
-      local is_light_mode = get_os_mode()
-
-      if is_light_mode then
-        vim.o.background = 'light'
-        vim.cmd.colorscheme 'github_light_default'
-      else
-        vim.o.background = 'dark'
-        vim.cmd.colorscheme 'rose-pine-moon'
-      end
-      vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
+        if is_light_mode then
+          vim.o.background = 'light'
+          vim.cmd.colorscheme 'github_light_default'
+        end
+        vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
+      end, 1000)
     end,
   },
 }

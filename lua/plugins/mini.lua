@@ -2,6 +2,7 @@ return {
   'echasnovski/mini.nvim',
   lazy = true,
   config = function()
+    require('mini.ai').setup()
     require('mini.icons').setup {}
     local win_config = function()
       return {

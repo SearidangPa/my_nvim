@@ -1,6 +1,7 @@
 return {
   'stevearc/oil.nvim',
-  lazy = false,
+  lazy = true,
+  event = 'VeryLazy',
   config = function()
     require('oil').setup {
       view_options = {

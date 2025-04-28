@@ -1,4 +1,4 @@
-vim.schedule(function()
+vim.defer_fn(function()
   local stdpath = vim.fn.stdpath 'config'
   local config_path
   if vim.fn.has 'win32' == 1 then
@@ -15,4 +15,4 @@ vim.schedule(function()
       require('config.' .. module)
     end
   end
-end)
+end, 1000)
