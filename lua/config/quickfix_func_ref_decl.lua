@@ -1,7 +1,5 @@
 local M = {}
 local util_find_func = require 'config.util_find_func'
-local mini_notify = require 'mini.notify'
-local make_notify = mini_notify.make_notify {}
 
 ---@type QFList
 M.qflist = {}
@@ -112,7 +110,7 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
       if func_ref_decl then
-        make_notify('found: ' .. func_ref_decl.text)
+        vim.notify('found: ' .. func_ref_decl.text, vim.log.levels.INFO)
         M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
       end
     end
@@ -152,7 +150,7 @@ local function load_func_refs()
       M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
     end
     M.last_func_decls = M.new_func_decls
-    make_notify 'Additional function references loaded'
+    vim.notify('Additional function references loaded', vim.log.levels.INFO)
   end
 end
 
@@ -163,7 +161,7 @@ vim.api.nvim_create_user_command('ResetFuncRefDecl', function()
   M.qflist = {}
   M.processed_funcs = {}
   vim.fn.setqflist {}
-  make_notify 'Reset func ref decl quickfix list'
+  vim.notify('Reset func ref decl quickfix list', vim.log.levels.INFO)
 end, { desc = 'Reset func ref decl' })
 
 return M
