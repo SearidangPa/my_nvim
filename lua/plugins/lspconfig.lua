@@ -82,6 +82,7 @@ return {
   },
   {
     'neovim/nvim-lspconfig',
+    event = 'VeryLazy',
     config = function()
       attach_auto_import()
       lsp_attach_keybind()
