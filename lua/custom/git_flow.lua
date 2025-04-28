@@ -1,5 +1,4 @@
 require 'config.util_job'
-local make_notify = require('mini.notify').make_notify {}
 
 local height = math.floor(vim.o.lines * 0.25)
 local row = math.floor((vim.o.lines - height) / 2)
@@ -32,7 +31,7 @@ local commit_msg = ''
 
 local function handle_choice(choice, perform_commit_func)
   if not choice then
-    make_notify 'Commit aborted: no message selected.'
+    vim.notify('Commit aborted: no message selected.', vim.log.levels.WARN)
     return
   end
 
@@ -119,6 +118,7 @@ map('n', '<leader>pc', function()
       vim.cmd 'Gwrite'
       vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
       vim.cmd 'silent G push'
+      local make_notify = require('mini.notify').make_notify {}
       make_notify(string.format(commit_format_notification, commit_msg))
     end)
   end
