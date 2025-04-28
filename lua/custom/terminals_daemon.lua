@@ -3,14 +3,6 @@ local terminal_multiplexer = require('terminal-multiplexer').new {
   powershell = true,
 }
 
-local make_notify
-local function get_make_notify()
-  if not make_notify then
-    make_notify = require('mini.notify').make_notify {}
-  end
-  return make_notify
-end
-
 M.terminal_multiplexer = terminal_multiplexer
 M.exec_command = function(command, title)
   terminal_multiplexer:toggle_float_terminal(title)
@@ -18,11 +10,12 @@ M.exec_command = function(command, title)
   assert(current_float_term_state, 'Failed to toggle float terminal')
   vim.api.nvim_chan_send(current_float_term_state.chan, command .. '\n')
 
-  get_make_notify()(string.format('running %s daemon', title))
+  local make_notify = require('mini.notify').make_notify {}
+  make_notify(string.format('running %s daemon', title))
 
   vim.defer_fn(function()
     local output = vim.api.nvim_buf_get_lines(current_float_term_state.bufnr, 0, -1, false)
-    get_make_notify()(string.format('output:\n%s', table.concat(output, '\n')))
+    make_notify(string.format('output:\n%s', table.concat(output, '\n')))
   end, 3000)
 end
 
