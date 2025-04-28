@@ -11,7 +11,7 @@ local function attach_auto_import()
 				for _, r in pairs(res.result or {}) do
 					if r.edit then
 						local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or
-						    'utf-16'
+							 'utf-16'
 						vim.lsp.util.apply_workspace_edit(r.edit, enc)
 					end
 				end
@@ -70,9 +70,9 @@ local function lsp_attach_keybind()
 end
 
 return {
-	{ 'williamboman/mason.nvim',                   config = true, lazy = true }, -- NOTE: Must be loaded before dependants
-	{ 'williamboman/mason-lspconfig.nvim',         lazy = true },
-	{ 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true },
+	{ 'williamboman/mason.nvim',                   config = true, lazy = true,        event = 'LspAttach' }, -- NOTE: Must be loaded before dependants
+	{ 'williamboman/mason-lspconfig.nvim',         lazy = true,   event = 'LspAttach' },
+	{ 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true,   event = 'LspAttach' },
 	{
 		'folke/lazydev.nvim',
 		lazy = true,
@@ -86,8 +86,6 @@ return {
 	},
 	{
 		'neovim/nvim-lspconfig',
-		lazy = true,
-		event = "BufRead",
 		config = function()
 			attach_auto_import()
 			lsp_attach_keybind()
