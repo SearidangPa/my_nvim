@@ -1,7 +1,7 @@
 return {
 	'lewis6991/gitsigns.nvim',
 	lazy = true,
-	event = 'WinEnter',
+	event = 'BufEnter',
 	opts = {
 		signs = {
 			add = { text = '+' },

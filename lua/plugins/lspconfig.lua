@@ -75,6 +75,7 @@ return {
 	{ 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true },
 	{
 		'folke/lazydev.nvim',
+		lazy = true,
 		ft = 'lua', -- only load for lua files
 		opts = {
 			library = {
@@ -85,6 +86,8 @@ return {
 	},
 	{
 		'neovim/nvim-lspconfig',
+		lazy = true,
+		event = "BufEnter",
 		config = function()
 			attach_auto_import()
 			lsp_attach_keybind()

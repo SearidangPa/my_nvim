@@ -1,7 +1,5 @@
 local M = {}
 
-local get_node_text = vim.treesitter.get_node_text
-local ts_utils = require 'nvim-treesitter.ts_utils'
 
 ---@param bufnr number
 ---@param line number
