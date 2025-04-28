@@ -13,7 +13,6 @@ return {
     },
 
     config = function()
-      local builtin = require 'telescope.builtin'
       local opts = {
         defaults = {
           layout_strategy = 'vertical',
