@@ -81,9 +81,12 @@ return {
 
     local function nearest_func_name_if_exists()
       local util_find_func = require 'config.util_find_func'
-      local func_name = Nearest_func_name()
-      if func_name then
-        return '%#TabLineSelItalic#' .. func_name .. '%#TabLine#'
+      local func_node = util_find_func.nearest_func_node()
+
+      for child in func_node:iter_children() do
+        if child:type() == 'identifier' or child:type() == 'name' then
+          return '%#TabLineSelItalic#' .. vim.treesitter.get_node_text(child, 0) .. '%#TabLine#'
+        end
       end
       return ''
     end
