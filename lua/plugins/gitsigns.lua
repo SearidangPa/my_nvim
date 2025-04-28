@@ -1,7 +1,7 @@
 return {
   'lewis6991/gitsigns.nvim',
   lazy = true,
-  event = 'BufReadPost',
+  event = 'VeryLazy',
   opts = {
     signs = {
       add = { text = '+' },

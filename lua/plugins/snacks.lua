@@ -18,6 +18,7 @@ return {
     },
     bigfile = { enabled = true },
     indent = { enabled = true },
+    scroll = { enabled = true },
     picker = {
       previewers = {
         -- diff hunk preview: use delta instead of builtin

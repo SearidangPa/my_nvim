@@ -36,7 +36,7 @@ return {
           vim.cmd.colorscheme 'github_light_default'
         end
         vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
-      end, 1000)
+      end, 0)
     end,
   },
 }
