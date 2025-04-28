@@ -16,7 +16,7 @@ vim.opt.list = true
 vim.opt.listchars = { tab = '   ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
 vim.opt.numberwidth = 1
-vim.opt.tabstop = 4
+vim.opt.tabstop = 3
 
 --- === Live Preview ===
 vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!
