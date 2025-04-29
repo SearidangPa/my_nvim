@@ -1,29 +1,24 @@
 return {
   'folke/trouble.nvim',
   lazy = true,
-  opts = {},
+  event = 'VeryLazy',
+  opts = {}, -- for default options, refer to the configuration section for custom setup.
   cmd = 'Trouble',
   keys = {
     {
-      '<leader>ts',
-      '<cmd>Trouble symbols toggle focus=false<cr>',
-      desc = '[T]oggle [S]ymbols',
-    },
-    {
-      '<leader>xq',
-      '<cmd>Trouble qflist toggle<cr>',
-      desc = 'Quickfix List (Trouble)',
-    },
-    {
-      '<leader>xb',
-      '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
-      desc = '[x] current [b]uffer',
-    },
-    {
       '<leader>xx',
       '<cmd>Trouble diagnostics toggle<cr>',
-      desc = '[x] Diagnostics',
+      desc = 'Diagnostics (Trouble)',
+    },
+    {
+      '<leader>xX',
+      '<cmd>Trouble diagnostics toggle filter.buf=0<cr>',
+      desc = 'Buffer Diagnostics (Trouble)',
+    },
+    {
+      '<leader>ts',
+      '<cmd>Trouble symbols toggle focus=false<cr>',
+      desc = 'Symbols (Trouble)',
     },
   },
-  config = function() require 'custom.trouble_config' end,
 }

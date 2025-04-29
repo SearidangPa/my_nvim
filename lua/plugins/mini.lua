@@ -5,9 +5,7 @@ return {
   version = '*',
   config = function()
     require('mini.ai').setup()
-    require('mini.surround').setup()
     require('mini.icons').setup()
-    require('mini.pairs').setup()
     require('mini.diff').setup()
     local win_config = function()
       return {
