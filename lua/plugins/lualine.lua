@@ -5,7 +5,6 @@ return {
   options = {},
   config = function()
     local ll = require 'lualine'
-    vim.api.nvim_set_hl(0, 'LualineCustomDir', { fg = '#5097A4', italic = true })
 
     local function get_harpoon_filenames()
       local harpoon = require 'harpoon'
