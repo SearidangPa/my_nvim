@@ -69,7 +69,7 @@ require('lazy').setup {
   },
 }
 
-require 'init_config'
+require 'config.keymaps'
 
 vim.treesitter.language.register('bash', 'zsh') -- ducktape solution because there is no treesitter support for zsh
 
