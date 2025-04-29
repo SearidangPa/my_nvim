@@ -8,5 +8,6 @@ return {
     if vim.fn.has 'win32' ~= 1 then
       require 'custom.push_with_qwen'
     end
+    require 'config.scratch'
   end,
 }

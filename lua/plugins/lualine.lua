@@ -2,39 +2,32 @@ local function get_harpoon_filenames()
   local harpoon = require 'harpoon'
   local harpoonList = harpoon:list()
   local length = harpoonList:length()
-
   if length == 0 then
     return ''
   end
-
   local root_dir = harpoonList.config:get_root_dir()
   local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
-
   local max_num_files_displayed = 5
   if vim.fn.has 'win32' == 1 then
     max_num_files_displayed = 4
   end
 
-  table.insert(result, '%#HarpoonFilename#')
   for i = 1, math.min(length, max_num_files_displayed) do
     local path = harpoonList:get(i).value
     local filename = vim.fn.fnamemodify(path, ':t')
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-
     if i > 1 then
       table.insert(result, ' | ')
     end
-
     if fullpath == current_file_path then
-      table.insert(result, '[' .. filename .. ']') -- We'll use a visual marker instead
+      table.insert(result, '%#TabLineSel#' .. filename .. '%#TabLine#')
     else
-      table.insert(result, filename)
+      table.insert(result, '%#TabLine#' .. filename)
     end
   end
-
   return table.concat(result)
 end
 
@@ -45,36 +38,10 @@ local function modified_buffer()
   return ''
 end
 
-local function get_dir_and_filename()
-  local path = vim.fn.expand '%:p'
-  local filename = vim.fn.fnamemodify(path, ':t')
-  local full_dir = vim.fn.fnamemodify(path, ':h')
-  local dir_parts = {}
-  local dir_count = 0
-  local max_dirs = 2
-
-  while dir_count < max_dirs do
-    local dirname = vim.fn.fnamemodify(full_dir, ':t')
-    if dirname == '' or dirname == '/' or dirname == full_dir then
-      break
-    end
-    table.insert(dir_parts, 1, dirname)
-    dir_count = dir_count + 1
-    full_dir = vim.fn.fnamemodify(full_dir, ':h')
-  end
-
-  local dirs = table.concat(dir_parts, '/')
-  if dirs == '' then
-    dirs = vim.fn.fnamemodify(path, ':h:t')
-  end
-
-  return modified_buffer() .. dirs .. '/' .. filename
-end
-
 return {
   'nvim-lualine/lualine.nvim',
   lazy = true,
-  event = 'VeryLazy',
+  event = { 'VeryLazy', 'BufEnter', 'BufWinEnter' },
   options = {},
   config = function()
     local ll = require 'lualine'
@@ -85,14 +52,41 @@ return {
 
       for child in func_node:iter_children() do
         if child:type() == 'identifier' or child:type() == 'name' then
-          return '%#TabLineSelItalic#' .. vim.treesitter.get_node_text(child, 0) .. '%#TabLine#'
+          -- return '%#HarpoonFilename#' .. vim.treesitter.get_node_text(child, 0)
+          -- return '%#FuncName#' .. vim.treesitter.get_node_text(child, 0)
+          local func_name = vim.treesitter.get_node_text(child, 0)
+          -- return func_name
+          return '%#FuncName#' .. func_name
         end
       end
       return ''
     end
 
-    vim.api.nvim_set_hl(0, 'TabLineSelItalic', { fg = '#5097A4', italic = true })
-    vim.api.nvim_set_hl(0, 'HarpoonFilename', { fg = '#5097A4' })
+    local function get_dir_and_filename()
+      local path = vim.fn.expand '%:p'
+      local filename = vim.fn.fnamemodify(path, ':t')
+      local full_dir = vim.fn.fnamemodify(path, ':h')
+      local dir_parts = {}
+      local dir_count = 0
+      local max_dirs = 2
+
+      while dir_count < max_dirs do
+        local dirname = vim.fn.fnamemodify(full_dir, ':t')
+        if dirname == '' or dirname == '/' or dirname == full_dir then
+          break
+        end
+        table.insert(dir_parts, 1, dirname)
+        dir_count = dir_count + 1
+        full_dir = vim.fn.fnamemodify(full_dir, ':h')
+      end
+
+      local dirs = table.concat(dir_parts, '/')
+      if dirs == '' then
+        dirs = vim.fn.fnamemodify(path, ':h:t')
+      end
+
+      return '%#HarpoonFilename#' .. modified_buffer() .. dirs .. '/' .. filename
+    end
 
     ll.setup {
       options = {
@@ -107,8 +101,8 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = {},
-        lualine_x = { get_harpoon_filenames },
+        lualine_c = { get_dir_and_filename },
+        lualine_x = { nearest_func_name_if_exists },
         lualine_y = {},
         lualine_z = {},
       },
@@ -116,8 +110,8 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { nearest_func_name_if_exists },
-        lualine_y = { get_dir_and_filename },
+        lualine_x = { get_harpoon_filenames },
+        lualine_y = {},
         lualine_z = {},
       },
     }

@@ -3,8 +3,8 @@ if vim.fn.has 'win32' == 1 then
 end
 
 local push_with_qwen = {}
-local qwen_terminal_name = 'git_push_with_qwen14b'
-local push_cmd_str_14b = 'gaa && pg_14\r'
+local qwen_terminal_name = 'git_push_with_qwen'
+local push_cmd_str = 'gaa && pg\r'
 local start_ollama_command_str = 'start_ollama\r'
 
 push_with_qwen._get_commit_message_and_time = function()
@@ -16,7 +16,7 @@ push_with_qwen._get_commit_message_and_time = function()
   }
 end
 
-push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
+push_with_qwen.send_request = function()
   require 'terminal-multiplexer'
   local terminal_multiplexer = require('custom.terminals_daemon').terminal_multiplexer
 
@@ -34,7 +34,7 @@ push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   vim.api.nvim_chan_send(float_terminal_state.chan, push_cmd_str .. '\n')
 
   local make_notify = require('mini.notify').make_notify {}
-  make_notify('Sent request to ' .. model_name)
+  make_notify 'Sent request to qwen'
 
   vim.api.nvim_buf_attach(float_terminal_state.bufnr, false, {
     on_lines = function(_, buf, _, first_line, last_line)
@@ -56,9 +56,7 @@ push_with_qwen.push_with_qwen = function(push_cmd_str, model_name)
   })
 end
 
-local function push_with_14b() push_with_qwen.push_with_qwen(push_cmd_str_14b, 'qwen14b') end
-
-vim.keymap.set('n', '<leader>pq', push_with_14b, { silent = true, desc = '[P]ush with [Q]wen14b' })
+vim.keymap.set('n', '<leader>pq', function() push_with_qwen.send_request() end, { silent = true, desc = '[P]ush with [Q]wen' })
 
 push_with_qwen.start_ollama = function()
   local terminal_multiplexer = require('custom.terminals_daemon').terminal_multiplexer

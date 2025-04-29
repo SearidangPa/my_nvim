@@ -73,7 +73,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## Brief description of the changes
 
 ## Test Section
-\<For each new test added. I want a bullet point for the test name inside a backtick with color for pretty formatting. Then I want three subbullet points: the test description, the setup and the expected outcome\>
+\<For each new test added in the diff. I want a bullet point for the test name inside a backtick with color for pretty formatting. Then I want three subbullet points: the test description, the setup and the expected outcome. If there is no changes related to the test package, I don't want this section removed. Test always start with Test_* \>
 
 ## Flows with relation to the changes
 \<Think about a brief description of the flow using right arrows. Each flow should contain at most 5 steps. \>
