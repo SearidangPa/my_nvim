@@ -100,7 +100,7 @@ return {
         lualine_c = {
           {
             get_dir_and_filename,
-            color = { fg = '#5097A4', gui = 'italic' },
+            color = { fg = '#5097A4', gui = 'italic,bold' },
           },
         },
         lualine_x = {

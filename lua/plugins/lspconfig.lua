@@ -83,7 +83,7 @@ return {
   },
   {
     'neovim/nvim-lspconfig',
-    event = 'VeryLazy',
+    event = { 'VeryLazy', 'BufReadPost' },
     config = function()
       attach_auto_import()
       lsp_attach_keybind()
