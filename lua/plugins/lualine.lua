@@ -52,11 +52,8 @@ return {
 
       for child in func_node:iter_children() do
         if child:type() == 'identifier' or child:type() == 'name' then
-          -- return '%#HarpoonFilename#' .. vim.treesitter.get_node_text(child, 0)
-          -- return '%#FuncName#' .. vim.treesitter.get_node_text(child, 0)
           local func_name = vim.treesitter.get_node_text(child, 0)
-          -- return func_name
-          return '%#FuncName#' .. func_name
+          return func_name
         end
       end
       return ''
@@ -85,7 +82,7 @@ return {
         dirs = vim.fn.fnamemodify(path, ':h:t')
       end
 
-      return '%#HarpoonFilename#' .. modified_buffer() .. dirs .. '/' .. filename
+      return modified_buffer() .. dirs .. '/' .. filename
     end
 
     ll.setup {
