@@ -18,9 +18,9 @@ return {
       enabled = true,
       preset = {
         keys = {
-          { icon = ' ', key = 'f', desc = 'Find File', action = ":lua Snacks.dashboard.pick('files')" },
-          { icon = ' ', key = 'g', desc = 'Find Text', action = ":lua Snacks.dashboard.pick('live_grep')" },
-          { icon = '🔱', key = 'h', desc = 'Find Harpoon', action = ":lua require('custom.snack_harpoon').pick_harpoon()" },
+          { icon = ' ', key = 'f', desc = 'File', action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = ' ', key = 'g', desc = 'Grep', action = ":lua Snacks.dashboard.pick('live_grep')" },
+          { icon = '🔱', key = 'h', desc = 'Harpoon', action = ":lua require('custom.snack_harpoon').pick_harpoon()" },
           { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
           { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
         },
