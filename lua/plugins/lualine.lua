@@ -1,43 +1,3 @@
-local function get_harpoon_filenames()
-  local harpoon = require 'harpoon'
-  local harpoonList = harpoon:list()
-  local length = harpoonList:length()
-  if length == 0 then
-    return ''
-  end
-  local root_dir = harpoonList.config:get_root_dir()
-  local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
-  local current_file_path = vim.api.nvim_buf_get_name(0)
-  local result = {}
-  local max_num_files_displayed = 5
-  if vim.fn.has 'win32' == 1 then
-    max_num_files_displayed = 4
-  end
-
-  for i = 1, math.min(length, max_num_files_displayed) do
-    local path = harpoonList:get(i).value
-    local filename = vim.fn.fnamemodify(path, ':t')
-    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
-    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-    if i > 1 then
-      table.insert(result, ' | ')
-    end
-    if fullpath == current_file_path then
-      table.insert(result, '%#TabLineSel#' .. filename .. '%#TabLine#')
-    else
-      table.insert(result, '%#TabLine#' .. filename)
-    end
-  end
-  return table.concat(result)
-end
-
-local function modified_buffer()
-  if vim.bo.modified then
-    return '● ' -- Indicator for unsaved changes
-  end
-  return ''
-end
-
 return {
   'nvim-lualine/lualine.nvim',
   lazy = true,
@@ -45,6 +5,39 @@ return {
   options = {},
   config = function()
     local ll = require 'lualine'
+
+    local function get_harpoon_filenames()
+      local harpoon = require 'harpoon'
+      local harpoonList = harpoon:list()
+      local length = harpoonList:length()
+      if length == 0 then
+        return ''
+      end
+      local root_dir = harpoonList.config:get_root_dir()
+      local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
+      local current_file_path = vim.api.nvim_buf_get_name(0)
+      local result = {}
+      local max_num_files_displayed = 5
+      if vim.fn.has 'win32' == 1 then
+        max_num_files_displayed = 4
+      end
+
+      for i = 1, math.min(length, max_num_files_displayed) do
+        local path = harpoonList:get(i).value
+        local filename = vim.fn.fnamemodify(path, ':t')
+        local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
+        local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
+        if i > 1 then
+          table.insert(result, ' | ')
+        end
+        if fullpath == current_file_path then
+          table.insert(result, '%#TabLineSel#' .. filename .. '%#TabLine#')
+        else
+          table.insert(result, '%#TabLine#' .. filename)
+        end
+      end
+      return table.concat(result)
+    end
 
     local function nearest_func_name_if_exists()
       local util_find_func = require 'config.util_find_func'
@@ -82,6 +75,12 @@ return {
         dirs = vim.fn.fnamemodify(path, ':h:t')
       end
 
+      local function modified_buffer()
+        if vim.bo.modified then
+          return '● ' -- Indicator for unsaved changes
+        end
+        return ''
+      end
       return modified_buffer() .. dirs .. '/' .. filename
     end
 
