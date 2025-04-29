@@ -25,10 +25,21 @@ return {
           { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
         },
       },
+
       sections = {
         { section = 'header' },
-        { icon = ' ', title = 'Recent Files', section = 'recent_files', indent = 2, padding = 1 },
+        {
+          icon = ' ',
+          title = 'Recent Files',
+          section = 'recent_files',
+          indent = 2,
+          padding = 1,
+          limit = 9,
+          filter = function(file) return vim.startswith(file, vim.fn.getcwd()) end,
+        },
+
         { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
+
         {
           icon = ' ',
           title = 'Git Status',
@@ -141,7 +152,7 @@ return {
     { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
     { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
-    { '<leader>ds', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+    { '<localleader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
     { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
   },
 }

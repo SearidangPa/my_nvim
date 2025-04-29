@@ -76,7 +76,7 @@ map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
-map('n', '<BS>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all') -- yolo :D
+map('n', '<Enter>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all') -- yolo :D
 
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
