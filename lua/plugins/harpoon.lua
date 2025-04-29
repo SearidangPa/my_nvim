@@ -8,9 +8,6 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    local item = harpoon:list():get(1)
-    vim.cmd('edit ' .. item.value)
-
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
