@@ -4,7 +4,7 @@ end
 
 local push_with_qwen = {}
 local qwen_terminal_name = 'git_push_with_qwen'
-local push_cmd_str = 'gaa && pg\r'
+local push_cmd_str = 'gaa && pq\r'
 local start_ollama_command_str = 'start_ollama\r'
 
 push_with_qwen._get_commit_message_and_time = function()

@@ -5,6 +5,7 @@ return {
   options = {},
   config = function()
     local ll = require 'lualine'
+    vim.api.nvim_set_hl(0, 'LualineCustomDir', { fg = '#5097A4', italic = true })
 
     local function get_harpoon_filenames()
       local harpoon = require 'harpoon'
@@ -31,9 +32,9 @@ return {
           table.insert(result, ' | ')
         end
         if fullpath == current_file_path then
-          table.insert(result, '%#TabLineSel#' .. filename .. '%#TabLine#')
+          table.insert(result, '[' .. filename .. ']')
         else
-          table.insert(result, '%#TabLine#' .. filename)
+          table.insert(result, filename)
         end
       end
       return table.concat(result)
@@ -97,8 +98,18 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = { get_dir_and_filename },
-        lualine_x = { nearest_func_name_if_exists },
+        lualine_c = {
+          {
+            get_dir_and_filename,
+            color = { fg = '#5097A4', gui = 'italic' },
+          },
+        },
+        lualine_x = {
+          {
+            nearest_func_name_if_exists,
+            color = { fg = '#E491A6', gui = 'italic' },
+          },
+        },
         lualine_y = {},
         lualine_z = {},
       },
@@ -106,7 +117,12 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { get_harpoon_filenames },
+        lualine_x = {
+          {
+            get_harpoon_filenames,
+            color = { fg = '#DCA1A1', gui = 'italic' },
+          },
+        },
         lualine_y = {},
         lualine_z = {},
       },
