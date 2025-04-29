@@ -1,10 +1,11 @@
 return {
   'echasnovski/mini.nvim',
   lazy = true,
+  event = 'VeryLazy',
   config = function()
     require('mini.ai').setup()
-    require('mini.icons').setup {}
-    require('mini.pairs').setup {}
+    require('mini.icons').setup()
+    require('mini.pairs').setup()
     require('mini.diff').setup()
     local win_config = function()
       return {
