@@ -89,6 +89,9 @@ return {
       lsp_attach_keybind()
       vim.lsp.enable 'lua_ls'
       vim.lsp.enable 'gopls'
+      require 'config.go_nav_func_decl'
+      require 'config.go_nav_func_expr'
+      require 'config.go_nav_func_equal'
     end,
   },
 }

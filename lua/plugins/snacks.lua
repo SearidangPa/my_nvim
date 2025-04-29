@@ -129,7 +129,7 @@ return {
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-    { '<leader>fm', function() Snacks.picker.marks() end, desc = 'Marks' },
+    { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
     { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
