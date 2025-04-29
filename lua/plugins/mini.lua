@@ -2,8 +2,10 @@ return {
   'echasnovski/mini.nvim',
   lazy = true,
   event = 'VeryLazy',
+  version = '*',
   config = function()
     require('mini.ai').setup()
+    require('mini.surround').setup()
     require('mini.icons').setup()
     require('mini.pairs').setup()
     require('mini.diff').setup()
