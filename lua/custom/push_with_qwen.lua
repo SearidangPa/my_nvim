@@ -56,7 +56,10 @@ push_with_qwen.send_request = function()
   })
 end
 
-vim.keymap.set('n', '<leader>pq', function() push_with_qwen.send_request() end, { silent = true, desc = '[P]ush with [Q]wen' })
+vim.keymap.set('n', '<leader>pq', function()
+  vim.cmd [[wa]]
+  push_with_qwen.send_request()
+end, { silent = true, desc = '[P]ush with [Q]wen' })
 
 push_with_qwen.start_ollama = function()
   local terminal_multiplexer = require('custom.terminals_daemon').terminal_multiplexer
