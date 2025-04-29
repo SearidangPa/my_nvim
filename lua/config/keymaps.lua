@@ -76,7 +76,7 @@ map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_
 map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
-map('n', '<C-s>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all')
+map('n', '<Del>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all')
 
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
@@ -87,7 +87,6 @@ map('n', '<leader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorsc
 map('n', '<leader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [R]ose-pine')
 map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
 
--- =================== Navigation ===================
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- === Visual select ===
@@ -108,8 +107,8 @@ map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
 map('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
 map('n', 'n', 'nzzzv')
 
--- map('n', '<C-u>', '<C-u>zz')
--- map('n', '<C-d>', '<C-d>zz')
+map('n', '<C-u>', '<C-u>zz')
+map('n', '<C-d>', '<C-d>zz')
 
 map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
