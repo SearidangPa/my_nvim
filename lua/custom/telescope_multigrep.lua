@@ -84,7 +84,7 @@ end
 M.setup = function()
   vim.keymap.set(
     'n',
-    '<localleader>sm',
+    '<leader>sm',
     function()
       Live_search {
         args_constructor = construct_args_multigrep,

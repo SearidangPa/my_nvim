@@ -95,7 +95,7 @@ return {
       end,
       desc = 'Find Neovim Config Files',
     },
-    { '<leader>sf', function() Snacks.picker.files() end, desc = 'Find Files' },
+    { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
     {
       '<leader>sG',
@@ -129,7 +129,7 @@ return {
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-    { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+    { '<leader>fm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
     { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
@@ -142,6 +142,6 @@ return {
     { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<leader>ds', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-    { '<leader>ws', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+    { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
   },
 }
