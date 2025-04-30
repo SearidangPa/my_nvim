@@ -9,5 +9,6 @@ return {
       require 'custom.push_with_qwen'
     end
     require 'config.scratch'
+    require 'config.async_job'
   end,
 }
