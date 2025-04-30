@@ -34,6 +34,7 @@ return {
           section = 'harpoon',
           indent = 2,
           padding = 1,
+          limit = 3,
         },
         {
           icon = ' ',
@@ -59,7 +60,6 @@ return {
               local item_dir_name = vim.fn.fnamemodify(item.value, ':h:t')
               local file_name = vim.fn.fnamemodify(file, ':t')
               local dir_name = vim.fn.fnamemodify(file, ':h:t')
-
               if item_file_name == file_name and item_dir_name == dir_name then
                 return false
               end
@@ -69,7 +69,7 @@ return {
           end,
         },
 
-        { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
+        { icon = ' ', section = 'keys', indent = 2, padding = 1 },
 
         {
           icon = ' ',
