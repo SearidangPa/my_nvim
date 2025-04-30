@@ -11,11 +11,11 @@ local function create_fidget_handle(cmd)
   }
 end
 
-async_job.make_all = function()
+async_job.make_all_and_lint = function()
   local cmd = 'make -j all'
   local make_all_ns = vim.api.nvim_create_namespace 'make_all'
   local fidget_handle = create_fidget_handle(cmd)
-  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = make_all_ns }
+  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = make_all_ns, on_success_cb = async_job.make_lint }
 end
 
 async_job.make_lint = function()
@@ -33,7 +33,7 @@ async_job.go_mod_tidy = function()
 end
 
 vim.api.nvim_create_user_command('GoModTidy', async_job.go_mod_tidy, {})
-vim.api.nvim_create_user_command('MakeAll', async_job.make_all, {})
+vim.api.nvim_create_user_command('MakeAllLint', async_job.make_all_and_lint, {})
 vim.api.nvim_create_user_command('MakeLint', async_job.make_lint, {})
 vim.api.nvim_create_user_command('QuickfixClear', function() vim.fn.setqflist({}, 'r') end, {})
 

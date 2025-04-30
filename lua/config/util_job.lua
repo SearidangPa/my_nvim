@@ -122,12 +122,7 @@ function util_job.start_job(opts)
       end
       if code ~= 0 then
         vim.list_extend(output, errors)
-        local qflist = vim.fn.getqflist()
-        if #qflist == 0 then
-          set_diagnostics_and_quickfix(cmd, output, ns)
-        else
-          vim.notify('Lint failed. Stuff in the quickfix so will not override quickfix', vim.log.levels.ERROR)
-        end
+        set_diagnostics_and_quickfix(cmd, output, ns)
         make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)

@@ -104,8 +104,7 @@ local function async_push_all()
     vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
     if vim.bo.filetype == 'go' then
       local async_job = require 'config.async_job'
-      async_job.make_lint()
-      async_job.make_all()
+      async_job.make_all_and_lint()
     end
     async_git_push()
   end

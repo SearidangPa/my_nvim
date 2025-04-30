@@ -22,8 +22,7 @@ push_with_qwen.send_request = function()
 
   if vim.bo.filetype == 'go' then
     local async_make_job = require 'config.async_job'
-    async_make_job.make_lint()
-    async_make_job.make_all()
+    async_make_job.make_all_and_lint()
   end
 
   terminal_multiplexer:delete_terminal(qwen_terminal_name)
