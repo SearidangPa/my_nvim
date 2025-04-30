@@ -1,5 +1,5 @@
 return {
-  'folke/snacks.nvim',
+  'SearidangPa/snacks.nvim',
   event = 'VeryLazy',
 
   ---@type snacks.Config
@@ -29,13 +29,44 @@ return {
       sections = {
         { section = 'header' },
         {
+          icon = '🔱',
+          title = 'Harpoon Files',
+          section = 'harpoon',
+          indent = 2,
+          padding = 1,
+        },
+        {
           icon = ' ',
           title = 'Recent Files',
           section = 'recent_files',
           indent = 2,
           padding = 1,
           limit = 9,
-          filter = function(file) return vim.startswith(file, vim.fn.getcwd()) end,
+          filter = function(file)
+            local is_in_cwd = vim.startswith(file, vim.fn.getcwd())
+            if not is_in_cwd then
+              return false
+            end
+
+            local ok, harpoon = pcall(require, 'harpoon')
+            if not ok then
+              return true
+            end
+            local harpoon_item = harpoon:list()
+            local items = harpoon_item.items
+            for _, item in ipairs(items) do
+              local item_file_name = vim.fn.fnamemodify(item.value, ':t')
+              local item_dir_name = vim.fn.fnamemodify(item.value, ':h:t')
+              local file_name = vim.fn.fnamemodify(file, ':t')
+              local dir_name = vim.fn.fnamemodify(file, ':h:t')
+
+              if item_file_name == file_name and item_dir_name == dir_name then
+                return false
+              end
+            end
+
+            return true
+          end,
         },
 
         { icon = ' ', title = 'Keymaps', section = 'keys', indent = 2, padding = 1 },
