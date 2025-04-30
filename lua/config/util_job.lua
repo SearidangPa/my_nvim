@@ -81,7 +81,6 @@ end
 ---@field ns number
 ---@field fidget_handle? ProgressHandle
 ---@field on_success_cb? fun()
----@field do_not_override_quickfix? boolean
 
 ---@param opts Job.opts
 function util_job.start_job(opts)
@@ -124,7 +123,7 @@ function util_job.start_job(opts)
       if code ~= 0 then
         vim.list_extend(output, errors)
         local qflist = vim.fn.getqflist()
-        if not opts.do_not_override_quickfix and #qflist > 0 then
+        if #qflist == 0 then
           set_diagnostics_and_quickfix(cmd, output, ns)
         else
           vim.notify('Lint failed. Stuff in the quickfix so will not override quickfix', vim.log.levels.ERROR)

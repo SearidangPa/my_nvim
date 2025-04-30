@@ -22,7 +22,7 @@ async_job.make_lint = function()
   local cmd = 'make -j lint'
   local linter_ns = vim.api.nvim_create_namespace 'linter'
   local fidget_handle = create_fidget_handle(cmd)
-  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = linter_ns, do_not_override_quickfix = true }
+  require('config.util_job').start_job { cmd = cmd, fidget_handle = fidget_handle, ns = linter_ns }
 end
 
 async_job.go_mod_tidy = function()
