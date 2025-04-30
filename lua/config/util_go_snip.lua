@@ -11,7 +11,7 @@ local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
-require 'config.go_nav_func_equal'
+require 'custom.go_nav_func_equal'
 
 GetInstName = function(args)
   local input = args[1][1] or ''
@@ -69,7 +69,7 @@ local function transform(text, info)
       info.index = info.index + 1
       return c(info.index, {
         t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
-        t('err'),
+        t 'err',
         sn(
           nil,
           fmta(
@@ -77,9 +77,7 @@ local function transform(text, info)
               eris.Wrapf(err, "failed to <funcName>, <moreInfo>
             ]],
             {
-              funcName = f(function()
-                return GetLastFuncName { { info.func_name } }
-              end, {}),
+              funcName = f(function() return GetLastFuncName { { info.func_name } } end, {}),
               moreInfo = i(1, ''), -- Insert node for user input
             }
           )
