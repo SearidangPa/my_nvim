@@ -109,7 +109,7 @@ return {
         preset = 'ivy',
         layout = {
           width = 0,
-          height = 0.65,
+          height = 0.4,
         },
       },
     },

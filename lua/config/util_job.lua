@@ -81,6 +81,7 @@ end
 ---@field ns number
 ---@field fidget_handle? ProgressHandle
 ---@field on_success_cb? fun()
+---@field do_not_override_quickfix? boolean
 
 ---@param opts Job.opts
 function util_job.start_job(opts)
@@ -122,7 +123,10 @@ function util_job.start_job(opts)
       end
       if code ~= 0 then
         vim.list_extend(output, errors)
-        set_diagnostics_and_quickfix(cmd, output, ns)
+        local qflist = vim.fn.getqflist()
+        if opts.do_not_override_quickfix and #qflist > 0 then
+          set_diagnostics_and_quickfix(cmd, output, ns)
+        end
         make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
