@@ -34,6 +34,10 @@ opts.prompt_library = {
       stop_context_insertion = true,
       placement = 'replace',
       ignore_system_prompt = true,
+      adapter = {
+        name = 'ollama',
+        model = 'qwen2.5-coder:14b',
+      },
     },
     prompts = {
       {
