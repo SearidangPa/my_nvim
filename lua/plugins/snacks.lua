@@ -53,7 +53,7 @@ return {
           section = 'harpoon',
           indent = 2,
           padding = 1,
-          limit = 3,
+          limit = 5,
         },
         { icon = ' ', section = 'keys', indent = 2, padding = 1 },
 
