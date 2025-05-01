@@ -123,8 +123,6 @@ return {
       end,
       desc = 'Find Neovim Config Files',
     },
-    { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
-    { '<leader>sg', function() Snacks.picker.grep() end, desc = 'Grep' },
     {
       '<leader>sG',
       function()
@@ -168,6 +166,8 @@ return {
     { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
     { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
     { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
+    { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
+    { '<localleader>g', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<localleader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
     { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
