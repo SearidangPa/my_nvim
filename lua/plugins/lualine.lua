@@ -105,8 +105,8 @@ return {
         },
         lualine_x = {
           {
-            nearest_func_name_if_exists,
-            color = { fg = '#FFA500', gui = 'italic' },
+            get_harpoon_filenames,
+            color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
         lualine_y = {},
@@ -118,8 +118,8 @@ return {
         lualine_c = {},
         lualine_x = {
           {
-            get_harpoon_filenames,
-            color = { fg = '#DCA1A1', gui = 'italic' },
+            nearest_func_name_if_exists,
+            color = { fg = '#FFA500', gui = 'italic' },
           },
         },
         lualine_y = {},
