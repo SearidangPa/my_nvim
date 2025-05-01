@@ -66,9 +66,7 @@ Don't forget to use proper triple backticks escape for the mermaid diagram.
 ## What's the purpose of this change?
 
 ## Constraints and Mitigation
-\<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy. like this: 
-<Constraints>
-    * \<🦔: fill in here\> \>
+\<Each constraint should be followed with a sub-bullet point that contains a mitigation strategy\>
 
 ## Brief description of the changes
 
