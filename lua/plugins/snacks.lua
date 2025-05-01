@@ -29,14 +29,6 @@ return {
       sections = {
         { section = 'header' },
         {
-          icon = '🔱',
-          title = 'Harpoon Files',
-          section = 'harpoon',
-          indent = 2,
-          padding = 1,
-          limit = 3,
-        },
-        {
           icon = ' ',
           title = 'Recent Files',
           section = 'recent_files',
@@ -69,6 +61,14 @@ return {
           end,
         },
 
+        {
+          icon = '🔱',
+          title = 'Harpoon Files',
+          section = 'harpoon',
+          indent = 2,
+          padding = 1,
+          limit = 3,
+        },
         { icon = ' ', section = 'keys', indent = 2, padding = 1 },
 
         {
