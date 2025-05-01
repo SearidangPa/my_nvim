@@ -40,23 +40,9 @@ return {
             if not is_in_cwd then
               return false
             end
-
-            local ok, harpoon = pcall(require, 'harpoon')
-            if not ok then
-              return true
+            if vim.fn.isdirectory(file) == 1 then
+              return false
             end
-            local harpoon_item = harpoon:list()
-            local items = harpoon_item.items
-            for _, item in ipairs(items) do
-              local item_file_name = vim.fn.fnamemodify(item.value, ':t')
-              local item_dir_name = vim.fn.fnamemodify(item.value, ':h:t')
-              local file_name = vim.fn.fnamemodify(file, ':t')
-              local dir_name = vim.fn.fnamemodify(file, ':h:t')
-              if item_file_name == file_name and item_dir_name == dir_name then
-                return false
-              end
-            end
-
             return true
           end,
         },
