@@ -35,8 +35,7 @@ opts.prompt_library = {
       placement = 'replace',
       ignore_system_prompt = true,
       adapter = {
-        name = 'ollama',
-        model = 'qwen2.5-coder:14b',
+        name = 'copilot',
       },
     },
     prompts = {
