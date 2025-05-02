@@ -115,7 +115,6 @@ return {
     {
       '<localleader>f',
       function()
-        require 'snacks'
         Snacks.picker.files {
           cmd = 'fd',
         }

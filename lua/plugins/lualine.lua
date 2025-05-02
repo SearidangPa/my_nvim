@@ -90,6 +90,7 @@ return {
     end
 
     ll.setup {
+      globalstatus = true,
       sections = {
         lualine_a = {
           {

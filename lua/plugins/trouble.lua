@@ -2,7 +2,15 @@ return {
   'folke/trouble.nvim',
   lazy = true,
   event = { 'VeryLazy', 'BufReadPost' },
-  opts = {}, -- for default options, refer to the configuration section for custom setup.
+
+  opts = {
+    ---@type trouble.Window.opts
+    win = {
+      size = {
+        height = 5,
+      },
+    },
+  }, -- for default options, refer to the configuration section for custom setup.
   cmd = 'Trouble',
   keys = {
     {
