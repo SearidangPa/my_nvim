@@ -69,7 +69,7 @@ return {
             show_modified_status = true,
           },
         },
-        lualine_b = { 'branch', 'diagnostics' },
+        lualine_b = { 'FugitiveHead', 'diagnostics' },
         lualine_c = {
           {
             'filename',
