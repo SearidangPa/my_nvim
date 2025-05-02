@@ -21,6 +21,7 @@ return {
       map('n', string.format('<localleader>%d', idx), function()
         local item = harpoon:list():get(idx)
         vim.cmd('edit ' .. item.value)
+        harpoon:list():select(idx)
       end, { desc = string.format('harpoon select %d', idx) })
     end
 

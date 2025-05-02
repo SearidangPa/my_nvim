@@ -1,7 +1,7 @@
 return {
   'nvim-lualine/lualine.nvim',
   lazy = true,
-  event = { 'VeryLazy' },
+  event = 'VeryLazy',
   options = {},
   config = function()
     local ll = require 'lualine'
@@ -97,13 +97,17 @@ return {
           },
         },
         lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = {},
-        lualine_x = {
+        lualine_c = {
           {
-            get_harpoon_filenames,
-            color = { fg = '#DCA1A1', gui = 'italic' },
+            get_dir_and_filename,
+            color = { fg = '#5097A4', gui = 'italic,bold' },
+          },
+          {
+            nearest_func_name_if_exists,
+            color = { fg = '#F38BA8', gui = 'italic' },
           },
         },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = {},
       },
@@ -113,16 +117,11 @@ return {
         lualine_c = {},
         lualine_x = {
           {
-            nearest_func_name_if_exists,
-            color = { fg = '#F38BA8', gui = 'italic' },
+            get_harpoon_filenames,
+            color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
-        lualine_y = {
-          {
-            get_dir_and_filename,
-            color = { fg = '#5097A4', gui = 'italic,bold' },
-          },
-        },
+        lualine_y = {},
         lualine_z = {},
       },
     }

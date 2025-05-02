@@ -66,9 +66,9 @@ local function lsp_attach_keybind()
 end
 
 return {
-  { 'williamboman/mason.nvim', config = true, lazy = true, event = 'VeryLazy' }, -- NOTE: Must be loaded before dependants
-  { 'williamboman/mason-lspconfig.nvim', lazy = true, event = 'VeryLazy' },
-  { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true, event = 'VeryLazy' },
+  { 'williamboman/mason.nvim', config = true, lazy = true, event = { 'VeryLazy', 'BufReadPost' } }, -- NOTE: Must be loaded before dependants
+  { 'williamboman/mason-lspconfig.nvim', lazy = true, event = { 'VeryLazy', 'BufReadPost' } },
+  { 'WhoIsSethDaniel/mason-tool-installer.nvim', lazy = true, event = { 'VeryLazy', 'BufReadPost' } },
   {
     'folke/lazydev.nvim',
     lazy = true,
