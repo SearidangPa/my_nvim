@@ -82,28 +82,27 @@ Live_search = function(opts)
 end
 
 M.setup = function()
-  vim.keymap.set(
-    'n',
-    '<localleader>sm',
+  vim.api.nvim_create_user_command(
+    'MultiGrep',
     function()
       Live_search {
         args_constructor = construct_args_multigrep,
         prompt_title = 'multi grep',
       }
     end,
-    { desc = '[S]earch [M]ulti grep' }
+    {}
   )
 
   vim.keymap.set(
     'n',
-    '<leader>sn',
+    '<localleader>sf',
     function()
       Live_search {
         args_constructor = construct_args_no_regex,
         prompt_title = 'no regex',
       }
     end,
-    { desc = '[S]earch [N]o regex' }
+    { desc = '[S]earch [F]ixed string' }
   )
 end
 
