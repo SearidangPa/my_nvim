@@ -1,6 +1,7 @@
 return {
   'folke/snacks.nvim',
   event = 'VeryLazy',
+  version = '*',
 
   ---@type snacks.Config
   opts = {

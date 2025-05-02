@@ -20,7 +20,9 @@ return {
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
       map('n', string.format('<localleader>%d', idx), function()
         local item = harpoon:list():get(idx)
-        vim.cmd('edit ' .. item.value)
+        if item then
+          vim.cmd('edit ' .. item.value)
+        end
       end, { desc = string.format('harpoon select %d', idx) })
     end
 
@@ -39,11 +41,14 @@ return {
 
     -- Delete the current file from harpoon
     local function delete_current_file(with_toggle_quick_menu)
-      local currentFileRelative = vim.fn.expand '%:.' -- Get the file path relative to working directory
+      local currentFileRelative = vim.fn.expand '%:.'
+      -- Normalize path separators for cross-platform compatibility
+      currentFileRelative = currentFileRelative:gsub('\\', '/')
+
       local list = harpoon:list()
       local items = list.items
-
       local fileIndex = nil
+
       for i, item in ipairs(items) do
         if item.value == currentFileRelative then
           fileIndex = i

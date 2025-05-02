@@ -81,13 +81,10 @@ return {
         end
         return ''
       end
-      return modified_buffer() .. dirs .. '/' .. filename
+      return dirs .. '/' .. filename .. modified_buffer()
     end
 
     ll.setup {
-      options = {
-        globalstatus = true,
-      },
       sections = {
         lualine_a = {
           {
@@ -96,7 +93,7 @@ return {
             show_modified_status = true,
           },
         },
-        lualine_b = { 'branch', 'diagnostics' },
+        lualine_b = {},
         lualine_c = {
           {
             get_dir_and_filename,
@@ -109,7 +106,7 @@ return {
         },
         lualine_x = {},
         lualine_y = {},
-        lualine_z = {},
+        lualine_z = { 'branch', 'diagnostics' },
       },
       tabline = {
         lualine_a = {},
