@@ -112,7 +112,7 @@ map('n', '<C-d>', '<C-d>zz')
 
 map('x', '<localleader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
-map('n', '<localleader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
+map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
