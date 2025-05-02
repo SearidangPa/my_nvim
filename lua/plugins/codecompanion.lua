@@ -66,7 +66,8 @@ opts.prompt_library = {
 return {
   'olimorris/codecompanion.nvim',
   lazy = true,
-  event = 'BufReadPost',
+  version = '*',
+  event = { 'BufReadPost', 'VeryLazy' },
   config = function()
     require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {

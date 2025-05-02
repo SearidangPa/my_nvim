@@ -77,7 +77,7 @@ return {
 
       local function modified_buffer()
         if vim.bo.modified then
-          return '● ' -- Indicator for unsaved changes
+          return '● '
         end
         return ''
       end

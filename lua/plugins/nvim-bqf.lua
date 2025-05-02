@@ -1,6 +1,7 @@
 return {
   'kevinhwang91/nvim-bqf',
   lazy = true,
+  version = '*',
   ft = 'qf',
   config = function()
     require('bqf').setup {
