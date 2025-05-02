@@ -81,7 +81,7 @@ local completion = {
 return {
   'saghen/blink.cmp',
   lazy = true,
-  event = 'InsertEnter',
+  event = 'InsertCharPre',
   version = '*',
 
   opts = {
@@ -99,7 +99,7 @@ return {
     snippets = snippets,
     completion = completion,
     keymap = get_keymap(),
-    -- fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'prefer_rust_with_warning' },
     cmdline = cmdline_opt,
   },
 }
