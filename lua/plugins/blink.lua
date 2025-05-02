@@ -1,42 +1,12 @@
-M = {
-  'saghen/blink.cmp',
-  lazy = true,
-  event = 'InsertEnter',
-  version = '*',
-  opts = {
-    appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
-    signature = { enabled = true },
-    sources = {
-      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
-      providers = {
-        lazydev = {
-          name = 'LazyDev',
-          module = 'lazydev.integrations.blink',
-          -- make lazydev completions top priority (see `:h blink.cmp`)
-          score_offset = 100,
-        },
-      },
-    },
-    snippets = M._snippets,
-    completion = M._completion,
-    keymap = M._generate_keymap(),
-    fuzzy = { implementation = 'lua' },
-    cmdline = M._cmdline_opt,
-  },
-}
-
-function M._generate_keymap()
+local get_keymap = function()
   local keymap = {}
   keymap.preset = 'none'
   keymap['<C-y>'] = { 'select_and_accept' }
   keymap['<C-p>'] = { 'select_prev', 'fallback' }
   keymap['<C-n>'] = { 'select_next', 'fallback' }
-
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
-
   keymap['<C-e>'] = { 'hide' }
-
   keymap['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end }
   keymap['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end }
   keymap['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end }
@@ -47,40 +17,12 @@ function M._generate_keymap()
   keymap['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end }
   keymap['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end }
   keymap['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end }
-
-  keymap['<C-1>'] = { function(cmp) cmp.accept { index = 1 } end }
-  keymap['<C-2>'] = { function(cmp) cmp.accept { index = 2 } end }
-  keymap['<C-3>'] = { function(cmp) cmp.accept { index = 3 } end }
-  keymap['<C-4>'] = { function(cmp) cmp.accept { index = 4 } end }
-  keymap['<C-5>'] = { function(cmp) cmp.accept { index = 5 } end }
-  keymap['<C-6>'] = { function(cmp) cmp.accept { index = 6 } end }
-  keymap['<C-7>'] = { function(cmp) cmp.accept { index = 7 } end }
-  keymap['<C-8>'] = { function(cmp) cmp.accept { index = 8 } end }
-  keymap['<C-9>'] = { function(cmp) cmp.accept { index = 9 } end }
-  keymap['<C-0>'] = { function(cmp) cmp.accept { index = 10 } end }
   return keymap
 end
 
-M._cmdline_opt = {
+local cmdline_opt = {
   enabled = true,
-
-  keymap = {
-    ['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end },
-    ['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end },
-    ['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end },
-    ['<F1>'] = { function(cmp) cmp.accept { index = 1 } end },
-    ['<F2>'] = { function(cmp) cmp.accept { index = 2 } end },
-    ['<F3>'] = { function(cmp) cmp.accept { index = 3 } end },
-
-    ['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end },
-    ['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end },
-    ['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end },
-    ['<M-7>'] = { function(cmp) cmp.accept { index = 7 } end },
-    ['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end },
-    ['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end },
-    ['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end },
-  },
-
+  keymap = get_keymap(),
   sources = function()
     local type = vim.fn.getcmdtype()
     -- Search forward and backward
@@ -110,7 +52,7 @@ M._cmdline_opt = {
   },
 }
 
-M._snippets = {
+local snippets = {
   preset = 'luasnip',
   expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
   active = function(filter)
@@ -122,7 +64,7 @@ M._snippets = {
   jump = function(direction) require('luasnip').jump(direction) end,
 }
 
-M._completion = {
+local completion = {
   menu = {
     draw = {
       columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
@@ -136,5 +78,30 @@ M._completion = {
   },
   documentation = { auto_show = true, auto_show_delay_ms = 500 },
 }
+return {
+  'saghen/blink.cmp',
+  lazy = true,
+  event = 'InsertEnter',
+  version = '*',
 
-return M
+  opts = {
+    appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
+    signature = { enabled = true },
+    sources = {
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          -- make lazydev completions top priority (see `:h blink.cmp`)
+          score_offset = 100,
+        },
+      },
+    },
+    snippets = snippets,
+    completion = completion,
+    keymap = get_keymap(),
+    fuzzy = { implementation = 'lua' },
+    cmdline = cmdline_opt,
+  },
+}
