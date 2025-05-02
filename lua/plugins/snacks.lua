@@ -36,7 +36,16 @@ return {
           padding = 1,
           limit = 9,
           filter = function(file)
-            local is_in_cwd = vim.startswith(file, vim.fn.getcwd())
+            local cwd = vim.fn.getcwd()
+            local file_path = file
+
+            -- Normalize path separators
+            if vim.fn.has 'win32' == 1 then
+              cwd = cwd:gsub('\\', '/')
+              file_path = file_path:gsub('\\', '/')
+            end
+
+            local is_in_cwd = vim.startswith(file_path, cwd)
             if not is_in_cwd then
               return false
             end
