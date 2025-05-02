@@ -58,39 +58,9 @@ return {
       return ''
     end
 
-    local function get_dir_and_filename()
-      local path = vim.fn.expand '%:p'
-      local filename = vim.fn.fnamemodify(path, ':t')
-      local full_dir = vim.fn.fnamemodify(path, ':h')
-      local dir_parts = {}
-      local dir_count = 0
-      local max_dirs = 2
-
-      while dir_count < max_dirs do
-        local dirname = vim.fn.fnamemodify(full_dir, ':t')
-        if dirname == '' or dirname == '/' or dirname == full_dir then
-          break
-        end
-        table.insert(dir_parts, 1, dirname)
-        dir_count = dir_count + 1
-        full_dir = vim.fn.fnamemodify(full_dir, ':h')
-      end
-
-      local dirs = table.concat(dir_parts, '/')
-      if dirs == '' then
-        dirs = vim.fn.fnamemodify(path, ':h:t')
-      end
-
-      local function modified_buffer()
-        if vim.bo.modified then
-          return '● '
-        end
-        return ''
-      end
-      return dirs .. '/' .. filename .. modified_buffer()
-    end
-
     ll.setup {
+      globalstatus = true,
+      always_show_tabline = true,
       sections = {
         lualine_a = {
           {
@@ -99,21 +69,26 @@ return {
             show_modified_status = true,
           },
         },
-        lualine_b = { 'diagnostics' },
+        lualine_b = { 'branch', 'diagnostics' },
         lualine_c = {
           {
-            get_dir_and_filename,
-            color = { fg = '#5097A4', gui = 'italic,bold' },
+            'filename',
+            path = 0,
+            shorting_target = 40,
+            symbols = {
+              modified = '●',
+              readonly = '',
+              unnamed = '[No Name]',
+            },
+            color = { fg = '#F38BA8', gui = 'italic' },
           },
-        },
-        lualine_x = {},
-        lualine_y = {
           {
             nearest_func_name_if_exists,
             color = { fg = '#F38BA8', gui = 'italic' },
           },
-          'branch',
         },
+        lualine_x = {},
+        lualine_y = {},
         lualine_z = {},
       },
       tabline = {

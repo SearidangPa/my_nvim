@@ -80,7 +80,6 @@ return {
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
     { '<leader>gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
-    { '<leader>gg', function() Snacks.lazygit() end, desc = 'Lazygit' },
     { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
 
     -- === LSP ===
@@ -100,7 +99,7 @@ return {
     { '<localleader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<localleader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<localleader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<localleader>sO', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+    { '<localleader>sO', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
 
     { '<localleader>so', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     { '<localleader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
@@ -113,8 +112,20 @@ return {
     { '<localleader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<localleader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
-    { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
-    { '<localleader>g', function() Snacks.picker.grep() end, desc = 'Grep' },
+    {
+      '<localleader>f',
+      function()
+        Snacks.picker.files {
+          cmd = 'fd',
+        }
+      end,
+      desc = 'Find Files',
+    },
+    { '<localleader>g', function()
+      Snacks.picker.grep {
+        cmd = 'rg',
+      }
+    end, desc = 'Grep' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<localleader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
     { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
