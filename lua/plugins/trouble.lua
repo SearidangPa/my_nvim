@@ -20,6 +20,28 @@ return {
       '<cmd>Trouble toggle snacks<cr>',
       desc = 'Toggle Trouble Window',
     },
+    {
+      ']d',
+      function()
+        local tr = require 'trouble'
+        ---@diagnostic disable-next-line: missing-fields
+        tr.next {}
+        ---@diagnostic disable-next-line: missing-fields
+        tr.jump {}
+      end,
+      desc = 'Next Trouble Item',
+    },
+    {
+      '[d',
+      function()
+        local tr = require 'trouble'
+        ---@diagnostic disable-next-line: missing-fields
+        tr.prev {}
+        ---@diagnostic disable-next-line: missing-fields
+        tr.jump {}
+      end,
+      desc = 'Previous Trouble Item',
+    },
   },
   specs = {
     'folke/snacks.nvim',
