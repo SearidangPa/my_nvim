@@ -133,39 +133,42 @@ return {
       desc = 'Grep',
     },
 
-    { '<leader>sO', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
-    { '<leader>so', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
-    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
-
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
     { '<leader>gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
     { '<leader>gg', function() Snacks.lazygit() end, desc = 'Lazygit' },
     { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
 
-    -- === search in buffers ===
-    { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-    { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-    { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<leader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
-    { '<leader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
-
-    -- === search registers, autocmds, command_history, marks, qflist ===
-    { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
-    { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
-    { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-    { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-    { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
-
-    { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
-    { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-
-    -- LSP
+    -- === LSP ===
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
     { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
     { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
-    { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
+    { '<localleader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
+
+    { '<localleader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+
+    -- === Help, Keymaps ===
+    { '<localleader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+    { '<localleader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+    { '<localleader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+
+    -- === search ===
+    { '<localleader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+    { '<localleader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+    { '<localleader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
+    { '<localleader>sO', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+
+    { '<localleader>so', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
+    { '<localleader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+    { '<localleader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+
+    -- === search registers, autocmds, command_history, marks, qflist ===
+    { '<localleader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+    { '<localleader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
+    { '<localleader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+    { '<localleader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+    { '<localleader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+
     { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
     { '<localleader>g', function() Snacks.picker.grep() end, desc = 'Grep' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },

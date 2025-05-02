@@ -55,7 +55,7 @@ push_with_qwen.send_request = function()
   })
 end
 
-vim.keymap.set('n', '<leader>pq', function()
+vim.keymap.set('n', '<localleader>pq', function()
   vim.cmd [[wa]]
   push_with_qwen.send_request()
 end, { silent = true, desc = '[P]ush with [Q]wen' })

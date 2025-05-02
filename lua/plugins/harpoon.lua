@@ -18,7 +18,7 @@ return {
     map('n', "<D-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
 
     for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-      map('n', string.format('<leader>%d', idx), function()
+      map('n', string.format('<localleader>%d', idx), function()
         local item = harpoon:list():get(idx)
         vim.cmd('edit ' .. item.value)
       end, { desc = string.format('harpoon select %d', idx) })
