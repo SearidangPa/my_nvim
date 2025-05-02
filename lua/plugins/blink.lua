@@ -1,4 +1,31 @@
-local function generate_keymap()
+M = {
+  'saghen/blink.cmp',
+  lazy = true,
+  event = 'InsertEnter',
+  version = '*',
+  opts = {
+    appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
+    signature = { enabled = true },
+    sources = {
+      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+      providers = {
+        lazydev = {
+          name = 'LazyDev',
+          module = 'lazydev.integrations.blink',
+          -- make lazydev completions top priority (see `:h blink.cmp`)
+          score_offset = 100,
+        },
+      },
+    },
+    snippets = M._snippets,
+    completion = M._completion,
+    keymap = M._generate_keymap(),
+    fuzzy = { implementation = 'lua' },
+    cmdline = M._cmdline_opt,
+  },
+}
+
+function M._generate_keymap()
   local keymap = {}
   keymap.preset = 'none'
   keymap['<C-y>'] = { 'select_and_accept' }
@@ -34,7 +61,7 @@ local function generate_keymap()
   return keymap
 end
 
-local cmdline_opt = {
+M._cmdline_opt = {
   enabled = true,
 
   keymap = {
@@ -83,7 +110,7 @@ local cmdline_opt = {
   },
 }
 
-local snippets = {
+M._snippets = {
   preset = 'luasnip',
   expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
   active = function(filter)
@@ -95,7 +122,7 @@ local snippets = {
   jump = function(direction) require('luasnip').jump(direction) end,
 }
 
-local completion = {
+M._completion = {
   menu = {
     draw = {
       columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
@@ -110,29 +137,4 @@ local completion = {
   documentation = { auto_show = true, auto_show_delay_ms = 500 },
 }
 
-return {
-  'saghen/blink.cmp',
-  lazy = true,
-  event = 'InsertEnter',
-  version = '*',
-  opts = {
-    appearance = { use_nvim_cmp_as_default = true, nerd_font_variant = 'mono' },
-    signature = { enabled = true },
-    sources = {
-      default = { 'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
-      providers = {
-        lazydev = {
-          name = 'LazyDev',
-          module = 'lazydev.integrations.blink',
-          -- make lazydev completions top priority (see `:h blink.cmp`)
-          score_offset = 100,
-        },
-      },
-    },
-    snippets = snippets,
-    completion = completion,
-    keymap = generate_keymap(),
-    fuzzy = { implementation = 'lua' },
-    cmdline = cmdline_opt,
-  },
-}
+return M
