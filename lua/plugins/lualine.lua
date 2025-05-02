@@ -39,7 +39,13 @@ return {
       return table.concat(result)
     end
 
+    local show_func_name = false
+    vim.keymap.set('n', '<localleader>uf', function() show_func_name = not show_func_name end, { desc = 'Toggle function name in statusline' })
+
     local function nearest_func_name_if_exists()
+      if not show_func_name then
+        return ''
+      end
       local util_find_func = require 'config.util_find_func'
       local func_node = util_find_func.nearest_func_node()
 
@@ -93,20 +99,22 @@ return {
             show_modified_status = true,
           },
         },
-        lualine_b = {},
+        lualine_b = { 'diagnostics' },
         lualine_c = {
           {
             get_dir_and_filename,
             color = { fg = '#5097A4', gui = 'italic,bold' },
           },
+        },
+        lualine_x = {},
+        lualine_y = {
           {
             nearest_func_name_if_exists,
             color = { fg = '#F38BA8', gui = 'italic' },
           },
+          'branch',
         },
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = { 'branch', 'diagnostics' },
+        lualine_z = {},
       },
       tabline = {
         lualine_a = {},
