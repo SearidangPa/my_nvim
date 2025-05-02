@@ -59,8 +59,6 @@ return {
     end
 
     ll.setup {
-      globalstatus = true,
-      always_show_tabline = true,
       sections = {
         lualine_a = {
           {

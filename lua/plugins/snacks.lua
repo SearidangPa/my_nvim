@@ -7,6 +7,7 @@ return {
   opts = {
     ---@type table<string, snacks.win.Config>
     styles = {
+      -- style for prompting input box
       input = {
         relative = 'editor',
         row = 10,
@@ -36,10 +37,9 @@ return {
 
       enabled = true,
       layout = {
-        preset = 'ivy',
+        preset = 'ivy_split',
         layout = {
-          width = 0,
-          height = 0.5,
+          height = 0.35,
         },
       },
     },
@@ -115,6 +115,7 @@ return {
     {
       '<localleader>f',
       function()
+        require 'snacks'
         Snacks.picker.files {
           cmd = 'fd',
         }
