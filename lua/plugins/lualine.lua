@@ -107,18 +107,15 @@ return {
           },
         },
         lualine_c = {},
+        lualine_x = {},
+        lualine_y = {},
+        lualine_z = {},
+      },
+      tabline = {
         lualine_x = {
           {
             get_harpoon_filenames,
             color = { fg = '#DCA1A1', gui = 'italic' },
-          },
-        },
-        lualine_y = {},
-        lualine_z = {
-          {
-            'mode',
-            fmt = function(str) return str:sub(1, 1) end,
-            show_modified_status = true,
           },
         },
       },
