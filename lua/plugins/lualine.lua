@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = { 'VeryLazy', 'BufReadPost' },
+  event = 'VeryLazy',
   config = function()
     local ll = require 'lualine'
 
@@ -90,7 +90,10 @@ return {
     end
 
     ll.setup {
-      globalstatus = true,
+      options = {
+        always_show_tabline = true,
+        globalstatus = true,
+      },
       sections = {
         lualine_a = {
           {

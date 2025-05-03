@@ -39,32 +39,6 @@ vim.opt.signcolumn = 'yes'
 vim.opt.cursorline = true
 vim.opt.breakindent = true
 
-vim.api.nvim_create_autocmd('BufFilePre', {
-  callback = function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local full_path = vim.api.nvim_buf_get_name(bufnr)
-    local cwd = vim.fn.getcwd()
-
-    -- Normalize path separators on Windows
-    if vim.fn.has 'win32' == 1 then
-      full_path = full_path:gsub('\\', '/')
-      cwd = cwd:gsub('\\', '/')
-    end
-
-    -- Ensure cwd ends with a slash
-    if cwd:sub(-1) ~= '/' then
-      cwd = cwd .. '/'
-    end
-
-    -- Check if the path is within the current working directory
-    if full_path:sub(1, #cwd) == cwd then
-      local relative_path = full_path:sub(#cwd + 1)
-      vim.api.nvim_buf_set_name(bufnr, relative_path)
-    end
-  end,
-  desc = 'Convert absolute paths to relative paths on BufEnter',
-})
-
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
