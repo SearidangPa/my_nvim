@@ -1,83 +1,19 @@
 return {
-  'SearidangPa/snacks.nvim',
+  'folke/snacks.nvim',
   event = 'VeryLazy',
+  version = '*',
 
   ---@type snacks.Config
   opts = {
     ---@type table<string, snacks.win.Config>
     styles = {
+      -- style for prompting input box
       input = {
         relative = 'editor',
         row = 10,
         b = {
           completion = true,
         },
-      },
-    },
-    dashboard = {
-      enabled = true,
-      preset = {
-        keys = {
-          { icon = ' ', key = 'f', desc = 'File', action = ":lua Snacks.dashboard.pick('files')" },
-          { icon = ' ', key = 'g', desc = 'Grep', action = ":lua Snacks.dashboard.pick('live_grep')" },
-          { icon = '🔱', key = 'h', desc = 'Harpoon', action = ":lua require('custom.snack_harpoon').pick_harpoon()" },
-          { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
-          { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
-        },
-      },
-
-      sections = {
-        { section = 'header' },
-        {
-          icon = ' ',
-          title = 'Recent Files',
-          section = 'recent_files',
-          indent = 2,
-          padding = 1,
-          limit = 9,
-          filter = function(file)
-            local cwd = vim.fn.getcwd()
-            local file_path = file
-
-            -- Normalize path separators
-            if vim.fn.has 'win32' == 1 then
-              cwd = cwd:gsub('\\', '/')
-              file_path = file_path:gsub('\\', '/')
-            end
-
-            local is_in_cwd = vim.startswith(file_path, cwd)
-            if not is_in_cwd then
-              return false
-            end
-            if vim.fn.isdirectory(file) == 1 then
-              return false
-            end
-            return true
-          end,
-        },
-
-        {
-          icon = '🔱',
-          title = 'Harpoon Files',
-          section = 'harpoon',
-          indent = 2,
-          padding = 1,
-          limit = 5,
-        },
-        { icon = ' ', section = 'keys', indent = 2, padding = 1 },
-
-        {
-          icon = ' ',
-          title = 'Git Status',
-          section = 'terminal',
-          enabled = function() return Snacks.git.get_root() ~= nil end,
-          cmd = 'git status --short --branch --renames',
-          height = 5,
-          padding = 1,
-          ttl = 5 * 60,
-          indent = 3,
-        },
-        { section = 'startup' },
       },
     },
     input = {
@@ -101,10 +37,9 @@ return {
 
       enabled = true,
       layout = {
-        preset = 'ivy',
+        preset = 'ivy_split',
         layout = {
-          width = 0,
-          height = 0.5,
+          height = 0.35,
         },
       },
     },
@@ -145,7 +80,6 @@ return {
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
     { '<leader>gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
-    { '<leader>gg', function() Snacks.lazygit() end, desc = 'Lazygit' },
     { '<leader>gd', function() Snacks.picker.git_diff() end, desc = 'Git Diff (Hunks)' },
 
     -- === LSP ===
@@ -165,7 +99,7 @@ return {
     { '<localleader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<localleader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<localleader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<localleader>sO', function() Snacks.picker.grep_buffers() end, desc = 'Grep Open Buffers' },
+    { '<localleader>sO', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
 
     { '<localleader>so', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     { '<localleader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
@@ -178,8 +112,20 @@ return {
     { '<localleader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<localleader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
-    { '<localleader>f', function() Snacks.picker.files() end, desc = 'Find Files' },
-    { '<localleader>g', function() Snacks.picker.grep() end, desc = 'Grep' },
+    {
+      '<localleader>f',
+      function()
+        Snacks.picker.files {
+          cmd = 'fd',
+        }
+      end,
+      desc = 'Find Files',
+    },
+    { '<localleader>g', function()
+      Snacks.picker.grep {
+        cmd = 'rg',
+      }
+    end, desc = 'Grep' },
     { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<localleader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
     { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },

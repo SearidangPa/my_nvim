@@ -1,8 +1,8 @@
 return {
   'nvim-lualine/lualine.nvim',
+  version = '*',
   lazy = true,
-  event = { 'VeryLazy' },
-  options = {},
+  event = 'VeryLazy',
   config = function()
     local ll = require 'lualine'
 
@@ -39,7 +39,13 @@ return {
       return table.concat(result)
     end
 
+    local show_func_name = false
+    vim.keymap.set('n', '<localleader>uf', function() show_func_name = not show_func_name end, { desc = 'Toggle function name in statusline' })
+
     local function nearest_func_name_if_exists()
+      if not show_func_name then
+        return ''
+      end
       local util_find_func = require 'config.util_find_func'
       local func_node = util_find_func.nearest_func_node()
 
@@ -51,14 +57,13 @@ return {
       end
       return ''
     end
-
     local function get_dir_and_filename()
       local path = vim.fn.expand '%:p'
       local filename = vim.fn.fnamemodify(path, ':t')
       local full_dir = vim.fn.fnamemodify(path, ':h')
       local dir_parts = {}
       local dir_count = 0
-      local max_dirs = 2
+      local max_dirs = 1
 
       while dir_count < max_dirs do
         local dirname = vim.fn.fnamemodify(full_dir, ':t')
@@ -81,13 +86,11 @@ return {
         end
         return ''
       end
-      return modified_buffer() .. dirs .. '/' .. filename
+      return dirs .. '/' .. filename .. modified_buffer()
     end
 
     ll.setup {
-      options = {
-        globalstatus = true,
-      },
+      globalstatus = true,
       sections = {
         lualine_a = {
           {
@@ -96,14 +99,18 @@ return {
             show_modified_status = true,
           },
         },
-        lualine_b = { 'branch', 'diagnostics' },
-        lualine_c = {},
-        lualine_x = {
+        lualine_b = { 'FugitiveHead', 'diagnostics' },
+        lualine_c = {
           {
-            get_harpoon_filenames,
-            color = { fg = '#DCA1A1', gui = 'italic' },
+            get_dir_and_filename,
+            color = { fg = '#F38BA8', gui = 'italic' },
+          },
+          {
+            nearest_func_name_if_exists,
+            color = { fg = '#F38BA8', gui = 'italic' },
           },
         },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = {},
       },
@@ -113,16 +120,11 @@ return {
         lualine_c = {},
         lualine_x = {
           {
-            nearest_func_name_if_exists,
-            color = { fg = '#F38BA8', gui = 'italic' },
+            get_harpoon_filenames,
+            color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
-        lualine_y = {
-          {
-            get_dir_and_filename,
-            color = { fg = '#5097A4', gui = 'italic,bold' },
-          },
-        },
+        lualine_y = {},
         lualine_z = {},
       },
     }

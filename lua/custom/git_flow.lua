@@ -1,9 +1,5 @@
 require 'config.util_job'
 
-local height = math.floor(vim.o.lines * 0.25)
-local row = math.floor((vim.o.lines - height) / 2)
-local col = math.floor((vim.o.columns / 5))
-
 local default_no_more_input = {
   'Pushing to remote',
   'Done with what I set out to do',

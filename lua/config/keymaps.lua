@@ -44,7 +44,7 @@ vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
 
 -- =================== Extmarks ===================
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
-map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
+map('n', '<localleader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 -- =================== Window Navigation ===================
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
@@ -73,8 +73,8 @@ map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
-map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
-map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
+map('n', '<localleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
+map('n', '<localleader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 map('n', '<Enter>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all') -- yolo :D
 
@@ -83,20 +83,20 @@ map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua 
 map('n', '<localleader>q', function() vim.cmd [[q]] end, map_opt '[Q]uit')
 
 -- =================== colorscheme ==================
-map('n', '<leader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')
-map('n', '<leader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [R]ose-pine')
-map('n', '<leader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
+map('n', '<localleader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')
+map('n', '<localleader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [R]ose-pine')
+map('n', '<localleader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
 
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- === Visual select ===
-map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
+map('n', '<localleader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
 map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
-map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
+map('n', '<localleader>yf', yank_function, { desc = 'Yank nearest function' })
 
-map('n', '<leader>ya', function()
+map('n', '<localleader>ya', function()
   local cur_pos = vim.fn.getpos '.'
   vim.cmd 'normal! ggyG'
   vim.fn.setpos('.', cur_pos)
@@ -110,7 +110,7 @@ map('n', 'n', 'nzzzv')
 map('n', '<C-u>', '<C-u>zz')
 map('n', '<C-d>', '<C-d>zz')
 
-map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
+map('x', '<localleader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
 map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
@@ -118,19 +118,19 @@ vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg
 
 -- === Quickfix navigation ===
 local quickfix = require 'config.quickfix'
-map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
-map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
+map('n', '<localleader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
+map('n', '<localleader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
-map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+map('n', '<localleader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 
-map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<leader>qt', quickfix.toggle_quickfix, { desc = 'toggle diagnostic windows' })
-map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
+map('n', '<localleader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+map('n', '<localleader>qt', quickfix.toggle_quickfix, { desc = 'toggle diagnostic windows' })
+map('n', '<localleader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
 
 --- === Quickfix load ===
-map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
-map('n', '<leader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
+map('n', '<localleader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
+map('n', '<localleader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
 
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
@@ -159,65 +159,6 @@ end
 
 vim.keymap.set({ 'v', 'c' }, '<localleader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
-
-vim.keymap.set('n', '<leader>nf', function() require('neogen').generate() end, map_opt '[N]eogen [F]unction')
-vim.keymap.set('n', '<laader>gd', ':CopilotChatDoc<CR>', map_opt '[G]enerate [D]ocumentation')
-
---- === Yank inside fenced_code_block ===
---- Very useful for copying code from copilot chat
-local function find_code_block(node, row, col)
-  assert(node, 'Node cannot be nil')
-
-  if node:type() == 'fenced_code_block' then
-    local start_row, _, end_row, _ = node:range()
-    if row >= start_row and row <= end_row then
-      return node
-    end
-  end
-
-  -- Search through children recursively
-  for child in node:iter_children() do
-    local result = find_code_block(child, row, col)
-    if result then
-      return result
-    end
-  end
-
-  return nil
-end
-
-local function yank_fenced_code_block()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local cursor_pos = vim.api.nvim_win_get_cursor(0)
-  local row = cursor_pos[1] - 1 -- Convert to 0-indexed
-  local col = cursor_pos[2]
-  local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
-  assert(lang, 'markdown', 'This command only works in markdown files')
-  local parser = vim.treesitter.get_parser(bufnr, lang)
-  assert(parser, 'No parser found for this buffer')
-  local root = parser:parse()[1]:root()
-  local code_block = find_code_block(root, row, col)
-  assert(code_block, 'No code block found at cursor position')
-
-  local content_node = nil
-  for child in code_block:iter_children() do
-    if child:type() == 'code_fence_content' then
-      content_node = child
-      break
-    end
-  end
-  assert(content_node, 'Could not find code content in block')
-  local start_row, start_col, end_row, end_col = content_node:range()
-  start_row = start_row + 1
-  end_row = end_row
-  vim.cmd(start_row .. ',' .. end_row .. 'yank')
-  vim.notify('Yanked code block content from line ' .. start_row .. ' to ' .. end_row, vim.log.levels.WARN)
-end
-
-vim.api.nvim_create_user_command('YankCodeBlock', yank_fenced_code_block, {
-  desc = 'Yank content inside fenced code blocks using Tree-sitter',
-})
-vim.keymap.set('n', '<localleader>y', ':YankCodeBlock<CR>', { noremap = true, silent = true, desc = 'Yank code block content' })
 
 vim.keymap.set('v', '<localleader>r', function()
   vim.cmd 'normal! y'

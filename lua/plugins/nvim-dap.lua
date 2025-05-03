@@ -1,12 +1,33 @@
 return {
-  { 'leoluz/nvim-dap-go', lazy = true },
-  { 'rcarriga/nvim-dap-ui', lazy = true },
-  { 'theHamsta/nvim-dap-virtual-text', lazy = true },
-  { 'nvim-neotest/nvim-nio', lazy = true },
-  { 'williamboman/mason.nvim', lazy = true },
+  {
+    'leoluz/nvim-dap-go',
+    lazy = true,
+    version = '*',
+  },
+  {
+    'rcarriga/nvim-dap-ui',
+    lazy = true,
+    version = '*',
+  },
+  {
+    'theHamsta/nvim-dap-virtual-text',
+    lazy = true,
+    version = '*',
+  },
+  {
+    'nvim-neotest/nvim-nio',
+    lazy = true,
+    version = '*',
+  },
+  {
+    'williamboman/mason.nvim',
+    lazy = true,
+    version = '*',
+  },
   {
     'mfussenegger/nvim-dap',
     lazy = true,
+    version = '*',
     config = function()
       local dap = require 'dap'
       dap.configurations.go = {
