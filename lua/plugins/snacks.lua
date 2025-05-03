@@ -16,6 +16,62 @@ return {
         },
       },
     },
+    dashboard = {
+      enabled = true,
+      preset = {
+        keys = {
+          { icon = ' ', key = 'f', desc = 'File', action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = ' ', key = 'g', desc = 'Grep', action = ":lua Snacks.dashboard.pick('live_grep')" },
+          { icon = '🔱', key = 'h', desc = 'Harpoon', action = ":lua require('custom.snack_harpoon').pick_harpoon()" },
+          { icon = '󰒲 ', key = 'L', desc = 'Lazy', action = ':Lazy', enabled = package.loaded.lazy ~= nil },
+          { icon = ' ', key = 'q', desc = 'Quit', action = ':qa' },
+        },
+      },
+
+      sections = {
+        { section = 'header' },
+        {
+          icon = ' ',
+          title = 'Recent Files',
+          section = 'recent_files',
+          indent = 2,
+          padding = 1,
+          limit = 9,
+          filter = function(file)
+            local cwd = vim.fn.getcwd()
+            local file_path = file
+
+            -- Normalize path separators
+            if vim.fn.has 'win32' == 1 then
+              cwd = cwd:gsub('\\', '/')
+              file_path = file_path:gsub('\\', '/')
+            end
+
+            local is_in_cwd = vim.startswith(file_path, cwd)
+            if not is_in_cwd then
+              return false
+            end
+            if vim.fn.isdirectory(file) == 1 then
+              return false
+            end
+            return true
+          end,
+        },
+        { icon = ' ', section = 'keys', indent = 2, padding = 1 },
+        {
+          icon = ' ',
+          title = 'Git Status',
+          section = 'terminal',
+          enabled = function() return Snacks.git.get_root() ~= nil end,
+          cmd = 'git status --short --branch --renames',
+          height = 5,
+          padding = 1,
+          ttl = 5 * 60,
+          indent = 3,
+        },
+        { section = 'startup' },
+      },
+    },
     input = {
       enabled = true,
     },
@@ -99,9 +155,8 @@ return {
     { '<localleader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<localleader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<localleader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<localleader>sO', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
+    { '<localleader>so', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
 
-    { '<localleader>so', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     { '<localleader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
     { '<localleader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
@@ -112,9 +167,11 @@ return {
     { '<localleader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<localleader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
+    { '<localleader>o', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     {
       '<localleader>f',
       function()
+        require 'snacks'
         Snacks.picker.files {
           cmd = 'fd',
         }
