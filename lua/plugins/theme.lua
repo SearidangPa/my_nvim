@@ -3,11 +3,11 @@ return {
     'projekt0n/github-nvim-theme',
     name = 'github-theme',
     lazy = true,
+    event = 'VeryLazy',
   },
   {
     'rose-pine/neovim',
     name = 'rose-pine',
-    priority = 1000,
     config = function()
       require('rose-pine').setup {
         variant = 'moon',

@@ -22,6 +22,7 @@ vim.opt.listchars = { tab = '   ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
 vim.opt.numberwidth = 1
 vim.opt.tabstop = 6
+vim.opt.showtabline = 1
 
 --- === Live Preview ===
 vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!
@@ -33,9 +34,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.mouse = 'a'
 vim.g.have_nerd_font = true
-vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.signcolumn = 'yes'
 vim.opt.cursorline = true
 vim.opt.breakindent = true
 

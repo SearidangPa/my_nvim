@@ -91,7 +91,6 @@ return {
 
     ll.setup {
       options = {
-        always_show_tabline = true,
         globalstatus = true,
       },
       sections = {
@@ -113,14 +112,6 @@ return {
             color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = {},
-      },
-      tabline = {
-        lualine_a = {},
-        lualine_b = {},
-        lualine_c = {},
         lualine_x = {
           {
             get_harpoon_filenames,
