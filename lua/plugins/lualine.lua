@@ -82,7 +82,7 @@ return {
 
       local function modified_buffer()
         if vim.bo.modified then
-          return '● ' -- Indicator for unsaved changes
+          return ' ● ' -- Indicator for unsaved changes
         end
         return ''
       end
@@ -94,15 +94,9 @@ return {
         globalstatus = true,
       },
       sections = {
-        lualine_a = {
-          {
-            'mode',
-            fmt = function(str) return str:sub(1, 1) end,
-            show_modified_status = true,
-          },
-        },
-        lualine_b = { 'FugitiveHead', 'diagnostics' },
-        lualine_c = {
+        lualine_a = { 'diagnostics' },
+        lualine_b = {
+          'FugitiveHead',
           {
             get_dir_and_filename,
             color = { fg = '#F38BA8', gui = 'italic' },
@@ -112,6 +106,7 @@ return {
             color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
+        lualine_c = {},
         lualine_x = {
           {
             get_harpoon_filenames,
@@ -119,7 +114,13 @@ return {
           },
         },
         lualine_y = {},
-        lualine_z = {},
+        lualine_z = {
+          {
+            'mode',
+            fmt = function(str) return str:sub(1, 1) end,
+            show_modified_status = true,
+          },
+        },
       },
     }
   end,

@@ -20,7 +20,6 @@ vim.opt.undofile = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '   ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
-vim.opt.numberwidth = 1
 vim.opt.tabstop = 6
 vim.opt.showtabline = 1
 
