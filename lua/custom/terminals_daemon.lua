@@ -36,6 +36,6 @@ end
 
 vim.api.nvim_create_user_command('RunCloudDrive', run_cloud_drive, {})
 vim.api.nvim_create_user_command('RunDrive', run_drive, {})
-vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
+vim.keymap.set('n', '<localleader>st', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 return M
