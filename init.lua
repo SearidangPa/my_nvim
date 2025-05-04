@@ -35,6 +35,7 @@ vim.g.have_nerd_font = true
 vim.opt.relativenumber = true
 vim.opt.cursorline = true
 vim.opt.breakindent = true
+vim.opt.signcolumn = 'yes'
 
 if vim.fn.has 'win32' ~= 1 then
   vim.opt.shell = '/opt/homebrew/bin/fish'
