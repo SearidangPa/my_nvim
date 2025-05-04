@@ -43,7 +43,6 @@ return {
         },
       },
     },
-    quickfile = { enabled = true },
   },
 
   keys = {

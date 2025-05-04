@@ -36,6 +36,10 @@ vim.opt.relativenumber = true
 vim.opt.cursorline = true
 vim.opt.breakindent = true
 
+if vim.fn.has 'win32' ~= 1 then
+  vim.opt.shell = '/opt/homebrew/bin/fish'
+end
+
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
