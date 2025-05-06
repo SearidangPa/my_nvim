@@ -25,32 +25,48 @@ return {
             vim.lsp.buf.format { async = false }
           end,
         })
+      end
 
-        -- Auto-format Fish files on save
+      local function format_fish_file()
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+        local content = table.concat(lines, '\n')
+
+        -- First, check for syntax errors before attempting to format
+        local syntax_check = vim.fn.system('fish -n', content)
+        if vim.v.shell_error ~= 0 then
+          vim.notify('Fish syntax error detected: ' .. syntax_check, vim.log.levels.WARN)
+          -- Don't attempt to format if there are syntax errors
+          return
+        end
+
+        local formatted_content = vim.fn.system('fish_indent', content)
+        if vim.v.shell_error ~= 0 then
+          vim.notify('Error formatting Fish file: ' .. formatted_content, vim.log.levels.ERROR)
+          return
+        end
+
+        -- Split the formatted content into lines while preserving empty lines
+        local formatted_lines = {}
+        -- Remove the last newline if it exists to avoid adding an extra empty line at the end
+        if formatted_content:sub(-1) == '\n' then
+          formatted_content = formatted_content:sub(1, -2)
+        end
+
+        -- Split by newlines and preserve empty lines
+        for line in (formatted_content .. '\n'):gmatch '(.-)\n' do
+          table.insert(formatted_lines, line)
+        end
+
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
+        vim.api.nvim_win_set_cursor(0, cursor_pos)
+      end
+
+      local function setup_fish_formatting()
         vim.api.nvim_create_autocmd('BufWritePre', {
+          group = fish_format_group,
           pattern = '*.fish',
-          callback = function()
-            local cursor_pos = vim.api.nvim_win_get_cursor(0)
-            local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
-            local content = table.concat(lines, '\n')
-            local formatted_content = vim.fn.system('fish_indent', content)
-            if vim.v.shell_error ~= 0 then
-              vim.notify('Error formatting Fish file: ' .. formatted_content, vim.log.levels.ERROR)
-              return
-            end
-            -- Split the formatted content into lines while preserving empty lines
-            local formatted_lines = {}
-            -- Remove the last newline if it exists to avoid adding an extra empty line at the end
-            if formatted_content:sub(-1) == '\n' then
-              formatted_content = formatted_content:sub(1, -2)
-            end
-            -- Split by newlines and preserve empty lines
-            for line in (formatted_content .. '\n'):gmatch '(.-)\n' do
-              table.insert(formatted_lines, line)
-            end
-            vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
-            vim.api.nvim_win_set_cursor(0, cursor_pos)
-          end,
+          callback = format_fish_file,
           desc = 'Format Fish buffer with fish_indent on save while preserving empty lines',
         })
       end
@@ -101,6 +117,7 @@ return {
 
       attach_auto_import()
       lsp_attach_keybind()
+      setup_fish_formatting()
       vim.lsp.enable 'lua_ls'
       vim.lsp.enable 'gopls'
       require 'custom.go_nav_func_decl'
