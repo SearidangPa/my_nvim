@@ -40,16 +40,12 @@ local function attach_auto_import()
       if formatted_content:sub(-1) == '\n' then
         formatted_content = formatted_content:sub(1, -2)
       end
-
       -- Split by newlines and preserve empty lines
       for line in (formatted_content .. '\n'):gmatch '(.-)\n' do
         table.insert(formatted_lines, line)
       end
 
-      -- Replace buffer content
       vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
-
-      -- Restore cursor position
       vim.api.nvim_win_set_cursor(0, cursor_pos)
     end,
     desc = 'Format Fish buffer with fish_indent on save while preserving empty lines',
