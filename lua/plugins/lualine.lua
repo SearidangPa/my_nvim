@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = 'VeryLazy',
+  event = 'WinEnter',
   config = function()
     local ll = require 'lualine'
 

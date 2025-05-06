@@ -8,6 +8,8 @@ return {
   {
     'rose-pine/neovim',
     name = 'rose-pine',
+    lazy = true,
+    event = 'WinEnter',
     config = function()
       require('rose-pine').setup {
         variant = 'moon',

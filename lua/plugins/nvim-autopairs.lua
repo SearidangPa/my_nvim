@@ -2,7 +2,7 @@ return {
   'windwp/nvim-autopairs',
   lazy = true,
   version = '*',
-  event = 'InsertEnter',
+  event = 'WinEnter',
   config = function()
     require('nvim-autopairs').setup {
       enabled = function(bufnr) return true end, -- control if auto-pairs should be enabled when attaching to a buffer

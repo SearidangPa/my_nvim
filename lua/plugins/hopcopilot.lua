@@ -2,7 +2,7 @@ return {
   {
     'github/copilot.vim',
     lazy = true,
-    event = { 'VeryLazy', 'BufReadPost' },
+    event = 'WinEnter',
   },
   {
     'SearidangPa/hopcopilot.nvim',

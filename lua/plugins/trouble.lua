@@ -1,7 +1,7 @@
 return {
   'folke/trouble.nvim',
   lazy = true,
-  event = { 'VeryLazy', 'BufReadPost' },
+  event = 'LspAttach',
 
   opts = {
     ---@type trouble.Window.opts

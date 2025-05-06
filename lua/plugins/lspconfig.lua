@@ -71,25 +71,25 @@ return {
     config = true,
     version = '*',
     lazy = true,
-    event = { 'VeryLazy', 'BufReadPost' },
+    event = 'WinEnter',
   },
   {
     'williamboman/mason-lspconfig.nvim',
     lazy = true,
     version = '*',
-    event = { 'VeryLazy', 'BufReadPost' },
+    event = 'WinEnter',
   },
   {
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     lazy = true,
     version = '*',
-    event = { 'VeryLazy', 'BufReadPost' },
+    event = 'WinEnter',
   },
   {
     'folke/lazydev.nvim',
     lazy = true,
     version = '*',
-    event = 'VeryLazy',
+    event = 'WinEnter',
     ft = 'lua', -- only load for lua files
     opts = {
       library = {
@@ -101,7 +101,7 @@ return {
   {
     'neovim/nvim-lspconfig',
     version = '*',
-    event = { 'VeryLazy', 'BufReadPost' },
+    event = 'VeryLazy',
     config = function()
       attach_auto_import()
       lsp_attach_keybind()

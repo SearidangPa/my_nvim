@@ -67,7 +67,7 @@ return {
   'olimorris/codecompanion.nvim',
   lazy = true,
   version = '*',
-  event = { 'BufReadPost', 'VeryLazy' },
+  event = 'WinEnter',
   config = function()
     require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {

@@ -2,6 +2,7 @@ return {
   'SearidangPa/go-test-t.nvim',
   lazy = true,
   ft = 'go',
+  event = 'WinEnter',
   dependencies = {
     'echasnovski/mini.nvim',
     'j-hui/fidget.nvim',

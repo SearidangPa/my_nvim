@@ -1,7 +1,7 @@
 return {
   'sindrets/diffview.nvim',
   lazy = true,
-  event = { 'VeryLazy' },
+  event = 'WinEnter',
   config = function()
     local actions = require 'diffview.actions'
 
