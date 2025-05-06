@@ -2,7 +2,6 @@ vim.g.mapleader = ','
 vim.g.maplocalleader = ' '
 vim.g.copilot_no_tab_map = true -- copilot plugin config
 vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
-
 --- === case insensitive search, unless capital letter is used ===
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
