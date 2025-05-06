@@ -24,17 +24,11 @@ local function attach_auto_import()
   vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = '*.fish',
     callback = function()
-      -- Store cursor position
       local cursor_pos = vim.api.nvim_win_get_cursor(0)
-
-      -- Get all lines from the current buffer
       local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
       local content = table.concat(lines, '\n')
 
-      -- Use fish_indent without the -w flag to format the content
       local formatted_content = vim.fn.system('fish_indent', content)
-
-      -- Check for errors
       if vim.v.shell_error ~= 0 then
         vim.notify('Error formatting Fish file: ' .. formatted_content, vim.log.levels.ERROR)
         return
