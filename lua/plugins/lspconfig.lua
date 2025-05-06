@@ -62,14 +62,31 @@ return {
         vim.api.nvim_win_set_cursor(0, cursor_pos)
       end
 
+      local fish_format_group = vim.api.nvim_create_augroup('FishFormatting', { clear = true })
       local function setup_fish_formatting()
-        vim.api.nvim_create_autocmd('BufWritePre', {
+        vim.api.nvim_create_autocmd('BufWritePost', {
           group = fish_format_group,
           pattern = '*.fish',
           callback = format_fish_file,
           desc = 'Format Fish buffer with fish_indent on save while preserving empty lines',
         })
       end
+
+      vim.api.nvim_create_user_command('FishFormatDisable', function()
+        vim.api.nvim_clear_autocmds { group = fish_format_group }
+        vim.notify('Fish auto-formatting disabled', vim.log.levels.INFO)
+      end, {
+        desc = 'Disable automatic Fish file formatting on save',
+      })
+
+      -- Create user command to reattach (enable) fish formatting
+      vim.api.nvim_create_user_command('FishFormatEnable', function()
+        vim.api.nvim_clear_autocmds { group = fish_format_group }
+        setup_fish_formatting()
+        vim.notify('Fish auto-formatting enabled', vim.log.levels.INFO)
+      end, {
+        desc = 'Enable automatic Fish file formatting on save',
+      })
 
       local function lsp_attach_keybind()
         vim.api.nvim_create_autocmd('LspAttach', {
