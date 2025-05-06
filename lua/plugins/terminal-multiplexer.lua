@@ -10,10 +10,5 @@ return {
     end
     require 'config.scratch'
     require 'custom.async_job'
-
-    vim.api.nvim_create_autocmd('TermOpen', {
-      pattern = '*',
-      callback = function() vim.api.nvim_buf_set_keymap(0, 'n', 'q', ':q<CR>', { noremap = true, silent = true }) end,
-    })
   end,
 }

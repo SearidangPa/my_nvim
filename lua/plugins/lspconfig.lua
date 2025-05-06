@@ -28,7 +28,6 @@ return {
       end
 
       local function format_fish_file()
-        local cursor_pos = vim.api.nvim_win_get_cursor(0)
         local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
         local content = table.concat(lines, '\n')
 
@@ -46,20 +45,17 @@ return {
           return
         end
 
-        -- Split the formatted content into lines while preserving empty lines
         local formatted_lines = {}
         -- Remove the last newline if it exists to avoid adding an extra empty line at the end
         if formatted_content:sub(-1) == '\n' then
           formatted_content = formatted_content:sub(1, -2)
         end
-
-        -- Split by newlines and preserve empty lines
+        -- Split by newlines
         for line in (formatted_content .. '\n'):gmatch '(.-)\n' do
           table.insert(formatted_lines, line)
         end
 
         vim.api.nvim_buf_set_lines(0, 0, -1, false, formatted_lines)
-        vim.api.nvim_win_set_cursor(0, cursor_pos)
       end
 
       local fish_format_group = vim.api.nvim_create_augroup('FishFormatting', { clear = true })
