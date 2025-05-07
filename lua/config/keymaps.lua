@@ -76,7 +76,7 @@ map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_
 map('n', '<localleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<localleader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
-map('n', '<BS>', ':wa<CR>', map_opt '[W]rite all') -- yolo :D
+map('n', '<Enter>', ':wa<CR>', map_opt '[W]rite all') -- yolo :D
 
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
@@ -118,7 +118,6 @@ map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
 -- === Quickfix navigation ===
-local quickfix = require 'config.quickfix'
 map('n', '<localleader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
 map('n', '<localleader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
@@ -126,12 +125,17 @@ map('n', '<localleader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item
 map('n', '<localleader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 
 map('n', '<localleader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<localleader>qt', quickfix.toggle_quickfix, { desc = 'toggle diagnostic windows' })
+map('n', '<localleader>qt', function()
+  if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
+    vim.cmd 'cclose'
+  else
+    vim.cmd 'copen'
+  end
+end, { desc = 'toggle diagnostic windows' })
 map('n', '<localleader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
 
 --- === Quickfix load ===
 map('n', '<localleader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
-map('n', '<localleader>qr', quickfix.lsp_references_nearest_function, { desc = 'Go to func references (excluding test files)' })
 
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
@@ -159,7 +163,7 @@ local function convert_line_comments_to_block()
 end
 
 vim.keymap.set({ 'v', 'c' }, '<localleader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
-vim.keymap.set('n', '<localleader>m', ':messages<CR>', map_opt 'Show [M]essages')
+vim.keymap.set('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 
 vim.keymap.set('v', '<localleader>r', function()
   vim.cmd 'normal! y'

@@ -1,5 +1,7 @@
 local async_job = {}
 
+require 'config.quickfix_func_ref_decl'
+
 ---@param cmd string
 local function create_fidget_handle(cmd)
   assert(cmd, 'cmd is required')
@@ -35,7 +37,6 @@ end
 vim.api.nvim_create_user_command('GoModTidy', async_job.go_mod_tidy, {})
 vim.api.nvim_create_user_command('MakeAllLint', async_job.make_all_and_lint, {})
 vim.api.nvim_create_user_command('MakeLint', async_job.make_lint, {})
-vim.api.nvim_create_user_command('QuickfixClear', function() vim.fn.setqflist({}, 'r') end, {})
 
 local map = vim.keymap.set
 map('n', '<localleader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
