@@ -71,7 +71,7 @@ local function set_diagnostics_and_quickfix(cmd, output, ns)
   end
 
   if #quickfix_list > 0 then
-    vim.fn.setqflist(quickfix_list, 'a')
+    vim.fn.setqflist(quickfix_list, 'r')
     vim.cmd 'copen'
   end
 end
