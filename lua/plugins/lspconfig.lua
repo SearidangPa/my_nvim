@@ -7,7 +7,6 @@ return {
       local function attach_auto_import()
         vim.api.nvim_create_autocmd('BufWritePre', {
           pattern = '*.go',
-
           callback = function()
             local params = vim.lsp.util.make_range_params()
 
@@ -21,7 +20,6 @@ return {
                 end
               end
             end
-
             vim.lsp.buf.format { async = false }
           end,
         })
@@ -136,6 +134,17 @@ return {
       require 'custom.go_nav_func_decl'
       require 'custom.go_nav_func_expr'
       require 'custom.go_nav_func_equal'
+
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'fish',
+        callback = function()
+          vim.lsp.start {
+            name = 'fish-lsp',
+            cmd = { 'fish-lsp', 'start' },
+            cmd_env = { fish_lsp_show_client_popups = false },
+          }
+        end,
+      })
     end,
   },
 
