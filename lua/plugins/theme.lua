@@ -48,6 +48,7 @@ return {
 
       local function set_theme(is_light_mode)
         if is_light_mode then
+          require 'github-theme'
           vim.cmd.colorscheme 'github_light_default'
         else
           vim.cmd.colorscheme 'rose-pine-moon'
