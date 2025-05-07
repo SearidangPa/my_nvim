@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = 'BufReadPre',
+  event = 'BufReadPost',
   config = function()
     local ll = require 'lualine'
 
@@ -17,10 +17,7 @@ return {
       local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
       local current_file_path = vim.api.nvim_buf_get_name(0)
       local result = {}
-      local max_num_files_displayed = 4
-      if vim.fn.has 'win32' == 1 then
-        max_num_files_displayed = 3
-      end
+      local max_num_files_displayed = 3
 
       for i = 1, math.min(length, max_num_files_displayed) do
         local path = harpoonList:get(i).value
@@ -96,7 +93,7 @@ return {
       sections = {
         lualine_a = { 'diagnostics' },
         lualine_b = {
-          'FugitiveHead',
+          { 'FugitiveHead' },
           {
             get_dir_and_filename,
             color = { fg = '#F38BA8', gui = 'italic' },
