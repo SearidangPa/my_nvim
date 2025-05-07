@@ -8,8 +8,8 @@ return {
   {
     'rose-pine/neovim',
     name = 'rose-pine',
-    lazy = true,
-    event = 'VeryLazy',
+    lazy = false,
+    priority = 100000,
     config = function()
       require('rose-pine').setup {
         variant = 'moon',
@@ -50,6 +50,11 @@ return {
         if is_light_mode then
           require 'github-theme'
           vim.cmd.colorscheme 'github_light_default'
+          require('lualine').setup {
+            options = {
+              theme = 'github_light',
+            },
+          }
         else
           vim.cmd.colorscheme 'rose-pine-moon'
         end

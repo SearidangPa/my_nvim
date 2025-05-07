@@ -1,7 +1,7 @@
 return {
   'MeanderingProgrammer/render-markdown.nvim',
   lazy = true,
-  event = 'WinEnter',
+  ft = { 'markdown' },
   version = '*',
   config = function()
     require('render-markdown').setup {

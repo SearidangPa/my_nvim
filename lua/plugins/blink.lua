@@ -37,10 +37,6 @@ local cmdline_opt = {
   end,
 
   completion = {
-    trigger = {
-      show_on_blocked_trigger_characters = {},
-      show_on_x_blocked_trigger_characters = {},
-    },
     list = {
       selection = {
         preselect = true,

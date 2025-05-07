@@ -1,12 +1,12 @@
 return {
   'echasnovski/mini.nvim',
   lazy = true,
-  event = 'VeryLazy',
+  event = 'BufReadPost',
   version = '*',
   config = function()
     require('mini.ai').setup()
     require('mini.icons').setup()
-    -- require('mini.diff').setup()
+    require('mini.diff').setup()
     local win_config = function()
       return {
         anchor = 'NE',

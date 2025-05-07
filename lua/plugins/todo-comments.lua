@@ -1,7 +1,7 @@
 return {
   'folke/todo-comments.nvim',
   lazy = true,
-  event = 'WinEnter',
+  event = 'BufReadPost',
   opts = {
     signs = false,
     keywords = {

@@ -1,7 +1,7 @@
 return {
   'folke/flash.nvim',
   lazy = true,
-  event = 'WinEnter',
+  event = 'BufReadPost',
   version = '*',
   -- stylua: ignore
   keys = {
