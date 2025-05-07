@@ -139,7 +139,7 @@ local function load_func_ref_decls()
   M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
 end
 
-local function load_func_refs()
+function M.load_func_refs()
   if vim.fn.getqflist({ size = 0 }).size == 0 then
     load_func_ref_decls()
     M.last_func_decls = M.new_func_decls
@@ -154,8 +154,6 @@ local function load_func_refs()
     M.last_func_decls = M.new_func_decls
   end
 end
-
-vim.keymap.set('n', '<localleader>qr', load_func_refs, { desc = '[L]oad function [R]eferences', noremap = true, silent = true })
 
 vim.api.nvim_create_user_command('ClearQuickFix', function()
   M.qflist = {}

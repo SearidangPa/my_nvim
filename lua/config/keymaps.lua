@@ -137,6 +137,13 @@ map('n', '<localleader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic
 --- === Quickfix load ===
 map('n', '<localleader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
 
+vim.keymap.set(
+  'n',
+  '<localleader>qr',
+  function() require('custom.quickfix_func_ref_decl').load_func_refs() end,
+  { desc = '[L]oad function [R]eferences', noremap = true, silent = true }
+)
+
 --- === Fold ===
 map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
 

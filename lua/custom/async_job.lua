@@ -1,6 +1,6 @@
 local async_job = {}
 
-require 'config.quickfix_func_ref_decl'
+require 'custom.quickfix_func_ref_decl'
 
 ---@param cmd string
 local function create_fidget_handle(cmd)
