@@ -109,6 +109,8 @@ map('n', 'n', 'nzzzv')
 
 map('n', '<C-u>', '<C-u>zz')
 map('n', '<C-d>', '<C-d>zz')
+map('n', '<PageUp>', '<C-u>zz')
+map('n', '<PageDown>', '<C-d>zz')
 
 map('x', '<localleader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
