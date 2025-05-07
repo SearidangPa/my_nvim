@@ -113,7 +113,9 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       if func_ref_decl then
         local make_notify = require('mini.notify').make_notify {}
         make_notify(string.format('found: %s', func_ref_decl.func_name))
-        M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
+        if not string.find(func_ref_decl.filename, 'test') then
+          M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
+        end
       end
     end
     vim.fn.setqflist(M.qflist, 'a')
