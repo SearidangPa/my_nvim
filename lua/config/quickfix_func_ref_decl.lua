@@ -118,7 +118,9 @@ function M.lsp_ref_func_decl(bufnr, line, col)
         end
       end
     end
-    vim.fn.setqflist(M.qflist, 'a')
+    vim.cmd 'copen'
+    vim.cmd 'wincmd p'
+    vim.fn.setqflist(M.qflist, 'r')
   end)
   return M.qflist
 end
