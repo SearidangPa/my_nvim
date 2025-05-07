@@ -85,6 +85,7 @@ function M.find_enclosing_function(uri, ref_line, ref_col)
     filename = filename,
     location = location,
     text = text,
+    func_name = func_name,
   }
 end
 
@@ -110,7 +111,8 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
       if func_ref_decl then
-        require('fidget').notify('found: ' .. func_ref_decl.text, vim.log.levels.INFO)
+        local make_notify = require('mini.notify').make_notify {}
+        make_notify(string.format('found: %s', func_ref_decl.func_name))
         M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
       end
     end
