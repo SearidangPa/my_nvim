@@ -120,7 +120,9 @@ return {
             end
 
             if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-              map('<leader>th', function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end, '[T]oggle Inlay [H]ints')
+              map('<leader>th',
+                function() vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf }) end,
+                '[T]oggle Inlay [H]ints')
             end
           end,
         })
@@ -142,18 +144,6 @@ return {
     config = true,
     version = '*',
     lazy = true,
-    event = 'WinEnter',
-  },
-  {
-    'williamboman/mason-lspconfig.nvim',
-    lazy = true,
-    version = '*',
-    event = 'WinEnter',
-  },
-  {
-    'WhoIsSethDaniel/mason-tool-installer.nvim',
-    lazy = true,
-    version = '*',
     event = 'WinEnter',
   },
   {
