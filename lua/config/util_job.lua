@@ -71,7 +71,7 @@ local function set_diagnostics_and_quickfix(cmd, output, ns)
   end
 
   if #quickfix_list > 0 then
-    vim.fn.setqflist(quickfix_list, 'r')
+    vim.fn.setqflist(quickfix_list, 'a')
     vim.cmd 'copen'
   end
 end
@@ -86,7 +86,6 @@ end
 function util_job.start_job(opts)
   assert(opts.cmd, 'cmd is required')
   assert(opts.ns, 'ns is required')
-  local make_notify = require('mini.notify').make_notify {}
   local cmd = opts.cmd
   local ns = opts.ns
   local output = {}
@@ -123,7 +122,6 @@ function util_job.start_job(opts)
       if code ~= 0 then
         vim.list_extend(output, errors)
         set_diagnostics_and_quickfix(cmd, output, ns)
-        make_notify(string.format('%s failed', cmd), vim.log.levels.ERROR)
       else
         vim.diagnostic.reset(ns)
         vim.fn.setqflist({}, 'r')
@@ -133,10 +131,6 @@ function util_job.start_job(opts)
       end
     end,
   })
-
-  if job_id <= 0 then
-    make_notify('Failed to start the Make command', vim.log.levels.ERROR)
-  end
 end
 
 return util_job

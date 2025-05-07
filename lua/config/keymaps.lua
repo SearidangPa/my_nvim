@@ -76,11 +76,10 @@ map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_
 map('n', '<localleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<localleader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
-map('n', '<Enter>', function() vim.cmd [[:wa]] end, map_opt '[W]rite all') -- yolo :D
+map('n', '<BS>', ':wa<CR>', map_opt '[W]rite all') -- yolo :D
 
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
-map('n', '<localleader>q', function() vim.cmd [[q]] end, map_opt '[Q]uit')
 
 -- =================== colorscheme ==================
 map('n', '<localleader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')

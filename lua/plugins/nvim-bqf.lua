@@ -1,7 +1,7 @@
 return {
   'kevinhwang91/nvim-bqf',
   lazy = true,
-  version = '*',
+  event = 'BufReadPost',
   ft = 'qf',
   config = function()
     require('bqf').setup {

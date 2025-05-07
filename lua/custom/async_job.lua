@@ -38,7 +38,7 @@ vim.api.nvim_create_user_command('MakeLint', async_job.make_lint, {})
 vim.api.nvim_create_user_command('QuickfixClear', function() vim.fn.setqflist({}, 'r') end, {})
 
 local map = vim.keymap.set
-map('n', '<leader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
-map('n', '<leader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
+map('n', '<localleader>ma', ':MakeAll<CR>', { desc = '[M}ake [A]ll in the background' })
+map('n', '<localleader>ml', ':MakeLint<CR>', { desc = '[M]ake [L]int' })
 
 return async_job
