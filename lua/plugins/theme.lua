@@ -1,5 +1,10 @@
 return {
   {
+    'projekt0n/github-nvim-theme',
+    name = 'github-theme',
+    lazy = true,
+  },
+  {
     'catppuccin/nvim',
     name = 'catppuccin',
     config = true,
