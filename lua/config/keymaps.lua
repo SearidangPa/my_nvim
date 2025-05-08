@@ -142,9 +142,6 @@ vim.keymap.set(
   { desc = '[L]oad function [R]eferences', noremap = true, silent = true }
 )
 
---- === Fold ===
-map('n', '<Tab>', 'za', { desc = 'Toggle fold' })
-
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
   vim.cmd [[normal! d]]
