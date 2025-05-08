@@ -57,6 +57,10 @@ end
 
 vim.keymap.set('n', '<localleader>pq', function()
   vim.cmd [[wa]]
+  if vim.bo.filetype == 'go' then
+    local async_job = require 'custom.async_job'
+    async_job.make_all_and_lint()
+  end
   push_with_qwen.send_request()
 end, { silent = true, desc = '[P]ush with [Q]wen' })
 
