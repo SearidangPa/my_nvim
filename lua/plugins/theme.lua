@@ -46,17 +46,22 @@ return {
         return false
       end
 
+      local function lualine_refresh(theme_name)
+        require('lualine').setup {
+          options = {
+            theme = theme_name,
+          },
+        }
+      end
+
       local function set_theme(is_light_mode)
         if is_light_mode then
           require 'github-theme'
           vim.cmd.colorscheme 'github_light_default'
-          require('lualine').setup {
-            options = {
-              theme = 'github_light',
-            },
-          }
+          lualine_refresh 'github_light_default'
         else
           vim.cmd.colorscheme 'rose-pine-moon'
+          lualine_refresh 'rose-pine'
         end
       end
 
@@ -69,8 +74,10 @@ return {
         local is_light_mode_from_os = get_os_mode()
         if is_light_mode_from_os and vim.g.colors_name ~= 'github_light_default' then
           vim.cmd.colorscheme 'github_light_default'
+          lualine_refresh 'github_light_default'
         elseif not is_light_mode_from_os and not string.find(vim.g.colors_name, 'rose-pine') then
           vim.cmd.colorscheme 'rose-pine-moon'
+          lualine_refresh 'rose-pine'
         end
         save_theme_preference(is_light_mode_from_os)
         vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
