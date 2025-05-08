@@ -78,6 +78,8 @@ map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase fir
 
 map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
 
+map('n', '<S-Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
+
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
