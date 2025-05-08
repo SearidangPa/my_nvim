@@ -7,6 +7,7 @@ local get_keymap = function()
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
   keymap['<C-e>'] = { 'hide' }
+  keymap['<Tab>'] = { 'select_next' }
   return keymap
 end
 
@@ -56,7 +57,7 @@ local completion = {
       columns = { { 'label' }, { 'kind_icon' } },
     },
   },
-  documentation = { auto_show = true, auto_show_delay_ms = 500 },
+  documentation = { auto_show = true },
 }
 return {
   'saghen/blink.cmp',
