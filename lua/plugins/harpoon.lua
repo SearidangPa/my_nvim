@@ -1,7 +1,7 @@
 return {
   'ThePrimeagen/harpoon',
   lazy = true,
-  event = 'VeryLazy',
+  event = 'BufEnter',
   branch = 'harpoon2',
   config = function()
     local harpoon = require 'harpoon'
@@ -102,6 +102,7 @@ return {
       end)
     end
 
+    map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
     map('n', '<D-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
   end,
 }
