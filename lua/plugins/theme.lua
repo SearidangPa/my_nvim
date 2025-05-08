@@ -2,7 +2,7 @@ return {
   {
     'catppuccin/nvim',
     name = 'catppuccin',
-    lazy = true,
+    config = true,
   },
   {
     'rose-pine/neovim',
