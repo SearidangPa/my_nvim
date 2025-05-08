@@ -8,8 +8,19 @@ return {
         vim.api.nvim_create_autocmd('BufWritePre', {
           pattern = '*.go',
           callback = function()
-            local params = vim.lsp.util.make_range_params()
+            local clients = vim.lsp.get_clients { bufnr = bufnr }
+            local position_encoding_for_params
+            if clients and #clients > 0 then
+              for _, client in ipairs(clients) do
+                if client and client.offset_encoding and type(client.offset_encoding) == 'string' then
+                  position_encoding_for_params = client.offset_encoding
+                  break
+                end
+              end
+            end
 
+            print('position_encoding_for_params: ' .. position_encoding_for_params)
+            local params = vim.lsp.util.make_range_params(0, position_encoding_for_params)
             local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params)
 
             for cid, res in pairs(result or {}) do
