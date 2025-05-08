@@ -61,6 +61,7 @@ return {
 
       ---@param opts thmeme.opts
       local function set_theme(opts)
+        print('Setting theme to ' .. (opts.is_light_mode and 'light' or 'dark'))
         local is_light_mode = opts.is_light_mode or false
         if is_light_mode and vim.g.colors_name ~= 'github_light_default' then
           require 'github-theme'
@@ -70,7 +71,7 @@ return {
           vim.cmd.colorscheme 'rose-pine-moon'
           lualine_refresh 'rose-pine-moon'
         end
-        save_theme_preference { is_light_mode = is_light_mode_from_os }
+        save_theme_preference { is_light_mode = is_light_mode }
       end
 
       vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
