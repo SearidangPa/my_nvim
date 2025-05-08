@@ -19,7 +19,6 @@ return {
               end
             end
 
-            print('position_encoding_for_params: ' .. position_encoding_for_params)
             local params = vim.lsp.util.make_range_params(0, position_encoding_for_params)
             local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params)
 
