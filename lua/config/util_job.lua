@@ -116,6 +116,7 @@ function util_job.start_job(opts)
     end,
 
     on_exit = function(_, code)
+      require 'fidget'
       if opts.fidget_handle then
         opts.fidget_handle:finish()
       end

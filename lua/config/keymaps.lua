@@ -73,7 +73,7 @@ map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
-map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
+map('n', '<lleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 map('n', '<Enter>', ':wa<CR>', map_opt '[W]rite all') -- yolo :D
@@ -82,9 +82,6 @@ map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- =================== colorscheme ==================
-map('n', '<localleader>cl', ':colorscheme github_light_default<CR>', map_opt 'Colorscheme [L]ight')
-map('n', '<localleader>cr', ':colorscheme rose-pine-moon<CR>', map_opt 'Colorscheme [R]ose-pine')
-map('n', '<localleader>ck', ':colorscheme kanagawa-wave<CR>', map_opt 'Colorscheme [K]anagawa')
 
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 

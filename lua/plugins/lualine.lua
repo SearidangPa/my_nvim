@@ -91,8 +91,9 @@ return {
         globalstatus = true,
       },
       sections = {
-        lualine_a = { 'diagnostics' },
+        lualine_a = {},
         lualine_b = {
+          'diagnostics',
           { 'FugitiveHead' },
           {
             get_dir_and_filename,
