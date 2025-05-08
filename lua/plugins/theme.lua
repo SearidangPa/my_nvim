@@ -85,8 +85,8 @@ return {
         set_theme { is_light_mode = is_light_mode_from_os }
       end)
 
-      map('n', '<localleader>cl', function() set_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
-      map('n', '<localleader>cr', function() set_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
+      vim.keymap.set('n', '<localleader>cl', function() set_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
+      vim.keymap.set('n', '<localleader>cr', function() set_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
     end,
   },
 }
