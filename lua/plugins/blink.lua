@@ -1,15 +1,12 @@
-local get_keymap = function()
-  local keymap = {}
-  keymap.preset = 'none'
-  keymap['<C-y>'] = { 'select_and_accept' }
-  keymap['<C-p>'] = { 'select_prev', 'fallback' }
-  keymap['<C-n>'] = { 'select_next', 'fallback' }
-  keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
-  keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
-  keymap['<C-e>'] = { 'hide' }
-  keymap['<Tab>'] = { 'select_next' }
-  return keymap
-end
+local keymaps = {}
+keymaps.preset = 'none'
+keymaps['<C-y>'] = { 'select_and_accept' }
+keymaps['<C-p>'] = { 'select_prev', 'fallback' }
+keymaps['<C-n>'] = { 'select_next', 'fallback' }
+keymaps['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
+keymaps['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
+keymaps['<C-e>'] = { 'hide' }
+keymaps['<Tab>'] = { 'select_next' }
 
 local snippets = {
   preset = 'luasnip',
@@ -31,6 +28,7 @@ local completion = {
   },
   documentation = { auto_show = true },
 }
+
 return {
   'saghen/blink.cmp',
   lazy = true,
@@ -51,7 +49,7 @@ return {
     },
     snippets = snippets,
     completion = completion,
-    keymap = get_keymap(),
+    keymap = keymaps,
     fuzzy = { implementation = 'prefer_rust_with_warning' },
     cmdline = {
       keymap = { preset = 'inherit' },
