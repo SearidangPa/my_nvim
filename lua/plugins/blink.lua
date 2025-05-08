@@ -11,34 +11,6 @@ local get_keymap = function()
   return keymap
 end
 
-local cmdline_opt = {
-  enabled = true,
-  keymap = get_keymap(),
-  sources = function()
-    local type = vim.fn.getcmdtype()
-    -- Search forward and backward
-    if type == '/' or type == '?' then
-      return { 'buffer' }
-    end
-    -- Commands
-    if type == ':' or type == '@' then
-      return { 'cmdline' }
-    end
-    return {}
-  end,
-
-  completion = {
-    list = {
-      selection = {
-        preselect = true,
-        auto_insert = true,
-      },
-    },
-    menu = { auto_show = function() return vim.fn.getcmdtype() == ':' end },
-    ghost_text = { enabled = true },
-  },
-}
-
 local snippets = {
   preset = 'luasnip',
   expand = function(snippet) require('luasnip').lsp_expand(snippet) end,
@@ -81,6 +53,9 @@ return {
     completion = completion,
     keymap = get_keymap(),
     fuzzy = { implementation = 'prefer_rust_with_warning' },
-    cmdline = cmdline_opt,
+    cmdline = {
+      keymap = { preset = 'inherit' },
+      completion = { menu = { auto_show = true } },
+    },
   },
 }
