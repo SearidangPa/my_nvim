@@ -73,7 +73,7 @@ map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
-map('n', '<lleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
+map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
 map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 map('n', '<Enter>', ':wa<CR>', map_opt '[W]rite all') -- yolo :D
