@@ -86,8 +86,6 @@ end, map_opt 'remap Enter') -- yolo :D
 map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
 map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
--- =================== colorscheme ==================
-
 map('i', '<Insert>', '<Esc>', map_opt 'Exit insert mode with jj')
 
 -- === Visual select ===
