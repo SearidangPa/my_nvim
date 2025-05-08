@@ -1,21 +1,20 @@
 return {
   {
-    'projekt0n/github-nvim-theme',
-    name = 'github-theme',
+    'catppuccin/nvim',
+    name = 'catppuccin',
     lazy = true,
-    event = 'VeryLazy',
   },
   {
     'rose-pine/neovim',
     name = 'rose-pine',
-    lazy = false,
-    priority = 100000,
+    lazy = true,
+    event = 'BufReadPost',
     config = function()
       require('rose-pine').setup {
         variant = 'moon',
+        italic = false,
       }
       local cache_file = vim.fn.stdpath 'cache' .. '/theme_preference.txt'
-
       local function get_os_mode()
         local is_light = true
         if vim.fn.has 'win32' == 1 then
@@ -28,10 +27,6 @@ return {
         return is_light
       end
 
-      ---@class thmeme.opts
-      ---@field is_light_mode boolean
-
-      --- @param opts thmeme.opts
       local function save_theme_preference(opts)
         local is_light_mode = opts.is_light_mode or false
         local file = io.open(cache_file, 'w')
@@ -59,13 +54,12 @@ return {
         }
       end
 
-      ---@param opts thmeme.opts
       local function set_theme(opts)
         local is_light_mode = opts.is_light_mode or false
-        if is_light_mode and vim.g.colors_name ~= 'github_light_default' then
-          require 'github-theme'
-          vim.cmd.colorscheme 'github_light_default'
-          lualine_refresh 'github_light_default'
+        if is_light_mode and vim.g.colors_name ~= 'catppuccin' then
+          -- vim.cmd.colorscheme 'github_light_default'
+          vim.cmd.colorscheme 'catppuccin-latte'
+          lualine_refresh 'catppuccin-latte'
         elseif not is_light_mode and vim.g.colors_name ~= 'rose-pine' then
           vim.cmd.colorscheme 'rose-pine-moon'
           lualine_refresh 'rose-pine'
@@ -75,7 +69,7 @@ return {
 
       vim.api.nvim_set_hl(0, 'Comment', { italic = true, fg = '#6e6a86' })
 
-      if not vim.g.colors_name then -- at startup
+      if not vim.g.colors_name then
         local is_light_mode = load_prev_theme_preference()
         set_theme { is_light_mode = is_light_mode }
       end
