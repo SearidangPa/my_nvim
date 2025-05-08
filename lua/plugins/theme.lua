@@ -61,7 +61,6 @@ return {
 
       ---@param opts thmeme.opts
       local function set_theme(opts)
-        print('Setting theme to ' .. (opts.is_light_mode and 'light' or 'dark'))
         local is_light_mode = opts.is_light_mode or false
         if is_light_mode and vim.g.colors_name ~= 'github_light_default' then
           require 'github-theme'
