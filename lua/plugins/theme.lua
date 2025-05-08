@@ -68,7 +68,7 @@ return {
           lualine_refresh 'github_light_default'
         elseif not is_light_mode and vim.g.colors_name ~= 'rose-pine' then
           vim.cmd.colorscheme 'rose-pine-moon'
-          lualine_refresh 'rose-pine-moon'
+          lualine_refresh 'rose-pine'
         end
         save_theme_preference { is_light_mode = is_light_mode }
       end
