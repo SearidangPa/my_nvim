@@ -7,16 +7,6 @@ local get_keymap = function()
   keymap['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
   keymap['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
   keymap['<C-e>'] = { 'hide' }
-  keymap['<M-1>'] = { function(cmp) cmp.accept { index = 1 } end }
-  keymap['<M-2>'] = { function(cmp) cmp.accept { index = 2 } end }
-  keymap['<M-3>'] = { function(cmp) cmp.accept { index = 3 } end }
-  keymap['<M-4>'] = { function(cmp) cmp.accept { index = 4 } end }
-  keymap['<M-5>'] = { function(cmp) cmp.accept { index = 5 } end }
-  keymap['<M-6>'] = { function(cmp) cmp.accept { index = 6 } end }
-  keymap['<M-7>'] = { function(cmp) cmp.accept { index = 7 } end }
-  keymap['<M-8>'] = { function(cmp) cmp.accept { index = 8 } end }
-  keymap['<M-9>'] = { function(cmp) cmp.accept { index = 9 } end }
-  keymap['<M-0>'] = { function(cmp) cmp.accept { index = 10 } end }
   return keymap
 end
 
@@ -63,13 +53,7 @@ local snippets = {
 local completion = {
   menu = {
     draw = {
-      columns = { { 'label' }, { 'kind_icon' }, { 'item_idx' } },
-      components = {
-        item_idx = {
-          text = function(ctx) return ctx.idx == 10 and '0' or ctx.idx >= 10 and ' ' or tostring(ctx.idx) end,
-          highlight = 'BlinkCmpItemIdx',
-        },
-      },
+      columns = { { 'label' }, { 'kind_icon' } },
     },
   },
   documentation = { auto_show = true, auto_show_delay_ms = 500 },
