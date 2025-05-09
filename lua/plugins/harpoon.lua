@@ -17,7 +17,7 @@ return {
 
     if is_not_filepath() then
       harpoon:list():select(1)
-      vim.cmd 'doautocmd BufReadPost'
+      vim.schedule(function() vim.cmd 'doautocmd BufReadPost' end)
     end
 
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })

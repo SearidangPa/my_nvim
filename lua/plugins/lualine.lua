@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = 'BufReadPost',
+  event = 'BufEnter',
   config = function()
     local ll = require 'lualine'
 
@@ -17,7 +17,7 @@ return {
       local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
       local current_file_path = vim.api.nvim_buf_get_name(0)
       local result = {}
-      local max_num_files_displayed = 3
+      local max_num_files_displayed = 4
 
       for i = 1, math.min(length, max_num_files_displayed) do
         local path = harpoonList:get(i).value
@@ -108,17 +108,14 @@ return {
           },
         },
         lualine_c = {},
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = {},
-      },
-      tabline = {
         lualine_x = {
           {
             get_harpoon_filenames,
             color = { fg = '#DCA1A1', gui = 'italic' },
           },
         },
+        lualine_y = {},
+        lualine_z = {},
       },
     }
   end,
