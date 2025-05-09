@@ -3,20 +3,18 @@ return {
   lazy = true,
   ft = { 'markdown' },
   version = '*',
-  config = function()
-    require('render-markdown').setup {
-      heading = {
-        sign = false,
-        backgrounds = {
-          'RenderMarkdownH2Bg',
-          'RenderMarkdownH1Bg',
-          'RenderMarkdownH2Bg',
-        },
+  opts = {
+    heading = {
+      sign = false,
+      backgrounds = {
+        'RenderMarkdownH2Bg',
+        'RenderMarkdownH1Bg',
+        'RenderMarkdownH2Bg',
       },
-      completions = { blink = { enabled = true } },
-      code = {
-        enabled = false,
-      },
-    }
-  end,
+    },
+    completions = { blink = { enabled = true } },
+    code = {
+      enabled = false,
+    },
+  },
 }
