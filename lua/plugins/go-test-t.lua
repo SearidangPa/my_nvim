@@ -3,11 +3,6 @@ return {
   lazy = true,
   ft = 'go',
   event = { 'LspAttach' },
-  dependencies = {
-    'echasnovski/mini.nvim',
-    'j-hui/fidget.nvim',
-    'SearidangPa/terminal-multiplexer.nvim',
-  },
   config = function()
     local go_test_prefix = 'go test'
     local cwd = vim.fn.getcwd()
