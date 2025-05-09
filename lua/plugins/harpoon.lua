@@ -8,7 +8,7 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    if not vim.fn.has 'win32' == 1 then
+    if vim.fn.has 'win32' ~= 1 then
       local function is_not_filepath()
         local current_path = vim.fn.expand '%:p'
         local is_directory = vim.fn.isdirectory(current_path) == 1
