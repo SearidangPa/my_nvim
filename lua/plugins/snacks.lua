@@ -17,6 +17,50 @@ return {
         },
       },
     },
+    dashboard = {
+      enabled = true,
+      sections = {
+        {
+          icon = ' ',
+          title = 'Recent Files',
+          section = 'recent_files',
+          indent = 2,
+          padding = 1,
+          limit = 9,
+          filter = function(file)
+            local cwd = vim.fn.getcwd()
+            local file_path = file
+
+            -- Normalize path separators
+            if vim.fn.has 'win32' == 1 then
+              cwd = cwd:gsub('\\', '/')
+              file_path = file_path:gsub('\\', '/')
+            end
+
+            local is_in_cwd = vim.startswith(file_path, cwd)
+            if not is_in_cwd then
+              return false
+            end
+            if vim.fn.isdirectory(file) == 1 then
+              return false
+            end
+            return true
+          end,
+        },
+        {
+          icon = ' ',
+          title = 'Git Status',
+          section = 'terminal',
+          enabled = function() return Snacks.git.get_root() ~= nil end,
+          cmd = 'git status --short --branch --renames',
+          height = 5,
+          padding = 1,
+          ttl = 5 * 60,
+          indent = 3,
+        },
+        { section = 'startup' },
+      },
+    },
     input = {
       enabled = true,
     },
