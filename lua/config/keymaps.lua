@@ -34,8 +34,8 @@ local function set_save_theme(opts)
   theme_loader.save_theme_preference { opts }
 end
 
-vim.keymap.set('n', '<leader>cl', function() set_save_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
-vim.keymap.set('n', '<leader>cr', function() set_save_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
+vim.keymap.set('n', '<leader>ul', function() set_save_theme { is_light_mode = true } end, { desc = '[U]i [L]ight' })
+vim.keymap.set('n', '<leader>ur', function() set_save_theme { is_light_mode = false } end, { desc = '[U]i [R]ose-Pine' })
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
