@@ -10,7 +10,6 @@ return {
     'rose-pine/neovim',
     name = 'rose-pine',
     lazy = true,
-    config = true,
     opts = {
       variant = 'moon',
       styles = {
