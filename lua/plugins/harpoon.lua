@@ -57,11 +57,6 @@ return {
       end
     end
 
-    map('n', '<leader>a', function()
-      delete_current_file(true)
-      harpoon:list():prepend()
-    end, { desc = 'harpoon [A]dd' })
-
     local function add_at_index(idx)
       delete_current_file(true)
       local currentFileRelative = vim.fn.expand '%:.' -- Get the file path relative to working directory
@@ -100,6 +95,11 @@ return {
     map('n', '<M-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
     map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
     map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
+
+    map('n', '<leader>a', function()
+      delete_current_file(true)
+      harpoon:list():prepend()
+    end, { desc = 'harpoon [A]dd' })
 
     for _, idx in ipairs { 1, 2, 3, 4 } do
       map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
