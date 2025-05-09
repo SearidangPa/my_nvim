@@ -2,7 +2,6 @@ return {
   {
     'catppuccin/nvim',
     name = 'catppuccin',
-    config = true,
     lazy = true,
   },
 
