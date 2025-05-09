@@ -23,9 +23,10 @@ return {
       { '<localleader>x', group = '[x] Trouble' },
 
       { '<leader>m', group = '[M]ake' },
+      { '<leader>g', group = '[G]it' },
+      { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
       { '<leader>p', group = '[P]ush' },
       { '<leader>q', group = '[Q]uickfix' },
-      { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
       { '<leader>s', group = '[S]earch' },
       { '<leader>t', group = '[T]erminal' },
       { '<leader>u', group = '[U]i', mode = { 'n' } },
