@@ -20,7 +20,9 @@ return {
     config = function()
       require('rose-pine').setup {
         variant = 'moon',
-        italic = false,
+        styles = {
+          italic = false,
+        },
       }
       local cache_file = vim.fn.stdpath 'cache' .. '/theme_preference.txt'
       local function get_os_mode()
