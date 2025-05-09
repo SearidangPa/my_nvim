@@ -8,20 +8,6 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    if vim.fn.has 'win32' ~= 1 then
-      local function is_not_filepath()
-        local current_path = vim.fn.expand '%:p'
-        local is_directory = vim.fn.isdirectory(current_path) == 1
-        local is_empty = vim.fn.empty(current_path) == 1
-        return is_directory or is_empty
-      end
-
-      if is_not_filepath() then
-        harpoon:list():select(1)
-        vim.cmd 'doautocmd BufReadPost'
-      end
-    end
-
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
