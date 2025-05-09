@@ -2,7 +2,7 @@ return {
   'SearidangPa/go-test-t.nvim',
   lazy = true,
   ft = 'go',
-  event = { 'LspAttach' },
+  event = 'LspAttach',
   config = function()
     local go_test_prefix = 'go test'
     local cwd = vim.fn.getcwd()

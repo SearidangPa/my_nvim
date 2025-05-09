@@ -482,12 +482,12 @@ vim.api.nvim_create_autocmd('FileType', {
       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
     end
 
-    vim.keymap.set('v', '<leader>fn', function()
+    vim.keymap.set('v', '<localleader>fn', function()
       vim.cmd [[normal! d]]
       expand_fn()
     end, { buffer = true, desc = 'Expand Lua function snippet' })
 
-    vim.keymap.set('n', '<leader>fn', expand_fn, { buffer = true, desc = 'Expand Lua function snippet' })
+    vim.keymap.set('n', '<localleader>fn', expand_fn, { buffer = true, desc = 'Expand Lua function snippet' })
   end,
 })
 

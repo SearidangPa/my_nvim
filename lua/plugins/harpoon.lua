@@ -25,24 +25,6 @@ return {
       end
     end
 
-    map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
-    map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-    map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-
-    map('n', '<D-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
-    map('n', '<M-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
-    map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
-    map('n', "<D-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
-
-    for _, idx in ipairs { 1, 2, 3, 4, 5, 6 } do
-      map('n', string.format('<localleader>%d', idx), function()
-        local item = harpoon:list():get(idx)
-        if item then
-          vim.cmd('edit ' .. item.value)
-        end
-      end, { desc = string.format('harpoon select %d', idx) })
-    end
-
     local function delete_at_index(fileIndex)
       harpoon.ui:toggle_quick_menu(harpoon:list())
       for _ = 1, fileIndex - 1 do
@@ -50,10 +32,6 @@ return {
       end
       vim.cmd 'normal! dd'
       vim.cmd 'w'
-    end
-
-    for _, idx in ipairs { 1, 2, 3, 4, 5 } do
-      map('n', string.format('<localleader>hd%d', idx), function() delete_at_index(idx) end, { desc = string.format('harpoon delete %d', idx) })
     end
 
     local function delete_current_file(with_toggle_quick_menu)
@@ -79,7 +57,7 @@ return {
       end
     end
 
-    map('n', '<localleader>a', function()
+    map('n', '<leader>a', function()
       delete_current_file(true)
       harpoon:list():prepend()
     end, { desc = 'harpoon [A]dd' })
@@ -94,10 +72,6 @@ return {
       end
       vim.cmd 'normal! P'
       vim.cmd 'w'
-    end
-
-    for _, idx in ipairs { 1, 2, 3, 4, 5 } do
-      map('n', string.format('<localleader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
     end
 
     local function toggle_snack(harpoon_files)
@@ -117,7 +91,27 @@ return {
       end)
     end
 
-    map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
+    map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+    map('n', '<D-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
+    map('n', "<D-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
     map('n', '<D-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
+
+    map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+    map('n', '<M-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
+    map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
+    map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
+
+    map('n', '<leader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
+    for _, idx in ipairs { 1, 2, 3, 4 } do
+      map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
+    end
+    for _, idx in ipairs { 1, 2, 3, 4 } do
+      map('n', string.format('<leader>%d', idx), function()
+        local item = harpoon:list():get(idx)
+        if item then
+          vim.cmd('edit ' .. item.value)
+        end
+      end, { desc = string.format('harpoon select %d', idx) })
+    end
   end,
 }

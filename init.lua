@@ -1,5 +1,5 @@
-vim.g.mapleader = ','
-vim.g.maplocalleader = ' '
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ','
 vim.g.copilot_no_tab_map = true -- copilot plugin config
 vim.g.undotree_WindowLayout = 2 -- undo tree plugin config
 --- === case insensitive search, unless capital letter is used ===
@@ -35,7 +35,6 @@ vim.opt.cursorline = true
 vim.opt.breakindent = true
 vim.opt.signcolumn = 'yes'
 vim.opt.numberwidth = 1
-vim.opt.showtabline = 0
 
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 

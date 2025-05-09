@@ -95,7 +95,7 @@ M.setup = function()
 
   vim.keymap.set(
     'n',
-    '<localleader>sf',
+    '<leader>sf',
     function()
       Live_search {
         args_constructor = construct_args_no_regex,

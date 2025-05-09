@@ -45,7 +45,7 @@ local function lsp_references_filtered_test_files()
     pickers.new(opts):find()
   end)
 end
-vim.keymap.set('n', '<leader>rx', lsp_references_filtered_test_files, { desc = 'Go to references (excluding test files)' })
+vim.keymap.set('n', '<localleader>rx', lsp_references_filtered_test_files, { desc = 'Go to references (excluding test files)' })
 
 local construct_args_glob_no_test_files = function(prompt)
   if not prompt or prompt == '' then
@@ -62,7 +62,7 @@ local construct_args_glob_no_test_files = function(prompt)
   return args
 end
 
-vim.keymap.set('n', '<leader>gx', function()
+vim.keymap.set('n', '<localleader>gx', function()
   require 'config.telescope_multigrep'
   Live_search {
     args_constructor = construct_args_glob_no_test_files,
@@ -72,7 +72,7 @@ end, { desc = 'Search [G]rep [X](excluding test files)' })
 
 local builtin = require 'telescope.builtin'
 
-vim.keymap.set('n', '<leader>sx', function()
+vim.keymap.set('n', '<localleader>sx', function()
   builtin.grep_string {
     additional_args = function(opts) return { '--glob', '!*test*' } end,
     prompt_title = 'find word (excluding test files)',

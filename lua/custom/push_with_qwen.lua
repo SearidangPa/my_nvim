@@ -55,7 +55,7 @@ push_with_qwen.send_request = function()
   })
 end
 
-vim.keymap.set('n', '<localleader>pq', function()
+vim.keymap.set('n', '<leader>pq', function()
   vim.cmd [[wa]]
   if vim.bo.filetype == 'go' then
     local async_job = require 'custom.async_job'

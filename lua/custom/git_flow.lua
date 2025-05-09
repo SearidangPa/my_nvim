@@ -109,8 +109,8 @@ end
 
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
-map('n', '<localleader>pa', async_push_all, map_opt '[P]ush [A]ll')
-map('n', '<localleader>pc', function()
+map('n', '<leader>pa', async_push_all, map_opt '[P]ush [A]ll')
+map('n', '<leader>pc', function()
   local commit_func_push = function(commit_msg)
     vim.schedule(function()
       vim.cmd 'Gwrite'

@@ -14,17 +14,17 @@ return {
   cmd = 'Trouble',
   keys = {
     {
-      '<localleader><localleader>',
+      '<leader><leader>',
       '<cmd>Trouble diagnostics toggle<cr>',
       desc = 'Diagnostics (Trouble)',
     },
     {
-      '<leader>ts',
+      '<localleader>ts',
       '<cmd>Trouble symbols toggle focus=false<cr>',
       desc = 'Symbols (Trouble)',
     },
     {
-      '<leader>tt',
+      '<localleader>tt',
       '<cmd>Trouble toggle snacks<cr>',
       desc = 'Toggle Trouble Window',
     },

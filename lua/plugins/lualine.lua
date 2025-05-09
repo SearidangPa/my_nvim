@@ -37,7 +37,7 @@ return {
     end
 
     local show_func_name = false
-    vim.keymap.set('n', '<localleader>uf', function() show_func_name = not show_func_name end, { desc = 'Toggle function name in statusline' })
+    vim.keymap.set('n', '<leader>uf', function() show_func_name = not show_func_name end, { desc = 'Toggle function name in statusline' })
 
     local function nearest_func_name_if_exists()
       if not show_func_name then

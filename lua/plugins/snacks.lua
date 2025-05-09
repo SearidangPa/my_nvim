@@ -47,10 +47,10 @@ return {
   },
 
   keys = {
-    { '<leader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
-    { '<leader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
+    { '<localleader>fp', function() Snacks.picker.projects() end, desc = 'Projects' },
+    { '<localleader>fg', function() Snacks.picker.git_files() end, desc = 'Find Git Files' },
     {
-      '<leader>fp',
+      '<localleader>fp',
       function()
         Snacks.picker.files {
           cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
@@ -59,7 +59,7 @@ return {
       desc = 'Find Plugin Files',
     },
     {
-      '<leader>fc',
+      '<localleader>fc',
       function()
         Snacks.picker.files {
           cwd = vim.fn.stdpath 'config',
@@ -79,34 +79,34 @@ return {
     { 'gd', function() Snacks.picker.lsp_definitions() end, desc = 'Goto Definition' },
     { 'gD', function() Snacks.picker.lsp_declarations() end, desc = 'Goto Declaration' },
     { 'gI', function() Snacks.picker.lsp_implementations() end, desc = 'Goto Implementation' },
-    { '<localleader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
+    { '<leader>D', function() Snacks.picker.lsp_type_definitions() end, desc = 'Goto T[y]pe Definition' },
 
-    { '<localleader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+    { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
 
     -- === Help, Keymaps ===
-    { '<localleader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-    { '<localleader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
-    { '<localleader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
+    { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
+    { '<leader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
+    { '<leader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
 
     -- === search ===
-    { '<localleader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
-    { '<localleader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-    { '<localleader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<localleader>so', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
+    { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
+    { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+    { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
+    { '<leader>so', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
 
-    { '<localleader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-    { '<localleader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
+    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
     -- === search registers, autocmds, command_history, marks, qflist ===
-    { '<localleader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
-    { '<localleader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
-    { '<localleader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-    { '<localleader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
-    { '<localleader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
+    { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
+    { '<leader>sj', function() Snacks.picker.jumps() end, desc = 'Registers' },
+    { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+    { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+    { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
-    { '<localleader>o', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
+    { '<leader>o', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     {
-      '<localleader>f',
+      '<leader>f',
       function()
         require 'snacks'
         Snacks.picker.files {
@@ -115,13 +115,13 @@ return {
       end,
       desc = 'Find Files',
     },
-    { '<localleader>g', function()
+    { '<leader>sg', function()
       Snacks.picker.grep {
         cmd = 'rg',
       }
     end, desc = 'Grep' },
-    { '<localleader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
-    { '<localleader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-    { '<localleader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
+    { '<leader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
+    { '<leader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+    { '<leader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
   },
 }

@@ -67,7 +67,7 @@ return {
         },
       }
 
-      -- vim.keymap.set('n', '<localleader><localleader>', function() dapui.eval(nil, { enter = true }) end, { desc = 'Eval Dap-ui' })
+      -- vim.keymap.set('n', '<leader><leader>', function() dapui.eval(nil, { enter = true }) end, { desc = 'Eval Dap-ui' })
       -- vim.keymap.set('n', '<space>td', function() require('dap-go').debug_test() end, { desc = 'Debug test' })
 
       -- vim.keymap.set('n', '<space>b', dap.toggle_breakpoint, { desc = 'Toggle breakpoint' })
@@ -81,7 +81,7 @@ return {
       -- dap.listeners.before.launch.dapui_config = function() dapui.open() end
       -- dap.listeners.before.event_terminated.dapui_config = function() dapui.close() end
       -- dap.listeners.before.event_exited.dapui_config = function() dapui.close() end
-      -- vim.keymap.set('n', '<leader>du', require('dapui').toggle, { desc = 'Toggle DAP UI' })
+      -- vim.keymap.set('n', '<localleader>du', require('dapui').toggle, { desc = 'Toggle DAP UI' })
     end,
   },
 }

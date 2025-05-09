@@ -34,13 +34,13 @@ local function set_save_theme(opts)
   theme_loader.save_theme_preference { opts }
 end
 
-vim.keymap.set('n', '<localleader>cl', function() set_save_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
-vim.keymap.set('n', '<localleader>cr', function() set_save_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
+vim.keymap.set('n', '<leader>cl', function() set_save_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
+vim.keymap.set('n', '<leader>cr', function() set_save_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
   'n',
-  '<localleader>sb',
+  '<leader>sb',
   function() require('fzf-lua').git_branches {} end,
   { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' }
 )
@@ -61,7 +61,7 @@ vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
 
 -- =================== Extmarks ===================
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
-map('n', '<localleader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 -- =================== Window Navigation ===================
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
@@ -90,8 +90,8 @@ map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
-map('n', '<leader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
-map('n', '<leader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
+map('n', '<localleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
+map('n', '<localleader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
 
@@ -100,17 +100,17 @@ map('n', '<S-Enter>', function()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
 end, map_opt 'remap Enter') -- yolo :D
 
-map({ 'v', 'x' }, '<localleader>d', [["_x]], map_opt '[D]elete into black hole')
-map('n', '<localleader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
+map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
+map('n', '<leader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- === Visual select ===
-map('n', '<localleader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
+map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
 map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
-map('n', '<localleader>yf', yank_function, { desc = 'Yank nearest function' })
+map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 
-map('n', '<localleader>ya', function()
+map('n', '<leader>ya', function()
   local cur_pos = vim.fn.getpos '.'
   vim.cmd 'normal! ggyG'
   vim.fn.setpos('.', cur_pos)
@@ -126,35 +126,35 @@ map('n', '<C-d>', '<C-d>zz')
 map('n', '<PageUp>', '<C-u>zz')
 map('n', '<PageDown>', '<C-d>zz')
 
-map('x', '<localleader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
+map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
-map('n', '<leader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
+map('n', '<localleader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
 -- === Quickfix navigation ===
-map('n', '<localleader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
-map('n', '<localleader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
+map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
+map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
-map('n', '<localleader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
+map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 
-map('n', '<localleader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<localleader>qt', function()
+map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
+map('n', '<leader>qt', function()
   if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
     vim.cmd 'cclose'
   else
     vim.cmd 'copen'
   end
 end, { desc = 'toggle diagnostic windows' })
-map('n', '<localleader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
+map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
 
 --- === Quickfix load ===
-map('n', '<localleader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
+map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
 
 vim.keymap.set(
   'n',
-  '<localleader>qr',
+  '<leader>qr',
   function() require('custom.quickfix_func_ref_decl').load_func_refs() end,
   { desc = '[L]oad function [R]eferences', noremap = true, silent = true }
 )
@@ -181,10 +181,10 @@ local function convert_line_comments_to_block()
   vim.cmd [[normal! P]]
 end
 
-vim.keymap.set({ 'v', 'c' }, '<localleader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
+vim.keymap.set({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 vim.keymap.set('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 
-vim.keymap.set('v', '<localleader>r', function()
+vim.keymap.set('v', '<leader>r', function()
   vim.cmd 'normal! y'
   local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
   selected_text = vim.trim(selected_text)

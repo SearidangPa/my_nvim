@@ -1,6 +1,5 @@
 local M = {}
 
-
 ---@param bufnr number
 ---@param line number
 ---@return TSNode|nil
@@ -63,7 +62,7 @@ M.delete_function = function()
 end
 
 local map = vim.keymap.set
-map('n', '<leader>vf', M.visual_function, { desc = 'Visual nearest function' })
-map('n', '<leader>df', M.delete_function, { desc = 'Delete nearest function' })
+map('n', '<localleader>vf', M.visual_function, { desc = 'Visual nearest function' })
+map('n', '<localleader>df', M.delete_function, { desc = 'Delete nearest function' })
 
 return M
