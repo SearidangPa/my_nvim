@@ -11,7 +11,8 @@ return {
     local function is_not_filepath()
       local current_path = vim.fn.expand '%:p'
       local is_directory = vim.fn.isdirectory(current_path) == 1
-      return is_directory
+      local is_empty = vim.fn.empty(current_path) == 1
+      return is_directory or is_empty
     end
 
     if is_not_filepath() then
