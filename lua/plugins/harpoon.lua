@@ -96,7 +96,7 @@ return {
     map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
     map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
 
-    map('n', '<leader>a', function()
+    map('n', '<leader>ha', function()
       delete_current_file(true)
       harpoon:list():prepend()
     end, { desc = 'harpoon [A]dd' })
