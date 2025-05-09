@@ -29,6 +29,12 @@ local function yank_function()
 end
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+vim.keymap.set(
+  'n',
+  '<localleader>sb',
+  function() require('fzf-lua').git_branches {} end,
+  { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' }
+)
 
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
