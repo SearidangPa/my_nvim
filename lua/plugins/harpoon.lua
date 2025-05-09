@@ -101,7 +101,6 @@ return {
     map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
     map('n', '<M-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
 
-    map('n', '<leader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     for _, idx in ipairs { 1, 2, 3, 4 } do
       map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
 
