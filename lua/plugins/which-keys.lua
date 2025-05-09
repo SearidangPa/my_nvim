@@ -32,6 +32,7 @@ return {
       { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
       { '<leader>u', group = '[U]i', mode = { 'n' } },
       { '<leader>v', group = '[V]isual', mode = { 'n' } },
+      { '<leader>y', group = '[Y]ank', mode = { 'n' } },
     },
   },
 }
