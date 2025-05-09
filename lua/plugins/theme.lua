@@ -57,11 +57,14 @@ return {
       end
 
       local function lualine_refresh(theme_name)
-        require('lualine').setup {
-          options = {
-            theme = theme_name,
-          },
-        }
+        local ok, lualine = pcall(require, 'lualine')
+        if ok then
+          lualine.setup {
+            options = {
+              theme = theme_name,
+            },
+          }
+        end
       end
 
       local function set_theme(opts)

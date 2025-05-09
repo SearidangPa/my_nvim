@@ -28,6 +28,9 @@ local function yank_function()
   end
 end
 
+vim.keymap.set('n', '<localleader>cl', function() set_theme { is_light_mode = true } end, { desc = 'Colorscheme [L]ight' })
+vim.keymap.set('n', '<localleader>cr', function() set_theme { is_light_mode = false } end, { desc = 'Colorscheme [R]ose-Pine' })
+
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
   'n',

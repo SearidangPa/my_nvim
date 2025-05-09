@@ -1,7 +1,6 @@
 local keymaps = {}
 keymaps.preset = 'none'
 keymaps['<C-y>'] = { 'select_and_accept' }
-keymaps['<Enter>'] = { 'select_and_accept', 'fallback' }
 keymaps['<C-p>'] = { 'select_prev', 'fallback' }
 keymaps['<C-n>'] = { 'select_next', 'fallback' }
 keymaps['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
