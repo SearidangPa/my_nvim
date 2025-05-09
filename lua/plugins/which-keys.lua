@@ -10,6 +10,8 @@ return {
 
     -- Document existing key chains
     spec = {
+
+      { '<localleader>a', group = '[A]i' },
       { '<localleader>c', group = '[C]olorscheme, [C]lear, [C]urrent, [C]opy', mode = 'n', expr = false, noremap = true },
       { '<localleader>d', group = '[D]ocument, [D]elete, [D]ap' },
       { '<localleader>e', group = '[E]dit' },
