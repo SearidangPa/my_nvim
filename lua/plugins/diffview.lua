@@ -1,7 +1,7 @@
 return {
   'sindrets/diffview.nvim',
   lazy = true,
-  event = { 'LspAttach', 'BufWritePost' },
+  event = { 'LspAttach' },
   config = function()
     local actions = require 'diffview.actions'
 

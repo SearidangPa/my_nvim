@@ -67,7 +67,7 @@ return {
   'olimorris/codecompanion.nvim',
   lazy = true,
   version = '*',
-  event = { 'LspAttach', 'BufWritePost' },
+  event = { 'LspAttach' },
   config = function()
     require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {

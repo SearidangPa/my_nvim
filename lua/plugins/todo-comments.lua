@@ -1,7 +1,7 @@
 return {
   'folke/todo-comments.nvim',
   lazy = true,
-  event = { 'LspAttach', 'BufWritePost' },
+  event = { 'LspAttach' },
   opts = {
     signs = false,
     keywords = {

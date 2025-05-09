@@ -1,7 +1,7 @@
 return {
   'kevinhwang91/nvim-bqf',
   lazy = true,
-  event = { 'LspAttach', 'BufWritePost' },
+  event = { 'LspAttach' },
   ft = 'qf',
   opts = {
     preview = {

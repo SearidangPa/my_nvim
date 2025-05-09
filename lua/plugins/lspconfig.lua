@@ -152,7 +152,7 @@ return {
     config = true,
     version = '*',
     lazy = true,
-    event = { 'BufWritePost', 'LspAttach' },
+    event = { 'BufReadCmd', 'LspAttach' },
   },
   {
     'folke/lazydev.nvim',
