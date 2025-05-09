@@ -19,7 +19,6 @@ vim.opt.undofile = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '   ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
-vim.opt.showtabline = 1 -- show tabline only when there are multiple tabs
 
 --- === Live Preview ===
 vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!
