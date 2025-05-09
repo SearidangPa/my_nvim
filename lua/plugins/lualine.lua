@@ -2,7 +2,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = 'BufReadPost',
+  event = 'BufEnter',
   config = function()
     local ll = require 'lualine'
 

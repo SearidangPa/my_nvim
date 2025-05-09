@@ -1,5 +1,5 @@
 return {
   'tpope/vim-fugitive',
   lazy = true,
-  event = 'BufEnter',
+  event = 'BufReadPost',
 }
