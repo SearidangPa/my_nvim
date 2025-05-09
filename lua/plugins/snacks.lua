@@ -1,7 +1,7 @@
 return {
   'folke/snacks.nvim',
   lazy = true,
-  event = 'BufEnter',
+  event = 'VeryLazy',
   version = '*',
 
   ---@type snacks.Config

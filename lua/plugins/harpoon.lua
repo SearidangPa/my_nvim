@@ -8,6 +8,42 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
+    local function is_not_filepath()
+      local current_path = vim.fn.expand '%:p'
+      local is_directory = vim.fn.isdirectory(current_path) == 1
+      return is_directory
+    end
+
+    if is_not_filepath() then
+      local item = harpoon:list():get(1)
+      if item then
+        vim.cmd('edit ' .. item.value)
+
+        vim.defer_fn(function()
+          local bufnr = vim.api.nvim_get_current_buf()
+
+          vim.cmd 'doautocmd BufRead'
+          vim.cmd 'doautocmd BufEnter'
+          local filetype = vim.filetype.match { filename = item.value }
+          if filetype or filetype == '' then
+            return
+          end
+          vim.api.nvim_set_option_value('filetype', filetype, { scope = 'local', win = 0, buf = bufnr })
+
+          local clients = vim.lsp.get_clients { bufnr = bufnr }
+          for _, client in ipairs(clients) do
+            vim.lsp.buf_attach_client(bufnr, client.id)
+          end
+
+          if vim.fn.exists ':TSBufEnable' > 0 then
+            vim.cmd 'TSBufEnable highlight'
+          end
+
+          vim.cmd 'redraw'
+        end, 100)
+      end
+    end
+
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
