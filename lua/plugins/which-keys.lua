@@ -24,10 +24,14 @@ return {
       { '<localleader>t', group = '[T]oggle, [T]est Dap' },
       { '<localleader>w', group = '[W]orkspace' },
       { '<localleader>x', group = '[x] Trouble' },
+
       { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
       { '<leader>s', group = '[S]earch' },
       { '<leader>t', group = '[T]erminal' },
       { '<leader>x', group = '[Ex]ecute' },
+      { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
+      { '<leader>u', group = '[U]i', mode = { 'n' } },
+      { '<leader>v', group = '[V]isual', mode = { 'n' } },
     },
   },
 }

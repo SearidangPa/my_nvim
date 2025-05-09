@@ -99,7 +99,7 @@ return {
     map('n', '<leader>ha', function()
       delete_current_file(true)
       harpoon:list():prepend()
-    end, { desc = 'harpoon [A]dd' })
+    end, { desc = '[H]arpoon [A]dd' })
 
     for _, idx in ipairs { 1, 2, 3, 4 } do
       map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
