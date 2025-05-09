@@ -28,6 +28,8 @@ local function yank_function()
   end
 end
 
+vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
 --- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
