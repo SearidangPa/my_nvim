@@ -56,12 +56,8 @@ end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 vim.keymap.set('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
 vim.keymap.set('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
--- Make U opposite to u.
-vim.keymap.set('n', 'U', '<C-r>', { desc = 'Redo' })
-
 -- =================== Extmarks ===================
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
-map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 -- =================== Window Navigation ===================
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
@@ -99,6 +95,8 @@ map('n', '<S-Enter>', function()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', false)
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
 end, map_opt 'remap Enter') -- yolo :D
+
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
 
