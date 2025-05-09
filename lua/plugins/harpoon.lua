@@ -58,8 +58,7 @@ return {
 
     -- Delete the current file from harpoon
     local function delete_current_file(with_toggle_quick_menu)
-      local currentFileRelative = vim.fn.expand '%:.'
-      -- Normalize path separators for cross-platform compatibility
+      local currentFileRelative = vim.fn.expand '%:p'
       currentFileRelative = currentFileRelative:gsub('\\', '/')
 
       local list = harpoon:list()
