@@ -1,6 +1,7 @@
 return {
   {
     'SearidangPa/theme-loader.nvim',
+    lazy = false,
     priority = 1000,
     config = function() require('theme-loader').setup() end,
   },
