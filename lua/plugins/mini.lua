@@ -1,10 +1,5 @@
 return {
   {
-    'echasnovski/mini.ai.nvim',
-    lazy = true,
-    event = { 'LspAttach', 'BufReadCmd' },
-  },
-  {
     'echasnovski/mini.nvim',
     lazy = true,
     event = { 'BufWritePost', 'LspAttach' },
