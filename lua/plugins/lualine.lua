@@ -94,7 +94,10 @@ return {
         lualine_a = {},
         lualine_b = {
           'diagnostics',
-          { 'FugitiveHead' },
+          {
+            'FugitiveHead',
+            icon = '',
+          },
           {
             get_dir_and_filename,
             color = { fg = '#F38BA8', gui = 'italic' },
