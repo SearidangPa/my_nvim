@@ -2,12 +2,12 @@ return {
   {
     'github/copilot.vim',
     lazy = true,
-    event = 'BufReadPost',
+    event = 'InsertCharPre',
   },
   {
     'SearidangPa/hopcopilot.nvim',
     lazy = true,
-    event = 'BufReadPost',
+    event = 'InsertCharPre',
     config = function()
       local hopcopilot = require 'hopcopilot'
       hopcopilot.setup()

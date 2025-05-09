@@ -2,7 +2,7 @@ return {
   'f-person/git-blame.nvim',
   lazy = true,
   version = '*',
-  event = 'BufReadPost',
+  event = 'LspAttach',
   opts = {
     enabled = false, -- if you want to enable the plugin
     message_template = ' <summary> • <date> • <author> • <<sha>>', -- template for the blame message, check the Message template section for more options

@@ -1,7 +1,7 @@
 return {
   'kevinhwang91/nvim-bqf',
   lazy = true,
-  event = 'BufReadPost',
+  event = { 'LspAttach', 'BufWritePost' },
   ft = 'qf',
   config = function()
     require('bqf').setup {

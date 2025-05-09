@@ -1,7 +1,7 @@
 return {
   'SearidangPa/terminal-multiplexer.nvim',
   lazy = true,
-  event = 'BufReadPost',
+  event = { 'LspAttach', 'BufWritePost' },
   config = function()
     require 'custom.terminals_daemon'
     require 'custom.git_flow'
