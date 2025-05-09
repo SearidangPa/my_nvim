@@ -2,7 +2,7 @@ return {
   'nvim-treesitter/nvim-treesitter',
   build = ':TSUpdate',
   lazy = true,
-  event = 'BufReadCmd',
+  event = 'BufReadPost',
   main = 'nvim-treesitter.configs', -- Sets main module to use for opts
   opts = {
     ensure_installed = { 'go', 'lua' },

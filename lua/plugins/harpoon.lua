@@ -18,29 +18,8 @@ return {
       local item = harpoon:list():get(1)
       if item then
         vim.cmd('edit ' .. item.value)
-
-        vim.defer_fn(function()
-          local bufnr = vim.api.nvim_get_current_buf()
-
-          vim.cmd 'doautocmd BufRead'
-          vim.cmd 'doautocmd BufEnter'
-          local filetype = vim.filetype.match { filename = item.value }
-          if filetype or filetype == '' then
-            return
-          end
-          vim.api.nvim_set_option_value('filetype', filetype, { scope = 'local', win = 0, buf = bufnr })
-
-          local clients = vim.lsp.get_clients { bufnr = bufnr }
-          for _, client in ipairs(clients) do
-            vim.lsp.buf_attach_client(bufnr, client.id)
-          end
-
-          if vim.fn.exists ':TSBufEnable' > 0 then
-            vim.cmd 'TSBufEnable highlight'
-          end
-
-          vim.cmd 'redraw'
-        end, 100)
+        vim.cmd 'doautocmd BufReadPost'
+        vim.cmd 'doautocmd BufEnter'
       end
     end
 
