@@ -8,20 +8,20 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    -- local function is_not_filepath()
-    --   local current_path = vim.fn.expand '%:p'
-    --   local is_directory = vim.fn.isdirectory(current_path) == 1
-    --   return is_directory
-    -- end
-    --
-    -- if is_not_filepath() then
-    --   local item = harpoon:list():get(1)
-    --   if item then
-    --     vim.cmd('edit ' .. item.value)
-    --     vim.cmd 'doautocmd BufReadPost'
-    --     vim.cmd 'doautocmd BufEnter'
-    --   end
-    -- end
+    local function is_not_filepath()
+      local current_path = vim.fn.expand '%:p'
+      local is_directory = vim.fn.isdirectory(current_path) == 1
+      return is_directory
+    end
+
+    if is_not_filepath() then
+      local item = harpoon:list():get(1)
+      if item then
+        vim.cmd('edit ' .. item.value)
+        vim.cmd 'doautocmd BufReadPost'
+        vim.cmd 'doautocmd BufEnter'
+      end
+    end
 
     map('n', '<localleader>ha', function() harpoon:list():add() end, { desc = 'harpoon add at the [B]ack' })
     map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
