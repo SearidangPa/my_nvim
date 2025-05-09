@@ -101,7 +101,6 @@ map('n', '<S-Enter>', function()
 end, map_opt 'remap Enter') -- yolo :D
 
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
-map('n', '<leader>xx', '<cmd>source %<CR>', map_opt '[E]xecute current lua file')
 
 -- === Visual select ===
 map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
