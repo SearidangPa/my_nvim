@@ -56,7 +56,6 @@ return {
       map('n', string.format('<localleader>hd%d', idx), function() delete_at_index(idx) end, { desc = string.format('harpoon delete %d', idx) })
     end
 
-    -- Delete the current file from harpoon
     local function delete_current_file(with_toggle_quick_menu)
       local currentFileRelative = vim.fn.expand '%:p'
       currentFileRelative = currentFileRelative:gsub('\\', '/')
