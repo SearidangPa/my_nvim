@@ -27,7 +27,6 @@ return {
       { '<leader>t', group = '[T]erminal' },
       { '<leader>u', group = '[U]i', mode = { 'n' } },
       { '<leader>v', group = '[V]isual', mode = { 'n' } },
-      { '<leader>x', group = '[Ex]ecute' },
       { '<leader>y', group = '[Y]ank', mode = { 'n' } },
     },
   },
