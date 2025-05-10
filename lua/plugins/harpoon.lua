@@ -85,28 +85,28 @@ return {
       map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
     end
 
-    map('n', '<C-j>', function()
+    map('n', '<C-n>', function()
       local item = harpoon:list():get(1)
       if item then
         vim.cmd('edit ' .. item.value)
       end
     end, { desc = string.format('harpoon select 1', idx) })
 
-    map('n', '<C-k>', function()
+    map('n', '<C-p>', function()
       local item = harpoon:list():get(2)
       if item then
         vim.cmd('edit ' .. item.value)
       end
     end, { desc = string.format('harpoon select 2', idx) })
 
-    map('n', '<C-n>', function()
+    map('n', '<C-,>', function()
       local item = harpoon:list():get(3)
       if item then
         vim.cmd('edit ' .. item.value)
       end
     end, { desc = string.format('harpoon select 3', idx) })
 
-    map('n', '<C-p>', function()
+    map('n', '<C-.>', function()
       local item = harpoon:list():get(4)
       if item then
         vim.cmd('edit ' .. item.value)
