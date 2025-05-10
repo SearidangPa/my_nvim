@@ -93,7 +93,7 @@ map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
 
 -- === Visual select ===
-map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = 'Yank all' })
+map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = '[V]isual [A]ll' })
 map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
