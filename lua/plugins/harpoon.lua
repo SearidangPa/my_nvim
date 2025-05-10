@@ -8,23 +8,6 @@ return {
     harpoon:setup {}
     local map = vim.keymap.set
 
-    local function is_not_filepath()
-      local current_path = vim.fn.expand '%:p'
-      local is_directory = vim.fn.isdirectory(current_path) == 1
-      local is_empty = vim.fn.empty(current_path) == 1
-      return is_directory or is_empty
-    end
-
-    if is_not_filepath() then
-      if vim.fn.has 'win32' == 1 then
-        vim.schedule(function() vim.cmd 'doautocmd BufReadPost' end)
-        harpoon:list():select(1)
-      else
-        harpoon:list():select(1)
-        vim.cmd 'doautocmd BufReadPost'
-      end
-    end
-
     local function delete_at_index(fileIndex)
       harpoon.ui:toggle_quick_menu(harpoon:list())
       for _ = 1, fileIndex - 1 do
@@ -91,25 +74,43 @@ return {
       end)
     end
 
-    map('n', '<C-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
-    map('n', '<C-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-    map('n', '<C-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
-    map('n', "<C-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
-
+    map('n', '<C-e>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
+    map('n', '<leader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
     map('n', '<leader>a', function()
       delete_current_file(true)
       harpoon:list():prepend()
-    end, { desc = '[H]arpoon [A]dd' })
+    end, { desc = 'Harpoon [A]dd' })
 
     for _, idx in ipairs { 1, 2, 3, 4 } do
       map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
-
-      map('n', string.format('<leader>%d', idx), function()
-        local item = harpoon:list():get(idx)
-        if item then
-          vim.cmd('edit ' .. item.value)
-        end
-      end, { desc = string.format('harpoon select %d', idx) })
     end
+
+    map('n', '<C-j>', function()
+      local item = harpoon:list():get(1)
+      if item then
+        vim.cmd('edit ' .. item.value)
+      end
+    end, { desc = string.format('harpoon select 1', idx) })
+
+    map('n', '<C-k>', function()
+      local item = harpoon:list():get(2)
+      if item then
+        vim.cmd('edit ' .. item.value)
+      end
+    end, { desc = string.format('harpoon select 2', idx) })
+
+    map('n', '<C-n>', function()
+      local item = harpoon:list():get(3)
+      if item then
+        vim.cmd('edit ' .. item.value)
+      end
+    end, { desc = string.format('harpoon select 3', idx) })
+
+    map('n', '<C-p>', function()
+      local item = harpoon:list():get(4)
+      if item then
+        vim.cmd('edit ' .. item.value)
+      end
+    end, { desc = string.format('harpoon select 4', idx) })
   end,
 }
