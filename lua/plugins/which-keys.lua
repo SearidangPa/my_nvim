@@ -10,10 +10,10 @@ return {
 
     -- Document existing key chains
     spec = {
-      { '<localleader>a', group = '[A]i' },
-      { '<localleader>d', group = '[D]elete' },
-      { '<localleader>r', group = '[R]ename' },
-      { '<localleader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+      { '<localleader>a', group = '[a]i' },
+      { '<localleader>f', group = '[f]iles' },
+      { '<localleader>d', group = '[d]elete' },
+      { '<localleader>r', group = '[r]ename' },
       { '<localleader>t', group = '[T]oggle' },
       { '<localleader>x', group = '[x] Trouble' },
 

@@ -47,6 +47,25 @@ return {
   },
 
   keys = {
+    {
+      '<localleader>fp',
+      function()
+        Snacks.picker.files {
+          cwd = vim.fs.joinpath(tostring(vim.fn.stdpath 'data'), 'lazy'),
+        }
+      end,
+      desc = 'Find Plugin Files',
+    },
+    {
+      '<localleader>fc',
+      function()
+        Snacks.picker.files {
+          cwd = vim.fn.stdpath 'config',
+        }
+      end,
+      desc = 'Find Neovim Config Files',
+    },
+
     -- === git ===
     { '<leader>gf', function() Snacks.picker.git_log_file() end, desc = 'Git Log File' },
     { '<leader>gl', function() Snacks.picker.git_log() end, desc = 'Git Log' },
