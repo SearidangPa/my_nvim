@@ -66,9 +66,18 @@ require('lazy').setup {
   },
 }
 
-require 'config.keymaps'
+vim.defer_fn(function()
+  require 'config.keymaps'
+  require 'custom.terminals_daemon'
+  require 'custom.git_flow'
+  if vim.fn.has 'win32' ~= 1 then
+    require 'custom.push_with_qwen'
+  end
+  require 'config.scratch'
+  require 'custom.async_job'
 
-vim.treesitter.language.register('bash', 'zsh') -- ducktape solution because there is no treesitter support for zsh
+  vim.treesitter.language.register('bash', 'zsh')
+end, 0)
 
 local yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
