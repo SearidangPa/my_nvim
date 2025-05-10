@@ -28,14 +28,7 @@ local function yank_function()
   end
 end
 
-local function set_save_theme(opts)
-  local theme_loader = require 'theme-loader'
-  theme_loader.set_theme { opts }
-  theme_loader.save_theme_preference { opts }
-end
-
-vim.keymap.set('n', '<leader>ul', function() set_save_theme { is_light_mode = true } end, { desc = '[U]i [L]ight' })
-vim.keymap.set('n', '<leader>ur', function() set_save_theme { is_light_mode = false } end, { desc = '[U]i [R]ose-Pine' })
+vim.keymap.set('n', '<leader>ut', function() require('theme-loader').set_os_theme() end, { desc = '[U]i [T]heme' })
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
