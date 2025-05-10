@@ -89,17 +89,17 @@ return {
     { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
 
-    { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
-    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
+
+    { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
     { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
     { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
-    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
 
+    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
     --- === Most heavily used
     {
       '<leader>f',
