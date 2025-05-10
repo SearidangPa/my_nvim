@@ -29,7 +29,6 @@ local function yank_function()
 end
 
 vim.keymap.set('n', '<leader>ut', function() require('theme-loader').set_os_theme() end, { desc = '[U]i [T]heme' })
-
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
   'n',
@@ -173,6 +172,7 @@ end
 
 vim.keymap.set({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 vim.keymap.set('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
+vim.keymap.set('i', '<C-CR>', '<Esc>', map_opt '[Esc]')
 
 vim.keymap.set('v', '<leader>r', function()
   vim.cmd 'normal! y'
