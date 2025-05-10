@@ -35,7 +35,12 @@ return {
     end
 
     local function delete_current_file(with_toggle_quick_menu)
-      local currentFileRelative = vim.fn.expand '%:p'
+      local currentFileRelative
+      if vim.fn.has 'win32' == 1 then
+        currentFileRelative = vim.fn.expand '%:p'
+      else
+        currentFileRelative = vim.fn.expand '%:.'
+      end
       currentFileRelative = currentFileRelative:gsub('\\', '/')
 
       local list = harpoon:list()
