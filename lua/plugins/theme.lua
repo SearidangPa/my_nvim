@@ -4,6 +4,11 @@ return {
     name = 'catppuccin',
     lazy = true,
   },
+  {
+    'projekt0n/github-nvim-theme',
+    name = 'github-theme',
+    lazy = true,
+  },
 
   {
     'rose-pine/neovim',
