@@ -1,7 +1,7 @@
 return {
   'folke/which-key.nvim',
   lazy = true,
-  event = 'BufEnter',
+  event = 'VeryLazy',
   opts = {
     icons = {
       mappings = vim.g.have_nerd_font,
