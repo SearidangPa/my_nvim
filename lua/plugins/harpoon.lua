@@ -86,15 +86,10 @@ return {
       end)
     end
 
-    map('n', '<D-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-    map('n', '<D-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
-    map('n', "<D-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
-
     map('n', '<C-p>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
-
-    map('n', '<M-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
-    map('n', '<M-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
-    map('n', "<M-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
+    map('n', '<C-l>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+    map('n', '<C-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
+    map('n', "<C-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
 
     map('n', '<leader>ha', function()
       delete_current_file(true)
