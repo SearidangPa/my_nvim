@@ -121,10 +121,5 @@ return {
         },
       },
     },
-    inactive_sections = {
-      tabline = {
-        lualine_a = {},
-      },
-    },
   },
 }
