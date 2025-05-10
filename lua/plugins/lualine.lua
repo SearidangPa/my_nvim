@@ -6,6 +6,7 @@ local function nearest_func_name_if_exists()
     return ''
   end
   local util_find_func = require 'config.util_find_func'
+
   local func_node = util_find_func.nearest_func_node()
 
   for child in func_node:iter_children() do
