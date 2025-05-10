@@ -62,18 +62,11 @@ map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
 map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
--- =================== Terminal ===================
-map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
--- =================== delete ===================
-map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 
--- =================== Insert Empty Lines ===================
+map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) -- exit terminal mode
+map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 map('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
-
--- =================== LSP diagnostic ===================
-map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
-map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
@@ -121,6 +114,8 @@ map('n', '<localleader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
+map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
+map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
 -- === Quickfix navigation ===
 map('n', ']q', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
 map('n', '[q', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })

@@ -86,17 +86,21 @@ return {
     { '<leader>sh', function() Snacks.picker.help() end, desc = 'Help Pages' },
     { '<leader>sk', function() Snacks.picker.keymaps() end, desc = 'Keymaps' },
 
-    { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
+    { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
     { '<leader>sa', function() Snacks.picker.autocmds() end, desc = 'Autocmds' },
-    { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
+
+    { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
-    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
     { '<leader>s"', function() Snacks.picker.registers() end, desc = 'Registers' },
     { '<leader>sm', function() Snacks.picker.marks() end, desc = 'Marks' },
     { '<leader>sq', function() Snacks.picker.qflist() end, desc = 'Quickfix List' },
 
+    { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
     { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>:', function() Snacks.picker.command_history() end, desc = 'Command History' },
+    { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },
+
+    --- === Most heavily used
     {
       '<leader>f',
       function()
@@ -108,12 +112,11 @@ return {
       desc = 'Find Files',
     },
     { '<leader>o', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
-    { '<leader>O', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep [Open Buffers' },
-    { '<leader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<leader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
+    { '<leader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
     { '<leader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
     { '<leader>e', function() Snacks.picker.git_diff() end, desc = 'Git Diff Hunks (Edited)' },
     { '<leader>j', function() Snacks.picker.jumps() end, desc = 'Registers' },
-    { '<leader>uc', function() Snacks.picker.colorschemes() end, desc = 'Colorschemes' },
+    { '<leader>O', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep [Open Buffers' },
   },
 }
