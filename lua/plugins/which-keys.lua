@@ -10,17 +10,14 @@ return {
 
     -- Document existing key chains
     spec = {
-
       { '<localleader>a', group = '[A]i' },
-      { '<localleader>c', group = '[C]olorscheme, [C]lear, [C]urrent, [C]opy', mode = 'n', expr = false, noremap = true },
-      { '<localleader>d', group = '[D]ocument, [D]elete, [D]ap' },
-      { '<localleader>e', group = '[E]dit' },
+      { '<localleader>d', group = '[D]elete' },
       { '<localleader>r', group = '[R]ename' },
       { '<localleader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
-      { '<localleader>t', group = '[T]oggle, [T]est Dap' },
-      { '<localleader>w', group = '[W]orkspace' },
+      { '<localleader>t', group = '[T]oggle' },
       { '<localleader>x', group = '[x] Trouble' },
 
+      { '<leader>c', group = '[C]lear' },
       { '<leader>m', group = '[M]ake' },
       { '<leader>g', group = '[G]it' },
       { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
