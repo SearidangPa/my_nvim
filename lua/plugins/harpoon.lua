@@ -91,7 +91,7 @@ return {
     map('n', '<C-;>', function() harpoon:list():prev() end, { desc = 'harpoon next' })
     map('n', "<C-'>", function() harpoon:list():next() end, { desc = 'harpoon prev' })
 
-    map('n', '<leader>ha', function()
+    map('n', '<leader>a', function()
       delete_current_file(true)
       harpoon:list():prepend()
     end, { desc = '[H]arpoon [A]dd' })
