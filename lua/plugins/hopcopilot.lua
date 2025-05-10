@@ -44,7 +44,6 @@ return {
       local map = vim.keymap.set
       map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
       map('i', '<M-l>', function() accept { no_indentation = true, only_one_line = true } end, { expr = true, silent = true, desc = 'Accept Copilot' })
-
       map('i', '<D-y>', function() accept {} end, { expr = true, silent = true, desc = 'Accept Copilot' })
       map('i', '<M-y>', function() accept {} end, { expr = true, silent = true, desc = 'Accept Copilot' })
     end,
