@@ -20,11 +20,6 @@ return {
     version = '*',
   },
   {
-    'williamboman/mason.nvim',
-    lazy = true,
-    version = '*',
-  },
-  {
     'mfussenegger/nvim-dap',
     lazy = true,
     version = '*',
