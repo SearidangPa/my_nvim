@@ -127,16 +127,8 @@ map('n', '[q', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-
 map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<leader>qt', function()
-  if vim.fn.getwininfo(vim.fn.win_getid())[1].quickfix == 1 then
-    vim.cmd 'cclose'
-  else
-    vim.cmd 'copen'
-  end
-end, { desc = 'toggle diagnostic windows' })
-map('n', '<leader>qf', vim.diagnostic.open_float, { desc = 'Open diagnostic [f]loat' })
+map('n', '<leader>z', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
 
 --- === Quickfix load ===
 map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
