@@ -121,5 +121,8 @@ return {
         },
       },
     },
+    inactive_sections = {
+      tabline = {},
+    },
   },
 }
