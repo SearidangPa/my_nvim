@@ -1,7 +1,7 @@
 return {
   'ThePrimeagen/harpoon',
   lazy = true,
-  event = 'VeryLazy',
+  event = 'BufEnter',
   branch = 'harpoon2',
   config = function()
     local harpoon = require 'harpoon'
@@ -16,11 +16,11 @@ return {
     end
 
     if is_not_filepath() then
-      harpoon:list():select(1)
-
       if vim.fn.has 'win32' == 1 then
         vim.schedule(function() vim.cmd 'doautocmd BufReadPost' end)
+        harpoon:list():select(1)
       else
+        harpoon:list():select(1)
         vim.cmd 'doautocmd BufReadPost'
       end
     end
