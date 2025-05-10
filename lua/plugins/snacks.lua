@@ -90,7 +90,7 @@ return {
     { '<leader>s/', function() Snacks.picker.lines() end, desc = 'Buffer Lines' },
     { '<leader>su', function() Snacks.picker.undo() end, desc = 'Undo History' },
     { '<leader>sr', function() Snacks.picker.resume() end, desc = 'Resume' },
-    { '<leader>so', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep Open Buffers' },
+    { '<leader>O', function() Snacks.picker.grep_buffers { cmd = 'rg' } end, desc = 'Grep [Open Buffers' },
 
     { '<leader>sd', function() Snacks.picker.diagnostics() end, desc = 'Diagnostics' },
     { '<leader>sw', function() Snacks.picker.grep_word() end, desc = 'Visual selection or word', mode = { 'n', 'x' } },

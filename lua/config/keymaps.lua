@@ -172,6 +172,7 @@ end
 
 vim.keymap.set({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 vim.keymap.set('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
+vim.keymap.set('i', '<BS>', '<ESC>', map_opt 'Show [M]essages')
 
 vim.keymap.set('v', '<leader>r', function()
   vim.cmd 'normal! y'
