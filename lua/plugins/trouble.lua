@@ -19,12 +19,12 @@ return {
       desc = 'Diagnostics (Trouble)',
     },
     {
-      '<localleader>ts',
+      '<leader>ts',
       '<cmd>Trouble symbols toggle focus=false<cr>',
       desc = 'Symbols (Trouble)',
     },
     {
-      '<localleader>tt',
+      '<leader>tt',
       '<cmd>Trouble toggle snacks<cr>',
       desc = 'Toggle Trouble Window',
     },
