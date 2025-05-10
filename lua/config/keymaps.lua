@@ -128,7 +128,7 @@ map('n', '[q', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 -- === Quickfix window controls ===
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
 map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<leader>z', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
+map('n', '<leader>x', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
 
 --- === Quickfix load ===
 map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
