@@ -99,14 +99,14 @@ return {
       end
     end, { desc = string.format('harpoon select 2', idx) })
 
-    map('n', '<C-,>', function()
+    map('n', '<C-j>', function()
       local item = harpoon:list():get(3)
       if item then
         vim.cmd('edit ' .. item.value)
       end
     end, { desc = string.format('harpoon select 3', idx) })
 
-    map('n', '<C-.>', function()
+    map('n', '<C-k>', function()
       local item = harpoon:list():get(4)
       if item then
         vim.cmd('edit ' .. item.value)
