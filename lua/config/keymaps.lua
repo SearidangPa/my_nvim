@@ -122,8 +122,8 @@ map('n', '<localleader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
 -- === Quickfix navigation ===
-map('n', '<leader>qn', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
-map('n', '<leader>qp', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
+map('n', ']q', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
+map('n', '[q', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
 
 -- === Quickfix window controls ===
 map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
