@@ -84,7 +84,7 @@ return {
   'nvim-lualine/lualine.nvim',
   version = '*',
   lazy = true,
-  event = 'BufEnter',
+  event = 'VeryLazy',
   opts = {
     options = {
       globalstatus = true,

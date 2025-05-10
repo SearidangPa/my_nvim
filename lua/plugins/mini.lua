@@ -2,7 +2,7 @@ return {
   {
     'echasnovski/mini.nvim',
     lazy = true,
-    event = { 'BufWritePost', 'LspAttach' },
+    event = { 'VeryLazy' },
     config = function()
       require('mini.ai').setup()
       require('mini.icons').setup()

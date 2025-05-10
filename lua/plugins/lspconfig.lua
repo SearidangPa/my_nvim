@@ -2,7 +2,7 @@ return {
   {
     'neovim/nvim-lspconfig',
     version = '*',
-    event = 'BufReadPost',
+    event = 'VeryLazy',
     config = function()
       local function attach_auto_import()
         vim.api.nvim_create_autocmd('BufWritePre', {
@@ -152,7 +152,7 @@ return {
     config = true,
     version = '*',
     lazy = true,
-    event = { 'BufReadPost', 'LspAttach' },
+    event = { 'VeryLazy' },
   },
   {
     'folke/lazydev.nvim',
