@@ -124,8 +124,8 @@ return {
           include_declaration = false,
           filter = {
             filter = function(item, _)
-              local file_path = item.filename or ''
-              return not (file_path:match '_test%.go$' or file_path:match '/[^/]*test/')
+              local file_path = item.file
+              return not file_path:match 'test'
             end,
           },
         }
