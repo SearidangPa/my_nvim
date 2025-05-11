@@ -14,7 +14,6 @@ return {
       { '<localleader>f', group = '[f]iles' },
       { '<localleader>d', group = '[d]elete' },
       { '<localleader>r', group = '[r]ename' },
-      { '<localleader>x', group = '[x] Trouble' },
 
       { '<leader>m', group = '[M]ake' },
       { '<leader>g', group = '[G]it' },
