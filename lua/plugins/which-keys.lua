@@ -17,7 +17,6 @@ return {
       { '<localleader>t', group = '[T]oggle' },
       { '<localleader>x', group = '[x] Trouble' },
 
-      { '<leader>c', group = '[C]lear' },
       { '<leader>m', group = '[M]ake' },
       { '<leader>g', group = '[G]it' },
       { '<leader>h', group = '[H]arpoon', mode = { 'n' } },
