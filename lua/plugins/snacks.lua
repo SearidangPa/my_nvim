@@ -112,7 +112,27 @@ return {
     },
     { '<leader>o', function() Snacks.picker.buffers() end, desc = 'Grep Open Buffers' },
     { '<leader>d', function() Snacks.picker.lsp_symbols() end, desc = 'LSP Symbols' },
-    { '<leader>r', function() Snacks.picker.lsp_references() end, nowait = true, desc = 'References' },
+    { '<leader>r', function()
+      Snacks.picker.lsp_references {
+        include_declaration = false,
+      }
+    end, nowait = true, desc = 'References' },
+    {
+      'gR',
+      function()
+        Snacks.picker.lsp_references {
+          include_declaration = false,
+          filter = {
+            filter = function(item, _)
+              local file_path = item.filename or ''
+              return not (file_path:match '_test%.go$' or file_path:match '/[^/]*test/')
+            end,
+          },
+        }
+      end,
+      nowait = true,
+      desc = 'References (no tests)',
+    },
     { '<leader>w', function() Snacks.picker.lsp_workspace_symbols() end, desc = 'LSP Workspace Symbols' },
     { '<leader>e', function() Snacks.picker.git_diff() end, desc = 'Git Diff Hunks (Edited)' },
     { '<leader>j', function() Snacks.picker.jumps() end, desc = 'Registers' },

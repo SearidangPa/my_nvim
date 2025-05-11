@@ -2,17 +2,17 @@ return {
   {
     'github/copilot.vim',
     lazy = true,
-    event = 'VeryLazy',
+    event = 'BufReadPost',
   },
   {
     'SearidangPa/hopcopilot.nvim',
     lazy = true,
-    event = 'VeryLazy',
+    event = 'BufReadPost',
     config = function()
       local hopcopilot = require 'hopcopilot'
       hopcopilot.setup()
-      vim.keymap.set('i', '<M-s>', hopcopilot.hop_copilot, { silent = true, desc = 'hop copilot' })
-      vim.keymap.set('i', '<D-s>', hopcopilot.hop_copilot, { silent = true, desc = 'hop copilot' })
+      vim.keymap.set('i', '<M-s>', hopcopilot.hop_copilot, { expr = true, silent = true, desc = 'hop copilot' })
+      vim.keymap.set('i', '<D-s>', hopcopilot.hop_copilot, { expr = true, silent = true, desc = 'hop copilot' })
 
       ---@class copilot_accept_opts
       ---@field only_one_line boolean
