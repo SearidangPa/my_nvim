@@ -96,12 +96,13 @@ return {
           color = { fg = '#F38BA8', gui = 'italic' },
         },
       },
-      lualine_c = {},
-      lualine_x = {
+      lualine_c = {
         {
           nearest_func_name_if_exists,
-          color = { fg = '#F38BA8', gui = 'italic' },
+          color = { fg = '#DCA1A1', gui = 'italic' },
         },
+      },
+      lualine_x = {
         {
           get_harpoon_filenames,
           color = { fg = '#DCA1A1', gui = 'italic' },
