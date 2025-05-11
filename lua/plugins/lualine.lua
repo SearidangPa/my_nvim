@@ -13,35 +13,33 @@ local function nearest_func_name_if_exists()
 end
 
 local function get_harpoon_filenames()
-  vim.schedule(function()
-    local harpoon = require 'harpoon'
-    local harpoonList = harpoon:list()
-    local length = harpoonList:length()
-    if length == 0 then
-      return ''
-    end
-    local root_dir = harpoonList.config:get_root_dir()
-    local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
-    local current_file_path = vim.api.nvim_buf_get_name(0)
-    local result = {}
-    local max_num_files_displayed = 4
+  local harpoon = require 'harpoon'
+  local harpoonList = harpoon:list()
+  local length = harpoonList:length()
+  if length == 0 then
+    return ''
+  end
+  local root_dir = harpoonList.config:get_root_dir()
+  local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
+  local current_file_path = vim.api.nvim_buf_get_name(0)
+  local result = {}
+  local max_num_files_displayed = 4
 
-    for i = 1, math.min(length, max_num_files_displayed) do
-      local path = harpoonList:get(i).value
-      local filename = vim.fn.fnamemodify(path, ':t')
-      local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
-      local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-      if i > 1 then
-        table.insert(result, ' | ')
-      end
-      if fullpath == current_file_path then
-        table.insert(result, '[' .. filename .. ']')
-      else
-        table.insert(result, filename)
-      end
+  for i = 1, math.min(length, max_num_files_displayed) do
+    local path = harpoonList:get(i).value
+    local filename = vim.fn.fnamemodify(path, ':t')
+    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
+    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
+    if i > 1 then
+      table.insert(result, ' | ')
     end
-    return table.concat(result)
-  end)
+    if fullpath == current_file_path then
+      table.insert(result, '[' .. filename .. ']')
+    else
+      table.insert(result, filename)
+    end
+  end
+  return table.concat(result)
 end
 
 local function get_dir_and_filename()
