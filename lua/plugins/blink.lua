@@ -6,7 +6,6 @@ keymaps['<C-n>'] = { 'select_next', 'fallback' }
 keymaps['<C-b>'] = { 'scroll_documentation_up', 'fallback' }
 keymaps['<C-f>'] = { 'scroll_documentation_down', 'fallback' }
 keymaps['<C-e>'] = { 'hide' }
-keymaps['<Tab>'] = { 'select_next' }
 
 local snippets = {
   preset = 'luasnip',
