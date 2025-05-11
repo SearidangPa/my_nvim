@@ -82,7 +82,10 @@ return {
     end, { desc = 'Harpoon [A]dd' })
 
     for _, idx in ipairs { 1, 2, 3, 4 } do
-      map('n', string.format('<leader>h%d', idx), function() add_at_index(idx) end, { desc = string.format('harpoon add at index%d', idx) })
+      map('n', string.format('<leader>%d', idx), function()
+        require('fidget').notify(string.format('harpoon add at index%d', idx))
+        add_at_index(idx)
+      end, { desc = string.format('harpoon add at index%d', idx) })
     end
 
     map('n', '<C-j>', function()
