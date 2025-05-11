@@ -14,7 +14,6 @@ return {
       { '<localleader>f', group = '[f]iles' },
       { '<localleader>d', group = '[d]elete' },
       { '<localleader>r', group = '[r]ename' },
-      { '<localleader>t', group = '[T]oggle' },
       { '<localleader>x', group = '[x] Trouble' },
 
       { '<leader>m', group = '[M]ake' },
@@ -23,7 +22,7 @@ return {
       { '<leader>p', group = '[P]ush' },
       { '<leader>q', group = '[Q]uickfix' },
       { '<leader>s', group = '[S]earch' },
-      { '<leader>t', group = '[T]erminal' },
+      { '<leader>t', group = '[T]oggle' },
       { '<leader>u', group = '[U]i', mode = { 'n' } },
       { '<leader>v', group = '[V]isual', mode = { 'n' } },
       { '<leader>y', group = '[Y]ank', mode = { 'n' } },
