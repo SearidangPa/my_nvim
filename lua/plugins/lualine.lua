@@ -1,10 +1,4 @@
-local show_func_name = false
-vim.keymap.set('n', '<leader>uf', function() show_func_name = not show_func_name end, { desc = 'Toggle function name in statusline' })
-
 local function nearest_func_name_if_exists()
-  if not show_func_name then
-    return ''
-  end
   local util_find_func = require 'config.util_find_func'
 
   local func_node = util_find_func.nearest_func_node()
@@ -16,36 +10,6 @@ local function nearest_func_name_if_exists()
     end
   end
   return ''
-end
-
-local function get_harpoon_filenames()
-  local harpoon = require 'harpoon'
-  local harpoonList = harpoon:list()
-  local length = harpoonList:length()
-  if length == 0 then
-    return ''
-  end
-  local root_dir = harpoonList.config:get_root_dir()
-  local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
-  local current_file_path = vim.api.nvim_buf_get_name(0)
-  local result = {}
-  local max_num_files_displayed = 4
-
-  for i = 1, math.min(length, max_num_files_displayed) do
-    local path = harpoonList:get(i).value
-    local filename = vim.fn.fnamemodify(path, ':t')
-    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
-    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-    if i > 1 then
-      table.insert(result, ' | ')
-    end
-    if fullpath == current_file_path then
-      table.insert(result, '[' .. filename .. ']')
-    else
-      table.insert(result, filename)
-    end
-  end
-  return table.concat(result)
 end
 
 local function get_dir_and_filename()
@@ -103,23 +67,14 @@ return {
         },
       },
       lualine_c = {},
-      lualine_x = {},
-      lualine_y = {},
-      lualine_z = {},
-    },
-    tabline = {
-      lualine_c = {
+      lualine_x = {
         {
           nearest_func_name_if_exists,
           color = { fg = '#DCA1A1', gui = 'italic' },
         },
       },
-      lualine_x = {
-        {
-          get_harpoon_filenames,
-          color = { fg = '#DCA1A1', gui = 'italic' },
-        },
-      },
+      lualine_y = {},
+      lualine_z = {},
     },
   },
 }
