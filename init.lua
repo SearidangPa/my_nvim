@@ -75,6 +75,7 @@ vim.defer_fn(function()
   end
   require 'config.scratch'
   require 'custom.async_job'
+  require 'config.fold_tree'
 
   vim.treesitter.language.register('bash', 'zsh')
 end, 0)
