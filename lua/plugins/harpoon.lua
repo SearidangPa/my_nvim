@@ -82,7 +82,7 @@ return {
     end, { desc = 'Harpoon [A]dd' })
 
     for _, idx in ipairs { 1, 2, 3, 4 } do
-      map('n', string.format('<leader>%d', idx), function()
+      map('n', string.format('<leader>h%d', idx), function()
         require('fidget').notify(string.format('harpoon add at index%d', idx))
         add_at_index(idx)
       end, { desc = string.format('harpoon add at index%d', idx) })
@@ -93,27 +93,27 @@ return {
       if item then
         vim.cmd('edit ' .. item.value)
       end
-    end, { desc = string.format('harpoon select 1', idx) })
+    end, { desc = 'harpoon select 1' })
 
     map('n', '<C-k>', function()
       local item = harpoon:list():get(2)
       if item then
         vim.cmd('edit ' .. item.value)
       end
-    end, { desc = string.format('harpoon select 2', idx) })
+    end, { desc = 'harpoon select 2' })
 
     map('n', '<C-n>', function()
       local item = harpoon:list():get(3)
       if item then
         vim.cmd('edit ' .. item.value)
       end
-    end, { desc = string.format('harpoon select 3', idx) })
+    end, { desc = 'harpoon select 3' })
 
     map('n', '<C-p>', function()
       local item = harpoon:list():get(4)
       if item then
         vim.cmd('edit ' .. item.value)
       end
-    end, { desc = string.format('harpoon select 4', idx) })
+    end, { desc = 'harpoon select 4' })
   end,
 }
