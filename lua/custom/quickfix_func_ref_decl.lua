@@ -43,7 +43,7 @@ function M.find_enclosing_function(uri, ref_line)
   vim.fn.bufload(bufnr)
 
   -- Find the nearest function declaration at the reference line
-  local func_node = util_find_func.nearest_function_at_line(bufnr, ref_line)
+  local func_node = util_find_func.enclosing_function_at_line(bufnr, ref_line)
   if not func_node then
     print('No enclosing function found for reference at line', ref_line + 1)
     return nil
@@ -63,11 +63,9 @@ function M.find_enclosing_function(uri, ref_line)
   func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_identifier:range()
 
   local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
-
   if M.processed_funcs[func_key] then
     return nil
   end
-
   M.processed_funcs[func_key] = true
 
   -- Get the complete function signature from the line
@@ -87,7 +85,7 @@ function M.find_enclosing_function(uri, ref_line)
   }
 end
 
-function M.lsp_ref_func_decl(bufnr, line, col)
+function M.load_decl_func_reference(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -134,7 +132,7 @@ function M.load_func_refs()
       end
     end
     local start_row, start_col = func_identifier:range()
-    M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
+    M.load_decl_func_reference(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
     M.last_func_decls = M.new_func_decls
     return
   end
@@ -144,7 +142,7 @@ function M.load_func_refs()
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
-    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+    M.load_decl_func_reference(bufnr, item.lnum, item.col)
   end
   M.last_func_decls = M.new_func_decls
 end
