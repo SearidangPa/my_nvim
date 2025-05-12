@@ -123,6 +123,7 @@ function M.lsp_ref_func_decl(bufnr, line, col)
 end
 
 function M.load_func_refs()
+  -- first time loading function declarations that refer to this function
   if vim.fn.getqflist({ size = 0 }).size == 0 then
     local func_node = util_find_func.nearest_func_node()
     assert(func_node, 'No function found')
@@ -135,16 +136,17 @@ function M.load_func_refs()
     local start_row, start_col = func_identifier:range()
     M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
     M.last_func_decls = M.new_func_decls
-  else
-    M.new_func_decls = {}
-    for _, item in ipairs(M.last_func_decls) do
-      local filename = item.filename
-      local bufnr = vim.fn.bufadd(filename)
-      vim.fn.bufload(bufnr)
-      M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
-    end
-    M.last_func_decls = M.new_func_decls
+    return
   end
+
+  M.new_func_decls = {}
+  for _, item in ipairs(M.last_func_decls) do
+    local filename = item.filename
+    local bufnr = vim.fn.bufadd(filename)
+    vim.fn.bufload(bufnr)
+    M.lsp_ref_func_decl(bufnr, item.lnum, item.col)
+  end
+  M.last_func_decls = M.new_func_decls
 end
 
 vim.api.nvim_create_user_command('ClearQuickFix', function()
