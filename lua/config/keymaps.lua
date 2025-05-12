@@ -40,7 +40,6 @@ vim.keymap.set(
   { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' }
 )
 
---- === Powerful Esc. Copied from Maria SolOs ===
 vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
     require('luasnip').unlink_current()
@@ -51,9 +50,8 @@ end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 vim.keymap.set('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
 vim.keymap.set('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
--- =================== Extmarks ===================
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
--- =================== Window Navigation ===================
+
 vim.api.nvim_create_user_command('Split4060', function()
   local total = vim.o.columns
   local left = math.floor(total * 0.4)
