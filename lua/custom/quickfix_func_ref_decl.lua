@@ -1,12 +1,12 @@
 local M = {}
 local util_find_func = require 'config.util_find_func'
 
----@type QFList
+---@type QFList[]
 M.qflist = {}
 
 M.processed_funcs = {} -- Track function declarations we've already added
 
----@type QFList
+---@type QFList[]
 M.new_func_decls = {} -- Track recent function declarations
 M.last_func_decls = {} -- Track last function declarations
 
@@ -32,7 +32,7 @@ function M.add_to_quickfix(qflist, filename, location, text)
   return true
 end
 
-function M.find_enclosing_function(uri, ref_line, ref_col)
+function M.find_enclosing_function(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
     return nil
@@ -109,7 +109,7 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
       local ref_col = range.start.character
-      local func_ref_decl = M.find_enclosing_function(uri, ref_line, ref_col)
+      local func_ref_decl = M.find_enclosing_function(uri, ref_line)
       if func_ref_decl then
         local make_notify = require('mini.notify').make_notify {}
         make_notify(string.format('found: %s', func_ref_decl.func_name))
