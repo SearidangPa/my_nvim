@@ -1,6 +1,6 @@
 local keymaps = {}
 keymaps.preset = 'none'
-keymaps['<Tab>'] = { 'select_and_accept' }
+keymaps['<Tab>'] = { 'select_and_accept', 'fallback' }
 keymaps['<C-y>'] = { 'select_and_accept' }
 keymaps['<C-p>'] = { 'select_prev', 'fallback' }
 keymaps['<C-n>'] = { 'select_next', 'fallback' }
