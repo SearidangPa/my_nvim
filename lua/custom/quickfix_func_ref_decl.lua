@@ -32,6 +32,13 @@ function M.add_to_quickfix(qflist, filename, location, text)
   return true
 end
 
+--[[
+Finds the enclosing function for a given line in a file.
+- Skips test files and ensures the buffer is loaded.
+- Uses Treesitter to locate the nearest function declaration.
+- Extracts the function name, range, and signature for further processing.
+- Avoids reprocessing functions that have already been handled.
+]]
 function M.find_enclosing_function(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
@@ -85,6 +92,11 @@ function M.find_enclosing_function(uri, ref_line)
   }
 end
 
+--[[
+  - Loads declaration of function that references the pos.
+  - Filters out test files and adds valid references to the quickfix list.
+  - Opens the quickfix window to display the results.
+]]
 function M.load_decl_func_reference(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')

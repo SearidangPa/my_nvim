@@ -53,8 +53,10 @@ opts.prompt_library = {
               .. '\n'
               .. code
               .. '\n```'
-          else
+          elseif context.filetype == 'lua' then
             return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the code block.'
+              .. 'I want it inside --[['
+              .. ']]'
               .. '\n'
               .. code
               .. '\n```'
@@ -73,7 +75,7 @@ return {
   'olimorris/codecompanion.nvim',
   lazy = true,
   version = '*',
-  event = { 'LspAttach' },
+  event = 'VeryLazy',
   config = function()
     require('custom.fidget_spinner_for_ai'):init()
     require('codecompanion').setup {
@@ -86,14 +88,12 @@ return {
       },
     }
 
-    vim.keymap.set({ 'v', 'n' }, '<localleader>av', function()
-      require('codecompanion').prompt 'docfn'
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true) {
-        noremap = true,
-        silent = true,
-        desc = '[A]dd [D]oc to a function',
-      }
-    end, { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' })
+    vim.keymap.set(
+      { 'v', 'n' },
+      '<localleader>av',
+      function() require('codecompanion').prompt 'docfn' end,
+      { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' }
+    )
 
     vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
       local util_find_func = require 'config.util_find_func'
