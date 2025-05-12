@@ -123,8 +123,8 @@ function M.lsp_ref_func_decl(bufnr, line, col)
 end
 
 function M.load_func_refs()
-  -- first time loading function declarations that refer to this function
   if vim.fn.getqflist({ size = 0 }).size == 0 then
+    -- first time loading function declarations that refer to this function
     local func_node = util_find_func.nearest_func_node()
     assert(func_node, 'No function found')
     local func_identifier
