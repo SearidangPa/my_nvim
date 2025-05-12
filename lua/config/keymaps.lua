@@ -30,7 +30,8 @@ end
 
 vim.keymap.set({ 'i', 'v' }, '<Del>', '<ESC>', { desc = 'Escape Insert mode' })
 
-vim.keymap.set('n', '<leader>ut', function() require('theme-loader').set_os_theme() end, { desc = '[U]i [T]heme' })
+vim.keymap.set('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
+
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
 vim.keymap.set(
   'n',
