@@ -86,34 +86,13 @@ return {
         require('fidget').notify(string.format('harpoon add at index%d', idx))
         add_at_index(idx)
       end, { desc = string.format('harpoon add at index%d', idx) })
+
+      map('n', string.format('<leader>%d', idx), function()
+        local item = harpoon:list():get(idx)
+        if item then
+          vim.cmd('edit ' .. item.value)
+        end
+      end, { desc = string.format('harpoon select %d', idx) })
     end
-
-    map('n', '<C-j>', function()
-      local item = harpoon:list():get(1)
-      if item then
-        vim.cmd('edit ' .. item.value)
-      end
-    end, { desc = 'harpoon select 1' })
-
-    map('n', '<C-k>', function()
-      local item = harpoon:list():get(2)
-      if item then
-        vim.cmd('edit ' .. item.value)
-      end
-    end, { desc = 'harpoon select 2' })
-
-    map('n', '<C-n>', function()
-      local item = harpoon:list():get(3)
-      if item then
-        vim.cmd('edit ' .. item.value)
-      end
-    end, { desc = 'harpoon select 3' })
-
-    map('n', '<C-p>', function()
-      local item = harpoon:list():get(4)
-      if item then
-        vim.cmd('edit ' .. item.value)
-      end
-    end, { desc = 'harpoon select 4' })
   end,
 }

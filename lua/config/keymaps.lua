@@ -63,8 +63,8 @@ end, {})
 
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
-map('n', '<D-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
-map('n', '<D-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
+map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
+map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) -- exit terminal mode
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
