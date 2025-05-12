@@ -54,8 +54,7 @@ opts.prompt_library = {
               .. code
               .. '\n```'
           else
-            return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
-              .. 'The first nonempty line should start with the function name and its purpose.'
+            return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the code block.'
               .. '\n'
               .. code
               .. '\n```'
@@ -86,6 +85,15 @@ return {
         inline = { adapter = 'copilot' },
       },
     }
+
+    vim.keymap.set({ 'v', 'n' }, '<localleader>av', function()
+      require('codecompanion').prompt 'docfn'
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true) {
+        noremap = true,
+        silent = true,
+        desc = '[A]dd [D]oc to a function',
+      }
+    end, { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' })
 
     vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
       local util_find_func = require 'config.util_find_func'
