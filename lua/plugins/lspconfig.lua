@@ -8,7 +8,7 @@ return {
         vim.api.nvim_create_autocmd('BufWritePre', {
           pattern = '*.go',
           callback = function()
-            local clients = vim.lsp.get_clients { bufnr = bufnr }
+            local clients = vim.lsp.get_clients()
             local position_encoding_for_params
             if clients and #clients > 0 then
               for _, client in ipairs(clients) do
