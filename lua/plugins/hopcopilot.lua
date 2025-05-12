@@ -20,6 +20,7 @@ return {
 
       ---@param opts copilot_accept_opts
       local function accept(opts)
+        opts = opts or {}
         local no_indentation = opts.no_indentation or false
         local only_one_line = opts.only_one_line or false
         local accept_fn
