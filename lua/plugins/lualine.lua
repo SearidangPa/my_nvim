@@ -43,12 +43,23 @@ local function get_harpoon_filenames()
 end
 
 local function get_dir_and_filename()
+  local function modified_buffer()
+    if vim.bo.modified then
+      return ' ● ' -- Indicator for unsaved changes
+    end
+    return ''
+  end
+
   local path = vim.fn.expand '%:p'
   local filename = vim.fn.fnamemodify(path, ':t')
   local full_dir = vim.fn.fnamemodify(path, ':h')
   local dir_parts = {}
   local dir_count = 0
   local max_dirs = 0
+
+  if max_dirs == 0 then
+    return filename .. modified_buffer()
+  end
 
   while dir_count < max_dirs do
     local dirname = vim.fn.fnamemodify(full_dir, ':t')
@@ -65,12 +76,6 @@ local function get_dir_and_filename()
     dirs = vim.fn.fnamemodify(path, ':h:t')
   end
 
-  local function modified_buffer()
-    if vim.bo.modified then
-      return ' ● ' -- Indicator for unsaved changes
-    end
-    return ''
-  end
   return dirs .. '/' .. filename .. modified_buffer()
 end
 
