@@ -108,7 +108,6 @@ function M.lsp_ref_func_decl(bufnr, line, col)
       assert(range, 'range is nil')
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
-      local ref_col = range.start.character
       local func_ref_decl = M.find_enclosing_function(uri, ref_line)
       if func_ref_decl then
         local make_notify = require('mini.notify').make_notify {}
@@ -126,7 +125,6 @@ function M.lsp_ref_func_decl(bufnr, line, col)
 end
 
 local function load_func_ref_decls()
-  local util_find_func = require 'config.util_find_func'
   local func_node = util_find_func.nearest_func_node()
   assert(func_node, 'No function found')
   local func_identifier
