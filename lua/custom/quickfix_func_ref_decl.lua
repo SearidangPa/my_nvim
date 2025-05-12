@@ -1,16 +1,16 @@
 local M = {}
 local util_find_func = require 'config.util_find_func'
 
----@type QFList[]
+---@type qfItem[]
 M.qflist = {}
 
 M.processed_funcs = {} -- Track function declarations we've already added
 
----@type QFList[]
+---@type qfItem[]
 M.new_func_decls = {} -- Track recent function declarations
 M.last_func_decls = {} -- Track last function declarations
 
----@class QFList
+---@class qfItem
 ---@field filename string
 ---@field lnum number
 ---@field col number
