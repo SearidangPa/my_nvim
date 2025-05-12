@@ -42,7 +42,6 @@ opts.prompt_library = {
       {
         role = 'user',
         content = function(context)
-          vim.print('context', context)
           local code = require('codecompanion.helpers.actions').get_code(context.start_line, context.end_line)
           if context.filetype == 'go' then
             return 'Add a documentation above the function. I want from 2-4 bullet points. Pay attention to the main ideas of the function.'
