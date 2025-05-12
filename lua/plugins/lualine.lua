@@ -90,26 +90,30 @@ return {
         {
           'FugitiveHead',
           icon = '',
+          color = { fg = '#2879AE', gui = 'italic' },
         },
         {
           get_dir_and_filename,
           color = { fg = '#F38BA8', gui = 'italic' },
         },
       },
-      lualine_c = {
+      lualine_c = {},
+      lualine_x = {
         {
           nearest_func_name_if_exists,
-          color = { fg = '#6C3B50', gui = 'italic' },
+          color = { fg = '#2879AE', gui = 'italic' },
         },
       },
+      lualine_y = {},
+      lualine_z = {},
+    },
+    tabline = {
       lualine_x = {
         {
           get_harpoon_filenames,
           color = { fg = '#DCA1A1', gui = 'italic' },
         },
       },
-      lualine_y = {},
-      lualine_z = {},
     },
   },
 }
