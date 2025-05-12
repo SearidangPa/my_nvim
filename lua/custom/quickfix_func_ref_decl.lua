@@ -122,22 +122,18 @@ function M.lsp_ref_func_decl(bufnr, line, col)
   return M.qflist
 end
 
-local function load_func_ref_decls()
-  local func_node = util_find_func.nearest_func_node()
-  assert(func_node, 'No function found')
-  local func_identifier
-  for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'name' then
-      func_identifier = child
-    end
-  end
-  local start_row, start_col = func_identifier:range()
-  M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
-end
-
 function M.load_func_refs()
   if vim.fn.getqflist({ size = 0 }).size == 0 then
-    load_func_ref_decls()
+    local func_node = util_find_func.nearest_func_node()
+    assert(func_node, 'No function found')
+    local func_identifier
+    for child in func_node:iter_children() do
+      if child:type() == 'identifier' or child:type() == 'name' then
+        func_identifier = child
+      end
+    end
+    local start_row, start_col = func_identifier:range()
+    M.lsp_ref_func_decl(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
     M.last_func_decls = M.new_func_decls
   else
     M.new_func_decls = {}
