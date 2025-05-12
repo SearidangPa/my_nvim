@@ -43,7 +43,7 @@ function M.find_enclosing_function(uri, ref_line)
   vim.fn.bufload(bufnr)
 
   -- Find the nearest function declaration at the reference line
-  local func_node = util_find_func.enclosing_function_at_line(bufnr, ref_line)
+  local func_node = util_find_func.enclosing_function_for_line(bufnr, ref_line)
   if not func_node then
     print('No enclosing function found for reference at line', ref_line + 1)
     return nil

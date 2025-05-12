@@ -3,7 +3,7 @@ local M = {}
 ---@param bufnr number
 ---@param line number
 ---@return TSNode|nil
-M.enclosing_function_at_line = function(bufnr, line)
+M.enclosing_function_for_line = function(bufnr, line)
   local lang = vim.treesitter.language.get_lang(vim.bo[bufnr].filetype) -- Get language from filetype
   local parser = vim.treesitter.get_parser(bufnr, lang)
   assert(parser, 'parser is nil')
@@ -41,7 +41,7 @@ function M.nearest_func_node()
   local bufnr = vim.api.nvim_get_current_buf()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local line = cursor_pos[1] - 1
-  local func_node = M.enclosing_function_at_line(bufnr, line)
+  local func_node = M.enclosing_function_for_line(bufnr, line)
   assert(func_node, 'No function found')
   return func_node
 end
