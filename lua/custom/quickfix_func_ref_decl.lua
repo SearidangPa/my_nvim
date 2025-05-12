@@ -73,9 +73,7 @@ function M.find_enclosing_function(uri, ref_line)
   -- Get the complete function signature from the line
   local lines = vim.api.nvim_buf_get_lines(bufnr, func_range.start_row, func_range.start_row + 1, false)
   local signature = lines[1]
-
-  -- Include both function name and full signature in text: Remove leading whitespace
-  local text = signature:gsub('^%s+', '')
+  local text = signature:gsub('^%s+', '') -- Remove leading whitespace
 
   local location = {
     line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
