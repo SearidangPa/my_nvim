@@ -22,14 +22,14 @@ return {
       local function accept(opts)
         local no_indentation = opts.no_indentation or false
         local only_one_line = opts.only_one_line or false
-        local accept
+        local accept_fn
         if only_one_line then
-          accept = vim.fn['copilot#AcceptLine']
+          accept_fn = vim.fn['copilot#AcceptLine']
         else
-          accept = vim.fn['copilot#Accept']
+          accept_fn = vim.fn['copilot#Accept']
         end
-        assert(accept, 'copilot accept or accept line not found')
-        local res = accept()
+        assert(accept_fn, 'copilot accept or accept line not found')
+        local res = accept_fn()
         local cursor_pos = vim.api.nvim_win_get_cursor(0)
         local next_line = cursor_pos[1]
         local next_line_content = vim.api.nvim_buf_get_lines(0, next_line, next_line + 1, false)
