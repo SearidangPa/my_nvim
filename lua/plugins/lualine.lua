@@ -90,11 +90,11 @@ return {
         {
           'FugitiveHead',
           icon = '',
-          color = { fg = '#2879AE', gui = 'italic' },
+          color = { fg = '#DCA1A1', gui = 'italic' },
         },
         {
           get_dir_and_filename,
-          color = { fg = '#F38BA8', gui = 'italic' },
+          color = { fg = '#3195CA', gui = 'italic' },
         },
       },
       lualine_c = {},
