@@ -74,7 +74,6 @@ vim.defer_fn(function()
   if vim.fn.has 'win32' ~= 1 then
     require 'custom.push_with_qwen'
   end
-  require 'config.scratch'
   require 'custom.async_job'
   require 'config.fold_tree'
 
