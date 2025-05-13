@@ -1,5 +1,7 @@
-return{
+return {
   'aaronik/treewalker.nvim',
+  lazy = true,
+  event = 'VeryLazy',
 
   -- The following options are the defaults.
   -- Treewalker aims for sane defaults, so these are each individually optional,
@@ -14,5 +16,5 @@ return{
     -- The color of the above highlight. Must be a valid vim highlight group.
     -- (see :h highlight-group for options)
     highlight_group = 'CursorLine',
-  }
+  },
 }
