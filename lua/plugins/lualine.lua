@@ -108,6 +108,10 @@ return {
           nearest_func_name_if_exists,
           color = { fg = '#DCA1A1', gui = 'italic' },
         },
+        {
+          function() return 'L:' .. vim.fn.line '.' end,
+          color = { fg = '#3195CA', gui = 'italic' },
+        },
       },
       lualine_y = {},
       lualine_z = {},
