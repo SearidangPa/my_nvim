@@ -75,7 +75,10 @@ return {
     end
 
     map('n', '<C-e>', function() toggle_snack(harpoon:list()) end, { desc = 'harpoon [E]xplore' })
-    map('n', '<leader>l', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+
+    map('n', '<D-p>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+    map('n', '<M-p>', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = 'harpoon [L]ist' })
+
     map('n', '<leader>a', function()
       delete_current_file(true)
       harpoon:list():prepend()
