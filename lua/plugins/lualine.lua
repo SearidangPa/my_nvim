@@ -106,7 +106,7 @@ return {
       lualine_x = {
         {
           nearest_func_name_if_exists,
-          color = { fg = '#2879AE', gui = 'italic' },
+          color = { fg = '#DCA1A1', gui = 'italic' },
         },
       },
       lualine_y = {},
