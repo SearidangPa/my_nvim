@@ -84,6 +84,11 @@ return {
       harpoon:list():prepend()
     end, { desc = 'Harpoon [A]dd' })
 
+    map('n', '<leader>ha', function()
+      delete_current_file(true)
+      harpoon:list():add()
+    end, { desc = 'Harpoon [A]dd' })
+
     for _, idx in ipairs { 1, 2, 3, 4 } do
       map('n', string.format('<leader>h%d', idx), function()
         require('fidget').notify(string.format('harpoon add at index%d', idx))
