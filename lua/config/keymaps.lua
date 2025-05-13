@@ -28,6 +28,10 @@ local function yank_function()
   end
 end
 
+vim.keymap.set({ 'n', 'x' }, '<leader>gy', function()
+  Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
+end, { desc = 'Git Browse (copy)' })
+
 vim.keymap.set({ 'i', 'v' }, '<Del>', '<ESC>', { desc = 'Escape Insert mode' })
 
 vim.keymap.set('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })

@@ -21,6 +21,7 @@ return {
       enabled = true,
     },
     bigfile = { enabled = true },
+    gitbrowse = { enabled = true },
     indent = { enabled = true },
     picker = {
       previewers = {
