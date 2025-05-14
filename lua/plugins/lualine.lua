@@ -23,15 +23,15 @@ local function get_harpoon_filenames()
   local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
-  local max_num_files_displayed = 4
+  local max_num_files_displayed = 3
 
   for i = 1, math.min(length, max_num_files_displayed) do
     local path = harpoonList:get(i).value
-    local filename = vim.fn.fnamemodify(path, ':t')
+    local filename = vim.fn.fnamemodify(path, ':t:r')
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
     if i > 1 then
-      table.insert(result, ' | ')
+      table.insert(result, '|')
     end
     if fullpath == current_file_path then
       table.insert(result, '[' .. filename .. ']')
@@ -112,7 +112,7 @@ return {
       lualine_x = {
         {
           get_harpoon_filenames,
-          color = { fg = '#DCA1A1', gui = 'italic' },
+          color = { fg = '#B9005E' },
         },
       },
     },
