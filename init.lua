@@ -1,6 +1,7 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 vim.g.copilot_no_tab_map = true -- copilot plugin config
+
 --- === case insensitive search, unless capital letter is used ===
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
@@ -20,7 +21,7 @@ vim.opt.listchars = { tab = '   ', trail = '·', nbsp = '␣' }
 vim.opt.scrolloff = 10
 
 --- === Live Preview ===
-vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type!
+vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
