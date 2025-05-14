@@ -31,6 +31,8 @@ end
 vim.keymap.set('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 vim.keymap.set('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
+vim.keymap.set('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })
+
 vim.keymap.set({ 'n', 'x' }, '<leader>gy', function()
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, { desc = 'Git Browse (copy)' })
@@ -69,10 +71,8 @@ end, {})
 
 map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
 map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
-map('n', '<D-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
-map('n', '<D-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
-map('n', '<M-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
-map('n', '<M-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
+map('n', '<C-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
+map('n', '<C-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) -- exit terminal mode
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
