@@ -55,11 +55,7 @@ local function get_dir_and_filename()
   local full_dir = vim.fn.fnamemodify(path, ':h')
   local dir_parts = {}
   local dir_count = 0
-  local max_dirs = 0
-
-  if max_dirs == 0 then
-    return filename .. modified_buffer()
-  end
+  local max_dirs = 1
 
   while dir_count < max_dirs do
     local dirname = vim.fn.fnamemodify(full_dir, ':t')
