@@ -1,18 +1,34 @@
 return {
-  'nvim-treesitter/nvim-treesitter',
-  build = ':TSUpdate',
-  lazy = true,
-  event = 'VeryLazy',
-  main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-  opts = {
-    ensure_installed = { 'go', 'lua' },
-    auto_install = true,
-    highlight = {
-      enable = true,
-      additional_vim_regex_highlighting = { 'ruby' },
+  {
+    'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
+    lazy = true,
+    event = 'VeryLazy',
+    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    opts = {
+      ensure_installed = { 'go', 'lua' },
+      auto_install = true,
+      highlight = {
+        enable = true,
+        additional_vim_regex_highlighting = { 'ruby' },
+      },
+      indent = { enable = true, disable = { 'ruby' } },
+      matchup = { enable = true },
     },
-    indent = { enable = true, disable = { 'ruby' } },
-    matchup = { enable = true },
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-context',
+    lazy = true,
+    event = 'VeryLazy',
+    opts = {
+      enable = true,
+      max_lines = 0,
+      trim_scope = 'outer',
+      min_window_height = 0,
+      zindex = 20,
+      mode = 'cursor',
+      separator = nil,
+    },
   },
 
   -- There are additional nvim-treesitter modules that you can use to interact

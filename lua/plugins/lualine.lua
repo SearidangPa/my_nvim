@@ -1,17 +1,3 @@
-local function nearest_func_name_if_exists()
-  local util_find_func = require 'config.util_find_func'
-
-  local func_node = util_find_func.nearest_func_node()
-
-  for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'name' then
-      local func_name = vim.treesitter.get_node_text(child, 0)
-      return func_name
-    end
-  end
-  return ''
-end
-
 local function get_harpoon_filenames(start_idx, end_idx)
   local harpoon = require 'harpoon'
   local harpoonList = harpoon:list()
@@ -122,13 +108,6 @@ return {
       lualine_z = {},
     },
     tabline = {
-      lualine_c = {
-        {
-          nearest_func_name_if_exists,
-          color = { fg = '#DCA1A1' },
-        },
-      },
-
       lualine_x = {
         {
           get_harpoon_filenames_one_two,
