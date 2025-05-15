@@ -31,6 +31,6 @@ return {
           vim.cmd 'normal! zz'
         end
       end)
-    end, { desc = 'jump to last test in code' })
+    end, { desc = 'jump to last [T]est in code' })
   end,
 }
