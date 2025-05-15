@@ -14,13 +14,6 @@ opts.displays = {
 }
 opts.adapters = {
   copilot = function() return require('codecompanion.adapters').extend('copilot', {}) end,
-  ollama = function()
-    return require('codecompanion.adapters').extend('ollama', {
-      schema = {
-        model = { default = 'qwen2.5-coder:14b' },
-      },
-    })
-  end,
 }
 
 opts.prompt_library = {

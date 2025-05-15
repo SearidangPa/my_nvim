@@ -1,8 +1,6 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
-local ts_repeat_move = require 'nvim-treesitter.textobjects.repeatable_move'
-
 vim.keymap.set(
   { 'v', 'n' },
   '<localleader>av',
