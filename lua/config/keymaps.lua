@@ -16,14 +16,9 @@ vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
 end, { noremap = true, silent = true, desc = '[A]dd [D]oc to a function' })
 
-vim.keymap.set('i', '<M-s>', require('hopcopilot').hop_copilot, { expr = true, silent = true, desc = 'hop copilot' })
-vim.keymap.set('i', '<D-s>', require('hopcopilot').hop_copilot, { expr = true, silent = true, desc = 'hop copilot' })
+vim.keymap.set('i', '<M-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
+vim.keymap.set('i', '<D-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
 
----@class copilot_accept_opts
----@field only_one_line boolean
----@field no_indentation boolean
-
----@param opts copilot_accept_opts
 local function accept(opts)
   opts = opts or {}
   local no_indentation = opts.no_indentation or false
