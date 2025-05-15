@@ -1,3 +1,6 @@
+local commit_format_notification = [[Push successfully
+Commit: %s]]
+
 local default_no_more_input = {
   'Pushing to remote',
   'Done with what I set out to do',
@@ -68,9 +71,6 @@ local function git_add_all(on_success_cb)
     ns = vim.api.nvim_create_namespace 'git_add',
   }
 end
-
-local commit_format_notification = [[Push successfully
-Commit: %s]]
 
 local function async_push_all()
   local function async_git_push(commit_msg)
