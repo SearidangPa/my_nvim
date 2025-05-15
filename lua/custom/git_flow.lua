@@ -72,19 +72,18 @@ end
 local commit_format_notification = [[Push successfully
 Commit: %s]]
 
-local function async_git_push(commit_msg)
-  require('config.util_job').start_job {
-    cmd = 'git push',
-    on_success_cb = function()
-      local make_notify = require('mini.notify').make_notify {}
-      make_notify(string.format(commit_format_notification, commit_msg))
-    end,
-    silent = true,
-    ns = vim.api.nvim_create_namespace 'git_push',
-  }
-end
-
 local function async_push_all()
+  local function async_git_push(commit_msg)
+    require('config.util_job').start_job {
+      cmd = 'git push',
+      on_success_cb = function()
+        local make_notify = require('mini.notify').make_notify {}
+        make_notify(string.format(commit_format_notification, commit_msg))
+      end,
+      silent = true,
+      ns = vim.api.nvim_create_namespace 'git_push',
+    }
+  end
   local on_success_cb = function(commit_msg)
     vim.cmd('silent! G commit -m "' .. commit_msg .. '"')
     if vim.bo.filetype == 'go' then
