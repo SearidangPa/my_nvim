@@ -132,6 +132,10 @@ function util_job.start_job(opts)
       end
     end,
   })
+  if job_id < 0 then
+    vim.notify('Job failed to start', vim.log.levels.ERROR)
+    return
+  end
 end
 
 return util_job
