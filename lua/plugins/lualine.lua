@@ -12,35 +12,48 @@ local function nearest_func_name_if_exists()
   return ''
 end
 
-local function get_harpoon_filenames()
+local function get_harpoon_filenames(start_idx, end_idx)
   local harpoon = require 'harpoon'
   local harpoonList = harpoon:list()
   local length = harpoonList:length()
   if length == 0 then
     return ''
   end
+
   local root_dir = harpoonList.config:get_root_dir()
   local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
-  local max_num_files_displayed = 3
+  local added_count = 0
 
-  for i = 1, math.min(length, max_num_files_displayed) do
+  for i = start_idx, end_idx do
+    if i > length then
+      break
+    end
+
     local path = harpoonList:get(i).value
     local filename = vim.fn.fnamemodify(path, ':t:r')
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-    if i > 1 then
+
+    if added_count > 0 then
       table.insert(result, ' | ')
     end
+
     if fullpath == current_file_path then
       table.insert(result, '[' .. filename .. ']')
     else
       table.insert(result, filename)
     end
+
+    added_count = added_count + 1
   end
+
   return table.concat(result)
 end
+
+local function get_harpoon_filenames_one_two() return get_harpoon_filenames(1, 2) end
+local function get_harpoon_filenames_three_four() return get_harpoon_filenames(3, 4) end
 
 local function get_dir_and_filename()
   local function modified_buffer()
@@ -101,17 +114,24 @@ return {
       lualine_c = {},
       lualine_x = {
         {
-          nearest_func_name_if_exists,
-          color = { fg = '#DCA1A1', gui = 'italic' },
+          get_harpoon_filenames_three_four,
+          color = { fg = '#3195CA' },
         },
       },
       lualine_y = {},
       lualine_z = {},
     },
     tabline = {
+      lualine_c = {
+        {
+          nearest_func_name_if_exists,
+          color = { fg = '#DCA1A1', gui = 'italic' },
+        },
+      },
+
       lualine_x = {
         {
-          get_harpoon_filenames,
+          get_harpoon_filenames_one_two,
           color = { fg = '#3195CA' },
         },
       },
