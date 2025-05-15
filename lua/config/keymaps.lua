@@ -1,6 +1,21 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
+vim.keymap.set(
+  { 'v', 'n' },
+  '<localleader>av',
+  function() require('codecompanion').prompt 'docfn' end,
+  { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' }
+)
+
+vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
+  local util_find_func = require 'config.util_find_func'
+  util_find_func.visual_function()
+  vim.cmd [[normal! o]]
+  require('codecompanion').prompt 'docfn'
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+end, { noremap = true, silent = true, desc = '[A]dd [D]oc to a function' })
+
 local hopcopilot = require 'hopcopilot'
 hopcopilot.setup()
 vim.keymap.set('i', '<M-s>', hopcopilot.hop_copilot, { expr = true, silent = true, desc = 'hop copilot' })
