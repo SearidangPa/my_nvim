@@ -13,7 +13,6 @@ return {
       go_test_prefix = go_test_prefix,
       user_command_prefix = 'Go',
     }
-    vim.keymap.set('n', '<leader>G', ':GoTestTerm<CR>', { desc = 'Go testies' })
-    vim.keymap.set('n', '<leader>T', ':GoTestTermView<CR>', { desc = 'View testies' })
+    vim.keymap.set('n', '<localleader>g', ':GoTestTerm<CR>', { desc = 'Go testies' })
   end,
 }

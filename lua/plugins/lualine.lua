@@ -31,7 +31,7 @@ local function get_harpoon_filenames()
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
     if i > 1 then
-      table.insert(result, '|')
+      table.insert(result, ' ')
     end
     if fullpath == current_file_path then
       table.insert(result, '[' .. filename .. ']')

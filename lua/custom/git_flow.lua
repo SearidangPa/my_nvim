@@ -23,7 +23,6 @@ local function copy_list(list)
 end
 
 local choice_options = vim.list_extend(copy_list(default_no_more_input), item_options)
-local commit_msg = ''
 
 local function handle_choice(choice, perform_commit_func)
   if not choice then
@@ -31,7 +30,7 @@ local function handle_choice(choice, perform_commit_func)
     return
   end
 
-  commit_msg = choice
+  local commit_msg = choice
 
   local util_contains = require 'config.util_contains'
   if util_contains.contains(default_no_more_input, choice) then
@@ -75,14 +74,7 @@ end
 local commit_format_notification = [[Push successfully
 Commit: %s]]
 
-local function async_git_push()
-  local fidget = require 'fidget'
-  local fidget_handle = fidget.progress.handle.create {
-    title = 'Git Push',
-    lsp_client = {
-      name = 'git push',
-    },
-  }
+local function async_git_push(commit_msg)
   require('config.util_job').start_job {
     cmd = 'git push',
     on_success_cb = function()
@@ -91,7 +83,6 @@ local function async_git_push()
     end,
     silent = true,
     ns = vim.api.nvim_create_namespace 'git_push',
-    fidget_handle = fidget_handle,
   }
 end
 
@@ -102,7 +93,7 @@ local function async_push_all()
       local async_job = require 'custom.async_job'
       async_job.make_all_and_lint()
     end
-    async_git_push()
+    async_git_push(commit_msg)
   end
   git_add_all(function() select_commit_message_prompt(on_success_cb) end)
 end
