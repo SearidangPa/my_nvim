@@ -34,8 +34,8 @@ local function run_cloud_drive()
   M.exec_command(run_cloud_drive_command, cloud_drive_terminal_name)
 end
 
-vim.api.nvim_create_user_command('RunCloudDrive', run_cloud_drive, {})
-vim.api.nvim_create_user_command('RunDrive', run_drive, {})
+vim.api.nvim_create_user_command('CloudDrive', run_cloud_drive, {})
+vim.api.nvim_create_user_command('Drive', run_drive, {})
 vim.keymap.set('n', '<leader>st', function() terminal_multiplexer:search_terminal() end, { desc = '[S]earch [D]aemon terminals' })
 
 return M
