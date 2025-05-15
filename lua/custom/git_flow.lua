@@ -1,3 +1,5 @@
+local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
+local map = vim.keymap.set
 local commit_format_notification = [[Push successfully
 Commit: %s]]
 
@@ -95,8 +97,6 @@ local function async_push_all()
   git_add_all(function() select_commit_message_prompt(on_success_cb) end)
 end
 
-local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
-local map = vim.keymap.set
 map('n', '<leader>pa', async_push_all, map_opt '[P]ush [A]ll')
 map('n', '<leader>pc', function()
   local commit_func_push = function(commit_msg)
