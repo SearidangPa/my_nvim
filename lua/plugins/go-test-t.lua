@@ -17,6 +17,7 @@ return {
     vim.keymap.set('n', '<localleader>g', ':GoTestTerm<CR>', { desc = 'Go testies' })
 
     vim.keymap.set('n', '<localleader>t', function()
+      require 'terminal-multiplexer'
       local util_lsp = require 'go-test-t.util_lsp'
       local test_name = go_test_t.term_tester.terminal_multiplexer.last_terminal_name
       util_lsp.action_from_test_name(test_name, function(lsp_param)
