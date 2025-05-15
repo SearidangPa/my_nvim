@@ -18,7 +18,7 @@ return {
 
     vim.keymap.set('n', '<localleader>t', function()
       require 'terminal-multiplexer'
-      local util_lsp = require 'util_lsp'
+      local util_lsp = require 'util_go_test_lsp'
       local test_name = go_test_t.term_tester.terminal_multiplexer.last_terminal_name
       util_lsp.action_from_test_name(test_name, function(lsp_param)
         local filepath = lsp_param.filepath
