@@ -6,7 +6,7 @@ return {
     local go_test_prefix = 'go test'
     local cwd = vim.fn.getcwd()
     if string.match(cwd, 'drive') then
-      go_test_prefix = 'MODE=staging UKS=others go test'
+      go_test_prefix = 'MODE=staging UKS=others gotest'
     end
 
     local go_test_t = require('go-test-t').new {

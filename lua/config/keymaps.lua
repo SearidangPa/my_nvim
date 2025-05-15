@@ -12,10 +12,11 @@ vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
   local util_find_func = require 'config.util_find_func'
   local original_cursor_pos = vim.api.nvim_win_get_cursor(0)
   util_find_func.visual_function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
-  vim.api.nvim_win_set_cursor(0, original_cursor_pos)
-  require('codecompanion').prompt 'docfn'
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+  vim.schedule(function()
+    require('codecompanion').prompt 'docfn'
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+    vim.api.nvim_win_set_cursor(0, original_cursor_pos)
+  end)
 end, { noremap = true, silent = true, desc = '[A]dd [D]oc to a function' })
 
 vim.keymap.set('i', '<M-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
