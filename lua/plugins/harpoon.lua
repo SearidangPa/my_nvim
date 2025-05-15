@@ -13,7 +13,7 @@ return {
       for _ = 1, fileIndex - 1 do
         vim.cmd 'normal! j'
       end
-      vim.cmd 'normal! dd'
+      vim.cmd 'normal! "_dd'
       vim.cmd 'w'
     end
 
@@ -48,12 +48,11 @@ return {
     local function add_at_index(idx)
       delete_current_file(true)
       local currentFileRelative = vim.fn.expand '%:.' -- Get the file path relative to working directory
-      vim.fn.setreg('*', currentFileRelative .. '\n')
       harpoon.ui:toggle_quick_menu(harpoon:list())
       for _ = 1, idx - 1 do
         vim.cmd 'normal! j'
       end
-      vim.cmd 'normal! P'
+      vim.api.nvim_put({ currentFileRelative, '' }, '', false, true)
       vim.cmd 'w'
     end
 
