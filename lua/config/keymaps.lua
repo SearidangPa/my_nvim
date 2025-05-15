@@ -79,6 +79,7 @@ vim.keymap.set('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true 
 vim.keymap.set('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })
 
 vim.keymap.set({ 'n', 'x' }, '<leader>gy', function()
+  ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, { desc = 'Git Browse (copy)' })
 
