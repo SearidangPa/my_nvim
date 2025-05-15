@@ -32,7 +32,7 @@ local completion = {
 return {
   'saghen/blink.cmp',
   lazy = true,
-  event = 'InsertCharPre',
+  event = 'VeryLazy',
   version = '*',
 
   opts = {
