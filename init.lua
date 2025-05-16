@@ -35,7 +35,7 @@ vim.opt.cursorline = true
 vim.opt.breakindent = true
 vim.opt.signcolumn = 'yes'
 vim.opt.numberwidth = 1
-vim.opt.cmdheight = 0
+vim.opt.cmdheight = 1
 
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 
