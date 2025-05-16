@@ -101,7 +101,7 @@ return {
       lualine_x = {
         {
           get_harpoon_filenames_three_four,
-          color = { fg = '#3195CA' },
+          color = { fg = '#8E51FF' },
         },
       },
       lualine_y = {},
@@ -111,7 +111,7 @@ return {
       lualine_x = {
         {
           get_harpoon_filenames_one_two,
-          color = { fg = '#3195CA' },
+          color = { fg = '#8E51FF' },
         },
       },
     },
