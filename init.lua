@@ -67,18 +67,19 @@ require('lazy').setup {
   },
 }
 
-vim.defer_fn(function()
-  require 'config.keymaps'
-  require 'custom.terminals_daemon'
-  require 'custom.git_flow'
-  if vim.fn.has 'win32' ~= 1 then
-    require 'custom.push_with_qwen'
-  end
-  require 'custom.async_job'
-  require 'config.fold_tree'
-
-  vim.treesitter.language.register('bash', 'zsh')
-end, 0)
+vim.api.nvim_create_autocmd('UIEnter', {
+  callback = function()
+    require 'config.keymaps'
+    require 'custom.terminals_daemon'
+    require 'custom.git_flow'
+    if vim.fn.has 'win32' ~= 1 then
+      require 'custom.push_with_qwen'
+    end
+    require 'custom.async_job'
+    require 'config.fold_tree'
+    vim.treesitter.language.register('bash', 'zsh')
+  end,
+})
 
 local yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
