@@ -14,7 +14,7 @@ if vim.fn.has 'win32' ~= 1 then
       mode = 'cursor',
       separator = nil,
     },
-  },
+  }
 end
 
 return {
