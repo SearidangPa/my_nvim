@@ -1,3 +1,22 @@
+local nvim_treesitter_context = {}
+
+if vim.fn.has 'win32' ~= 1 then
+  nvim_treesitter_context = {
+    'nvim-treesitter/nvim-treesitter-context',
+    lazy = true,
+    event = 'VeryLazy',
+    opts = {
+      enable = true,
+      max_lines = 0,
+      trim_scope = 'outer',
+      min_window_height = 0,
+      zindex = 20,
+      mode = 'cursor',
+      separator = nil,
+    },
+  },
+end
+
 return {
   {
     'nvim-treesitter/nvim-treesitter',
@@ -16,20 +35,7 @@ return {
       matchup = { enable = true },
     },
   },
-  {
-    'nvim-treesitter/nvim-treesitter-context',
-    lazy = true,
-    event = 'VeryLazy',
-    opts = {
-      enable = true,
-      max_lines = 0,
-      trim_scope = 'outer',
-      min_window_height = 0,
-      zindex = 20,
-      mode = 'cursor',
-      separator = nil,
-    },
-  },
+  nvim_treesitter_context, -- Context for nvim-treesitter
 
   -- There are additional nvim-treesitter modules that you can use to interact
   -- with nvim-treesitter. You should go explore a few and see what interests you:
