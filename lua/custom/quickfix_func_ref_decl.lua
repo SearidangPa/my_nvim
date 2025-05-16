@@ -125,9 +125,11 @@ function M.load_decl_func_reference(bufnr, line, col)
         end
       end
     end
-    vim.cmd 'copen'
-    vim.cmd 'wincmd p'
-    vim.fn.setqflist(M.qflist, 'r')
+    vim.schedule(function()
+      vim.cmd 'copen'
+      vim.cmd 'wincmd p'
+      vim.fn.setqflist(M.qflist, 'r')
+    end)
   end)
   return M.qflist
 end
