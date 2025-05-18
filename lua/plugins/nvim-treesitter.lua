@@ -1,21 +1,21 @@
 local nvim_treesitter_context = {}
 
-if vim.fn.has 'win32' ~= 1 then
-  nvim_treesitter_context = {
-    'nvim-treesitter/nvim-treesitter-context',
-    lazy = true,
-    event = 'VeryLazy',
-    opts = {
-      enable = true,
-      max_lines = 0,
-      trim_scope = 'outer',
-      min_window_height = 0,
-      zindex = 20,
-      mode = 'cursor',
-      separator = nil,
-    },
-  }
-end
+-- if vim.fn.has 'win32' ~= 1 then
+nvim_treesitter_context = {
+  'nvim-treesitter/nvim-treesitter-context',
+  lazy = true,
+  event = 'VeryLazy',
+  opts = {
+    enable = true,
+    max_lines = 0,
+    trim_scope = 'outer',
+    min_window_height = 0,
+    zindex = 20,
+    mode = 'cursor',
+    separator = nil,
+  },
+}
+-- end
 
 return {
   {

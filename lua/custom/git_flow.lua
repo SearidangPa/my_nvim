@@ -5,6 +5,7 @@ Commit: %s]]
 
 local default_no_more_input = {
   'Pushing to remote',
+  'Beautifully crafted',
   'Done with what I set out to do',
 }
 
@@ -13,7 +14,6 @@ local item_options = {
   'Debugging',
   'Fix:',
   'Checkpoint:',
-  'Beautifully crafted:',
   'Refinement:',
 }
 

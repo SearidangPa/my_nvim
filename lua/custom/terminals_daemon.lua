@@ -21,7 +21,7 @@ end
 
 local function run_drive()
   if vim.fn.has 'win32' == 1 then
-    M.exec_command('dr; rds\r', 'drive')
+    M.exec_command('m;dr; rds\r', 'drive')
   else
     M.exec_command('dr && kill_port_4420 && ./bin/client --stdout --onlyUserIDs', 'drive')
   end
