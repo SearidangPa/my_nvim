@@ -491,22 +491,6 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
-ls.add_snippets('markdown', {
-  s(
-    'mer',
-    fmta(
-      [[
-        ```mermaid
-            <clipboard_content>
-        ```
-      ]],
-      {
-        clipboard_content = f(function() return get_clipboard_content() end, {}),
-      }
-    )
-  ),
-})
-
 --- === snip lua debugging ===
 -- local tests_info_print = vim.inspect(tests_info)
 -- print(string.format('Tests info: %s', tests_info_print))
