@@ -1,12 +1,9 @@
 local ls = require 'luasnip'
 local c = ls.choice_node
-local d = ls.dynamic_node
 local f = ls.function_node
 local i = ls.insert_node
-local s = ls.snippet
 local t = ls.text_node
 local sn = ls.snippet_node
-local extras = require 'luasnip.extras'
 local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
@@ -15,7 +12,7 @@ require 'custom.go_nav_func_equal'
 
 GetInstName = function(args)
   local input = args[1][1] or ''
-  local parts = vim.split(input, '.', true)
+  local parts = vim.split(input, '.', { plain = true })
   local res = parts[#parts] or ''
   local lower = res:sub(1, 1):lower()
   return lower .. res:sub(2)
