@@ -117,6 +117,7 @@ return {
       lualine_y = {},
       lualine_z = {},
     },
+
     tabline = {
       lualine_x = {
         {
