@@ -1,37 +1,34 @@
 local function get_harpoon_filenames(idx)
-  local harpoon = require 'harpoon'
-  local harpoonList = harpoon:list()
-  local length = harpoonList:length()
-  if length == 0 then
-    return ''
+  return function()
+    local harpoon = require 'harpoon'
+    local harpoonList = harpoon:list()
+    local length = harpoonList:length()
+    if length == 0 then
+      return ''
+    end
+
+    local root_dir = harpoonList.config:get_root_dir()
+    local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
+    local current_file_path = vim.api.nvim_buf_get_name(0)
+    local result = {}
+
+    if idx > length then
+      return ''
+    end
+
+    local path = harpoonList:get(idx).value
+    local filename = vim.fn.fnamemodify(path, ':t:r')
+    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
+    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
+
+    if fullpath == current_file_path then
+      table.insert(result, '[' .. filename .. ']')
+    else
+      table.insert(result, filename)
+    end
+    return table.concat(result)
   end
-
-  local root_dir = harpoonList.config:get_root_dir()
-  local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
-  local current_file_path = vim.api.nvim_buf_get_name(0)
-  local result = {}
-
-  if idx > length then
-    return ''
-  end
-
-  local path = harpoonList:get(idx).value
-  local filename = vim.fn.fnamemodify(path, ':t:r')
-  local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
-  local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-
-  if fullpath == current_file_path then
-    table.insert(result, '[' .. filename .. ']')
-  else
-    table.insert(result, filename)
-  end
-  return table.concat(result)
 end
-
-local function get_harpoon_filenames_one() return get_harpoon_filenames(1) end
-local function get_harpoon_filenames_two() return get_harpoon_filenames(2) end
-local function get_harpoon_filenames_three() return get_harpoon_filenames(3) end
-local function get_harpoon_filenames_four() return get_harpoon_filenames(4) end
 
 local function get_dir_and_filename()
   local function modified_buffer()
@@ -109,11 +106,11 @@ return {
       lualine_c = {},
       lualine_x = {
         {
-          get_harpoon_filenames_three,
+          get_harpoon_filenames(3),
           color = { fg = '#FDA5D5' },
         },
         {
-          get_harpoon_filenames_four,
+          get_harpoon_filenames(4),
           color = { fg = '#FDA5D5' },
         },
       },
@@ -123,11 +120,11 @@ return {
     tabline = {
       lualine_x = {
         {
-          get_harpoon_filenames_one,
+          get_harpoon_filenames(1),
           color = { fg = '#FDA5D5' },
         },
         {
-          get_harpoon_filenames_two,
+          get_harpoon_filenames(2),
           color = { fg = '#FDA5D5' },
         },
       },
