@@ -487,7 +487,7 @@ vim.api.nvim_create_autocmd('FileType', {
       expand_fn()
     end, { buffer = true, desc = 'Expand Lua function snippet' })
 
-    vim.keymap.set('n', '<localleader>fn', expand_fn, { buffer = true, desc = 'Expand Lua function snippet' })
+    vim.keymap.set('n', '<localleader>sf', expand_fn, { buffer = true, desc = '[S]nippet expand [f]unction' })
   end,
 })
 
