@@ -32,7 +32,7 @@ if vim.fn.has 'win' == 1 then
           }),
           funcName = i(1, 'funcName'),
           args = i(2, ''),
-          dynamicRet = d(4, Go_ret_vals, { { 1 } }),
+          dynamicRet = d(4, util_go_snip.go_ret_vals, { { 1 } }),
           finish = i(0),
         }
       )

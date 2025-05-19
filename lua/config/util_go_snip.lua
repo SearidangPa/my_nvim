@@ -149,7 +149,7 @@ local function go_result_type(info)
   return { t '' }
 end
 
-function Go_ret_vals(args)
+function M.go_ret_vals(args)
   local info = {
     index = 0,
     func_name = args[1][1] or 'unknown',
@@ -158,10 +158,10 @@ function Go_ret_vals(args)
   return sn(nil, result)
 end
 
-function Go_ret_vals_nearest_func_decl()
+function M.go_ret_vals_nearest_func_decl()
   local go_nav_func_equal = require 'custom.go_nav_func_equal'
   local func_name = go_nav_func_equal.get_prev_func_call_with_equal()
-  return Go_ret_vals { { func_name } }
+  return M.go_ret_vals { { func_name } }
 end
 
 return M
