@@ -1,3 +1,5 @@
+local M = {}
+
 local ignore_list = {
   Join = true,
 }
@@ -144,7 +146,10 @@ local function move_to_previous_func_call()
   end
 end
 
-function Get_prev_func_call_with_equal()
+--[[
+  - Retrieves the previous function call with an assignment operator.
+]]
+function M.get_prev_func_call_with_equal()
   local root = get_root_node()
   local cursor_pos = vim.api.nvim_win_get_cursor(0)
   local current_row, current_col = cursor_pos[1] - 1, cursor_pos[2]
@@ -157,3 +162,5 @@ end
 
 vim.keymap.set('n', ']f', move_to_next_func_call, { desc = 'Next function call' })
 vim.keymap.set('n', '[f', move_to_previous_func_call, { desc = 'Previous function call' })
+
+return M

@@ -8,7 +8,6 @@ local ts_locals = require 'nvim-treesitter.locals'
 local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
-require 'custom.go_nav_func_equal'
 
 GetInstName = function(args)
   local input = args[1][1] or ''
@@ -165,6 +164,7 @@ function Go_ret_vals(args)
 end
 
 function Go_ret_vals_nearest_func_decl()
-  local func_name = Get_prev_func_call_with_equal()
+  local go_nav_func_equal = require 'custom.go_nav_func_equal'
+  local func_name = go_nav_func_equal.get_prev_func_call_with_equal()
   return Go_ret_vals { { func_name } }
 end
