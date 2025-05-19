@@ -18,7 +18,7 @@ local function get_harpoon_filename_func(idx)
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
     local is_current = fullpath == current_file_path
 
-    return filename, is_current
+    return '󱁻 ' .. filename, is_current
   end
 end
 
@@ -104,7 +104,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(3)()
-            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#FDA5D5' }
+            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#DCA1A1' }
           end,
         },
         {
@@ -114,12 +114,13 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(4)()
-            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#FDA5D5' }
+            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#DCA1A1' }
           end,
         },
       },
       lualine_z = {},
     },
+
     tabline = {
       lualine_y = {
         {
@@ -129,7 +130,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(1)()
-            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#FDA5D5' }
+            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#DCA1A1' }
           end,
         },
         {
@@ -139,7 +140,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(2)()
-            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#FDA5D5' }
+            return is_current and { fg = '#3195CA', gui = 'italic' } or { fg = '#DCA1A1' }
           end,
         },
       },
