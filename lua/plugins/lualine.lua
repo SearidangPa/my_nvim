@@ -86,7 +86,7 @@ return {
         'diagnostics',
         {
           'FugitiveHead',
-          icon = '',
+          icon = '',
           color = { fg = '#DCA1A1', gui = 'italic' },
         },
         {
