@@ -10,7 +10,6 @@ local function get_harpoon_filenames(start_idx, end_idx)
   local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
-  local added_count = 0
 
   for i = start_idx, end_idx do
     if i > length then
@@ -22,24 +21,20 @@ local function get_harpoon_filenames(start_idx, end_idx)
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
 
-    if added_count > 0 then
-      table.insert(result, ' | ')
-    end
-
     if fullpath == current_file_path then
       table.insert(result, '[' .. filename .. ']')
     else
       table.insert(result, filename)
     end
-
-    added_count = added_count + 1
   end
 
   return table.concat(result)
 end
 
-local function get_harpoon_filenames_one_two() return get_harpoon_filenames(1, 2) end
-local function get_harpoon_filenames_three_four() return get_harpoon_filenames(3, 4) end
+local function get_harpoon_filenames_one() return get_harpoon_filenames(1, 1) end
+local function get_harpoon_filenames_two() return get_harpoon_filenames(2, 2) end
+local function get_harpoon_filenames_three() return get_harpoon_filenames(3, 3) end
+local function get_harpoon_filenames_four() return get_harpoon_filenames(4, 4) end
 
 local function get_dir_and_filename()
   local function modified_buffer()
@@ -81,8 +76,25 @@ return {
   event = 'VeryLazy',
   opts = {
     options = {
+      icons_enabled = true,
+      theme = 'auto',
+      component_separators = { left = '', right = '' },
+      section_separators = { left = '', right = '' },
+      disabled_filetypes = {
+        statusline = {},
+        winbar = {},
+      },
+      ignore_focus = {},
+      always_divide_middle = true,
+      always_show_tabline = true,
       globalstatus = true,
+      refresh = {
+        statusline = 100,
+        tabline = 100,
+        winbar = 100,
+      },
     },
+
     sections = {
       lualine_a = {},
       lualine_b = {
@@ -100,7 +112,11 @@ return {
       lualine_c = {},
       lualine_x = {
         {
-          get_harpoon_filenames_three_four,
+          get_harpoon_filenames_three,
+          color = { fg = '#FDA5D5' },
+        },
+        {
+          get_harpoon_filenames_four,
           color = { fg = '#FDA5D5' },
         },
       },
@@ -110,7 +126,11 @@ return {
     tabline = {
       lualine_x = {
         {
-          get_harpoon_filenames_one_two,
+          get_harpoon_filenames_one,
+          color = { fg = '#FDA5D5' },
+        },
+        {
+          get_harpoon_filenames_two,
           color = { fg = '#FDA5D5' },
         },
       },
