@@ -1,4 +1,5 @@
 local ls = require 'luasnip'
+local util_go_snip = require 'config.util_go_snip'
 local c = ls.choice_node
 local d = ls.dynamic_node
 local i = ls.insert_node
@@ -7,8 +8,6 @@ local f = ls.function_node
 local t = ls.text_node
 local extras = require 'luasnip.extras'
 local rep = extras.rep
-
-require 'config.util_go_snip'
 
 local fmta = require('luasnip.extras.fmt').fmta
 
@@ -120,7 +119,7 @@ ls.add_snippets('go', {
         }),
         funcName = i(1, 'funcName'),
         args = i(2),
-        processedFuncName = f(GetLastFuncName, { 1 }),
+        processedFuncName = f(util_go_snip.getLastFuncName, { 1 }),
         finish = i(0),
       }
     )
@@ -140,7 +139,7 @@ ls.add_snippets('go', {
       ]],
       {
         Type = i(1, 'Type'),
-        inst = f(GetInstName, { 1 }),
+        inst = f(util_go_snip.getInstName, { 1 }),
         finish = i(0),
       }
     )
@@ -204,8 +203,8 @@ func <cmd>CLI(path string){
       ]],
       {
         cmd_invoke_str = i(1, 'cmd_invoke_str'),
-        cmd = f(KebabToCamelCase, { 1 }),
-        short_desc = f(ReplaceDashWithSpace, { 1 }),
+        cmd = f(util_go_snip.kebabToCamelCase, { 1 }),
+        short_desc = f(util_go_snip.replaceDashWithSpace, { 1 }),
         flag_desc = i(2, 'flag_description'),
         finish = i(0),
       }

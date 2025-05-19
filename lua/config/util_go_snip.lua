@@ -1,3 +1,4 @@
+local M = {}
 local ls = require 'luasnip'
 local c = ls.choice_node
 local f = ls.function_node
@@ -9,7 +10,7 @@ local ts_utils = require 'nvim-treesitter.ts_utils'
 local fmta = require('luasnip.extras.fmt').fmta
 local get_node_text = vim.treesitter.get_node_text
 
-GetInstName = function(args)
+function M.getInstName(args)
   local input = args[1][1] or ''
   local parts = vim.split(input, '.', { plain = true })
   local res = parts[#parts] or ''
@@ -17,7 +18,7 @@ GetInstName = function(args)
   return lower .. res:sub(2)
 end
 
-GetLastFuncName = function(args)
+function M.getLastFuncName(args)
   local input = args[1][1] or ''
   ---@diagnostic disable-next-line: param-type-mismatch
   local parts = vim.split(input, '.', true)
@@ -25,13 +26,7 @@ GetLastFuncName = function(args)
   return res
 end
 
-function KebabToCamelCase(args)
-  local input = args[1][1] or ''
-  local lower = input:sub(1, 1):lower()
-  return lower
-end
-
-function KebabToCamelCase(args)
+function M.kebabToCamelCase(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
   for index = 2, #parts do
@@ -40,7 +35,7 @@ function KebabToCamelCase(args)
   return table.concat(parts, '')
 end
 
-function ReplaceDashWithSpace(args)
+function M.replaceDashWithSpace(args)
   local input = args[1][1]
   local parts = vim.split(input, '-', { plain = true })
   return table.concat(parts, ' ')
@@ -64,7 +59,7 @@ local function transform(text, info)
     if info then
       info.index = info.index + 1
       return c(info.index, {
-        t(string.format('eris.Wrap(err, "failed to %s")', GetLastFuncName { { info.func_name } })),
+        t(string.format('eris.Wrap(err, "failed to %s")', M.getLastFuncName { { info.func_name } })),
         t 'err',
         sn(
           nil,
@@ -73,7 +68,7 @@ local function transform(text, info)
               eris.Wrapf(err, "failed to <funcName>, <moreInfo>
             ]],
             {
-              funcName = f(function() return GetLastFuncName { { info.func_name } } end, {}),
+              funcName = f(function() return M.getLastFuncName { { info.func_name } } end, {}),
               moreInfo = i(1, ''), -- Insert node for user input
             }
           )
@@ -168,3 +163,5 @@ function Go_ret_vals_nearest_func_decl()
   local func_name = go_nav_func_equal.get_prev_func_call_with_equal()
   return Go_ret_vals { { func_name } }
 end
+
+return M
