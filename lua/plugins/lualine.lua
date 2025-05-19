@@ -1,4 +1,4 @@
-local function get_harpoon_filenames(start_idx, end_idx)
+local function get_harpoon_filenames(idx)
   local harpoon = require 'harpoon'
   local harpoonList = harpoon:list()
   local length = harpoonList:length()
@@ -11,30 +11,27 @@ local function get_harpoon_filenames(start_idx, end_idx)
   local current_file_path = vim.api.nvim_buf_get_name(0)
   local result = {}
 
-  for i = start_idx, end_idx do
-    if i > length then
-      break
-    end
-
-    local path = harpoonList:get(i).value
-    local filename = vim.fn.fnamemodify(path, ':t:r')
-    local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
-    local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
-
-    if fullpath == current_file_path then
-      table.insert(result, '[' .. filename .. ']')
-    else
-      table.insert(result, filename)
-    end
+  if idx > length then
+    return ''
   end
 
+  local path = harpoonList:get(idx).value
+  local filename = vim.fn.fnamemodify(path, ':t:r')
+  local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
+  local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
+
+  if fullpath == current_file_path then
+    table.insert(result, '[' .. filename .. ']')
+  else
+    table.insert(result, filename)
+  end
   return table.concat(result)
 end
 
-local function get_harpoon_filenames_one() return get_harpoon_filenames(1, 1) end
-local function get_harpoon_filenames_two() return get_harpoon_filenames(2, 2) end
-local function get_harpoon_filenames_three() return get_harpoon_filenames(3, 3) end
-local function get_harpoon_filenames_four() return get_harpoon_filenames(4, 4) end
+local function get_harpoon_filenames_one() return get_harpoon_filenames(1) end
+local function get_harpoon_filenames_two() return get_harpoon_filenames(2) end
+local function get_harpoon_filenames_three() return get_harpoon_filenames(3) end
+local function get_harpoon_filenames_four() return get_harpoon_filenames(4) end
 
 local function get_dir_and_filename()
   local function modified_buffer()
