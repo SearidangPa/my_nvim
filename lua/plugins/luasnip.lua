@@ -57,6 +57,6 @@ return {
       end
     end, { silent = true })
 
-    require 'custom.go_snip'
+    require 'snippets.go_snip'
   end,
 }

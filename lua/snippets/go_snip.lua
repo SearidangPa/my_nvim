@@ -1,5 +1,5 @@
 local ls = require 'luasnip'
-local util_go_snip = require 'config.util_go_snip'
+local util_go_snip = require 'snippets.util_go_snip'
 local c = ls.choice_node
 local d = ls.dynamic_node
 local i = ls.insert_node
