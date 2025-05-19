@@ -1,5 +1,3 @@
-require 'config.util_find_func'
-require 'config.util_go_snip'
 local ls = require 'luasnip'
 local c = ls.choice_node
 local d = ls.dynamic_node
@@ -9,6 +7,8 @@ local f = ls.function_node
 local t = ls.text_node
 local extras = require 'luasnip.extras'
 local rep = extras.rep
+
+require 'config.util_go_snip'
 
 local fmta = require('luasnip.extras.fmt').fmta
 
