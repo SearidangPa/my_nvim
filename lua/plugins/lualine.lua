@@ -6,27 +6,19 @@ local function get_harpoon_filename_func(idx)
     if length == 0 then
       return ''
     end
-
     local root_dir = harpoonList.config:get_root_dir()
     local os_sep = vim.fn.has 'win32' == 1 and '\\' or '/'
     local current_file_path = vim.api.nvim_buf_get_name(0)
-    local result = {}
-
     if idx > length then
       return ''
     end
-
     local path = harpoonList:get(idx).value
     local filename = vim.fn.fnamemodify(path, ':t:r')
     local is_absolute = path:match '^/' or path:match '^%a:' or path:match '^\\\\'
     local fullpath = is_absolute and path or (root_dir .. os_sep .. path)
+    local is_current = fullpath == current_file_path
 
-    if fullpath == current_file_path then
-      table.insert(result, '[' .. filename .. ']')
-    else
-      table.insert(result, filename)
-    end
-    return table.concat(result)
+    return filename, is_current
   end
 end
 
@@ -88,14 +80,13 @@ return {
         winbar = 100,
       },
     },
-
     sections = {
       lualine_a = {},
       lualine_b = {
         'diagnostics',
         {
           'FugitiveHead',
-          icon = '',
+          icon = '',
           color = { fg = '#DCA1A1', gui = 'italic' },
         },
         {
@@ -107,26 +98,49 @@ return {
       lualine_x = {},
       lualine_y = {
         {
-          get_harpoon_filename_func(3),
-          color = { fg = '#FDA5D5' },
+          function()
+            local filename, is_current = get_harpoon_filename_func(3)()
+            return filename
+          end,
+          color = function()
+            local _, is_current = get_harpoon_filename_func(3)()
+            return is_current and { fg = '#3195CA' } or { fg = '#FDA5D5' }
+          end,
         },
         {
-          get_harpoon_filename_func(4),
-          color = { fg = '#FDA5D5' },
+          function()
+            local filename, is_current = get_harpoon_filename_func(4)()
+            return filename
+          end,
+          color = function()
+            local _, is_current = get_harpoon_filename_func(4)()
+            return is_current and { fg = '#3195CA' } or { fg = '#FDA5D5' }
+          end,
         },
       },
       lualine_z = {},
     },
-
     tabline = {
       lualine_y = {
         {
-          get_harpoon_filename_func(1),
-          color = { fg = '#FDA5D5' },
+          function()
+            local filename, is_current = get_harpoon_filename_func(1)()
+            return filename
+          end,
+          color = function()
+            local _, is_current = get_harpoon_filename_func(1)()
+            return is_current and { fg = '#3195CA' } or { fg = '#FDA5D5' }
+          end,
         },
         {
-          get_harpoon_filename_func(2),
-          color = { fg = '#FDA5D5' },
+          function()
+            local filename, is_current = get_harpoon_filename_func(2)()
+            return filename
+          end,
+          color = function()
+            local _, is_current = get_harpoon_filename_func(2)()
+            return is_current and { fg = '#3195CA' } or { fg = '#FDA5D5' }
+          end,
         },
       },
     },
