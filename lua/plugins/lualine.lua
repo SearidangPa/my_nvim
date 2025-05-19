@@ -124,7 +124,7 @@ return {
       lualine_y = {
         {
           function()
-            local filename, is_current = get_harpoon_filename_func(1)()
+            local filename, _ = get_harpoon_filename_func(1)()
             return filename
           end,
           color = function()
@@ -134,7 +134,7 @@ return {
         },
         {
           function()
-            local filename, is_current = get_harpoon_filename_func(2)()
+            local filename, _ = get_harpoon_filename_func(2)()
             return filename
           end,
           color = function()
