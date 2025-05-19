@@ -473,23 +473,18 @@ ls.add_snippets('lua', {
   ),
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'lua',
-  callback = function()
-    local function expand_fn()
-      local snip = ls.get_snippets(vim.bo.ft)[1]
-      ls.snip_expand(snip)
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
-    end
+local function expand_fn()
+  local snip = ls.get_snippets(vim.bo.ft)[1]
+  ls.snip_expand(snip)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
+end
 
-    vim.keymap.set('v', '<localleader>fn', function()
-      vim.cmd [[normal! d]]
-      expand_fn()
-    end, { buffer = true, desc = 'Expand Lua function snippet' })
+vim.keymap.set('v', '<localleader>fn', function()
+  vim.cmd [[normal! d]]
+  expand_fn()
+end, { buffer = true, desc = 'Expand Lua function snippet' })
 
-    vim.keymap.set('n', '<localleader>sf', expand_fn, { buffer = true, desc = '[S]nippet expand [F]unction' })
-  end,
-})
+vim.keymap.set('n', '<localleader>sf', expand_fn, { buffer = true, desc = '[S]nippet expand [F]unction' })
 
 --- === snip lua debugging ===
 -- local tests_info_print = vim.inspect(tests_info)
