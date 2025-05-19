@@ -110,11 +110,11 @@ return {
       lualine_x = {
         {
           get_harpoon_filenames_three,
-          color = { fg = '#FDA5D5' },
+          color = { fg = '#DCA1A1' },
         },
         {
           get_harpoon_filenames_four,
-          color = { fg = '#FDA5D5' },
+          color = { fg = '#DCA1A1' },
         },
       },
       lualine_y = {},
