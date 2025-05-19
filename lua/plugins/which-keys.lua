@@ -12,6 +12,7 @@ return {
     spec = {
       { '<localleader>a', group = '[a]i' },
       { '<localleader>f', group = '[f]iles' },
+      { '<localleader>s', group = '[s]nippet' },
       { '<localleader>d', group = '[d]elete' },
       { '<localleader>r', group = '[r]ename' },
 
