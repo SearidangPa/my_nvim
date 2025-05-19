@@ -58,7 +58,7 @@ else
           }),
           funcName = i(1, 'funcName'),
           args = i(2, ''),
-          dynamicRet = d(4, Go_ret_vals, { 1 }),
+          dynamicRet = d(4, util_go_snip.go_ret_vals, { 1 }),
           finish = i(0),
         }
       )
@@ -77,7 +77,7 @@ ls.add_snippets('go', {
         <finish>
       ]],
       {
-        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        funcName = d(1, util_go_snip.go_ret_vals_nearest_func_decl, {}),
         finish = i(0),
       }
     )
@@ -394,7 +394,7 @@ ls.add_snippets('go', {
         <finish>
       ]],
       {
-        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        funcName = d(1, util_go_snip.go_ret_vals_nearest_func_decl, {}),
         file = i(2, 'file'),
         finish = i(0),
       }
@@ -419,7 +419,7 @@ ls.add_snippets('go', {
         <finish>
       ]],
       {
-        funcName = d(1, Go_ret_vals_nearest_func_decl, {}),
+        funcName = d(1, util_go_snip.go_ret_vals_nearest_func_decl, {}),
         file = i(2, 'file'),
         flag = i(3, 'flag'),
         finish = i(0),
