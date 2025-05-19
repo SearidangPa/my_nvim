@@ -1,4 +1,4 @@
-local function get_harpoon_filenames(idx)
+local function get_harpoon_filename_func(idx)
   return function()
     local harpoon = require 'harpoon'
     local harpoonList = harpoon:list()
@@ -106,11 +106,11 @@ return {
       lualine_c = {},
       lualine_x = {
         {
-          get_harpoon_filenames(3),
+          get_harpoon_filename_func(3),
           color = { fg = '#FDA5D5' },
         },
         {
-          get_harpoon_filenames(4),
+          get_harpoon_filename_func(4),
           color = { fg = '#FDA5D5' },
         },
       },
@@ -120,11 +120,11 @@ return {
     tabline = {
       lualine_x = {
         {
-          get_harpoon_filenames(1),
+          get_harpoon_filename_func(1),
           color = { fg = '#FDA5D5' },
         },
         {
-          get_harpoon_filenames(2),
+          get_harpoon_filename_func(2),
           color = { fg = '#FDA5D5' },
         },
       },
