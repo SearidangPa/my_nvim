@@ -104,7 +104,8 @@ return {
         },
       },
       lualine_c = {},
-      lualine_x = {
+      lualine_x = {},
+      lualine_y = {
         {
           get_harpoon_filename_func(3),
           color = { fg = '#FDA5D5' },
@@ -114,12 +115,11 @@ return {
           color = { fg = '#FDA5D5' },
         },
       },
-      lualine_y = {},
       lualine_z = {},
     },
 
     tabline = {
-      lualine_x = {
+      lualine_y = {
         {
           get_harpoon_filename_func(1),
           color = { fg = '#FDA5D5' },
