@@ -27,6 +27,15 @@ end
 
 local choice_options = vim.list_extend(copy_list(default_no_more_input), item_options)
 
+local function contains(tbl, value)
+  for _, v in ipairs(tbl) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
+
 local function handle_choice(choice, perform_commit_func)
   if not choice then
     vim.notify('Commit aborted: no message selected.', vim.log.levels.WARN)
@@ -35,8 +44,7 @@ local function handle_choice(choice, perform_commit_func)
 
   local commit_msg = choice
 
-  local util_contains = require 'config.util_contains'
-  if util_contains.contains(default_no_more_input, choice) then
+  if contains(default_no_more_input, choice) then
     perform_commit_func(choice)
     return
   end
