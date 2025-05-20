@@ -80,9 +80,6 @@ vim.api.nvim_create_autocmd('UIEnter', {
     vim.treesitter.language.register('bash', 'zsh')
   end,
 })
-vim.api.nvim_create_autocmd('CursorHold', {
-  callback = function() vim.diagnostic.open_float(nil, { focusable = false, source = 'if_many' }) end,
-})
 
 local yank_group = vim.api.nvim_create_augroup('HighlightYank', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {

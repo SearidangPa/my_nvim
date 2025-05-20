@@ -14,26 +14,21 @@ function Highlight_Line_With_Treesitter(line, pos)
   assert(vim.treesitter, 'Treesitter is not available')
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   if not lang then
-    return nil, 0
+    return {}, 0
   end
-
   local parser = vim.treesitter.get_parser(0, lang)
   assert(parser, 'Parser not found')
   local query = vim.treesitter.query.get(parser:lang(), 'highlights')
   assert(query, 'Query not found')
-
   if query == nil then
     print 'No highlights query found'
-    return vim.fn.foldtext()
+    return {}, 0
   end
-
   local tree = parser:parse({ pos - 1, pos })[1]
   local result = {}
-
   local line_pos = 0
   local prev_range = nil
-
-  for id, node, _ in query:iter_captures(tree:root(), 0, pos - 1, pos) do
+  for id, node in query:iter_captures(tree:root(), 0, pos - 1, pos) do
     local name = query.captures[id]
     local start_row, start_col, end_row, end_col = node:range()
     if start_row == pos - 1 and end_row == pos - 1 then
@@ -51,7 +46,6 @@ function Highlight_Line_With_Treesitter(line, pos)
       prev_range = range
     end
   end
-
   return result, line_pos
 end
 
@@ -61,12 +55,10 @@ function HighlightedFoldtext()
   local line_count = end_pos - pos + 1
   local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
   local result, line_pos = Highlight_Line_With_Treesitter(line, pos)
-
-  if result == nil then
-    return { '\t\t[' .. line_count .. ' lines] ', 'Folded' }
+  if #result == 0 then
+    return { { '\t\t[' .. line_count .. ' lines] ', 'Folded' } }
   end
-
-  table.insert(result, #result + 1, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
+  table.insert(result, { '\t\t[' .. line_count .. ' lines] ', 'Folded' })
   if line_pos < #line then
     table.insert(result, { line:sub(line_pos + 1), 'Folded' })
   end
@@ -89,7 +81,7 @@ function Fold_node_recursively(node)
   end
 end
 
-function Fold_captured_nodes_recursively(query)
+local function fold_captured_nodes_recursively(query)
   local bufnr = vim.api.nvim_get_current_buf()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   local parser = vim.treesitter.get_parser(bufnr, lang, {})
@@ -173,7 +165,7 @@ local function fold_switch()
     (default_case) @default_case
   ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_comm()
@@ -186,7 +178,7 @@ local function fold_comm()
       (default_case) @default_case
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_Func()
@@ -199,7 +191,7 @@ local function fold_Func()
       (method_declaration) @method_decl
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_Type_Decl()
@@ -211,7 +203,7 @@ local function fold_Type_Decl()
       (type_declaration) @type_decl
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_if()
@@ -223,7 +215,7 @@ local function fold_if()
       (if_statement) @comm_case
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_short_var_decl()
@@ -235,7 +227,7 @@ local function fold_short_var_decl()
       (short_var_declaration ) @short_var_decl
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_return()
@@ -247,7 +239,7 @@ local function fold_return()
       (return_statement) @return_statement
     ]]
   )
-  Fold_captured_nodes_recursively(query)
+  fold_captured_nodes_recursively(query)
 end
 
 local function fold_tree()
