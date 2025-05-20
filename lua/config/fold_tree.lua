@@ -1,3 +1,22 @@
+-- Get the Folded highlight attributes
+local folded_hl = vim.api.nvim_get_hl(0, { name = 'Folded' })
+
+-- Get the StatusLine highlight background color
+local statusline_hl = vim.api.nvim_get_hl(0, { name = 'StatusLine' })
+
+-- Create a new highlight table with only the relevant attributes
+local new_hl = {
+  bg = statusline_hl.bg,
+  fg = folded_hl.fg,
+  bold = folded_hl.bold,
+  italic = folded_hl.italic,
+}
+
+-- Set the Folded highlight with the new attributes
+vim.api.nvim_set_hl(0, 'Folded', new_hl)
+
+vim.opt.foldtext = [[luaeval('HighlightedFoldtext')()]]
+
 function Highlight_Line_With_Treesitter(line, pos)
   assert(vim.treesitter, 'Treesitter is not available')
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
@@ -42,11 +61,6 @@ function Highlight_Line_With_Treesitter(line, pos)
 
   return result, line_pos
 end
-
-local hl = vim.api.nvim_get_hl(0, { name = 'Folded' })
-hl.bg = vim.api.nvim_get_hl(0, { name = 'StatusLine' }).bg
-vim.api.nvim_set_hl(0, 'Folded', hl)
-vim.opt.foldtext = [[luaeval('HighlightedFoldtext')()]]
 
 function HighlightedFoldtext()
   local pos = vim.v.foldstart
