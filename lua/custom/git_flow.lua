@@ -74,7 +74,7 @@ local function select_commit_message_prompt(cb)
 end
 
 local function git_add_all(on_success_cb)
-  require('config.util_job').start_job {
+  require('custom.util_job').start_job {
     cmd = 'git add .',
     on_success_cb = on_success_cb,
     silent = true,
@@ -84,7 +84,7 @@ end
 
 local function async_push_all()
   local function async_git_push(commit_msg)
-    require('config.util_job').start_job {
+    require('custom.util_job').start_job {
       cmd = 'git push',
       on_success_cb = function()
         local make_notify = require('mini.notify').make_notify {}

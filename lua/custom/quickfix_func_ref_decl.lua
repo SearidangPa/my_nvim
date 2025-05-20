@@ -1,5 +1,5 @@
 local M = {}
-local util_find_func = require 'config.util_find_func'
+local util_find_func = require 'custom.util_find_func'
 
 ---@type qfItem[]
 M.qflist = {}

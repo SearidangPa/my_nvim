@@ -9,7 +9,7 @@ vim.keymap.set(
 )
 
 vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
-  local util_find_func = require 'config.util_find_func'
+  local util_find_func = require 'custom.util_find_func'
   local original_cursor_pos = vim.api.nvim_win_get_cursor(0)
   util_find_func.visual_function()
   vim.schedule(function()
@@ -63,7 +63,7 @@ end
 
 local function yank_function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local util_find_func = require 'config.util_find_func'
+  local util_find_func = require 'custom.util_find_func'
   local func_node = util_find_func.nearest_func_node()
   local func_text = vim.treesitter.get_node_text(func_node, bufnr)
   vim.fn.setreg('*', func_text)

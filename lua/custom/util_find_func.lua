@@ -47,7 +47,7 @@ function M.nearest_func_node()
 end
 
 M.visual_function = function()
-  local util_find_func = require 'config.util_find_func'
+  local util_find_func = require 'custom.util_find_func'
   local func_node = util_find_func.nearest_func_node()
   local start_row, start_col, end_row, end_col = func_node:range()
   vim.cmd 'normal! v'
