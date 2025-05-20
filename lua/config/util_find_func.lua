@@ -61,8 +61,7 @@ M.delete_function = function()
   vim.cmd 'normal! d'
 end
 
-local map = vim.keymap.set
-map('n', '<leader>vf', M.visual_function, { desc = '[V]isual nearest [f]unction' })
-map('n', '<localleader>df', M.delete_function, { desc = '[D]elete nearest function' })
+vim.keymap.set('n', '<leader>vf', M.visual_function, { desc = '[V]isual nearest [f]unction' })
+vim.keymap.set('n', '<localleader>df', M.delete_function, { desc = '[D]elete nearest function' })
 
 return M
