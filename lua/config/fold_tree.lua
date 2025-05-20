@@ -157,6 +157,7 @@ end
 
 local function fold_switch()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -170,6 +171,7 @@ end
 
 local function fold_comm()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -182,6 +184,7 @@ end
 
 local function fold_Func()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -194,6 +197,7 @@ end
 
 local function fold_Type_Decl()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -205,6 +209,7 @@ end
 
 local function fold_if()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -216,6 +221,7 @@ end
 
 local function fold_short_var_decl()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
@@ -227,6 +233,7 @@ end
 
 local function fold_return()
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
+  assert(lang, 'Language is nil')
   local query = vim.treesitter.query.parse(
     lang,
     [[
