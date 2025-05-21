@@ -70,14 +70,16 @@ require('lazy').setup {
 vim.api.nvim_create_autocmd('UIEnter', {
   callback = function()
     require 'custom.keymaps'
+    require 'custom.remap'
     require 'custom.terminals_daemon'
     require 'custom.git_flow'
-    if vim.fn.has 'win32' ~= 1 then
-      require 'custom.push_with_qwen'
-    end
     require 'custom.async_job'
     require 'custom.fold_tree'
     vim.treesitter.language.register('bash', 'zsh')
+
+    if vim.fn.has 'win32' ~= 1 then
+      require 'custom.push_with_qwen'
+    end
   end,
 })
 
