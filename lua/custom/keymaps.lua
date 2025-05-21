@@ -8,14 +8,14 @@ map(
   { expr = true, silent = true, desc = 'Toggle fold' }
 )
 
-vim.keymap.set(
+map(
   { 'v', 'n' },
   '<localleader>av',
   function() require('codecompanion').prompt 'docfn' end,
   { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' }
 )
 
-vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
+map({ 'v', 'n' }, '<localleader>ad', function()
   local util_find_func = require 'custom.util_find_func'
   local original_cursor_pos = vim.api.nvim_win_get_cursor(0)
   util_find_func.visual_function()
@@ -26,8 +26,8 @@ vim.keymap.set({ 'v', 'n' }, '<localleader>ad', function()
   end)
 end, { noremap = true, silent = true, desc = '[A]dd [D]oc to a function' })
 
-vim.keymap.set('i', '<M-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
-vim.keymap.set('i', '<D-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
+map('i', '<M-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
+map('i', '<D-s>', function() require('hopcopilot').hop_copilot() end, { expr = true, silent = true, desc = 'hop copilot' })
 
 local function accept(opts)
   opts = opts or {}
@@ -83,37 +83,32 @@ local function yank_function()
   end
 end
 
-vim.keymap.set('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
-vim.keymap.set('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
+map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
+map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
-vim.keymap.set('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })
+map('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })
 
-vim.keymap.set({ 'n', 'x' }, '<leader>gy', function()
+map({ 'n', 'x' }, '<leader>gy', function()
   ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, { desc = 'Git Browse (copy)' })
 
-vim.keymap.set({ 'i', 'v' }, '<Insert>', '<ESC>', { desc = 'Escape Insert mode' })
+map({ 'i', 'v' }, '<Insert>', '<ESC>', { desc = 'Escape Insert mode' })
 
-vim.keymap.set('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
+map('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
 
-vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-vim.keymap.set(
-  'n',
-  '<leader>sb',
-  function() require('fzf-lua').git_branches {} end,
-  { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' }
-)
+map('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+map('n', '<leader>sb', function() require('fzf-lua').git_branches {} end, { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' })
 
-vim.keymap.set({ 'i', 's', 'n' }, '<esc>', function()
+map({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
     require('luasnip').unlink_current()
   end
   return '<esc>'
 end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
-vim.keymap.set('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
-vim.keymap.set('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
+map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
+map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
 
@@ -197,7 +192,7 @@ map('n', '<leader>x', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
 --- === Quickfix load ===
 map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
 
-vim.keymap.set(
+map(
   'n',
   '<leader>qr',
   function() require('custom.quickfix_func_ref_decl').load_func_refs() end,
@@ -226,10 +221,10 @@ local function convert_line_comments_to_block()
   vim.cmd [[normal! P]]
 end
 
-vim.keymap.set({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
-vim.keymap.set('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
+map({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
+map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 
-vim.keymap.set('v', '<leader>r', function()
+map('v', '<leader>r', function()
   vim.cmd 'normal! y'
   local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
   selected_text = vim.trim(selected_text)
