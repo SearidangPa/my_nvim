@@ -8,9 +8,9 @@ local new_hl = {
 }
 vim.api.nvim_set_hl(0, 'Folded', new_hl)
 
-vim.opt.foldtext = [[luaeval('HighlightedFoldtext')()]]
+vim.opt.foldtext = [[luaeval('Highlighted_fold_text')()]]
 
-local function highlight_Line_With_Treesitter(line, pos)
+local function highlight_line_with_treesitter(line, pos)
   assert(vim.treesitter, 'Treesitter is not available')
   local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
   if not lang then
@@ -49,12 +49,12 @@ local function highlight_Line_With_Treesitter(line, pos)
   return result, line_pos
 end
 
-function HighlightedFoldtext()
+function Highlighted_fold_text()
   local pos = vim.v.foldstart
   local end_pos = vim.v.foldend
   local line_count = end_pos - pos + 1
   local line = vim.api.nvim_buf_get_lines(0, pos - 1, pos, false)[1]
-  local result, line_pos = highlight_Line_With_Treesitter(line, pos)
+  local result, line_pos = highlight_line_with_treesitter(line, pos)
   if #result == 0 then
     return { { '\t\t[' .. line_count .. ' lines] ', 'Folded' } }
   end
