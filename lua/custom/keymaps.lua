@@ -49,13 +49,13 @@ map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = tru
 map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
-function RenameAndCapitalize()
+local function renameAndCapitalize()
   local current_word = vim.fn.expand '<cword>'
   local capitalized_word = current_word:sub(1, 1):upper() .. current_word:sub(2)
   vim.lsp.buf.rename(capitalized_word)
 end
 
-function RenameAndLowercase()
+local function renameAndLowercase()
   local current_word = vim.fn.expand '<cword>'
   local lowercase_word = current_word:sub(1, 1):lower() .. current_word:sub(2)
   vim.lsp.buf.rename(lowercase_word)
@@ -133,8 +133,8 @@ map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
-map('n', '<localleader>rc', RenameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
-map('n', '<localleader>rl', RenameAndLowercase, map_opt '[R]ename and [L]owercase first character')
+map('n', '<localleader>rc', renameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
+map('n', '<localleader>rl', renameAndLowercase, map_opt '[R]ename and [L]owercase first character')
 
 map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
 
