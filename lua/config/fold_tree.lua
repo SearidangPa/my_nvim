@@ -67,7 +67,7 @@ end
 
 -- ============= fold nodes functions =============
 
-function Fold_node_recursively(node)
+local function fold_node_recursively(node)
   local start_row, _, end_row, _ = node:range()
   start_row = start_row + 1
   end_row = end_row
@@ -77,7 +77,7 @@ function Fold_node_recursively(node)
   end
 
   for child in node:iter_children() do
-    Fold_node_recursively(child)
+    fold_node_recursively(child)
   end
 end
 
@@ -92,7 +92,7 @@ local function fold_captured_nodes_recursively(query)
 
   for _, node in query:iter_captures(root, bufnr, 0, -1) do
     if node then
-      Fold_node_recursively(node)
+      fold_node_recursively(node)
     end
   end
 end
