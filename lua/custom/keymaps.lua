@@ -122,11 +122,6 @@ map('n', '<D-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 map('n', '<M-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
 map('n', '<M-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 
-map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) -- exit terminal mode
-map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
-map('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
-map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
-
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- ================== LSP Rename the first letter
