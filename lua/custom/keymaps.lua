@@ -93,8 +93,6 @@ map({ 'n', 'x' }, '<leader>gy', function()
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, { desc = 'Git Browse (copy)' })
 
-map({ 'i', 'v' }, '<Insert>', '<ESC>', { desc = 'Escape Insert mode' })
-
 map('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
 
 map('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
@@ -106,9 +104,6 @@ map({ 'i', 's', 'n' }, '<esc>', function()
   end
   return '<esc>'
 end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
-
-map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
-map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
 

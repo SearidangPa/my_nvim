@@ -11,3 +11,7 @@ map('n', '<PageUp>', '<C-u>zz')
 map('n', '<PageDown>', '<C-d>zz')
 
 map('x', '<leader>p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
+
+-- === awesome for navigation long lines ===
+map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
+map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
