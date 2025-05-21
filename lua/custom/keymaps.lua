@@ -1,6 +1,13 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
+map(
+  'n',
+  '<Tab>',
+  function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('za', true, false, true), 'n', true) end,
+  { expr = true, silent = true, desc = 'Toggle fold' }
+)
+
 vim.keymap.set(
   { 'v', 'n' },
   '<localleader>av',
