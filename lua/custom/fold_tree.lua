@@ -267,3 +267,5 @@ create_user_cmd('FoldTypeDecl', fold_Type_Decl, {})
 create_user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
 create_user_cmd('FoldIf', fold_if, {})
 create_user_cmd('FoldReturn', fold_return, {})
+
+vim.keymap.set('n', '<leader>zf', ':FoldTree<CR>', { noremap = true, silent = true, desc = 'Fold tree' })
