@@ -76,7 +76,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
       require 'custom.push_with_qwen'
     end
     require 'custom.async_job'
-    require 'config.fold_tree'
+    require 'custom.fold_tree'
     vim.treesitter.language.register('bash', 'zsh')
   end,
 })

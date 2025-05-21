@@ -252,18 +252,18 @@ local function fold_tree()
 end
 
 -- ============= User commands =============
-local user_cmd = vim.api.nvim_create_user_command
-user_cmd('FoldErr', fold_err, {})
-user_cmd('FoldCase', function()
+local create_user_cmd = vim.api.nvim_create_user_command
+create_user_cmd('FoldErr', fold_err, {})
+create_user_cmd('FoldCase', function()
   fold_switch()
   fold_comm()
 end, {})
 
-user_cmd('FoldTree', fold_tree, {})
-user_cmd('FoldFunc', fold_Func, {})
-user_cmd('FoldSwitch', fold_switch, {})
-user_cmd('FoldComm', fold_comm, {})
-user_cmd('FoldTypeDecl', fold_Type_Decl, {})
-user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
-user_cmd('FoldIf', fold_if, {})
-user_cmd('FoldReturn', fold_return, {})
+create_user_cmd('FoldTree', fold_tree, {})
+create_user_cmd('FoldFunc', fold_Func, {})
+create_user_cmd('FoldSwitch', fold_switch, {})
+create_user_cmd('FoldComm', fold_comm, {})
+create_user_cmd('FoldTypeDecl', fold_Type_Decl, {})
+create_user_cmd('FoldShortVarDecl', fold_short_var_decl, {})
+create_user_cmd('FoldIf', fold_if, {})
+create_user_cmd('FoldReturn', fold_return, {})
