@@ -69,7 +69,7 @@ require('lazy').setup {
 
 vim.api.nvim_create_autocmd('UIEnter', {
   callback = function()
-    require 'config.keymaps'
+    require 'custom.keymaps'
     require 'custom.terminals_daemon'
     require 'custom.git_flow'
     if vim.fn.has 'win32' ~= 1 then
