@@ -22,3 +22,10 @@ map('x', 'p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 
 map('n', 'gk', 'O<Esc>j', map_opt 'Insert empty line above')
 map('n', 'gj', 'o<Esc>k', map_opt 'Insert empty line below')
+
+map('n', '<C-h>', '<C-w><C-h>', map_opt 'Move focus to the left window')
+map('n', '<C-l>', '<C-w><C-l>', map_opt 'Move focus to the right window')
+map('n', '<D-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
+map('n', '<D-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
+map('n', '<M-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
+map('n', '<M-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
