@@ -17,6 +17,8 @@ end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 ---@diagnostic disable-next-line: missing-fields
 map({ 'n', 'x' }, 'gy', function()
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
-end, map_opt '[G]it [Y]ank URL')
+  require('fidget').notify('Git URL copied to clipboard', 'info', { title = 'Git URL Copied' })
+  return '<esc>'
+end, { desc = '[G]it [Y]ank URL', expr = true })
 
 return {}
