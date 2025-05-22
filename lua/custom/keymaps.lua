@@ -106,11 +106,7 @@ map('x', '/', '<Esc>/\\%V', { noremap = true })
 -- === Yank ===
 map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 
-map('n', '<leader>ya', function()
-  local cur_pos = vim.fn.getpos '.'
-  vim.cmd 'normal! ggyG'
-  vim.fn.setpos('.', cur_pos)
-end, { desc = 'Yank all lines' })
+map('n', '<leader>ya', ':%y<CR>', { desc = 'Yank all lines' })
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
