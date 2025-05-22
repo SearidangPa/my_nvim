@@ -75,15 +75,7 @@ vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_cl
 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
-map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
-
--- === Visual select ===
-map('n', '<leader>va', 'ggVGp', { desc = '[V]isual [A]ll' })
 map('x', '/', '<Esc>/\\%V', { noremap = true })
-
--- === Yank ===
-
-map('n', '<leader>ya', ':%y<CR>', { desc = 'Yank all lines' })
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 

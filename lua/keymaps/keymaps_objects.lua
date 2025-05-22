@@ -17,7 +17,5 @@ local function yank_function()
 end
 
 map('n', '<leader>yf', yank_function, map_opt '[Y]ank [F]unction')
-
 map('n', '<leader>ya', ':%y<CR>', { desc = 'Yank all lines' })
-
 map('n', '<leader>va', 'ggVGp', { desc = '[V]isual [A]ll' })
