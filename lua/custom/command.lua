@@ -12,3 +12,5 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = yank_group,
   callback = function() vim.highlight.on_yank() end,
 })
+
+vim.api.nvim_create_user_command('CopyFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })

@@ -24,31 +24,4 @@ vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_cl
 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
-map('x', '/', '<Esc>/\\%V', { noremap = true })
-
-vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
-
-local function convert_comment_lines_to_block()
-  vim.cmd [[normal! d]]
-  local clipboard_content = vim.trim(vim.fn.getreg '+') -- use the '+' register on Windows
-  local lines = vim.split(clipboard_content, '\r?\n') -- split on CRLF or LF
-
-  local processed_lines = {}
-  for _, line in ipairs(lines) do
-    local processed = line:gsub('^%s*// ?', '')
-    table.insert(processed_lines, processed)
-  end
-
-  local result = { '/*' }
-  for _, line in ipairs(processed_lines) do
-    table.insert(result, line)
-  end
-  table.insert(result, '*/\n')
-
-  vim.fn.setreg('+', table.concat(result, '\n')) -- set the modified content to the '+' register
-  vim.cmd [[normal! P]]
-end
-
-map({ 'v', 'c' }, '<leader>cc', convert_comment_lines_to_block, map_opt '[C]onvert lines to block [C]omment')
-
 return {}
