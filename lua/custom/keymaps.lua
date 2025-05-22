@@ -95,24 +95,7 @@ end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
 vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
 
-vim.api.nvim_create_user_command('Split4060', function()
-  local total = vim.o.columns
-  local left = math.floor(total * 0.4)
-  vim.cmd 'leftabove vsplit'
-  vim.cmd 'wincmd h'
-  vim.cmd('vertical resize ' .. left)
-end, {})
-
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
-
-map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
-
-map('n', '<S-Enter>', function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', false)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
-end, map_opt 'remap Enter') -- yolo :D
-
-map('n', '<leader><BS>', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
 
@@ -175,7 +158,6 @@ local function convert_line_comments_to_block()
 end
 
 map({ 'v', 'c' }, '<leader>cc', convert_line_comments_to_block, map_opt '[C]onvert lines to block [C]omment')
-map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 
 --- === New Scratch Buffer ===
 local new_scratch_buf = function()
