@@ -31,7 +31,7 @@ vim.opt.inccommand = 'nosplit' -- Preview substitutions live, as you type
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
--- === Duh ===
+-- === some more functionality ===
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.mouse = 'a'
