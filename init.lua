@@ -71,6 +71,7 @@ vim.api.nvim_create_autocmd('UIEnter', {
   callback = function()
     require 'custom.keymaps'
     require 'custom.remap'
+    require 'custom.keymaps_rename'
     require 'custom.terminals_daemon'
     require 'custom.git_flow'
     require 'custom.async_job'

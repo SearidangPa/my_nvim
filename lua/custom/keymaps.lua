@@ -56,18 +56,6 @@ map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = tru
 map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
-local function renameAndCapitalize()
-  local current_word = vim.fn.expand '<cword>'
-  local capitalized_word = current_word:sub(1, 1):upper() .. current_word:sub(2)
-  vim.lsp.buf.rename(capitalized_word)
-end
-
-local function renameAndLowercase()
-  local current_word = vim.fn.expand '<cword>'
-  local lowercase_word = current_word:sub(1, 1):lower() .. current_word:sub(2)
-  vim.lsp.buf.rename(lowercase_word)
-end
-
 local function yank_function()
   local bufnr = vim.api.nvim_get_current_buf()
   local util_find_func = require 'custom.util_find_func'
@@ -117,10 +105,6 @@ end, {})
 
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
--- ================== LSP Rename the first letter
-map('n', '<localleader>rc', renameAndCapitalize, map_opt '[R]ename and [C]apitalize first character')
-map('n', '<localleader>rl', renameAndLowercase, map_opt '[R]ename and [L]owercase first character')
-
 map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all') -- yolo :D
 
 map('n', '<S-Enter>', function()
@@ -144,10 +128,6 @@ map('n', '<leader>ya', function()
   vim.cmd 'normal! ggyG'
   vim.fn.setpos('.', cur_pos)
 end, { desc = 'Yank all lines' })
-
--- === Remap ===
-
-map('n', '<localleader>rs', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
@@ -196,13 +176,6 @@ end
 
 map({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
-
-map('v', '<leader>r', function()
-  vim.cmd 'normal! y'
-  local selected_text = vim.fn.escape(vim.fn.getreg '"', '/\\')
-  selected_text = vim.trim(selected_text)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':%s/' .. selected_text .. '//gc<Left><Left><Left>', true, true, true), 'n', false)
-end, { desc = 'Substitute the visual selection' })
 
 --- === New Scratch Buffer ===
 local new_scratch_buf = function()
