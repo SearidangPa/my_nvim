@@ -19,3 +19,5 @@ end
 map('n', '<leader>yf', yank_function, map_opt '[Y]ank [F]unction')
 map('n', '<leader>ya', ':%y<CR>', { desc = 'Yank all lines' })
 map('n', '<leader>va', 'ggVGp', { desc = '[V]isual [A]ll' })
+
+map('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })

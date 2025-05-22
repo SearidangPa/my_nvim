@@ -69,18 +69,21 @@ require('lazy').setup {
 
 vim.api.nvim_create_autocmd('UIEnter', {
   callback = function()
-    require 'keymaps.keymaps'
-    require 'custom.remap'
-    require 'keymaps.keymaps_rename'
-    require 'custom.terminals_daemon'
-    require 'custom.git_flow'
-    require 'custom.async_job'
-    require 'custom.fold_tree'
-    vim.treesitter.language.register('bash', 'zsh')
+    local function load_modules(dir)
+      local path = vim.fs.joinpath(vim.fn.stdpath 'config', 'lua', dir)
+      local files = vim.fn.readdir(path)
 
-    if vim.fn.has 'win32' ~= 1 then
-      require 'custom.push_with_qwen'
+      for _, file in ipairs(files) do
+        if file:match '%.lua$' and not (file:match '^util_') then
+          local module_name = file:gsub('%.lua$', '')
+          require(dir .. '.' .. module_name)
+        end
+      end
     end
+    load_modules 'keymaps'
+    load_modules 'custom'
+
+    vim.treesitter.language.register('bash', 'zsh')
 
     --- === New Scratch Buffer ===
     local new_scratch_buf = function()

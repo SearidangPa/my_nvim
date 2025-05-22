@@ -52,8 +52,6 @@ map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' 
 map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
-map('n', 'yc', function() vim.cmd [[norm y2t:]] end, { silent = true })
-
 map({ 'n', 'x' }, '<leader>gy', function()
   ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
