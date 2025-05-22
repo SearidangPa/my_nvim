@@ -2,8 +2,8 @@ local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
 map('n', '<Tab>', 'zA', map_opt 'Toggle fold')
-map('n', '<S-Tab>', 'zj', map_opt 'Toggle fold')
-map('n', '<localleader><Tab>', 'zj', map_opt 'Toggle fold')
+map('n', ']]', 'zj', map_opt 'Next fold')
+map('n', '[[', 'zk', map_opt 'Previous fold')
 
 map('n', '<leader><BS>', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
