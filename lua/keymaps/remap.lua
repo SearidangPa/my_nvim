@@ -4,6 +4,7 @@ local function map_opt(desc) return { noremap = true, silent = true, desc = desc
 map('n', '<Tab>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('za', true, false, true), 'n', true) end, map_opt 'Toggle fold')
 map('n', '<leader><BS>', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
+map('n', '<Enter>', '<cmd>silent! wa<cr>', { desc = 'Save all buffers' })
 
 map('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
@@ -20,9 +21,6 @@ map('n', 'n', 'nzzzv')
 -- === navigation long wrapped lines
 map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
 map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
-
--- === Enter ===
-map('n', '<Enter>', '<cmd>silent! wa<cr>', { desc = 'Save all buffers' })
 
 -- === visual mode
 map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
