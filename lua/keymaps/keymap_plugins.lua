@@ -15,7 +15,7 @@ map({ 'i', 's', 'n' }, '<esc>', function()
 end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
 ---@diagnostic disable-next-line: missing-fields
-map({ 'n', 'x' }, '<leader>gy', function()
+map({ 'n', 'x' }, 'gy', function()
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, map_opt '[G]it [Y]ank URL')
 
