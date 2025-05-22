@@ -13,7 +13,7 @@ return {
       go_test_prefix = go_test_prefix,
       user_command_prefix = 'Go',
     }
-    local function go_test_location()
+    local function test_location()
       require 'terminal-multiplexer'
       local util_lsp = require 'util_go_test_lsp'
       local test_name = go_test_t.term_tester.terminal_multiplexer.last_terminal_name
@@ -33,6 +33,6 @@ return {
     vim.keymap.set('n', '<localleader>g', ':GoTestTerm<CR>', { desc = '[G]o test in terminal' })
     vim.keymap.set('n', '<localleader>v', ':GoTestTermViewLast<CR>', { desc = '[V]iew last test' })
 
-    vim.keymap.set('n', '<localleader>t', go_test_location, { desc = 'jump to last [T]est in code' })
+    vim.keymap.set('n', '<localleader>t', test_location, { desc = 'jump to last [T]est in code' })
   end,
 }

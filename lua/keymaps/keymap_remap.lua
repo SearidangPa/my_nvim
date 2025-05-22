@@ -2,13 +2,21 @@ local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+local function save_all()
+  if vim.bo.filetype == 'snacks_input' then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+  end
+  vim.cmd 'silent! wa'
+end
+map('n', '<Enter>', save_all, { desc = 'Save all buffers' })
+
 map('n', '<Tab>', 'zA', map_opt 'Toggle fold')
 map('n', ']]', 'zj', map_opt 'Next fold')
 map('n', '[[', 'zk', map_opt 'Previous fold')
 
 map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
-map('n', '<Enter>', '<cmd>silent! wa<cr>', { desc = 'Save all buffers' })
 map('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
 
 -- === Insert mode
