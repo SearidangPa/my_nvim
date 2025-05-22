@@ -56,21 +56,6 @@ map('i', '<C-l>', function() accept { no_indentation = true, only_one_line = tru
 map('i', '<D-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 map('i', '<M-y>', accept, { expr = true, silent = true, desc = 'Accept Copilot' })
 
-local function yank_function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local util_find_func = require 'custom.util_find_func'
-  local func_node = util_find_func.nearest_func_node()
-  local func_text = vim.treesitter.get_node_text(func_node, bufnr)
-  vim.fn.setreg('*', func_text)
-  for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'name' then
-      local func_name = vim.treesitter.get_node_text(child, bufnr)
-      print('Yanked function: ' .. func_name)
-      break
-    end
-  end
-end
-
 map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
@@ -104,32 +89,10 @@ map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = '[V]isual
 map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
-map('n', '<leader>yf', yank_function, { desc = 'Yank nearest function' })
 
 map('n', '<leader>ya', ':%y<CR>', { desc = 'Yank all lines' })
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
-
-map('n', ']g', function() vim.diagnostic.jump { count = 1, float = true } end, map_opt 'Next diagnostic')
-map('n', '[g', function() vim.diagnostic.jump { count = -1, float = true } end, map_opt 'Previous diagnostic')
--- === Quickfix navigation ===
-map('n', ']q', ':cnext<CR>zz', { desc = 'Next Quickfix item' })
-map('n', '[q', ':cprevious<CR>zz', { desc = 'Previous Quickfix item' })
-
--- === Quickfix window controls ===
-map('n', '<leader>qc', ':cclose<CR>', { desc = 'Close Quickfix window' })
-map('n', '<leader>qo', ':copen<CR>', { desc = 'Open Quickfix window' })
-map('n', '<leader>x', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
-
---- === Quickfix load ===
-map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
-
-map(
-  'n',
-  '<leader>qr',
-  function() require('custom.quickfix_func_ref_decl').load_func_refs() end,
-  { desc = '[L]oad function [R]eferences', noremap = true, silent = true }
-)
 
 -- Function to convert visually selected // comments to /* */ block comment
 local function convert_line_comments_to_block()
