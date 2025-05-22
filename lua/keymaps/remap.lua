@@ -1,17 +1,18 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
+map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 map('n', '<Tab>', 'zA', map_opt 'Toggle fold')
 map('n', ']]', 'zj', map_opt 'Next fold')
 map('n', '[[', 'zk', map_opt 'Previous fold')
 
-map('n', '<leader><BS>', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
+map('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 map('n', '<Enter>', '<cmd>silent! wa<cr>', { desc = 'Save all buffers' })
-
 map('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
+
+-- === Insert mode
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
-map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- === navigation: tag zz at the end
