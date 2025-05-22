@@ -8,6 +8,7 @@ map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 map('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
 
 -- === navigation: tag zz at the end
 map('n', '<C-u>', '<C-u>zz')

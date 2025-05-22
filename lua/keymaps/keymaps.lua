@@ -8,11 +8,6 @@ map('n', '<leader>sb', function() require('fzf-lua').git_branches {} end, { nore
 map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
----@diagnostic disable-next-line: missing-fields
-map({ 'n', 'x' }, '<leader>gy', function()
-  Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
-end, map_opt '[G]it [Y]ank URL')
-
 map({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
     require('luasnip').unlink_current()
@@ -20,8 +15,9 @@ map({ 'i', 's', 'n' }, '<esc>', function()
   return '<esc>'
 end, { desc = 'Escape, clear hlsearch, and stop snippet session', expr = true })
 
-vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
-
-map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_opt 'Signature help')
+---@diagnostic disable-next-line: missing-fields
+map({ 'n', 'x' }, '<leader>gy', function()
+  Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
+end, map_opt '[G]it [Y]ank URL')
 
 return {}

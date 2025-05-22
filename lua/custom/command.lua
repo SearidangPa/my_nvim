@@ -14,3 +14,4 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 vim.api.nvim_create_user_command('CopyFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
+vim.api.nvim_create_user_command('ClearExtmarks', function() vim.api.nvim_buf_clear_namespace(0, -1, 0, -1) end, { nargs = 0 })
