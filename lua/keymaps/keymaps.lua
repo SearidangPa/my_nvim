@@ -1,13 +1,10 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
-map(
-  'n',
-  '<Tab>',
-  function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('za', true, false, true), 'n', true) end,
-  { expr = true, silent = true, desc = 'Toggle fold' }
-)
-
+-- === Plugins keymaps ===
+map('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
+map('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+map('n', '<leader>sb', function() require('fzf-lua').git_branches {} end, { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' })
 map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
@@ -15,11 +12,6 @@ map({ 'n', 'x' }, '<leader>gy', function()
   ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
 end, { desc = 'Git Browse (copy)' })
-
-map('n', '<leader>ut', function() require('theme-loader').toggle_os_theme() end, { desc = '[U]i [T]heme' })
-
-map('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
-map('n', '<leader>sb', function() require('fzf-lua').git_branches {} end, { noremap = true, silent = true, desc = '[S]earch remote and local [B]ranches' })
 
 map({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then

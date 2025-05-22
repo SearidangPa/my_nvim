@@ -1,6 +1,7 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
+map('n', '<Tab>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('za', true, false, true), 'n', true) end, map_opt 'Toggle fold')
 map('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
 map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) -- exit terminal mode
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
