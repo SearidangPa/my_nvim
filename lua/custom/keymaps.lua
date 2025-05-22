@@ -174,7 +174,7 @@ local function convert_line_comments_to_block()
   vim.cmd [[normal! P]]
 end
 
-map({ 'v', 'c' }, '<leader>8', convert_line_comments_to_block, map_opt 'Convert line comments to block comment')
+map({ 'v', 'c' }, '<leader>cc', convert_line_comments_to_block, map_opt '[C]onvert lines to block [C]omment')
 map('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
 
 --- === New Scratch Buffer ===
