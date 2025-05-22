@@ -19,18 +19,14 @@ map('n', 'j', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'j']], { expr = true })
 map('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = true })
 
 -- === Enter ===
-map('n', '<Enter>', function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(':wa<CR>', true, false, true), 'n', false) end, map_opt '[W]rite all')
-map('n', '<S-Enter>', function()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', false)
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', false)
-end, map_opt '[Enter] and [Esc]')
+map('n', '<Enter>', '<cmd>silent! wa<cr>', { desc = 'Save all buffers' })
 
 -- === visual mode
 map('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
 map('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
 
 -- === visual mode: delete, paste into black hole
-map('x', 'p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
+map({ 'x', 'v' }, 'p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
 
 -- === add empty lines

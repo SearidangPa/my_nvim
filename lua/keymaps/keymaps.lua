@@ -8,10 +8,10 @@ map('n', '<leader>sb', function() require('fzf-lua').git_branches {} end, { nore
 map('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true })
 map('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true })
 
+---@diagnostic disable-next-line: missing-fields
 map({ 'n', 'x' }, '<leader>gy', function()
-  ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse { open = function(url) vim.fn.setreg('+', url) end, notify = false }
-end, { desc = 'Git Browse (copy)' })
+end, map_opt '[G]it [Y]ank URL')
 
 map({ 'i', 's', 'n' }, '<esc>', function()
   if require('luasnip').expand_or_jumpable() then
@@ -28,8 +28,7 @@ map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 vim.api.nvim_create_user_command('CopyCurrentFilePath', function() vim.fn.setreg('+', vim.fn.expand '%:p') end, { nargs = 0 })
 
--- Function to convert visually selected // comments to /* */ block comment
-local function convert_line_comments_to_block()
+local function convert_comment_lines_to_block()
   vim.cmd [[normal! d]]
   local clipboard_content = vim.trim(vim.fn.getreg '+') -- use the '+' register on Windows
   local lines = vim.split(clipboard_content, '\r?\n') -- split on CRLF or LF
@@ -50,6 +49,6 @@ local function convert_line_comments_to_block()
   vim.cmd [[normal! P]]
 end
 
-map({ 'v', 'c' }, '<leader>cc', convert_line_comments_to_block, map_opt '[C]onvert lines to block [C]omment')
+map({ 'v', 'c' }, '<leader>cc', convert_comment_lines_to_block, map_opt '[C]onvert lines to block [C]omment')
 
 return {}
