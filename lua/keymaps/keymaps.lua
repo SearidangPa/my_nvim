@@ -8,13 +8,6 @@ map(
   { expr = true, silent = true, desc = 'Toggle fold' }
 )
 
-map(
-  { 'v', 'n' },
-  '<localleader>av',
-  function() require('codecompanion').prompt 'docfn' end,
-  { noremap = true, silent = true, desc = '[A]dd doc to a visual selected block' }
-)
-
 map({ 'v', 'n' }, '<localleader>ad', function()
   local util_find_func = require 'custom.util_find_func'
   local original_cursor_pos = vim.api.nvim_win_get_cursor(0)
@@ -85,7 +78,7 @@ map({ 'n', 'i' }, '<C-space>', function() vim.lsp.buf.signature_help() end, map_
 map({ 'v', 'x' }, '<leader>d', [["_x]], map_opt '[D]elete into black hole')
 
 -- === Visual select ===
-map('n', '<leader>va', function() vim.cmd 'normal! ggVG' end, { desc = '[V]isual [A]ll' })
+map('n', '<leader>va', 'ggVGp', { desc = '[V]isual [A]ll' })
 map('x', '/', '<Esc>/\\%V', { noremap = true })
 
 -- === Yank ===
@@ -117,13 +110,5 @@ local function convert_line_comments_to_block()
 end
 
 map({ 'v', 'c' }, '<leader>cc', convert_line_comments_to_block, map_opt '[C]onvert lines to block [C]omment')
-
---- === New Scratch Buffer ===
-local new_scratch_buf = function()
-  vim.cmd 'enew'
-  vim.cmd 'setlocal buftype=nofile bufhidden=hide noswapfile'
-  vim.cmd 'setlocal filetype=markdown'
-end
-vim.api.nvim_create_user_command('NewScratch', new_scratch_buf, { desc = 'Start a scratch buffer' })
 
 return {}
