@@ -1,16 +1,16 @@
 local set_map_key = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
-set_map_key('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-local function save_all()
-  if vim.bo.filetype == 'snacks_input' then
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
-    return '<Esc>'
-  else
-    vim.cmd 'silent! wa'
-  end
-end
-set_map_key('n', '<Enter>', save_all, { expr = true, desc = 'Save all buffers' })
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'snacks_input',
+  callback = function()
+    set_map_key('n', '<Enter>', function()
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
+      return '<Esc>'
+    end, { buffer = true, expr = true, desc = 'Send <Enter> and Esc to the snack input' })
+  end,
+})
+set_map_key('n', '<Enter>', function() vim.cmd 'silent! wa' end, { desc = 'Save all buffers' })
 
 set_map_key('n', '<Tab>', 'zA', map_opt 'Toggle fold')
 set_map_key('n', ']]', 'zj', map_opt 'Next fold')
@@ -18,7 +18,6 @@ set_map_key('n', '[[', 'zk', map_opt 'Previous fold')
 
 set_map_key('n', '<leader>ce', ':ClearExtmarks<CR>', map_opt '[C]lear [E]xtmarks')
 set_map_key('n', '<BS>', ':messages<CR>', map_opt 'Show [M]essages')
-set_map_key('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
 
 -- === Insert mode
 set_map_key('i', '<C-D>', '<Del>', map_opt 'Delete character under the cursor')
@@ -38,6 +37,7 @@ set_map_key('n', 'k', [[(v:count > 1 ? 'm`' . v:count : 'g') . 'k']], { expr = t
 -- === visual mode
 set_map_key('v', 'J', ":m '>+1<CR>gv=gv") -- move line down
 set_map_key('v', 'K', ":m '<-2<CR>gv=gv") -- move line up
+set_map_key('x', '/', '<Esc>/\\%V', { desc = 'Search in visual selection' })
 
 -- === visual mode: delete, paste into black hole
 set_map_key({ 'x', 'v' }, 'p', [["_dP]], map_opt '[P]aste without overwriting the clipboard')
@@ -50,3 +50,6 @@ set_map_key('n', '<D-j>', '<C-w><C-j>', map_opt 'Move focus to the below window'
 set_map_key('n', '<D-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
 set_map_key('n', '<M-j>', '<C-w><C-j>', map_opt 'Move focus to the below window')
 set_map_key('n', '<M-k>', '<C-w><C-k>', map_opt 'Move focus to the above window')
+
+-- === terminal mode
+set_map_key('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })

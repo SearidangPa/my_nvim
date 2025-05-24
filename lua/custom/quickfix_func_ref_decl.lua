@@ -81,13 +81,13 @@ local function get_enclosing_function_info(uri, ref_line)
   local signature = lines[1]
   local text = signature:gsub('^%s+', '')
 
-  local location = {
-    line = func_range.start_row + 1,
-    col = func_range.start_col + 1,
-  }
   return {
     filename = filename,
-    location = location,
+    location = {
+      line = func_range.start_row + 1,
+      col = func_range.start_col + 1,
+
+    },
     text = text,
     func_name = func_name,
   }
