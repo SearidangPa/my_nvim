@@ -1,53 +1,52 @@
-local M = {}
----@class qfItem
+---@class QfItem
 ---@field filename string
 ---@field lnum number
 ---@field col number
 ---@field text string
 ---@field func_name? string
 
----@type qfItem[]
-M.qflist = {}
+---@class FunctionInfo
+---@field filename string
+---@field location {line: number, col: number}
+---@field text string
+---@field func_name string
 
-M.processed_funcs = {} -- Track function declarations we've already added
+local M = {}
 
----@type qfItem[]
-M.new_func_decls = {} -- Track recent function declarations
-M.last_func_decls = {} -- Track last function declarations
+local state = {
+  qflist = {},
+  processed_functions = {},
+  current_declarations = {},
+  previous_declarations = {},
+}
 
----@parameter qflist qfItem[]
-function M.add_to_quickfix(qflist, filename, location, text)
-  table.insert(qflist, {
+---@param qflist QfItem[]
+---@param filename string
+---@param location {line: number, col: number}
+---@param text string
+---@return boolean
+local function add_to_quickfix(qflist, filename, location, text)
+  local item = {
     filename = filename,
     lnum = location.line,
     col = location.col,
     text = text,
-  })
-  table.insert(M.new_func_decls, {
-    filename = filename,
-    lnum = location.line,
-    col = location.col,
-    text = text,
-  })
+  }
+
+  table.insert(qflist, item)
+  table.insert(state.current_declarations, item)
+
   return true
 end
 
---[[
-Finds the enclosing function for a given line in a file.
-- Skips test files and ensures the buffer is loaded.
-- Uses Treesitter to locate the nearest function declaration.
-- Extracts the function name, range, and signature for further processing.
-- Avoids reprocessing functions that have already been handled.
-]]
 ---@param uri string
 ---@param ref_line number
-function M.find_enclosing_function(uri, ref_line)
+local function find_enclosing_function(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
     return nil
   end
 
-  -- Convert URI to buffer number and load the buffer
   local bufnr = vim.fn.bufadd(filename)
   vim.fn.bufload(bufnr)
 
@@ -72,15 +71,14 @@ function M.find_enclosing_function(uri, ref_line)
   func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_identifier:range()
 
   local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
-  if M.processed_funcs[func_key] then
+  if state.processed_functions[func_key] then
     return nil
   end
-  M.processed_funcs[func_key] = true
+  state.processed_functions[func_key] = true
 
-  -- Get the complete function signature from the line
   local lines = vim.api.nvim_buf_get_lines(bufnr, func_range.start_row, func_range.start_row + 1, false)
   local signature = lines[1]
-  local text = signature:gsub('^%s+', '') -- Remove leading whitespace
+  local text = signature:gsub('^%s+', '')
 
   local location = {
     line = func_range.start_row + 1,
@@ -94,12 +92,7 @@ function M.find_enclosing_function(uri, ref_line)
   }
 end
 
---[[
-  - Loads declaration of function that references the pos.
-  - Filters out test files and adds valid references to the quickfix list.
-  - Opens the quickfix window to display the results.
-]]
-function M.load_decl_func_reference(bufnr, line, col)
+local function load_decl_func_reference(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -118,27 +111,26 @@ function M.load_decl_func_reference(bufnr, line, col)
       assert(range, 'range is nil')
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
-      local enclosing_function_info = M.find_enclosing_function(uri, ref_line)
+      local enclosing_function_info = find_enclosing_function(uri, ref_line)
       if enclosing_function_info then
         local make_notify = require('mini.notify').make_notify {}
         make_notify(string.format('found: %s', enclosing_function_info.func_name))
         if not string.find(enclosing_function_info.filename, 'test') then
-          M.add_to_quickfix(M.qflist, enclosing_function_info.filename, enclosing_function_info.location, enclosing_function_info.text)
+          add_to_quickfix(state.qflist, enclosing_function_info.filename, enclosing_function_info.location, enclosing_function_info.text)
         end
       end
     end
-    vim.fn.setqflist(M.qflist, 'r')
+    vim.fn.setqflist(state.qflist, 'r')
     vim.schedule(function()
       vim.cmd 'copen'
       vim.cmd 'wincmd p'
     end)
   end)
-  return M.qflist
+  return state.qflist
 end
 
 function M.load_func_refs()
   if vim.fn.getqflist({ size = 0 }).size == 0 then
-    -- first time loading function declarations that refer to this function
     local util_find_func = require 'custom.util_find_func'
     local func_node = util_find_func.nearest_func_node()
     assert(func_node, 'No function found')
@@ -149,26 +141,31 @@ function M.load_func_refs()
       end
     end
     local start_row, start_col = func_identifier:range()
-    M.load_decl_func_reference(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
-    M.last_func_decls = M.new_func_decls
+    load_decl_func_reference(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
     return
   end
 
-  M.new_func_decls = {}
-  for _, item in ipairs(M.last_func_decls) do
+  state.previous_declarations = vim.deepcopy(state.current_declarations)
+  state.current_declarations = {}
+
+  for _, item in ipairs(state.previous_declarations) do
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
-    M.load_decl_func_reference(bufnr, item.lnum, item.col)
+    load_decl_func_reference(bufnr, item.lnum, item.col)
   end
-  M.last_func_decls = M.new_func_decls
 end
 
-vim.api.nvim_create_user_command('ClearQuickFix', function()
-  M.qflist = {}
-  M.processed_funcs = {}
+local function clear_quickfix_state()
+  state.qflist = {}
+  state.processed_functions = {}
+  state.current_declarations = {}
+  state.previous_declarations = {}
+
   vim.fn.setqflist {}
-  vim.notify('Reset func ref decl quickfix list', vim.log.levels.INFO)
-end, { desc = 'Reset func ref decl' })
+  vim.notify('Quickfix cleared', vim.log.levels.INFO)
+end
+
+vim.api.nvim_create_user_command('ClearQuickFix', clear_quickfix_state, { desc = 'Clear quickfix list' })
 
 return M
