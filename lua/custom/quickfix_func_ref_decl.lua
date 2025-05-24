@@ -277,15 +277,6 @@ local function create_reference_quickfix_item(ref)
   }
 end
 
-local function add_reference_to_quickfix(ref)
-  if is_test_file(vim.uri_to_fname(ref.uri)) then
-    return
-  end
-
-  local item = create_reference_quickfix_item(ref)
-  table.insert(state.qflist, item)
-end
-
 function M.load_all_function_references()
   if vim.tbl_isempty(state.qflist) then
     vim.notify('No functions in quickfix list', vim.log.levels.WARN)
@@ -313,7 +304,8 @@ function M.load_all_function_references()
     vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result)
       if not err and result then
         for _, ref in ipairs(result) do
-          add_reference_to_quickfix(ref)
+          local quickfix_item = create_reference_quickfix_item(ref)
+          table.insert(state.qflist, quickfix_item)
         end
         processed_count = processed_count + 1
       end
