@@ -160,8 +160,12 @@ local function process_fn_decl_of_ref(ref)
   end
 end
 
-local function update_quickfix_window()
-  vim.fn.setqflist(state.qflist, 'r')
+local function update_quickfix_window(create_new)
+  if create_new then
+    vim.fn.setqflist(state.qflist, ' ')
+  else
+    vim.fn.setqflist(state.qflist, 'r')
+  end
   vim.schedule(function()
     vim.cmd 'copen'
     vim.cmd 'wincmd p'
@@ -295,8 +299,9 @@ function M.load_all_function_references()
 
   local function process_next_function(index)
     if index > total_functions then
-      vim.notify(string.format('Loaded references for %d functions', processed_count), vim.log.levels.INFO)
-      update_quickfix_window()
+      local make_notify = require('mini.notify').make_notify {}
+      make_notify(string.format('Loaded references for %d functions', processed_count))
+      update_quickfix_window(true)
       return
     end
 
