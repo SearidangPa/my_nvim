@@ -135,6 +135,8 @@ local function notify_function_found(func_name)
   make_notify(string.format('found: %s', func_name))
 end
 
+local function is_in_test_pkg(function_info) return function_info and not string.find(function_info.filename, 'test') end
+
 --- Processes a single LSP reference to extract function information
 --- Gets the enclosing function for the reference location
 --- Adds valid functions to quickfix list if they're not test functions
@@ -152,7 +154,9 @@ local function process_reference(ref)
 
   if function_info then
     notify_function_found(function_info.func_name)
-    add_function_to_quickfix(function_info)
+    if is_in_test_pkg(function_info) then
+      add_function_to_quickfix(function_info)
+    end
   end
 end
 
@@ -247,5 +251,48 @@ local function clear_quickfix_state()
 end
 
 vim.api.nvim_create_user_command('ClearQuickFix', clear_quickfix_state, { desc = 'Clear quickfix list' })
+
+-- === load function references for each func declarations in the quickfix list ===
+
+function M.load_all_function_references()
+  if vim.tbl_isempty(state.qflist) then
+    vim.notify('No functions in quickfix list', vim.log.levels.WARN)
+    return
+  end
+
+  local total_functions = #state.qflist
+  local processed_count = 0
+
+  local function process_next_function(index)
+    if index > total_functions then
+      vim.notify(string.format('Loaded references for %d functions', processed_count), vim.log.levels.INFO)
+      return
+    end
+
+    local item = state.qflist[index]
+    local bufnr = load_buffer_for_file(item.filename)
+
+    local params = create_lsp_params(bufnr, item.lnum, item.col)
+
+    vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result)
+      if not err and result then
+        for _, ref in ipairs(result) do
+          process_reference(ref)
+        end
+        processed_count = processed_count + 1
+      end
+
+      vim.schedule(function() process_next_function(index + 1) end)
+    end)
+  end
+
+  process_next_function(1)
+end
+
+vim.api.nvim_create_user_command(
+  'LoadAllFunctionReferences',
+  function() M.load_all_references() end,
+  { desc = 'Load references for all functions in quickfix list' }
+)
 
 return M
