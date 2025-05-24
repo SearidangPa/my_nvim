@@ -141,7 +141,7 @@ local function is_in_test_pkg(function_info) return function_info and not string
 --- Gets the enclosing function for the reference location
 --- Adds valid functions to quickfix list if they're not test functions
 --- @param ref table LSP reference object containing uri and range
-local function process_reference(ref)
+local function process_fn_decl_of_ref(ref)
   local uri = ref.uri or ref.targetUri
   assert(uri, 'URI is nil')
 
@@ -181,7 +181,7 @@ local function handle_references_response(err, result)
   assert(not err, 'err is not nil')
 
   for _, ref in ipairs(result) do
-    process_reference(ref)
+    process_fn_decl_of_ref(ref)
   end
 
   update_quickfix_window()
@@ -254,6 +254,34 @@ vim.api.nvim_create_user_command('ClearQuickFix', clear_quickfix_state, { desc =
 
 -- === load function references for each func declarations in the quickfix list ===
 
+local function create_reference_quickfix_item(ref)
+  local filename = vim.uri_to_fname(ref.uri)
+  local range = ref.range
+  local start_line = range.start.line + 1
+  local start_col = range.start.character + 1
+
+  local bufnr = load_buffer_for_file(filename)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_line - 1, start_line, false)
+  local line_text = lines[1] or ''
+
+  return {
+    filename = filename,
+    lnum = start_line,
+    col = start_col,
+    text = line_text:gsub('^%s+', ''),
+    func_name = nil,
+  }
+end
+
+local function add_reference_to_quickfix(ref)
+  if is_test_file(vim.uri_to_fname(ref.uri)) then
+    return
+  end
+
+  local item = create_reference_quickfix_item(ref)
+  table.insert(state.qflist, item)
+end
+
 function M.load_all_function_references()
   if vim.tbl_isempty(state.qflist) then
     vim.notify('No functions in quickfix list', vim.log.levels.WARN)
@@ -262,14 +290,17 @@ function M.load_all_function_references()
 
   local total_functions = #state.qflist
   local processed_count = 0
+  local original_qflist = vim.deepcopy(state.qflist)
+  state.qflist = {}
 
   local function process_next_function(index)
     if index > total_functions then
       vim.notify(string.format('Loaded references for %d functions', processed_count), vim.log.levels.INFO)
+      update_quickfix_window()
       return
     end
 
-    local item = state.qflist[index]
+    local item = original_qflist[index]
     local bufnr = load_buffer_for_file(item.filename)
 
     local params = create_lsp_params(bufnr, item.lnum, item.col)
@@ -277,7 +308,7 @@ function M.load_all_function_references()
     vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result)
       if not err and result then
         for _, ref in ipairs(result) do
-          process_reference(ref)
+          add_reference_to_quickfix(ref)
         end
         processed_count = processed_count + 1
       end
@@ -291,7 +322,7 @@ end
 
 vim.api.nvim_create_user_command(
   'LoadAllFunctionReferences',
-  function() M.load_all_references() end,
+  function() M.load_all_function_references() end,
   { desc = 'Load references for all functions in quickfix list' }
 )
 

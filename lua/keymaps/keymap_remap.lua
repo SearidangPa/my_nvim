@@ -3,8 +3,8 @@ local function map_opt(desc) return { noremap = true, silent = true, desc = desc
 
 map('n', '<Enter>', function()
   if vim.bo.filetype == 'snacks_input' then
+    vim.schedule(function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('i', true, false, true), 'n', true) end)
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
-    vim.schedule(function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true) end)
   else
     vim.cmd 'silent! wa'
   end
