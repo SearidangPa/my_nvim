@@ -20,148 +20,233 @@ local state = {
   previous_declarations = {},
 }
 
----@param qflist QfItem[]
----@param function_info FunctionInfo
-local function add_to_quickfix(qflist, function_info)
-  local item = {
+local function create_quickfix_item(function_info)
+  return {
     filename = function_info.filename,
     lnum = function_info.location.line,
     col = function_info.location.col,
     text = function_info.text,
     func_name = function_info.func_name,
   }
+end
 
-  table.insert(qflist, item)
+local function add_function_to_quickfix(function_info)
+  local item = create_quickfix_item(function_info)
+  table.insert(state.qflist, item)
   table.insert(state.current_declarations, item)
 end
 
----@param uri string
----@param ref_line number
----@return FunctionInfo|nil
-local function get_enclosing_function_info(uri, ref_line)
-  local filename = vim.uri_to_fname(uri)
-  if not filename or filename:match '_test%.go$' then
+local function is_test_file(filename) return filename and filename:match '_test%.go$' end
+
+local function load_buffer_for_file(filename)
+  local bufnr = vim.fn.bufadd(filename)
+  vim.fn.bufload(bufnr)
+  return bufnr
+end
+
+---@return TSNode|nil
+local function find_function_identifier(func_node)
+  for child in func_node:iter_children() do
+    for _, func_type in ipairs { 'identifier', 'field_identifier', 'name' } do
+      if child:type() == func_type then
+        return child
+      end
+    end
+  end
+  return nil
+end
+
+local function get_function_key(filename, func_name, start_row) return filename .. ':' .. func_name .. ':' .. start_row end
+
+local function is_function_already_processed(func_key)
+  if state.processed_functions[func_key] then
+    return true
+  end
+  state.processed_functions[func_key] = true
+  return false
+end
+
+local function get_function_signature(bufnr, start_row)
+  local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)
+  local signature = lines[1] or ''
+  return signature:gsub('^%s+', '')
+end
+
+--- Creates function information object from treesitter node
+--- Extracts function name, location, and signature from the given function identifier
+--- Returns nil if function was already processed to avoid duplicates
+--- @param filename string
+--- @param func_identifier TSNode
+--- @param bufnr number
+--- @return FunctionInfo|nil
+local function create_function_info(filename, func_identifier, bufnr)
+  local func_name = vim.treesitter.get_node_text(func_identifier, bufnr)
+  local start_row, start_col = func_identifier:range()
+
+  local func_key = get_function_key(filename, func_name, start_row)
+  if is_function_already_processed(func_key) then
     return nil
   end
 
-  local bufnr = vim.fn.bufadd(filename)
-  vim.fn.bufload(bufnr)
+  local signature = get_function_signature(bufnr, start_row)
 
+  return {
+    filename = filename,
+    location = {
+      line = start_row + 1,
+      col = start_col + 1,
+    },
+    text = signature,
+    func_name = func_name,
+  }
+end
+
+--- Gets function information for the function that encloses a given line
+--- Loads the file buffer, finds the enclosing function using treesitter
+--- Skips test files and returns nil if no function is found
+--- @param uri string LSP URI of the file
+--- @param ref_line number Line number to find enclosing function for
+--- @return FunctionInfo|nil
+local function get_enclosing_function_info(uri, ref_line)
+  local filename = vim.uri_to_fname(uri)
+  if not filename or is_test_file(filename) then
+    return nil
+  end
+
+  local bufnr = load_buffer_for_file(filename)
   local util_find_func = require 'custom.util_find_func'
   local func_node = util_find_func.enclosing_function_for_line(bufnr, ref_line)
+
   if not func_node then
     vim.notify(string.format('No function found for %s:%d', filename, ref_line), vim.log.levels.WARN)
     return nil
   end
 
-  ---@type TSNode
-  local func_identifier
-  for child in func_node:iter_children() do
-    if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
-      func_identifier = child
-      break
-    end
-  end
-  local func_name = vim.treesitter.get_node_text(func_identifier, bufnr)
-  local func_range = {
-    start_row = 0,
-    end_row = 0,
-    start_col = 0,
-    end_col = 0,
-  }
-  func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_identifier:range()
-
-  local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
-  if state.processed_functions[func_key] then
+  local func_identifier = find_function_identifier(func_node)
+  if not func_identifier then
     return nil
   end
-  state.processed_functions[func_key] = true
 
-  local lines = vim.api.nvim_buf_get_lines(bufnr, func_range.start_row, func_range.start_row + 1, false)
-  local signature = lines[1]
-  local text = signature:gsub('^%s+', '')
+  return create_function_info(filename, func_identifier, bufnr)
+end
 
+local function notify_function_found(func_name)
+  local make_notify = require('mini.notify').make_notify {}
+  make_notify(string.format('found: %s', func_name))
+end
+
+local function should_add_to_quickfix(function_info) return function_info and not string.find(function_info.filename, 'test') end
+
+--- Processes a single LSP reference to extract function information
+--- Gets the enclosing function for the reference location
+--- Adds valid functions to quickfix list if they're not test functions
+--- Notifies user when a function is found
+--- @param ref table LSP reference object containing uri and range
+local function process_reference(ref)
+  local uri = ref.uri or ref.targetUri
+  assert(uri, 'URI is nil')
+
+  local range = ref.range or ref.targetSelectionRange
+  assert(range, 'range is nil')
+  assert(range.start, 'range.start is nil')
+
+  local ref_line = range.start.line
+  local function_info = get_enclosing_function_info(uri, ref_line)
+
+  if function_info then
+    notify_function_found(function_info.func_name)
+    if should_add_to_quickfix(function_info) then
+      add_function_to_quickfix(function_info)
+    end
+  end
+end
+
+local function update_quickfix_window()
+  vim.fn.setqflist(state.qflist, 'r')
+  vim.schedule(function()
+    vim.cmd 'copen'
+    vim.cmd 'wincmd p'
+  end)
+end
+
+local function create_lsp_params(bufnr, line, col)
   return {
-    filename = filename,
-    location = {
-      line = func_range.start_row + 1,
-      col = func_range.start_col + 1,
-    },
-    text = text,
-    func_name = func_name,
+    textDocument = vim.lsp.util.make_text_document_params(bufnr),
+    position = { line = line - 1, character = col - 1 },
+    context = { includeDeclaration = false },
   }
+end
+
+local function handle_references_response(err, result)
+  assert(result, 'result is nil')
+  assert(not err, 'err is not nil')
+
+  for _, ref in ipairs(result) do
+    process_reference(ref)
+  end
+
+  update_quickfix_window()
 end
 
 local function load_definition_of_reference(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
-  local params = {
-    textDocument = vim.lsp.util.make_text_document_params(bufnr),
-    position = { line = line - 1, character = col - 1 },
-    context = { includeDeclaration = false },
-  }
 
-  vim.lsp.buf_request(bufnr, 'textDocument/references', params, function(err, result, _, _)
-    assert(result, 'result is nil')
-    assert(not err, 'err is not nil')
-    for _, ref in ipairs(result) do
-      local uri = ref.uri or ref.targetUri
-      assert(uri, 'URI is nil')
-      local range = ref.range or ref.targetSelectionRange
-      assert(range, 'range is nil')
-      assert(range.start, 'range.start is nil')
-      local ref_line = range.start.line
-      local enclosing_function_info = get_enclosing_function_info(uri, ref_line)
-      if enclosing_function_info then
-        local make_notify = require('mini.notify').make_notify {}
-        make_notify(string.format('found: %s', enclosing_function_info.func_name))
-        if not string.find(enclosing_function_info.filename, 'test') then
-          add_to_quickfix(state.qflist, enclosing_function_info)
-        end
-      end
-    end
-    vim.fn.setqflist(state.qflist, 'r')
-    vim.schedule(function()
-      vim.cmd 'copen'
-      vim.cmd 'wincmd p'
-    end)
-  end)
+  local params = create_lsp_params(bufnr, line, col)
+  vim.lsp.buf_request(bufnr, 'textDocument/references', params, handle_references_response)
   return state.qflist
 end
 
-function M.load_definitions_to_refactor()
-  if vim.fn.getqflist({ size = 0 }).size == 0 then
-    local util_find_func = require 'custom.util_find_func'
-    local func_node = util_find_func.nearest_func_node()
-    assert(func_node, 'No function found')
-    local func_identifier
-    for child in func_node:iter_children() do
-      if child:type() == 'identifier' or child:type() == 'name' then
-        func_identifier = child
-      end
-    end
-    local start_row, start_col = func_identifier:range()
-    load_definition_of_reference(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
-    return
-  end
+local function get_current_function_position()
+  local util_find_func = require 'custom.util_find_func'
+  local func_node = util_find_func.nearest_func_node()
+  assert(func_node, 'No function found')
 
+  local func_identifier = find_function_identifier(func_node)
+  assert(func_identifier, 'No function identifier found')
+  local start_row, start_col = func_identifier:range()
+  return start_row + 1, start_col + 1
+end
+
+local function load_initial_definitions()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local line, col = get_current_function_position()
+  load_definition_of_reference(current_buf, line, col)
+end
+
+local function prepare_for_next_iteration()
   state.previous_declarations = vim.deepcopy(state.current_declarations)
   state.current_declarations = {}
+end
 
+local function process_previous_declarations()
   for _, item in ipairs(state.previous_declarations) do
-    local filename = item.filename
-    local bufnr = vim.fn.bufadd(filename)
-    vim.fn.bufload(bufnr)
+    local bufnr = load_buffer_for_file(item.filename)
     load_definition_of_reference(bufnr, item.lnum, item.col)
   end
 end
 
-local function clear_quickfix_state()
+local function is_quickfix_empty() return vim.fn.getqflist({ size = 0 }).size == 0 end
+
+function M.load_definitions_to_refactor()
+  if is_quickfix_empty() then
+    load_initial_definitions()
+    return
+  end
+
+  prepare_for_next_iteration()
+  process_previous_declarations()
+end
+
+local function reset_state()
   state.qflist = {}
   state.processed_functions = {}
   state.current_declarations = {}
   state.previous_declarations = {}
+end
 
+local function clear_quickfix_state()
+  reset_state()
   vim.fn.setqflist {}
   vim.notify('Quickfix cleared', vim.log.levels.INFO)
 end
