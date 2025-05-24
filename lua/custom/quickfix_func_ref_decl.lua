@@ -325,10 +325,4 @@ function M.load_all_function_references()
   process_next_function(1)
 end
 
-vim.api.nvim_create_user_command(
-  'LoadAllFunctionReferences',
-  function() M.load_all_function_references() end,
-  { desc = 'Load references for all functions in quickfix list' }
-)
-
 return M
