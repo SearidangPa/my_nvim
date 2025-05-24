@@ -92,7 +92,7 @@ local function find_enclosing_function(uri, ref_line)
   }
 end
 
-local function load_def_of_func_ref(bufnr, line, col)
+local function load_a_def_of_func_ref(bufnr, line, col)
   assert(line, 'line is nil')
   assert(col, 'col is nil')
   local params = {
@@ -129,7 +129,7 @@ local function load_def_of_func_ref(bufnr, line, col)
   return state.qflist
 end
 
-function M.load_func_refs()
+function M.load_defs_of_func_refs()
   if vim.fn.getqflist({ size = 0 }).size == 0 then
     local util_find_func = require 'custom.util_find_func'
     local func_node = util_find_func.nearest_func_node()
@@ -141,7 +141,7 @@ function M.load_func_refs()
       end
     end
     local start_row, start_col = func_identifier:range()
-    load_def_of_func_ref(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
+    load_a_def_of_func_ref(vim.api.nvim_get_current_buf(), start_row + 1, start_col + 1)
     return
   end
 
@@ -152,7 +152,7 @@ function M.load_func_refs()
     local filename = item.filename
     local bufnr = vim.fn.bufadd(filename)
     vim.fn.bufload(bufnr)
-    load_def_of_func_ref(bufnr, item.lnum, item.col)
+    load_a_def_of_func_ref(bufnr, item.lnum, item.col)
   end
 end
 
