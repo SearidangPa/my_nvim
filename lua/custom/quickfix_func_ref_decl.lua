@@ -1,5 +1,4 @@
 local M = {}
-local util_find_func = require 'custom.util_find_func'
 ---@class qfItem
 ---@field filename string
 ---@field lnum number
@@ -52,6 +51,7 @@ function M.find_enclosing_function(uri, ref_line)
   local bufnr = vim.fn.bufadd(filename)
   vim.fn.bufload(bufnr)
 
+  local util_find_func = require 'custom.util_find_func'
   local func_node = util_find_func.enclosing_function_for_line(bufnr, ref_line)
   if not func_node then
     print('No enclosing function found for reference at line', ref_line + 1)
@@ -139,6 +139,7 @@ end
 function M.load_func_refs()
   if vim.fn.getqflist({ size = 0 }).size == 0 then
     -- first time loading function declarations that refer to this function
+    local util_find_func = require 'custom.util_find_func'
     local func_node = util_find_func.nearest_func_node()
     assert(func_node, 'No function found')
     local func_identifier
