@@ -20,6 +20,7 @@ local state = {
   previous_declarations = {},
 }
 
+---@param function_info FunctionInfo
 local function create_quickfix_item(function_info)
   return {
     filename = function_info.filename,
