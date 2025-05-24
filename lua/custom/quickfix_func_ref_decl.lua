@@ -21,22 +21,18 @@ local state = {
 }
 
 ---@param qflist QfItem[]
----@param filename string
----@param location {line: number, col: number}
----@param text string
----@return boolean
-local function add_to_quickfix(qflist, filename, location, text)
+---@param function_info FunctionInfo
+local function add_to_quickfix(qflist, function_info)
   local item = {
-    filename = filename,
-    lnum = location.line,
-    col = location.col,
-    text = text,
+    filename = function_info.filename,
+    lnum = function_info.location.line,
+    col = function_info.location.col,
+    text = function_info.text,
+    func_name = function_info.func_name,
   }
 
   table.insert(qflist, item)
   table.insert(state.current_declarations, item)
-
-  return true
 end
 
 ---@param uri string
@@ -121,7 +117,7 @@ local function load_a_def_of_func_ref(bufnr, line, col)
         local make_notify = require('mini.notify').make_notify {}
         make_notify(string.format('found: %s', enclosing_function_info.func_name))
         if not string.find(enclosing_function_info.filename, 'test') then
-          add_to_quickfix(state.qflist, enclosing_function_info.filename, enclosing_function_info.location, enclosing_function_info.text)
+          add_to_quickfix(state.qflist, enclosing_function_info)
         end
       end
     end
