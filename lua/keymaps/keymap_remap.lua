@@ -5,11 +5,12 @@ set_map_key('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 local function save_all()
   if vim.bo.filetype == 'snacks_input' then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
+    return '<Esc>'
+  else
+    vim.cmd 'silent! wa'
   end
-  vim.cmd 'silent! wa'
 end
-set_map_key('n', '<Enter>', save_all, { desc = 'Save all buffers' })
+set_map_key('n', '<Enter>', save_all, { expr = true, desc = 'Save all buffers' })
 
 set_map_key('n', '<Tab>', 'zA', map_opt 'Toggle fold')
 set_map_key('n', ']]', 'zj', map_opt 'Next fold')
