@@ -41,6 +41,7 @@ end
 
 ---@param uri string
 ---@param ref_line number
+---@return FunctionInfo|nil
 local function find_enclosing_function(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
@@ -53,13 +54,11 @@ local function find_enclosing_function(uri, ref_line)
   local util_find_func = require 'custom.util_find_func'
   local func_node = util_find_func.enclosing_function_for_line(bufnr, ref_line)
   if not func_node then
-    print('No enclosing function found for reference at line', ref_line + 1)
+    vim.notify(string.format('No function found for %s:%d', filename, ref_line), vim.log.levels.WARN)
     return nil
   end
 
-  local func_name = 'Unknown function'
-  local func_range = { start_row = 0, end_row = 0, start_col = 0, end_col = 0 }
-
+  ---@type TSNode
   local func_identifier
   for child in func_node:iter_children() do
     if child:type() == 'identifier' or child:type() == 'field_identifier' or child:type() == 'name' then
@@ -67,7 +66,13 @@ local function find_enclosing_function(uri, ref_line)
       break
     end
   end
-  func_name = vim.treesitter.get_node_text(func_identifier, bufnr)
+  local func_name = vim.treesitter.get_node_text(func_identifier, bufnr)
+  local func_range = {
+    start_row = 0,
+    end_row = 0,
+    start_col = 0,
+    end_col = 0,
+  }
   func_range.start_row, func_range.start_col, func_range.end_row, func_range.end_col = func_identifier:range()
 
   local func_key = filename .. ':' .. func_name .. ':' .. func_range.start_row
