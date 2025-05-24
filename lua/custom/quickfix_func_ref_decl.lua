@@ -135,8 +135,6 @@ local function notify_function_found(func_name)
   make_notify(string.format('found: %s', func_name))
 end
 
-local function should_add_to_quickfix(function_info) return function_info and not string.find(function_info.filename, 'test') end
-
 --- Processes a single LSP reference to extract function information
 --- Gets the enclosing function for the reference location
 --- Adds valid functions to quickfix list if they're not test functions
@@ -154,9 +152,7 @@ local function process_reference(ref)
 
   if function_info then
     notify_function_found(function_info.func_name)
-    if should_add_to_quickfix(function_info) then
-      add_function_to_quickfix(function_info)
-    end
+    add_function_to_quickfix(function_info)
   end
 end
 
