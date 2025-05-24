@@ -1,16 +1,14 @@
 local map = vim.keymap.set
 local function map_opt(desc) return { noremap = true, silent = true, desc = desc } end
 
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = 'snacks_input',
-  callback = function()
-    map('n', '<Enter>', function()
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
-      return '<Esc>'
-    end, { buffer = true, expr = true, desc = 'Send <Enter> and Esc to the snack input' })
-  end,
-})
-map('n', '<Enter>', function() vim.cmd 'silent! wa' end, { desc = 'Save all buffers' })
+map('n', '<Enter>', function()
+  if vim.bo.filetype == 'snacks_input' then
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Enter>', true, false, true), 'n', true)
+    vim.schedule(function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true) end)
+  else
+    vim.cmd 'silent! wa'
+  end
+end, { desc = 'Save all buffers' })
 
 map('n', '<Tab>', 'zA', map_opt 'Toggle fold')
 map('n', ']]', 'zj', map_opt 'Next fold')

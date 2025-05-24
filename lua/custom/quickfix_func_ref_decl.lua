@@ -88,7 +88,7 @@ local function create_function_info(filename, func_identifier, bufnr)
     return nil
   end
 
-  local signature = get_function_signature(bufnr, start_row)
+  local function_signature = get_function_signature(bufnr, start_row)
 
   return {
     filename = filename,
@@ -96,7 +96,7 @@ local function create_function_info(filename, func_identifier, bufnr)
       line = start_row + 1,
       col = start_col + 1,
     },
-    text = signature,
+    text = function_signature,
     func_name = func_name,
   }
 end
