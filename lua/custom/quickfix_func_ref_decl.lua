@@ -140,7 +140,6 @@ local function should_add_to_quickfix(function_info) return function_info and no
 --- Processes a single LSP reference to extract function information
 --- Gets the enclosing function for the reference location
 --- Adds valid functions to quickfix list if they're not test functions
---- Notifies user when a function is found
 --- @param ref table LSP reference object containing uri and range
 local function process_reference(ref)
   local uri = ref.uri or ref.targetUri
