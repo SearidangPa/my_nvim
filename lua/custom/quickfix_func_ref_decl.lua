@@ -86,7 +86,6 @@ local function get_enclosing_function_info(uri, ref_line)
     location = {
       line = func_range.start_row + 1,
       col = func_range.start_col + 1,
-
     },
     text = text,
     func_name = func_name,
