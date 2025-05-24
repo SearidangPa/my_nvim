@@ -14,5 +14,5 @@ map('n', '<leader>x', vim.diagnostic.open_float, { desc = 'Diagnostic float' })
 --- === Quickfix load ===
 map('n', '<leader>ql', vim.diagnostic.setqflist, { desc = '[Q]uickfix [L]ist' })
 
-map('n', '<leader>qd', require('custom.quickfix_func_ref_decl').load_definitions_to_refactor, map_opt '[Q]uickfix function declarations [R]eference ')
+map('n', '<leader>qf', require('custom.quickfix_func_ref_decl').load_definitions_to_refactor, map_opt '[Q]uickfix function declarations [R]eference ')
 map('n', '<leader>qr', require('custom.quickfix_func_ref_decl').load_all_function_references, map_opt '[Q]uickfix function declarations [R]eference ')
