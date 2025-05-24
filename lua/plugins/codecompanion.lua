@@ -27,6 +27,7 @@ opts.prompt_library = {
         name = 'copilot',
       },
     },
+
     prompts = {
       {
         role = 'user',

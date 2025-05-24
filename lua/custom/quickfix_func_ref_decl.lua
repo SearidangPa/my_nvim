@@ -1,5 +1,11 @@
 local M = {}
 local util_find_func = require 'custom.util_find_func'
+---@class qfItem
+---@field filename string
+---@field lnum number
+---@field col number
+---@field text string
+---@field func_name? string
 
 ---@type qfItem[]
 M.qflist = {}
@@ -10,12 +16,7 @@ M.processed_funcs = {} -- Track function declarations we've already added
 M.new_func_decls = {} -- Track recent function declarations
 M.last_func_decls = {} -- Track last function declarations
 
----@class qfItem
----@field filename string
----@field lnum number
----@field col number
----@field text string
-
+---@parameter qflist qfItem[]
 function M.add_to_quickfix(qflist, filename, location, text)
   table.insert(qflist, {
     filename = filename,
@@ -39,6 +40,8 @@ Finds the enclosing function for a given line in a file.
 - Extracts the function name, range, and signature for further processing.
 - Avoids reprocessing functions that have already been handled.
 ]]
+---@param uri string
+---@param ref_line number
 function M.find_enclosing_function(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or filename:match '_test%.go$' then
@@ -49,7 +52,6 @@ function M.find_enclosing_function(uri, ref_line)
   local bufnr = vim.fn.bufadd(filename)
   vim.fn.bufload(bufnr)
 
-  -- Find the nearest function declaration at the reference line
   local func_node = util_find_func.enclosing_function_for_line(bufnr, ref_line)
   if not func_node then
     print('No enclosing function found for reference at line', ref_line + 1)
@@ -81,7 +83,7 @@ function M.find_enclosing_function(uri, ref_line)
   local text = signature:gsub('^%s+', '') -- Remove leading whitespace
 
   local location = {
-    line = func_range.start_row + 1, -- Convert from 0-indexed to 1-indexed
+    line = func_range.start_row + 1,
     col = func_range.start_col + 1,
   }
   return {
@@ -116,12 +118,12 @@ function M.load_decl_func_reference(bufnr, line, col)
       assert(range, 'range is nil')
       assert(range.start, 'range.start is nil')
       local ref_line = range.start.line
-      local func_ref_decl = M.find_enclosing_function(uri, ref_line)
-      if func_ref_decl then
+      local enclosing_function_info = M.find_enclosing_function(uri, ref_line)
+      if enclosing_function_info then
         local make_notify = require('mini.notify').make_notify {}
-        make_notify(string.format('found: %s', func_ref_decl.func_name))
-        if not string.find(func_ref_decl.filename, 'test') then
-          M.add_to_quickfix(M.qflist, func_ref_decl.filename, func_ref_decl.location, func_ref_decl.text)
+        make_notify(string.format('found: %s', enclosing_function_info.func_name))
+        if not string.find(enclosing_function_info.filename, 'test') then
+          M.add_to_quickfix(M.qflist, enclosing_function_info.filename, enclosing_function_info.location, enclosing_function_info.text)
         end
       end
     end

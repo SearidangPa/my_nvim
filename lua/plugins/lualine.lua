@@ -104,7 +104,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(3)()
-            return is_current and { fg = '#DCA1A1', gui = 'italic' } or { fg = '#3195CA' }
+            return is_current and { fg = '#DCA1A1', gui = 'italic,bold,underline' } or { fg = '#3195CA' }
           end,
         },
         {
@@ -114,7 +114,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(4)()
-            return is_current and { fg = '#DCA1A1', gui = 'italic' } or { fg = '#3195CA' }
+            return is_current and { fg = '#DCA1A1', gui = 'italic,bold,underline' } or { fg = '#3195CA' }
           end,
         },
       },
@@ -130,7 +130,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(1)()
-            return is_current and { fg = '#DCA1A1', gui = 'italic' } or { fg = '#3195CA' }
+            return is_current and { fg = '#DCA1A1', gui = 'italic,bold,underline' } or { fg = '#3195CA' }
           end,
         },
         {
@@ -140,7 +140,7 @@ return {
           end,
           color = function()
             local _, is_current = get_harpoon_filename_func(2)()
-            return is_current and { fg = '#DCA1A1', gui = 'italic' } or { fg = '#3195CA' }
+            return is_current and { fg = '#DCA1A1', gui = 'italic,bold,underline' } or { fg = '#3195CA' }
           end,
         },
       },
