@@ -108,7 +108,7 @@ end
 --- @param uri string LSP URI of the file
 --- @param ref_line number Line number to find enclosing function for
 --- @return FunctionInfo|nil
-local function get_enclosing_function_info(uri, ref_line)
+local function enclosing_function_info_at_line(uri, ref_line)
   local filename = vim.uri_to_fname(uri)
   if not filename or is_test_file(filename) then
     return nil
@@ -138,11 +138,9 @@ end
 
 local function is_in_test_pkg(function_info) return function_info and not string.find(function_info.filename, 'test') end
 
---- Processes a single LSP reference to extract function information
---- Gets the enclosing function for the reference location
---- Adds valid functions to quickfix list if they're not test functions
+-- Resolves a reference to its definition using the provided URI and range.
 --- @param ref table LSP reference object containing uri and range
-local function process_fn_decl_of_ref(ref)
+local function reference_to_definition(ref)
   local uri = ref.uri or ref.targetUri
   assert(uri, 'URI is nil')
 
@@ -151,7 +149,7 @@ local function process_fn_decl_of_ref(ref)
   assert(range.start, 'range.start is nil')
 
   local ref_line = range.start.line
-  local function_info = get_enclosing_function_info(uri, ref_line)
+  local function_info = enclosing_function_info_at_line(uri, ref_line)
 
   if function_info then
     notify_function_found(function_info.func_name)
@@ -186,7 +184,7 @@ local function handle_references_response(err, result)
   assert(not err, 'err is not nil')
 
   for _, ref in ipairs(result) do
-    process_fn_decl_of_ref(ref)
+    reference_to_definition(ref)
   end
 
   update_quickfix_window()
