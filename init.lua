@@ -36,6 +36,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.mouse = 'a'
 vim.g.have_nerd_font = true
+vim.opt.shell = 'fish'
 
 vim.schedule(function() vim.opt.clipboard = 'unnamedplus' end)
 
